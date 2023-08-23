@@ -1,0 +1,9 @@
+# Normalize EOL for all files that Git considers text files.
+* text=auto eol=lf
+
+# Include HScript files as Haxe
+*.hxs linguist-language=Haxe
+*.hxc linguist-language=Haxe
+*.hsc linguist-language=Haxe
+*.hscript linguist-language=Haxe
+*.hxclass linguist-language=Haxe

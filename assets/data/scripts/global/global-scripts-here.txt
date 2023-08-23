@@ -1,0 +1,1 @@
+Drop scripts here to enable global ones

@@ -1,0 +1,12 @@
+{
+    "strumSize": 0.7,
+    "strumSpacing": 160,
+    "strumImage": "receptors",
+
+    "noteSize": 0.7,
+    "noteImage": "notes",
+
+    "splashSize": 1.0,
+    "splashAlpha": 0.6,
+    "splashImage": "splashes"
+}

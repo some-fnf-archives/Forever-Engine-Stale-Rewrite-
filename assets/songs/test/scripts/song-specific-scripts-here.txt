@@ -1,0 +1,2 @@
+Create a folder with the same name of your song's folder
+and drop scripts there
