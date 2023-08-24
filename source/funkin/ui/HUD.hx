@@ -42,7 +42,7 @@ class HUD extends FlxSpriteGroup {
 
 	public function updateScore():Void {
 		var tempScore:String = "";
-		var scoreBarStyle:String = "Default";
+		var scoreBarStyle:String = "Focused";
 
 		switch (scoreBarStyle) {
 			case "Focused":

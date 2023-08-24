@@ -6,7 +6,7 @@ import openfl.display.Sprite;
 class Main extends Sprite {
 	public static var framerate:Int = 60;
 
-	public static final initialState = PlayState;
+	public static final initialState = funkin.states.PlayState;
 	public static final version:String = "1.0.0";
 
 	public function new():Void {

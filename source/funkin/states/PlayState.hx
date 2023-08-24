@@ -1,4 +1,4 @@
-package;
+package funkin.states;
 
 import flixel.FlxSprite;
 import flixel.FlxState;
