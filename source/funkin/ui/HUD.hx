@@ -2,13 +2,13 @@ package funkin.ui;
 
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
-import flixel.text.FlxText;
+import forever.ui.ForeverText;
 
 class HUD extends FlxSpriteGroup {
-	public var scoreBar:FlxText;
+	public var scoreBar:ForeverText;
 
-	public var cornerMark:FlxText;
-	public var centerMark:FlxText;
+	public var cornerMark:ForeverText;
+	public var centerMark:ForeverText;
 
 	public var healthBar:HealthBar;
 
@@ -18,20 +18,19 @@ class HUD extends FlxSpriteGroup {
 		var downscroll:Bool = true;
 		var font:String = AssetHelper.getAsset("vcr", FONT);
 
-		cornerMark = new FlxText(0, 0, 0, 'FOREVER ENGINE v${Main.version}');
-		cornerMark.setFormat(font, 16, 0xFFFFFFFF).setBorderStyle(OUTLINE, 0xFF000000, 2);
+		cornerMark = new ForeverText(0, 0, 0, 'FOREVER ENGINE v${Main.version}', 16);
 		cornerMark.setPosition(FlxG.width - (cornerMark.width + 5), 5);
-		cornerMark.borderSize = 2;
+		cornerMark.borderSize = 2.0;
 		add(cornerMark);
 
-		centerMark = new FlxText(0, (downscroll ? FlxG.height - 40 : 10), 0, '- NO SONG [NO DIFFICULTY] -');
-		centerMark.setFormat(font, 20, 0xFFFFFFFF).setBorderStyle(OUTLINE, 0xFF000000, 2);
+		centerMark = new ForeverText(0, (downscroll ? FlxG.height - 40 : 10), 0, '- NO SONG [NO DIFFICULTY] -', 20);
+		centerMark.borderSize = 2.0;
 		centerMark.screenCenter(X);
 		centerMark.antialiasing = true;
 		add(centerMark);
 
-		scoreBar = new FlxText(0, 0, FlxG.width / 2, "");
-		scoreBar.setFormat(font, 18, 0xFFFFFFFF, CENTER, OUTLINE, 0xFF000000);
+		scoreBar = new ForeverText(0, 0, FlxG.width / 2, "", 18);
+		scoreBar.alignment = CENTER;
 		scoreBar.borderSize = 1.5;
 		add(scoreBar);
 
@@ -58,6 +57,6 @@ class HUD extends FlxSpriteGroup {
 				tempScore += divider + "Rank: S"; // PlayState.gameInfo.rank;
 		}
 
-		scoreBar.text = tempScore;
+		scoreBar.text = '${tempScore}\n';
 	}
 }

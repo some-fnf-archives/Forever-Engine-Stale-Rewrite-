@@ -16,6 +16,10 @@ typedef NoteConfigFile = {
 	var ?splashSize:Float;
 	var ?splashAlpha:Float;
 	var ?splashImage:String;
+	// ANIMATIONS
+	var noteAnims:Array<AnimationConfig>;
+	var splashAnims:Array<AnimationConfig>;
+	var strumAnims:Array<AnimationConfig>;
 }
 
 /**
@@ -57,6 +61,10 @@ class NoteConfig {
 					Utils.safeSet(config.noteSize, file.noteSize);
 					Utils.safeSet(config.splashSize, file.splashSize);
 					Utils.safeSet(config.splashAlpha, file.splashAlpha);
+					// ANIMATIONS
+					Utils.safeSet(config.noteAnims, file.noteAnims);
+					Utils.safeSet(config.splashAnims, file.splashAnims);
+					Utils.safeSet(config.strumAnims, file.strumAnims);
 				}
 			}
 			catch (e:haxe.Exception)

@@ -1,12 +1,18 @@
 {
-    "strumSize": 0.7,
-    "strumSpacing": 160,
     "strumImage": "receptors",
-
-    "noteSize": 0.7,
+    "splashImage": "splashes",
     "noteImage": "notes",
 
+    "strumSize": 0.7,
+    "noteSize": 0.7,
     "splashSize": 1.0,
+
+    "strumSpacing": 160,
     "splashAlpha": 0.6,
-    "splashImage": "splashes"
+
+    "noteAnims": [
+        {"name": "scroll", "prefix": "${dir}Scroll", "fps": 24, "looped": false},
+        {"name": "hold", "prefix": "${dir} hold piece", "fps": 24, "looped": false},
+        {"name": "end", "prefix": "${dir} holdend", "fps": 24, "looped": false}
+    ]
 }
