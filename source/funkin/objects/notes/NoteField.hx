@@ -7,11 +7,11 @@ class Strum extends ForeverSprite {
 	public function new(x:Float, y:Float, skin:String = "default", id:Int):Void {
 		super(x, y);
 
-		frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.strumImage}', ATLAS_SPARROW);
+		frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.strums.image}', ATLAS_SPARROW);
 		this.ID = id;
 
-		if (NoteConfig.config.strumAnims.length > 0)
-			for (i in NoteConfig.config.strumAnims) {
+		if (NoteConfig.config.strums.anims.length > 0)
+			for (i in NoteConfig.config.strums.anims) {
 				var dir:String = Utils.noteDirections[id];
 				var color:String = Utils.noteColors[id];
 
@@ -48,15 +48,15 @@ class NoteField extends FlxTypedGroup<Strum> {
 	}
 
 	@:dox(hide) @:noCompletion function get_spacing():Int {
-		if (NoteConfig.config.strumSpacing >= 30) // minimum spacing is 30
-			return NoteConfig.config.strumSpacing;
-		return NoteConfig.getDummyConfig().strumSpacing;
+		if (NoteConfig.config.strums.spacing >= 30) // minimum spacing is 30
+			return NoteConfig.config.strums.spacing;
+		return NoteConfig.getDummyConfig().strums.spacing;
 	}
 
 	@:dox(hide) @:noCompletion function get_size():Float {
-		if (NoteConfig.config.strumSize > 0)
-			return NoteConfig.config.strumSize;
-		return NoteConfig.getDummyConfig().strumSize;
+		if (NoteConfig.config.strums.size > 0)
+			return NoteConfig.config.strums.size;
+		return NoteConfig.getDummyConfig().strums.size;
 	}
 
 	@:dox(hide) @:noCompletion function get_fieldWidth():Float

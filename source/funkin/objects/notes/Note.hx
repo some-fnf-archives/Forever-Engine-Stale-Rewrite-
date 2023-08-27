@@ -46,14 +46,12 @@ class Note extends ForeverSprite {
 
 		switch (data.type) {
 			case "default", "normal", "":
-				var noteImg:String = NoteConfig.config.noteImage;
-				frames = AssetHelper.getAsset('images/notes/${type}/${noteImg}', ATLAS_SPARROW);
+				frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.notes.image}', ATLAS_SPARROW);
 
-				if (NoteConfig.config.noteAnims.length > 0)
-					for (i in NoteConfig.config.noteAnims) {
+				if (NoteConfig.config.notes.anims.length > 0)
+					for (i in NoteConfig.config.notes.anims) {
 						var dir:String = Utils.noteDirections[direction];
 						var color:String = Utils.noteColors[direction];
-
 						addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
 					}
 		}
