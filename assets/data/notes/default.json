@@ -1,18 +1,29 @@
 {
-    "strumImage": "receptors",
-    "splashImage": "splashes",
-    "noteImage": "notes",
+    "splashImage": "default/splashes",
+    "strumImage": "default/receptors",
+    "noteImage": "default/notes",
 
     "strumSize": 0.7,
+    "strumSpacing": 160,
+
     "noteSize": 0.7,
     "splashSize": 1.0,
-
-    "strumSpacing": 160,
     "splashAlpha": 0.6,
 
+    "strumAnims": [
+        {"name": "static", "prefix": "${dir} static", "fps": 24, "looped": false},
+        {"name": "pressed", "prefix": "${dir} press", "fps": 24, "looped": false},
+        {"name": "confirm", "prefix": "${dir} confirm", "fps": 24, "looped": false}
+    ],
+
     "noteAnims": [
-        {"name": "scroll", "prefix": "${dir}Scroll", "fps": 24, "looped": false},
+        {"name": "scroll", "prefix": "${dir}0", "fps": 24, "looped": false},
         {"name": "hold", "prefix": "${dir} hold piece", "fps": 24, "looped": false},
-        {"name": "end", "prefix": "${dir} holdend", "fps": 24, "looped": false}
+        {"name": "end", "prefix": "${dir} hold end", "fps": 24, "looped": false}
+    ],
+
+    "splashAnims": [
+        {"name": "1", "prefix": "${dir}1", "fps": 24, "looped": false},
+        {"name": "2", "prefix": "${dir}2", "fps": 24, "looped": false}
     ]
 }

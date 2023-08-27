@@ -1,7 +1,7 @@
 package forever;
 
 import flixel.graphics.frames.FlxAtlasFrames;
-import openfl.Assets;
+import openfl.Assets as OpenFLAssets;
 import openfl.utils.AssetType;
 
 class AssetHelper {
@@ -12,9 +12,10 @@ class AssetHelper {
 
 	public static function getAsset(asset:String, ?type:ForeverAsset):Dynamic {
 		return switch (type) {
-			case JSON: haxe.Json.parse(getPath('${asset}', JSON));
+			case JSON: tjson.TJSON.parse(OpenFLAssets.getText(getPath('${asset}', JSON)));
 			case FONT: getPath('fonts/${asset}', FONT);
 			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getAsset(asset, XML));
+			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getAsset(asset, TEXT));
 			default: getPath(asset, type);
 		}
 	}
@@ -48,10 +49,10 @@ enum abstract ForeverAsset(String) to String {
 		if (extensionLoader != null) {
 			if (extensionLoader.length > 1) {
 				for (i in extensionLoader)
-					if (Assets.exists('${path}${i}'))
+					if (OpenFLAssets.exists('${path}${i}'))
 						return '${path}${i}';
 			}
-			else if (Assets.exists('${path}${extensionLoader[0]}'))
+			else if (OpenFLAssets.exists('${path}${extensionLoader[0]}'))
 				return '${path}${extensionLoader[0]}';
 		}
 

@@ -29,7 +29,7 @@ class HUD extends FlxSpriteGroup {
 		centerMark.antialiasing = true;
 		add(centerMark);
 
-		scoreBar = new ForeverText(0, 0, FlxG.width / 2, "", 18);
+		scoreBar = new ForeverText(0, 0, Std.int(FlxG.width / 2), "", 18);
 		scoreBar.alignment = CENTER;
 		scoreBar.borderSize = 1.5;
 		add(scoreBar);

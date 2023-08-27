@@ -49,8 +49,10 @@ class FreeplayMenu extends FlxState {
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.UP || FlxG.keys.justPressed.DOWN)
-			updateSelection(FlxG.keys.justPressed.UP ? -1 : 1);
+		if (Controls.UP_P || Controls.DOWN_P)
+			updateSelection(Controls.UP_P ? -1 : 1);
+		if (Controls.ACCEPT)
+			FlxG.switchState(new funkin.states.PlayState());
 	}
 
 	public var curSelection:Int = 0;

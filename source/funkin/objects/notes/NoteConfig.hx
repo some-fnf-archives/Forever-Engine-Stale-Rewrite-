@@ -1,4 +1,4 @@
-package funkin.objects;
+package funkin.objects.notes;
 
 import openfl.Assets as OpenFLAssets;
 
@@ -30,6 +30,7 @@ typedef AnimationConfig = {
 	var prefix:String;
 	var fps:Int;
 	var looped:Bool;
+	var ?offsets:{x:Float, y:Float};
 }
 
 /**
@@ -48,7 +49,7 @@ class NoteConfig {
 
 		if (OpenFLAssets.exists(AssetHelper.getPath('data/notes/${skin}', JSON))) {
 			try {
-				file = AssetHelper.getAsset('data/notes/${skin}.json', JSON);
+				file = AssetHelper.getAsset('data/notes/${skin}', JSON);
 				if (file != null) {
 					// IMAGES
 					Utils.safeSet(config.strumImage, file.strumImage);
@@ -68,23 +69,79 @@ class NoteConfig {
 				}
 			}
 			catch (e:haxe.Exception)
-				trace('Unexpected Error when setting up note skinning, error: ${e.details()}');
+				trace('Unexpected Error when setting up note skinning, error: ${e.message}');
 		}
 	}
 
 	public static function getDummyConfig():NoteConfigFile {
 		return {
-			// NOTE FIELD STRUMS
+			splashImage: "default/splashes",
+			strumImage: "default/receptors",
+			noteImage: "default/notes",
+
 			strumSize: 0.7,
 			strumSpacing: 160,
-			strumImage: "receptors",
-			// NORMAL NOTES
+
 			noteSize: 0.7,
-			noteImage: "notes",
-			// NOTE SPLASHES
 			splashSize: 1.0,
 			splashAlpha: 0.6,
-			splashImage: "splashes",
+
+			strumAnims: [
+				{
+					name: "static",
+					prefix: "${dir} static",
+					fps: 24,
+					looped: false
+				},
+				{
+					name: "pressed",
+					prefix: "${dir} press",
+					fps: 24,
+					looped: false
+				},
+				{
+					name: "confirm",
+					prefix: "${dir} confirm",
+					fps: 24,
+					looped: false
+				}
+			],
+
+			noteAnims: [
+				{
+					name: "scroll",
+					prefix: "${dir}0",
+					fps: 24,
+					looped: false
+				},
+				{
+					name: "hold",
+					prefix: "${dir} hold piece",
+					fps: 24,
+					looped: false
+				},
+				{
+					name: "end",
+					prefix: "${dir} hold end",
+					fps: 24,
+					looped: false
+				}
+			],
+
+			splashAnims: [
+				{
+					name: "1",
+					prefix: "${dir}1",
+					fps: 24,
+					looped: false
+				},
+				{
+					name: "2",
+					prefix: "${dir}2",
+					fps: 24,
+					looped: false
+				}
+			],
 		}
 	}
 }

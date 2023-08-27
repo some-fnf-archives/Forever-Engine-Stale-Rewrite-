@@ -18,6 +18,9 @@ class Init extends FlxState {
 
 		Controls.current = new BaseControls();
 
+		// make sure there is a note configuration set
+		funkin.objects.notes.NoteConfig.reloadConfig();
+
 		FlxG.switchState(Type.createInstance(Main.initialState, []));
 	}
 }
