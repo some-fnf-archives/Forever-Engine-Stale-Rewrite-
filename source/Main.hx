@@ -15,4 +15,15 @@ class Main extends Sprite {
 		addChild(new FlxGame(1280, 720, Init, framerate, framerate, true));
 		addChild(new openfl.display.FPS());
 	}
+
+	public static function setFPSCap(newFramerate:Int):Void {
+		if (newFramerate > FlxG.drawFramerate) {
+			FlxG.updateFramerate = newFramerate;
+			FlxG.drawFramerate = newFramerate;
+		}
+		else {
+			FlxG.drawFramerate = newFramerate;
+			FlxG.updateFramerate = newFramerate;
+		}
+	}
 }

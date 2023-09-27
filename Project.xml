@@ -32,7 +32,7 @@
 		<set name="BUILD_DIR" value="export/release-x86" if="32bits" />
 	</section>
 
-	<section if="debug">
+	<section if="debug">>
 		<set name="BUILD_DIR" value="export/debug" />
 		<set name="BUILD_DIR" value="export/debug-x86" if="32bits" />
 	</section>

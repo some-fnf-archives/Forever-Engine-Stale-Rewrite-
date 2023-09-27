@@ -2,6 +2,7 @@ package forever;
 
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.Assets as OpenFLAssets;
+import openfl.media.Sound;
 import openfl.utils.AssetType;
 
 class AssetHelper {
@@ -19,11 +20,16 @@ class AssetHelper {
 			default: getPath(asset, type);
 		}
 	}
+
+	public static function getSound(soundFile:String):Sound {
+		return OpenFLAssets.getSound(getAsset(soundFile, SOUND));
+	}
 }
 
 enum abstract ForeverAsset(String) to String {
 	var IMAGE = "image";
 	var VIDEO = "video";
+	var SOUND = "sound";
 	// TEXT
 	var XML = "xml";
 	var YAML = "yaml";
@@ -38,6 +44,8 @@ enum abstract ForeverAsset(String) to String {
 	public function getExtension(path:String):String {
 		var extensionLoader:Array<String> = switch (this) {
 			case IMAGE: [".png", ".jpg"];
+			case SOUND: [".ogg", ".wav"];
+			case VIDEO: [".mp4"];
 			case XML: [".xml"];
 			case JSON: [".json"];
 			case TEXT: [".txt", ".ini", ".cfg"];

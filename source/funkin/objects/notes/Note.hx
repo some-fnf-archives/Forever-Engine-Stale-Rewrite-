@@ -3,16 +3,6 @@ package funkin.objects.notes;
 import forever.ForeverSprite;
 
 /**
- * Note Data Config
-**/
-typedef NoteData = {
-	var time:Float;
-	var direction:Int;
-	var type:String;
-	var length:Float;
-}
-
-/**
  * Base Note Object, may appear differently visually depending on its type
  * it can be a spinning mine, a arrow, and less commonly a bar or circle
 **/
@@ -27,17 +17,17 @@ class Note extends ForeverSprite {
 	/**
 	 * the Direction of this note, simply returns what the direction on `data` is
 	**/
-	public final direction:Int = data.direction;
-
-	/**
-	 * the Scrolling Speed of this Note
-	**/
-	public var speed(default, set):Float = 1.0;
+	public var direction(get, never):Int;
 
 	/**
 	 * Checks if this note is a sustain note
 	**/
 	public var isSustain(get, never):Bool;
+
+	/**
+	 * the Scrolling Speed of this Note
+	**/
+	public var speed(default, set):Float = 1.0;
 
 	public function new(data:NoteData):Void {
 		super(-5000, -5000); // make sure its offscreen initially
@@ -57,11 +47,30 @@ class Note extends ForeverSprite {
 		}
 	}
 
+	///////////////////////////////////////////////
+	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
+	///////////////////////////////////////////////
+
 	// do gay ass sustain nae nae shit here later
 	// because I think tiled sprites will need it
 	@:noCompletion function set_speed(v:Float):Float
 		return speed = v;
 
 	@:noCompletion function get_isSustain():Bool
-		return data.length > 0;
+		return data != null && data.length > 0.0;
+
+	@:noCompletion function get_direction():Int
+		return data != null ? data.direction : 0;
+}
+
+/**
+ * Note Data Config
+**/
+typedef NoteData = {
+	var step:Float;
+	// original millisecond timing, used for conversion to steps
+	var ?time:Float;
+	var direction:Int;
+	var type:String;
+	var length:Float;
 }
