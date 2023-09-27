@@ -74,13 +74,6 @@ class ConfigHelper {
 			}
 		}
 
-		// print fields
-		/*for(field in fields) {
-			var p = new Printer();
-			var aa = p.printField(field);
-			trace(aa);
-		}*/
-
 		return fields;
 	}
 	#end

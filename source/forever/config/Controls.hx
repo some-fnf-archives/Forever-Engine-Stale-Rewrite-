@@ -17,18 +17,18 @@ class BaseControls {
 	public static final defaultControls:KeyMap = [
 		"left" => [A, LEFT],
 		"down" => [S, DOWN],
-		"up" => [K, UP],
-		"right" => [L, RIGHT],
+		"up" => [W, UP],
+		"right" => [D, RIGHT],
 		//
 		"ui_left" => [A, LEFT],
 		"ui_down" => [S, DOWN],
-		"ui_up" => [K, UP],
-		"ui_right" => [L, RIGHT],
+		"ui_up" => [W, UP],
+		"ui_right" => [D, RIGHT],
 		//
 		"accept" => [ENTER, SPACE],
 		"back" => [BACKSPACE, ESCAPE],
 		"pause" => [ENTER, ESCAPE],
-		#if debug "reset" => [R], #end
+		"reset" => [R],
 	];
 
 	/**
@@ -107,17 +107,23 @@ class Controls {
 	 * to have a shortcut to your key, simply create a function here for it
 	 * to access your shortcut, use the expression `Controls.YOURCONTROL`
 	**/
+
+	// --------------- //
+	// COMMON ACTIONS  //
+	// --------------- //
+
 	function ACCEPT(jp_accept:Bool) {}
 
 	function BACK(jp_back:Bool) {}
 
 	function PAUSE(jp_pause:Bool) {}
 
-	#if debug function RESET(jp_reset:Bool) {} #end
+	function RESET(jp_reset:Bool) {}
 
 	// ------------- //
 	// SINGLE PRESS  //
 	// ------------- //
+
 	function LEFT_P(jp_left:Bool) {}
 
 	function DOWN_P(jp_down:Bool) {}

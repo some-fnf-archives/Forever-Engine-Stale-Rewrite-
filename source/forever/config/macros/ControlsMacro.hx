@@ -67,38 +67,13 @@ class ControlsMacro {
 						pos: Context.currentPos(),
 					};
 
-					// oh my fucking god, i just had the best idea, what if like
-
-					/**
-
-						@:build(AIMacro.build())
-						\**
-						  traces the words "Hello World", and then exits the program
-						*\
-						function hello() {
-
-						}
-
-						// it'd be interesting actually
-						// each time it has a chance of not working lol, since chat gpt is unique per session
-
-					**/
-
 					fields.remove(field);
-
 					fields.push(propertyField);
 					fields.push(getField);
 
-				// trace('name: ${field.name}, type: ${type}, id: ${id}');
 				default:
 			}
 		}
-
-		/*for(field in fields) {
-			var p = new Printer();
-			var aa = p.printField(field);
-			trace(aa);
-		}*/
 
 		return fields;
 	}
