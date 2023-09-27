@@ -2,6 +2,7 @@
 // FLIXEL IMPORTS
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 // FOREVER IMPORTS

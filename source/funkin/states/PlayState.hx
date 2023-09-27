@@ -1,10 +1,7 @@
 package funkin.states;
 
-import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.util.FlxColor;
 import funkin.components.ChartLoader;
 import funkin.objects.*;
 import funkin.ui.HUD;
@@ -38,6 +35,21 @@ class PlayState extends FlxState {
 		if (FlxG.keys.justPressed.R) {
 			trace("reset");
 			FlxG.resetState();
+		}
+	}
+
+	public function preloadEvent(which:ForeverEvents):Void {
+		switch (which) {
+			case ChangeCharacter(who, toCharacter):
+			/*
+				// character preloader here, so like
+				var newChar:Character = new Character(0, 0);
+				newChar.loadCharacter(toCharacter);
+				newChar.alpha = 0.000001;
+				characterGroup.add(newChar);
+			 */
+			default:
+				// do nothing
 		}
 	}
 
