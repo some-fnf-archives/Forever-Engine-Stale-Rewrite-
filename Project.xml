@@ -28,13 +28,13 @@
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<section if="release">
-		<set name="BUILD_DIR" value="export/release" if="release" />
-		<set name="BUILD_DIR" value="export/release-x86-32" if="release 32bits" />
+		<set name="BUILD_DIR" value="export/release" />
+		<set name="BUILD_DIR" value="export/release-x86" if="32bits" />
 	</section>
 
 	<section if="debug">
-		<set name="BUILD_DIR" value="export/debug" if="debug" />
-		<set name="BUILD_DIR" value="export/debug-x86-32" if="debug 32bits" />
+		<set name="BUILD_DIR" value="export/debug" />
+		<set name="BUILD_DIR" value="export/debug-x86" if="32bits" />
 	</section>
 
 	<source path="source" />
