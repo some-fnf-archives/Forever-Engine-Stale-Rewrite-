@@ -14,7 +14,7 @@
 	<!-- ____________________________ Window Settings ___________________________ -->
 
 	<!--These window settings apply to all targets-->
-	<window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" />
+	<window width="1280" height="720" fps="" background="#000000" hardware="true" vsync="false" allow-high-dpi="true" />
 
 	<!--HTML5-specific-->
 	<window if="html5" resizable="false" />
@@ -27,7 +27,16 @@
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
-	<set name="BUILD_DIR" value="export" />
+	<section if="release">
+		<set name="BUILD_DIR" value="export/release" if="release" />
+		<set name="BUILD_DIR" value="export/release-x86-32" if="release 32bits" />
+	</section>
+
+	<section if="debug">
+		<set name="BUILD_DIR" value="export/debug" if="debug" />
+		<set name="BUILD_DIR" value="export/debug-x86-32" if="debug 32bits" />
+	</section>
+
 	<source path="source" />
 	<assets path="assets" />
 
@@ -35,6 +44,7 @@
 
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
+	<haxelib name="hxcpp-debug-server" if="debug"/>
 	<haxelib name="tjson" />
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
