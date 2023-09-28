@@ -83,7 +83,7 @@ class BaseControls {
 
 	@:dox(hide) @:noCompletion private function keyChecker(act:String, state:FlxInputState):Bool {
 		for (key in myControls.get(act))
-			if (FlxG.keys.checkStatus(key, JUST_RELEASED))
+			if (FlxG.keys.checkStatus(key, state))
 				return true;
 		return false;
 	}
