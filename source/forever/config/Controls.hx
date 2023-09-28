@@ -81,14 +81,14 @@ class BaseControls {
 
 	// Helpers
 
-	@:dox(hide) @:noCompletion private function keyChecker(act:String, state:FlxInputState) {
+	@:dox(hide) @:noCompletion private function keyChecker(act:String, state:FlxInputState):Bool {
 		for (key in myControls.get(act))
 			if (FlxG.keys.checkStatus(key, JUST_RELEASED))
 				return true;
 		return false;
 	}
 
-	@:dox(hide) @:noCompletion private static function cloneControlsMap() {
+	@:dox(hide) @:noCompletion private static function cloneControlsMap():KeyMap {
 		var newMap:KeyMap = [];
 		for (key => value in defaultControls)
 			newMap[key] = value.copy();
