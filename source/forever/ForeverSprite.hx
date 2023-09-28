@@ -2,6 +2,7 @@ package forever;
 
 import forever.config.Settings;
 import flixel.FlxSprite;
+import flixel.tweens.FlxTween;
 
 /**
  * Global Sprite tools
@@ -13,6 +14,12 @@ class ForeverSprite extends FlxSprite
 		super(x, y);
 		antialiasing = Settings.globalAntialias;
 	}
+
+	/*public function tween(values:Dynamic, duration:Float, ?options:TweenOptions):ForeverSprite
+	{
+		FlxTween.tween(this, values, duration, options);
+		return this;
+	}*/
 
 	public function addGraphic(graphic:String, ?properties:Dynamic):ForeverSprite
 	{
