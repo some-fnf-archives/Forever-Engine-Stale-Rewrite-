@@ -94,7 +94,7 @@ class ChartEditor extends FNFState {
 
 	function updateHUDNodes():Void {
 		infoBar.text = 'Step: ${conductor.step} - Beat: ${conductor.beat}' + //
-			'- Bar: ${conductor.bar}\nBPM: ${conductor.bpm}';
+			' - Bar: ${conductor.bar}\nBPM: ${conductor.bpm}';
 		infoBar.x = FlxG.width - infoBar.width - 5;
 	}
 }
