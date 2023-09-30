@@ -33,11 +33,13 @@ class ForeverSprite extends FlxSprite {
 	public function addGraphic(graphic:String, ?properties:Dynamic):ForeverSprite {
 		loadGraphic(AssetHelper.getAsset('images/$graphic', IMAGE));
 
-		Utils.safeReflection(this.alpha, properties, "alpha");
-		Utils.safeReflection(this.color, properties, "color");
-		Utils.safeReflection(this.color, properties, "colour"); // british
-		Utils.safeReflection(this.scale.x, properties, "scale.x");
-		Utils.safeReflection(this.scale.y, properties, "scale.y");
+		if (properties != null) {
+			Utils.safeReflection(this.alpha, properties, "alpha");
+			Utils.safeReflection(this.color, properties, "color");
+			Utils.safeReflection(this.color, properties, "colour"); // british
+			Utils.safeReflection(this.scale.x, properties, "scale.x");
+			Utils.safeReflection(this.scale.y, properties, "scale.y");
+		}
 
 		return this;
 	}
