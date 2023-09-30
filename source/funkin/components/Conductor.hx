@@ -62,6 +62,34 @@ class Conductor {
 		}
 	}
 
+	/////////////////////////////////
+	// HELPER CONVERSION FUNCTIONS //
+	/////////////////////////////////
+
+	public static inline function timeToBeat(time:Float, _bpm:Float):Float {
+		return (time * _bpm) / 60.0;
+	}
+
+	public static inline function timeToStep(time:Float, _bpm:Float):Float {
+		return timeToBeat(time, _bpm) * 4.0;
+	}
+
+	public static inline function timeToBar(time:Float, _bpm:Float):Float {
+		return timeToBeat(time, _bpm) / 4.0;
+	}
+
+	public static inline function beatToTime(beatTime:Float, _bpm:Float):Float {
+		return (beatTime * 60.0) / _bpm;
+	}
+
+	public static inline function stepToTime(time:Float, _bpm:Float):Float {
+		return beatToTime(time, _bpm) * 4.0;
+	}
+
+	public static inline function barToTime(time:Float, _bpm:Float):Float {
+		return beatToTime(time, _bpm) / 4.0;
+	}
+
 	///////////////////////////////////////////////
 	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
 	///////////////////////////////////////////////

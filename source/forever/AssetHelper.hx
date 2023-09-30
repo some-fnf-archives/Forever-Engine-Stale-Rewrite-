@@ -7,8 +7,13 @@ import openfl.utils.AssetType;
 
 class AssetHelper {
 	public static function getPath(?asset:String, ?type:ForeverAsset):String {
-		var base:String = "assets";
-		return type.getExtension('${base}/${asset}');
+		var pathReturn:String = "assets";
+
+		var pathFormatted:String = type.getExtension('${pathReturn}/${asset}');
+		if (OpenFLAssets.exists(pathFormatted))
+			pathReturn = pathFormatted;
+
+		return pathReturn;
 	}
 
 	public static function getAsset(asset:String, ?type:ForeverAsset):Dynamic {

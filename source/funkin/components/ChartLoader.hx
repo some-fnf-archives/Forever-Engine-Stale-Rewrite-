@@ -2,7 +2,13 @@ package funkin.components;
 
 import funkin.objects.notes.Note.NoteData;
 
-class ChartLoader {}
+class ChartLoader {
+	public static function load(folder:String, file:String):Void {
+		var json:ChartFormat = cast AssetHelper.getAsset('songs/${folder}/${file}', JSON).song;
+		var isBaseGame:Bool = json != null && json.notes != null;
+		trace(json);
+	}
+}
 
 typedef ChartFormat = {
 	var notes:Array<NoteData>;

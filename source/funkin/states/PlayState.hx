@@ -16,6 +16,8 @@ class PlayState extends FlxState {
 		Conductor.reset();
 		Conductor.bpm = 150.0;
 
+		ChartLoader.load("test", "hard");
+
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
 
 		add(hud = new HUD());
