@@ -1,57 +1,57 @@
 package funkin.states;
 
-import forever.ForeverSprite;
-import forever.config.Settings;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import forever.ForeverSprite;
+import funkin.components.FNFState;
 import funkin.components.ChartLoader;
 import funkin.objects.*;
 import funkin.ui.HUD;
 
-class PlayState extends FlxState {
+class PlayState extends FNFState {
 	public var bg:ForeverSprite;
 	public var hud:HUD;
 	public var playField:PlayField;
 
+	public function new():Void {
+		super(true); // initialize conductor when creating playstate
+	}
+
 	public override function create():Void {
 		super.create();
 
-		Conductor.reset();
-		Conductor.bpm = 150.0;
+		conductor.bpm = 150.0;
 
 		ChartLoader.load("test", "hard");
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
 
-		add(bg = new ForeverSprite().addGraphic('bg'/*, {alpha: 0.3}*/));
+		add(bg = new ForeverSprite().addGraphic('bg' /*, {alpha: 0.3}*/));
 		bg.alpha = 0.3;
 
 		add(hud = new HUD());
 		add(playField = new PlayField());
 
-		Conductor.onBeat.add(function(beat:Int):Void {
+		conductor.onBeat.add(function(beat:Int):Void {
 			processEvent(PlaySound("metronome.wav", 1.0));
 		});
 	}
 
 	public override function update(elapsed:Float):Void {
+		conductor.time += elapsed;
+		// interpolation.
+		if (Math.abs(conductor.time - FlxG.sound.music.time / 1000.0) >= 0.05) {
+			conductor.time = FlxG.sound.music.time / 1000.0;
+		}
+
 		super.update(elapsed);
-
-		Conductor.update(elapsed);
-		Conductor.time += elapsed;
-
 		checkKeys();
 	}
 
-	private function checkKeys():Void
-	{
-		if (FlxG.keys.justPressed.R) {
-			trace("reset");
+	private function checkKeys():Void {
+		if (FlxG.keys.justPressed.R)
 			FlxG.resetState();
-		}
-
-		// what the fuck am I doing
 
 		/*if (FlxG.keys.justPressed.SPACE) {
 			Settings.downScroll = !Settings.downScroll;

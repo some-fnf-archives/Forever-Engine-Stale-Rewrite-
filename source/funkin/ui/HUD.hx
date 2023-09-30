@@ -29,7 +29,7 @@ class HUD extends FlxSpriteGroup {
 		centerMark.antialiasing = true;
 		add(centerMark);
 
-		scoreBar = new ForeverText(0, 0, Std.int(FlxG.width / 2), "", 18);
+		scoreBar = new ForeverText(0, 0, 650, "", 18);
 		scoreBar.alignment = CENTER;
 		scoreBar.borderSize = 1.5;
 		add(scoreBar);
@@ -41,22 +41,14 @@ class HUD extends FlxSpriteGroup {
 
 	public function updateScore():Void {
 		var tempScore:String = "";
-		var scoreBarStyle:String = "Focused";
 
-		switch (scoreBarStyle) {
-			case "Focused":
-				tempScore = "S: 5000"; // PlayState.gameInfo.score;
-				tempScore += divider + "A: 95.35%"; // PlayState.gameInfo.accuracy;
-				tempScore += divider + "CBs: 0"; // PlayState.gameInfo.comboBreaks;
-				tempScore += divider + "R: S"; // PlayState.gameInfo.rank;
-
-			default:
-				tempScore = "Score: 5000"; // PlayState.gameInfo.score;
-				tempScore += divider + "Accuracy: 95.35%"; // PlayState.gameInfo.accuracy;
-				tempScore += divider + "Combo Breaks: 0"; // PlayState.gameInfo.comboBreaks;
-				tempScore += divider + "Rank: S"; // PlayState.gameInfo.rank;
-		}
+		tempScore = "Score: 5000"; // PlayState.gameInfo.score;
+		tempScore += divider + "Accuracy: 95.35%"; // PlayState.gameInfo.accuracy;
+		tempScore += divider + "Combo Breaks: 0"; // PlayState.gameInfo.comboBreaks;
+		tempScore += divider + "Rank: S"; // PlayState.gameInfo.rank;
 
 		scoreBar.text = '${tempScore}\n';
+
+		scoreBar.screenCenter(X);
 	}
 }

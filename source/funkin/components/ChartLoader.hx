@@ -6,7 +6,7 @@ class ChartLoader {
 	public static function load(folder:String, file:String):Void {
 		var json:ChartFormat = cast AssetHelper.getAsset('songs/${folder}/${file}', JSON).song;
 		var isBaseGame:Bool = json != null && json.notes != null;
-		trace(json);
+		// trace(json);
 	}
 }
 
@@ -33,6 +33,6 @@ enum ForeverEvents {
 
 enum NoteFieldEvents {
 	VelocityChange(newSpeed:Float, duration:Float);
-	NoteRotation(newRotation:Int, duration:Float);
-	NoteVibration(intensity:Int, duration:Float);
+	NoteRotate(newRotation:Int, duration:Float);
+	NoteShake(intensity:Int, duration:Float);
 }

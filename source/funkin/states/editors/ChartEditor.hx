@@ -1,7 +1,7 @@
 package funkin.states.editors;
 
-import flixel.FlxState;
+import funkin.components.FNFState;
 
-class ChartEditor extends FlxState {
+class ChartEditor extends FNFState {
     public var checkerboard:FlxSprite;
 }

@@ -28,11 +28,6 @@ class Settings {
 	public static var uiStyle:String = "default";
 
 	/**
-	 * Style of your Heads-Up Display (in-game Score Text, Song Label, etc)
-	**/
-	public static var hudStyle:String = "default";
-
-	/**
 	 * Style of your scrolling notes
 	 *
 	 * [NOTE]: only applies to non-special notes, including the AI's notes if they have a different style

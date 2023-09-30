@@ -1,32 +1,35 @@
 package funkin.components;
 
+import flixel.FlxBasic;
 import flixel.util.FlxSignal;
 
-class Conductor {
-	static var _timeDelta:Float = 0.0;
-	static var _beatDelta(get, never):Float;
-	static var _stepDelta(get, never):Float;
+class Conductor extends FlxBasic {
+	var _timeDelta:Float = 0.0;
+	var _beatDelta(get, never):Float;
+	var _stepDelta(get, never):Float;
 
-	static var _lastTime:Float = -1.0;
-	static var _lastStep:Int = -1;
-	static var _lastBeat:Int = -1;
-	static var _lastBar:Int = -1;
+	var _lastTime:Float = -1.0;
+	var _lastStep:Int = -1;
+	var _lastBeat:Int = -1;
+	var _lastBar:Int = -1;
 
-	public static var bpm:Float = 100.0;
-	public static var time:Float = 0.0;
+	public var bpm:Float = 100.0;
+	public var time:Float = 0.0;
 
-	public static var stepTime:Float = 0.0;
-	public static var beatTime:Float = 0.0;
+	public var stepTime:Float = 0.0;
+	public var beatTime:Float = 0.0;
 
-	public static var step(get, never):Int;
-	public static var beat(get, never):Int;
-	public static var bar(get, never):Int;
+	public var step(get, never):Int;
+	public var beat(get, never):Int;
+	public var bar(get, never):Int;
 
-	public static var onStep:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
-	public static var onBeat:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
-	public static var onBar:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	public var onStep:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	public var onBeat:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	public var onBar:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
 
-	public static function reset():Void {
+	public function new():Void {
+		super();
+
 		time = stepTime = beatTime = _lastTime = 0.0;
 		_lastStep = _lastBeat = _lastBar = -1;
 		bpm = 100.0;
@@ -36,9 +39,8 @@ class Conductor {
 		onBar.removeAll();
 	}
 
-	public static function update(elapsed:Float):Void {
+	public override function update(elapsed:Float):Void {
 		_timeDelta = time - _lastTime;
-
 		if (time >= 0.0) {
 			stepTime += _stepDelta;
 			beatTime += _beatDelta;
@@ -94,19 +96,19 @@ class Conductor {
 	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
 	///////////////////////////////////////////////
 
-	@:noCompletion static function get__beatDelta():Float {
+	@:noCompletion function get__beatDelta():Float {
 		return (bpm / 60.0) * _timeDelta;
 	}
 
-	@:noCompletion static function get__stepDelta():Float
+	@:noCompletion function get__stepDelta():Float
 		return _beatDelta * 4.0;
 
-	@:noCompletion static function get_step():Int
+	@:noCompletion function get_step():Int
 		return Math.floor(stepTime);
 
-	@:noCompletion static function get_beat():Int
+	@:noCompletion function get_beat():Int
 		return Math.floor(step / 4.0);
 
-	@:noCompletion static function get_bar():Int
+	@:noCompletion function get_bar():Int
 		return Math.floor(beat / 4.0);
 }
