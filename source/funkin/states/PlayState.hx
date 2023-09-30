@@ -1,5 +1,8 @@
 package funkin.states;
 
+import forever.ForeverSprite;
+import forever.config.Settings;
+import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import funkin.components.ChartLoader;
@@ -7,6 +10,7 @@ import funkin.objects.*;
 import funkin.ui.HUD;
 
 class PlayState extends FlxState {
+	public var bg:ForeverSprite;
 	public var hud:HUD;
 	public var playField:PlayField;
 
@@ -19,6 +23,9 @@ class PlayState extends FlxState {
 		ChartLoader.load("test", "hard");
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
+
+		add(bg = new ForeverSprite().addGraphic('bg'/*, {alpha: 0.3}*/));
+		bg.alpha = 0.3;
 
 		add(hud = new HUD());
 		add(playField = new PlayField());
@@ -34,10 +41,30 @@ class PlayState extends FlxState {
 		Conductor.update(elapsed);
 		Conductor.time += elapsed;
 
+		checkKeys();
+	}
+
+	private function checkKeys():Void
+	{
 		if (FlxG.keys.justPressed.R) {
 			trace("reset");
 			FlxG.resetState();
 		}
+
+		// what the fuck am I doing
+
+		/*if (FlxG.keys.justPressed.SPACE) {
+			Settings.downScroll = !Settings.downScroll;
+			Settings.flush();
+
+			if (!Settings.downScroll) {
+				trace('uhhhhhh');
+				bg.tween({y: FlxG.height}, 1, {ease: FlxEase.expoOut});
+			} else {
+				trace('peekaboo');
+				bg.tween({y: 0}, 1, {ease: FlxEase.expoOut});
+			}
+		}*/
 	}
 
 	public function preloadEvent(which:ForeverEvents):Void {

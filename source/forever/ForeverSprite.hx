@@ -1,11 +1,32 @@
 package forever;
 
+import forever.config.Settings;
 import flixel.FlxSprite;
+import flixel.tweens.FlxTween;
 
 /**
  * Global Sprite tools
 **/
-class ForeverSprite extends FlxSprite {
+class ForeverSprite extends FlxSprite
+{
+	public function new(?x:Float, ?y:Float):Void
+	{
+		super(x, y);
+		antialiasing = Settings.globalAntialias;
+	}
+
+	/*public function tween(values:Dynamic, duration:Float, ?options:TweenOptions):ForeverSprite
+	{
+		FlxTween.tween(this, values, duration, options);
+		return this;
+	}*/
+
+	public function addGraphic(graphic:String, ?properties:Dynamic):ForeverSprite
+	{
+		loadGraphic(AssetHelper.getAsset('images/$graphic', IMAGE));
+		return this;
+	}
+
 	/**
 	 * Adds an animation from a sparrow/packer atlas file to this sprite
 	 *

@@ -50,6 +50,11 @@ class Settings {
 	public static var sustainLayer:String = "above note"; // ["above note", "below note"]
 
 	/**
+	 * Defines if the antialiasing effect affects all graphics.
+	 */
+	public static var globalAntialias:Bool = true;
+
+	/**
 	 * Saves your set settings, managed by a macro at `forever.config.macros.ConfigHelper`
 	 * [NOT RECOMMENDED TO MESS WITH TIS]
 	**/
