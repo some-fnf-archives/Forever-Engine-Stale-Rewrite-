@@ -27,11 +27,14 @@ class PlayState extends FNFState {
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
 
-		add(bg = new ForeverSprite().addGraphic('bg' /*, {alpha: 0.3}*/));
-		bg.alpha = 0.3;
+		bg = new ForeverSprite().addGraphic('bg', {alpha: 0.3});
+		add(bg);
 
-		add(hud = new HUD());
-		add(playField = new PlayField());
+		playField = new PlayField();
+		add(playField);
+
+		hud = new HUD();
+		add(hud);
 
 		conductor.onBeat.add(function(beat:Int):Void {
 			processEvent(PlaySound("metronome.wav", 1.0));

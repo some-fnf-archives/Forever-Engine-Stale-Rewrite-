@@ -6,8 +6,8 @@ import haxe.macro.Expr;
 #end
 
 class Utils {
-	public static final noteDirections:Array<String> = ["left", "down", "up", "right"];
-	public static final noteColors:Array<String> = ["purple", "blue", "green", "red"];
+	public static final NOTE_DIRECTIONS:Array<String> = ["left", "down", "up", "right"];
+	public static final NOTE_COLORS:Array<String> = ["purple", "blue", "green", "red"];
 
 	public static function listFromFile(path:String):Array<String> {
 		return [
@@ -20,8 +20,9 @@ class Utils {
 	 * Replaces the code to not set if the value is null
 	 * if an error appears here, then the error is where its called, not in here, since it replaces the code
 	**/
-	public static macro function safeSet(setTo:Expr, value:Expr) {
-		return macro if (${value} != null)
-			${setTo} = ${value};
+	#if macro
+	public static macro function safeSet(setTo:Null<Expr>, value:Null<Expr>) {
+		return macro if (${value} != null) ${setTo} = ${value};
 	}
+	#end
 }

@@ -40,8 +40,8 @@ class Note extends ForeverSprite {
 
 				if (NoteConfig.config.notes.anims.length > 0)
 					for (i in NoteConfig.config.notes.anims) {
-						var dir:String = Utils.noteDirections[direction];
-						var color:String = Utils.noteColors[direction];
+						var dir:String = Utils.NOTE_DIRECTIONS[direction];
+						var color:String = Utils.NOTE_COLORS[direction];
 						addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
 					}
 		}

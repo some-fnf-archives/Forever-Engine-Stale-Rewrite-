@@ -40,6 +40,7 @@ class NoteConfig {
 			try {
 				file = AssetHelper.getAsset('data/notes/${skin}', JSON);
 				if (file != null) {
+					#if macro
 					// IMAGES
 					Utils.safeSet(config.notes.image, file.notes.image);
 					Utils.safeSet(config.splashes.image, file.splashes.image);
@@ -56,6 +57,7 @@ class NoteConfig {
 					Utils.safeSet(config.notes.anims, file.notes.anims);
 					Utils.safeSet(config.splashes.anims, file.splashes.anims);
 					Utils.safeSet(config.strums.anims, file.strums.anims);
+					#end
 				}
 			}
 			catch (e:haxe.Exception)

@@ -18,6 +18,8 @@ class Init extends FlxState {
 
 		Controls.current = new BaseControls();
 
+		flixel.FlxSprite.defaultAntialiasing = forever.config.Settings.globalAntialias;
+
 		// make sure there is a note configuration set
 		funkin.objects.notes.NoteConfig.reloadConfig();
 

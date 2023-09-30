@@ -12,8 +12,8 @@ class Strum extends ForeverSprite {
 
 		if (NoteConfig.config.strums.anims.length > 0)
 			for (i in NoteConfig.config.strums.anims) {
-				var dir:String = Utils.noteDirections[id];
-				var color:String = Utils.noteColors[id];
+				var dir:String = Utils.NOTE_DIRECTIONS[id];
+				var color:String = Utils.NOTE_COLORS[id];
 
 				addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
 			}
