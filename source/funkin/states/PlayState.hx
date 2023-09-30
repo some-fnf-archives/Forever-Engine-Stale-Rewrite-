@@ -1,5 +1,6 @@
 package funkin.states;
 
+import funkin.states.editors.ChartEditor;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -21,9 +22,9 @@ class PlayState extends FNFState {
 	public override function create():Void {
 		super.create();
 
-		conductor.bpm = 150.0;
-
+		FlxG.mouse.visible = true;
 		ChartLoader.load("test", "hard");
+		conductor.bpm = 150.0;
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
 
@@ -55,6 +56,10 @@ class PlayState extends FNFState {
 	private function checkKeys():Void {
 		if (FlxG.keys.justPressed.R)
 			FlxG.resetState();
+		if (FlxG.keys.justPressed.SEVEN) {
+			FlxG.sound.music.stop();
+			FlxG.switchState(new ChartEditor());
+		}
 
 		/*if (FlxG.keys.justPressed.SPACE) {
 			Settings.downScroll = !Settings.downScroll;
