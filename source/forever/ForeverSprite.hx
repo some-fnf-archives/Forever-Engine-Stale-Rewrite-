@@ -19,16 +19,27 @@ typedef SpriteOptions = {
  * Global Sprite tools
 **/
 class ForeverSprite extends FlxSprite {
-	public function new(?x:Float, ?y:Float):Void {
+	/**
+	 * Creates a new Forever Sprite.
+	 *
+	 * @param x				The initial X Position of the Sprite.
+	 * @param y				The initial Y Position of the Sprite.
+	 * @param graphic		The name of the graphic (will be searched for in `assets/images`).
+	 * @param properties	The properties to modify for this graphic, refer to `SpriteOptions` in `ForeverSprite.hx`.
+	**/
+	public function new(?x:Float = 0, ?y:Float = 0, ?image:String, ?properties:SpriteOptions):Void {
 		super(x, y);
+
 		antialiasing = Settings.globalAntialias;
+		if (image != null)
+			addGraphic(image, properties);
 	}
 
 	/**
 	 * Loads a Graphic with the given set of properties.
 	 *
-	 * @param graphic		the Name of the Graphic (will be searched for in `assets/images`).
-	 * @param properties	the Properties to modify for this graphic, refer to `SpriteOptions` in `ForeverSprite.hx`.
+	 * @param graphic		The name of the graphic (will be searched for in `assets/images`).
+	 * @param properties	The properties to modify for this graphic, refer to `SpriteOptions` in `ForeverSprite.hx`.
 	**/
 	public function addGraphic(graphic:String, ?properties:SpriteOptions):ForeverSprite {
 		loadGraphic(AssetHelper.getAsset('images/$graphic', IMAGE));
@@ -38,11 +49,11 @@ class ForeverSprite extends FlxSprite {
 	/**
 	 * Adds an animation from a sparrow/packer atlas file to this sprite.
 	 *
-	 * @param name                  name of the animation.
-	 * @param prefix                prefix of the animation on your sparrow atlas file.
-	 * @param frameRate             the framerate for the animation, defaults to 24.
-	 * @param looped                whether the animation loops.
-	 * @param indices               array with animation indices, if unspecified, the animation gets added as a prefix animation only.
+	 * @param name                  Name of the animation.
+	 * @param prefix                Prefix of the animation on your sparrow atlas file.
+	 * @param frameRate             The framerate for the animation, defaults to 24.
+	 * @param looped                Whether the animation loops.
+	 * @param indices               Array with animation indices, if unspecified, the animation gets added as a prefix animation only.
 	**/
 	public function addAtlasAnim(name:String, prefix:String, frameRate:Int = 24, looped:Bool = false, ?indices:Array<Int>):Void {
 		if (indices != null)
