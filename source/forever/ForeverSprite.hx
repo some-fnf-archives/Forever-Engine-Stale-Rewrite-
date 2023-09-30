@@ -4,17 +4,6 @@ import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import forever.config.Settings;
 
-typedef SpriteOptions = {
-	/** Sprite Alpha. **/
-	@:optional var alpha:Float;
-
-	/** Sprite Color. **/
-	@:optional var color:FlxColor;
-
-	/** Sprite Size. **/
-	@:optional var scale:{x:Float, y:Float};
-}
-
 /**
  * Global Sprite tools
 **/
@@ -27,7 +16,7 @@ class ForeverSprite extends FlxSprite {
 	 * @param graphic		The name of the graphic (will be searched for in `assets/images`).
 	 * @param properties	The properties to modify for this graphic, refer to `SpriteOptions` in `ForeverSprite.hx`.
 	**/
-	public function new(?x:Float = 0, ?y:Float = 0, ?image:String, ?properties:SpriteOptions):Void {
+	public function new(?x:Float = 0, ?y:Float = 0, ?image:String, ?properties:Dynamic):Void {
 		super(x, y);
 
 		antialiasing = Settings.globalAntialias;
@@ -41,8 +30,15 @@ class ForeverSprite extends FlxSprite {
 	 * @param graphic		The name of the graphic (will be searched for in `assets/images`).
 	 * @param properties	The properties to modify for this graphic, refer to `SpriteOptions` in `ForeverSprite.hx`.
 	**/
-	public function addGraphic(graphic:String, ?properties:SpriteOptions):ForeverSprite {
+	public function addGraphic(graphic:String, ?properties:Dynamic):ForeverSprite {
 		loadGraphic(AssetHelper.getAsset('images/$graphic', IMAGE));
+
+		Utils.safeReflection(this.alpha, properties, "alpha");
+		Utils.safeReflection(this.color, properties, "color");
+		Utils.safeReflection(this.color, properties, "colour"); // british
+		Utils.safeReflection(this.scale.x, properties, "scale.x");
+		Utils.safeReflection(this.scale.y, properties, "scale.y");
+
 		return this;
 	}
 

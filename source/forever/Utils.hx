@@ -19,10 +19,19 @@ class Utils {
 	/**
 	 * Replaces the code to not set if the value is null
 	 * if an error appears here, then the error is where its called, not in here, since it replaces the code
+	 *
+	 * @param variable		The variable with the value we wanna modify
+	 * @param value			The new value for the variable given.
 	**/
-	#if macro
-	public static macro function safeSet(setTo:Null<Expr>, value:Null<Expr>) {
-		return macro if (${value} != null) ${setTo} = ${value};
+	public static macro function safeSet(variable:Null<Expr>, value:Null<Expr>):Null<Expr> {
+		return macro if (${value} != null) ${variable} = ${value};
 	}
-	#end
+
+	/**
+	 * Same as `Utils.safeSet`, but uses reflection, be careful as this may be slower
+	 * if used outside of the create function.
+	**/
+	public static macro function safeReflection(variable:Null<Expr>, value:Null<Expr>, field:Null<Expr>):Null<Expr> {
+		return macro if (Reflect.hasField(${value}, ${field})) ${variable} = Reflect.field(${value}, ${field});
+	}
 }

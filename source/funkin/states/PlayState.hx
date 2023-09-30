@@ -27,7 +27,7 @@ class PlayState extends FNFState {
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
 
-		bg = new ForeverSprite().addGraphic('bg', {alpha: 0.3});
+		bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: FlxColor.BLUE});
 		add(bg);
 
 		playField = new PlayField();
