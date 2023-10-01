@@ -65,6 +65,13 @@ class AssetHelper {
 		return null;
 	}
 
+	public static function clearCacheEntirely(major:Bool = false):Void {
+		AssetHelper.clearCachedGraphics(major);
+		AssetHelper.clearCachedSounds(major);
+		if (major)
+			@:privateAccess AssetHelper._clearCacheMajor();
+	}
+
 	public static function clearCachedGraphics(force:Bool = false):Void {
 		var graphicCounter:Int = 0;
 

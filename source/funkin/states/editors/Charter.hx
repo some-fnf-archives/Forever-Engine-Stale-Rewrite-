@@ -90,8 +90,10 @@ class Charter extends FNFSubState {
 			}
 		}
 
-		if (FlxG.keys.justPressed.ESCAPE)
-			FlxG.switchState(new PlayState());
+		if (FlxG.keys.justPressed.ESCAPE) {
+			FlxG.state.closeSubState();
+			AssetHelper.clearCacheEntirely();
+		}
 
 		super.update(elapsed);
 	}

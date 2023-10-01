@@ -49,10 +49,7 @@ class Main extends Sprite {
 	}
 
 	private function onStateCreate(state:FlxState):Void {
-		AssetHelper.clearCachedGraphics(true);
-		AssetHelper.clearCachedSounds(true);
-
-		@:privateAccess AssetHelper._clearCacheMajor();
+		AssetHelper.clearCacheEntirely(true);
 	}
 
 	public static function setFPSCap(newFramerate:Int):Void {
