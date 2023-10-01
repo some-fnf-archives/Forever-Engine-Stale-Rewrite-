@@ -16,6 +16,7 @@ class PlayState extends FNFState {
 
 	public var gameCamera:FlxCamera;
 	public var hudCamera:FlxCamera;
+	public var altCamera:FlxCamera;
 
 	public override function create():Void {
 		super.create();
@@ -24,8 +25,11 @@ class PlayState extends FNFState {
 
 		gameCamera = FlxG.camera;
 		hudCamera = new FlxCamera();
-		hudCamera.bgColor = 0x00000000;
+		altCamera = new FlxCamera();
+
+		hudCamera.bgColor = altCamera.bgColor = 0x00000000;
 		FlxG.cameras.add(hudCamera, false);
+		FlxG.cameras.add(altCamera, false);
 
 		Conductor.reset();
 		ChartLoader.load("test", "hard");
@@ -43,7 +47,7 @@ class PlayState extends FNFState {
 		});
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
-		FlxTransitionableState.transCams = [hudCamera];
+		FlxTransitionableState.transCams = [altCamera];
 	}
 
 	public override function update(elapsed:Float):Void {
@@ -62,8 +66,11 @@ class PlayState extends FNFState {
 			FlxG.resetState();
 
 		if (FlxG.keys.justPressed.SEVEN) {
-			FlxG.sound.music.stop();
-			FlxG.switchState(new Charter());
+			FlxG.sound.music.pause();
+
+			var charter:Charter = new Charter();
+			charter.camera = altCamera;
+			openSubState(charter);
 		}
 
 		/*if (FlxG.keys.justPressed.SPACE) {

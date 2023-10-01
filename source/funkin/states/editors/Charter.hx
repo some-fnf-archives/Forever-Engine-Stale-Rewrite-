@@ -1,23 +1,19 @@
 package funkin.states.editors;
 
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.math.FlxMath;
-import flixel.FlxCamera;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.display.FlxTiledSprite;
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.FlxGraphic;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxMath;
 import forever.ui.ForeverText;
-import funkin.components.FNFState;
+import funkin.components.FNFSubState;
 import openfl.geom.ColorTransform;
 import openfl.geom.Rectangle;
 
-class Charter extends FNFState {
+class Charter extends FNFSubState {
 	public var backgroundLayer:FlxSpriteGroup;
 	public var checkerboard:FlxTiledSprite;
-
-	public var editorCamera:FlxCamera;
-	public var uiCamera:FlxCamera;
 
 	public var infoBar:ForeverText;
 
@@ -29,24 +25,22 @@ class Charter extends FNFState {
 
 	var charterZoom:Float = 1.0;
 
+	public function new():Void {
+		super(0xFF000000);
+	}
+
 	function createBackground():Void {
 		backgroundLayer = new FlxSpriteGroup();
-		backgroundLayer.camera = editorCamera;
 		add(backgroundLayer);
 
 		// var gridBG = new FlxTiledSprite(AssetHelper.getAsset('images/menus/charter/gridPurple', IMAGE), FlxG.width, FlxG.height);
 
-		var bg1:FlxSprite = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
+		var bg1:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		var bg2:FlxSprite = new FlxSprite().loadGraphic(AssetHelper.getAsset("images/menus/backgrounds/bgBlack", IMAGE));
 
 		bg2.blend = DIFFERENCE;
 		bg1.alpha = 0.7;
 		bg2.alpha = 0.07;
-
-		for (bg in [bg1, bg2]) {
-			bg.scale.set(FlxG.width);
-			bg.screenCenter();
-		}
 
 		// backgroundLayer.add(gridBG);
 		backgroundLayer.add(bg1);
@@ -60,7 +54,6 @@ class Charter extends FNFState {
 		cbTexture.bitmap.colorTransform(new Rectangle(0, 0, gridSize * 2, gridSize * 2), new ColorTransform(1, 1, 1, 0.20));
 
 		checkerboard = new FlxTiledSprite(cbTexture, gridSize * keyAmount * noteFields, gridSize * stepLength);
-		checkerboard.camera = editorCamera;
 		checkerboard.screenCenter(XY);
 		add(checkerboard);
 	}
@@ -68,7 +61,6 @@ class Charter extends FNFState {
 	function createCharterHUD():Void {
 		infoBar = new ForeverText(0, 0, 0, "", 24);
 		infoBar.alignment = RIGHT;
-		infoBar.camera = uiCamera;
 		add(infoBar);
 
 		updateHUDNodes();
@@ -77,22 +69,12 @@ class Charter extends FNFState {
 	public override function create():Void {
 		super.create();
 
-		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
-
 		// show the mouse cursor
 		FlxG.mouse.visible = true;
-
-		// set up cameras
-		editorCamera = FlxG.camera;
-		uiCamera = new FlxCamera();
-		uiCamera.bgColor = 0x00000000;
-		FlxG.cameras.add(uiCamera, false);
 
 		createBackground();
 		createCharterElements();
 		createCharterHUD();
-
-		FlxTransitionableState.transCams = [uiCamera];
 	}
 
 	public override function update(elapsed:Float):Void {

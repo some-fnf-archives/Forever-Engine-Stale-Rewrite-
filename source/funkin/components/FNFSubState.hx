@@ -5,8 +5,8 @@ import flixel.FlxSubState;
 class FNFSubState extends FlxSubState {
 	public var controls(get, never):BaseControls;
 
-	public function new(?initConductor:Bool = false):Void {
-		super(0x00000000);
+	public function new(color:FlxColor = 0x00000000):Void {
+		super(color);
 	}
 
 	///////////////////////////////////////////////
