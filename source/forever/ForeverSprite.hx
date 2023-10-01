@@ -59,7 +59,7 @@ class ForeverSprite extends FlxSprite {
 	 * @param indices               Array with animation indices, if unspecified, the animation gets added as a prefix animation only.
 	**/
 	public function addAtlasAnim(name:String, prefix:String, frameRate:Int = 24, looped:Bool = false, ?indices:Array<Int>):Void {
-		if (indices != null)
+		if (indices != null && indices.length > 0)
 			animation.addByIndices(name, prefix, indices, "", frameRate, looped);
 		else
 			animation.addByPrefix(name, prefix, frameRate, looped);

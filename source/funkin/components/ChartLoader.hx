@@ -1,20 +1,5 @@
 package funkin.components;
 
-enum abstract ChartType(String) to String {
-	/** Forever Engine Style Chart. **/
-	var FOREVER = "forever";
-
-	/** Base Game (pre-0.3) Style Chart. **/
-	var VANILLA_V1 = "vanilla_v1";
-
-	/** Codename Engine Style Chart. **/
-	var CODENAME = "codename";
-
-	/** Crow Engine Style Chart. **/
-	var CROW = "crow"; // the engine, not the user. -CrowPlexus
-
-}
-
 class ChartLoader {
 	public static function load(folder:String, file:String):Chart {
 		var chart:Chart = new Chart();

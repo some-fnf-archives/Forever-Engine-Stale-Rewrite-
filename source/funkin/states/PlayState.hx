@@ -20,6 +20,8 @@ class PlayState extends FNFState {
 
 	public var songName:String = "Test";
 
+	public var player:Character;
+
 	public override function create():Void {
 		super.create();
 
@@ -35,22 +37,24 @@ class PlayState extends FNFState {
 
 		Conductor.reset();
 		ChartLoader.load("test", "hard");
-
 		Conductor.bpm = Chart.current.metadata.bpmChanges[0].bpm;
-
-		trace(Chart.current.notes);
-		trace(Chart.current.metadata);
 
 		add(bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: FlxColor.BLUE}));
 		add(playField = new PlayField());
 		add(hud = new HUD());
 
-		DiscordRPC.updatePresence('Playing: ${songName}', '${hud.scoreBar.text}');
+		player = new Character(0, 0, true);
+		player.loadCharacter("bf-psych");
+		add(player);
 
 		playField.camera = hud.camera = hudCamera;
 
+		DiscordRPC.updatePresence('Playing: ${songName}', '${hud.scoreBar.text}');
+
 		Conductor.onBeat.add(function(beat:Int):Void {
 			processEvent(PlaySound("metronome.wav", 1.0));
+			if (beat % player.danceInterval == 0)
+				player.dance();
 		});
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));

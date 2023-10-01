@@ -37,7 +37,7 @@ class Conductor {
 		onBar.removeAll();
 	}
 
-	public static function update(elapsed:Float):Void {
+	public static function update():Void {
 		_timeDelta = time - _lastTime;
 		if (time >= 0.0) {
 			stepTime += stepDelta;

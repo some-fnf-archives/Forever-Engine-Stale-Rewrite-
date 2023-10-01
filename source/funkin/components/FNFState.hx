@@ -7,6 +7,9 @@ class FNFState extends FlxTransitionableState {
 
 	public function new():Void {
 		super();
+
+		if (!FlxG.signals.preUpdate.has(Conductor.update))
+			FlxG.signals.preUpdate.add(Conductor.update);
 	}
 
 	///////////////////////////////////////////////

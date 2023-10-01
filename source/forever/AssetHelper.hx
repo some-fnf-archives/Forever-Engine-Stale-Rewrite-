@@ -7,6 +7,24 @@ import openfl.utils.Assets as OpenFLAssets;
 import openfl.media.Sound;
 import openfl.utils.AssetType as FLAssetType;
 
+enum abstract EngineImpl(String) to String {
+	/** Forever Engine Implementation Style. **/
+	var FOREVER = "forever";
+
+	/** Base Game (pre-0.3) Implementation Style. **/
+	var VANILLA_V1 = "vanilla_v1";
+
+	/** Psych Engine Implementation Style. **/
+	var PSYCH = "psych";
+
+	/** Codename Engine Implementation Style. **/
+	var CODENAME = "codename";
+
+	/** Crow Engine Implementation Style. **/
+	var CROW = "crow"; // the engine, not the user. -CrowPlexus
+
+}
+
 class AssetHelper {
 	@:noPrivateAccess static var loadedGraphics:Map<String, FlxGraphic> = [];
 	@:noPrivateAccess static var loadedSounds:Map<String, Sound> = [];
@@ -21,7 +39,7 @@ class AssetHelper {
 
 		return switch (type) {
 			case IMAGE: getGraphic('${gottenAsset}');
-			case JSON: tjson.TJSON.parse(OpenFLAssets.getText(getPath('${asset}', JSON)));
+			case JSON: tjson.TJSON.parse(OpenFLAssets.getText(gottenAsset));
 			case FONT: getPath('fonts/${asset}', FONT);
 			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset, XML));
 			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getPath(asset, TEXT));
