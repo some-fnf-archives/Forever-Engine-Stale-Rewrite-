@@ -1,5 +1,6 @@
 package forever.ui;
 
+import flixel.FlxG;
 import flixel.util.FlxStringUtil;
 import haxe.Timer as HaxeTimer;
 import openfl.text.TextField;
@@ -40,14 +41,16 @@ class ForeverOverlay extends TextField {
 			peakRAM = staticRAM;
 
 		text = '${currentFPS} FPS' //
-			+ '\n${FlxStringUtil.formatBytes(staticRAM)} / ${FlxStringUtil.formatBytes(peakRAM)} RAM / PEAK' //
+			+ '\n${FlxStringUtil.formatBytes(staticRAM)} / ${FlxStringUtil.formatBytes(peakRAM)}' //
 			+ getExtraInfo();
 	}
 
 	private function getExtraInfo():String {
-		#if debug
-		return '\nState: ${Type.getClassName(Type.getClass(flixel.FlxG.state))}' //
-			+ '\nObjects: ${flixel.FlxG.state.countLiving()}';
+		#if (debug && !USE_FLIXEL_DEBUGGER)
+		return '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}' //
+			+ '\nObjects: ${FlxG.state.countLiving()}' //
+			+ ' | Cameras: ${FlxG.state.cameras.length}' //
+			+ ' | Draws: ${flixel.graphics.tile.FlxDrawBaseItem.drawCalls}';
 		#else
 		return "";
 		#end
