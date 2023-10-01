@@ -3,9 +3,6 @@ package;
 import flixel.FlxGame;
 import forever.ui.ForeverOverlay;
 import openfl.display.Sprite;
-#if linux
-import lime.graphics.Image;
-#end
 
 class Main extends Sprite {
 	public static var framerate:Int = 60;
@@ -22,7 +19,7 @@ class Main extends Sprite {
 		addChild(overlay = new ForeverOverlay(0, 0, 0xFFFFFFFF));
 
 		#if linux
-		var icon = Image.fromFile("icon.png");
+		var icon = lime.graphics.Image.fromFile("icon.png");
 		openfl.Lib.current.stage.window.setIcon(icon);
 		#end
 	}
