@@ -25,7 +25,7 @@ class HUD extends FlxSpriteGroup {
 		cornerMark.borderSize = 2.0;
 		add(cornerMark);
 
-		centerMark = new ForeverText(0, (Settings.downscroll ? FlxG.height - 40 : 10), 0, '- NO SONG [NO DIFFICULTY] -', 20);
+		centerMark = new ForeverText(0, (Settings.downScroll ? FlxG.height - 40 : 10), 0, '- NO SONG [NO DIFFICULTY] -', 20);
 		centerMark.alignment = CENTER;
 		centerMark.borderSize = 2.0;
 		centerMark.screenCenter(X);
