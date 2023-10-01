@@ -28,6 +28,7 @@ class Init extends FlxState {
 		setupTransition();
 
 		Controls.current = new BaseControls();
+		new forever.data.DiscordWrapper("1157951594667708416");
 
 		// make sure there is a note configuration set
 		funkin.objects.notes.NoteConfig.reloadConfig();

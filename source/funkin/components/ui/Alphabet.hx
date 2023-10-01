@@ -9,7 +9,7 @@ using StringTools;
 /**
  * A class for rendering text in a special funky font!
  * Includes left, center, and right sided aligning!
- * 
+ *
  * @author swordcube
  */
 class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
@@ -27,7 +27,7 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 
 	/**
 	 * The size multiplier of the text.
-	 * 
+	 *
 	 * It is recommended to use this instead of `scale`
 	 * as it auto-adjusts the position of each glyph/letter.
 	 */

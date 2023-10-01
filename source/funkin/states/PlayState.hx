@@ -18,6 +18,8 @@ class PlayState extends FNFState {
 	public var hudCamera:FlxCamera;
 	public var altCamera:FlxCamera;
 
+	public var songName:String = "Test";
+
 	public override function create():Void {
 		super.create();
 
@@ -42,6 +44,8 @@ class PlayState extends FNFState {
 		add(bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: FlxColor.BLUE}));
 		add(playField = new PlayField());
 		add(hud = new HUD());
+
+		DiscordRPC.updatePresence('Playing: ${songName}', '${hud.scoreBar.text}');
 
 		playField.camera = hud.camera = hudCamera;
 
@@ -71,9 +75,11 @@ class PlayState extends FNFState {
 
 		if (FlxG.keys.justPressed.SEVEN) {
 			FlxG.sound.music.pause();
+			DiscordRPC.updatePresence('Charting: ${songName}?', '${hud.scoreBar.text}');
 
 			var charter:Charter = new Charter();
 			charter.camera = altCamera;
+			charter.ID = 1;
 			openSubState(charter);
 		}
 
@@ -89,6 +95,15 @@ class PlayState extends FNFState {
 				bg.tween({y: 0}, 1, {ease: FlxEase.expoOut});
 			}
 		}*/
+	}
+
+	public override function closeSubState():Void {
+		switch (FlxG.state.subState.ID) {
+			case 1:
+				DiscordRPC.updatePresence('Playing: ${songName}?', '${hud.scoreBar.text}');
+		}
+
+		super.closeSubState();
 	}
 
 	public function preloadEvent(which:ForeverEvents):Void {

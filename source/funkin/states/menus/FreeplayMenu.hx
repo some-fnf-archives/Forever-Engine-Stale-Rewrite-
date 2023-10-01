@@ -19,6 +19,8 @@ class FreeplayMenu extends FNFState {
 	public override function create():Void {
 		var localSongData:Array<String> = Utils.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
 
+		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
+
 		for (i in localSongData) {
 			var song:Array<String> = i.split(" || ");
 			var name:String = song[0];
@@ -33,9 +35,10 @@ class FreeplayMenu extends FNFState {
 		add(songGroup = new FlxTypedGroup());
 
 		for (i in 0...songs.length) {
-			var songTxt:Alphabet = new Alphabet(0, 10 + (20 * i), songs[i].name);
+			var songTxt:Alphabet = new Alphabet(0, 10 + (60 * i), songs[i].name);
 			songTxt.alignment = CENTER;
 			songTxt.isMenuItem = true;
+			songTxt.menuSpacing.y = 100;
 			songTxt.alpha = 0.6;
 			songTxt.targetY = i;
 			songGroup.add(songTxt);

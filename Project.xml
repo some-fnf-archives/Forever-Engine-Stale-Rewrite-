@@ -4,6 +4,7 @@
 	<!-- [ Forever Engine Custom Nodes ] -->
 	<!-- _______________________________ -->
 
+	<define name="DISCORD" if="cpp" />
 	<define name="CRASH_HANDLER" />
 
 	<icon path="art/icon16.png" size='16' />
@@ -69,7 +70,8 @@
 
 	<haxelib name="flixel-nova" version="git" url="https://github.com/swordcube/flixel" />
 	<haxelib name="flixel-addons-nova" version="git" url="https://github.com/swordcube/flixel-addons" />
-	<haxelib name="hxcpp-debug-server" if="debug"/>
+	<haxelib name="hxcpp-debug-server" if="debug" />
+	<haxelib name="hxdiscord_rpc" if="DISCORD" />
 	<haxelib name="tjson" />
 
 	<!-- _______________ -->

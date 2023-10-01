@@ -9,6 +9,7 @@ import flixel.tweens.FlxEase;
 import forever.AssetHelper;
 import forever.config.Settings;
 import forever.config.Controls;
+import forever.data.DiscordWrapper as DiscordRPC;
 // FUNKIN IMPORTS
 import funkin.components.Conductor;
 
