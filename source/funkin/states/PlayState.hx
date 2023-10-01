@@ -7,7 +7,7 @@ import funkin.components.ChartLoader;
 import funkin.components.FNFState;
 import funkin.objects.*;
 import funkin.states.editors.*;
-import funkin.ui.HUD;
+import funkin.components.ui.HUD;
 
 class PlayState extends FNFState {
 	public var bg:ForeverSprite;
@@ -43,15 +43,13 @@ class PlayState extends FNFState {
 		add(playField = new PlayField());
 		add(hud = new HUD());
 
-		playField.camera = hudCamera;
-		hud.camera = hudCamera;
+		playField.camera = hud.camera = hudCamera;
 
 		Conductor.onBeat.add(function(beat:Int):Void {
 			processEvent(PlaySound("metronome.wav", 1.0));
 		});
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
-		FlxTransitionableState.transCams = [altCamera];
 	}
 
 	public override function update(elapsed:Float):Void {
@@ -66,8 +64,10 @@ class PlayState extends FNFState {
 	}
 
 	private function checkKeys():Void {
-		if (FlxG.keys.justPressed.R)
-			FlxG.resetState();
+		if (FlxG.keys.justPressed.ESCAPE) {
+			FlxG.sound.music.stop();
+			FlxG.switchState(new funkin.states.menus.FreeplayMenu());
+		}
 
 		if (FlxG.keys.justPressed.SEVEN) {
 			FlxG.sound.music.pause();

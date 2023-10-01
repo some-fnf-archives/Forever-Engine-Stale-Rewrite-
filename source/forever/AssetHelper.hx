@@ -13,13 +13,7 @@ class AssetHelper {
 	@:noPrivateAccess static var currentUsedAssets:Array<String> = [];
 
 	public static function getPath(?asset:String, ?type:ForeverAsset):String {
-		var pathReturn:String = "assets";
-
-		var pathFormatted:String = type.getExtension('${pathReturn}/${asset}');
-		if (OpenFLAssets.exists(pathFormatted))
-			pathReturn = pathFormatted;
-
-		return pathReturn;
+		return type.getExtension('assets/${asset}');
 	}
 
 	public static function getAsset(asset:String, ?type:ForeverAsset):Dynamic {
@@ -29,8 +23,8 @@ class AssetHelper {
 			case IMAGE: getGraphic('${gottenAsset}');
 			case JSON: tjson.TJSON.parse(OpenFLAssets.getText(getPath('${asset}', JSON)));
 			case FONT: getPath('fonts/${asset}', FONT);
-			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getAsset(asset, XML));
-			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getAsset(asset, TEXT));
+			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset, XML));
+			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getPath(asset, TEXT));
 			default: gottenAsset;
 		}
 	}

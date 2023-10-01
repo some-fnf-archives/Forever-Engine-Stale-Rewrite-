@@ -1,8 +1,8 @@
 package forever;
 
 import openfl.Assets as OpenFLAssets;
-#if macro
-import haxe.macro.Expr;
+#if !macro
+import flixel.math.FlxMath;
 #end
 
 class Utils {
@@ -16,6 +16,12 @@ class Utils {
 		];
 	}
 
+	#if !macro
+	public static function fpsLerp(from:Float, to:Float, weight:Float) {
+		return FlxMath.lerp(from, to, FlxG.elapsed * 60.0 * weight);
+	}
+	#end
+
 	/**
 	 * Replaces the code to not set if the value is null
 	 * if an error appears here, then the error is where its called, not in here, since it replaces the code
@@ -23,7 +29,7 @@ class Utils {
 	 * @param variable		The variable with the value we wanna modify
 	 * @param value			The new value for the variable given.
 	**/
-	public static macro function safeSet(variable:Null<Expr>, value:Null<Expr>):Null<Expr> {
+	public static macro function safeSet(variable:Null<haxe.macro.Expr>, value:Null<haxe.macro.Expr>):Null<haxe.macro.Expr> {
 		return macro if (${value} != null)
 			${variable} = ${value};
 	}
@@ -32,7 +38,8 @@ class Utils {
 	 * Same as `Utils.safeSet`, but uses reflection, be careful as this may be slower
 	 * if used outside of the create function.
 	**/
-	public static macro function safeReflection(variable:Null<Expr>, value:Null<Expr>, field:Null<Expr>):Null<Expr> {
+	public static macro function safeReflection(variable:Null<haxe.macro.Expr>, value:Null<haxe.macro.Expr>,
+			field:Null<haxe.macro.Expr>):Null<haxe.macro.Expr> {
 		return macro if (Reflect.hasField(${value}, ${field}))
 			${variable} = Reflect.field(${value}, ${field});
 	}

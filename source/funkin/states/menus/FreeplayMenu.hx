@@ -1,15 +1,18 @@
 package funkin.states.menus;
 
 import flixel.FlxG;
-import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
+import funkin.components.FNFState;
+import funkin.components.ui.Alphabet;
+import forever.ForeverSprite;
 import forever.ui.ForeverText;
 
-class FreeplayMenu extends FlxState {
+class FreeplayMenu extends FNFState {
+	public var bg:ForeverSprite;
 	public var songs:Array<FreeplaySong> = [];
 
-	public var songGroup:FlxTypedGroup<ForeverText>;
+	public var songGroup:FlxTypedGroup<Alphabet>;
 
 	var folderIndicator:ForeverText;
 
@@ -24,16 +27,17 @@ class FreeplayMenu extends FlxState {
 			var color:Null<FlxColor> = FlxColor.WHITE;
 
 			songs.push(new FreeplaySong(name, folder, icon, color));
-		}
+		};
 
-		songGroup = new FlxTypedGroup();
-		add(songGroup);
+		add(bg = new ForeverSprite(0, 0, "bg", {color: FlxColor.WHITE}));
+		add(songGroup = new FlxTypedGroup());
 
 		for (i in 0...songs.length) {
-			var songTxt:ForeverText = new ForeverText(0, 10 + (20 * i), FlxG.width, songs[i].name, 18);
+			var songTxt:Alphabet = new Alphabet(0, 10 + (20 * i), songs[i].name);
 			songTxt.alignment = CENTER;
+			songTxt.isMenuItem = true;
 			songTxt.alpha = 0.6;
-			songTxt.ID = i;
+			songTxt.targetY = i;
 			songGroup.add(songTxt);
 		}
 
@@ -60,8 +64,12 @@ class FreeplayMenu extends FlxState {
 	public function updateSelection(newSelection:Int = 0):Void {
 		curSelection = flixel.math.FlxMath.wrap(curSelection + newSelection, 0, songs.length - 1);
 
-		for (i in songGroup.members)
-			i.alpha = i.ID == curSelection ? 1.0 : 0.6;
+		var bs:Int = 0;
+		for (i in songGroup.members) {
+			i.targetY = bs - curSelection;
+			i.alpha = i.targetY == 0 ? 1.0 : 0.6;
+			bs++;
+		}
 
 		folderIndicator.text = 'Folder: ${songs[curSelection].folder}';
 	}

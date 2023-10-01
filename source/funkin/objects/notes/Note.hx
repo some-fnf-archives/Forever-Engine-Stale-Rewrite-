@@ -1,6 +1,7 @@
 package funkin.objects.notes;
 
 import forever.ForeverSprite;
+import funkin.components.ChartLoader.NoteData;
 
 /**
  * Base Note Object, may appear differently visually depending on its type
@@ -60,16 +61,4 @@ class Note extends ForeverSprite {
 
 	@:noCompletion function get_direction():Int
 		return data != null ? data.direction : 0;
-}
-
-/**
- * Note Data Config
-**/
-typedef NoteData = {
-	var step:Float;
-	var direction:Int;
-	@:optional var time:Float; // original millisecond timing, used for conversion to steps
-	@:optional var type:String;
-	@:optional var animation:String;
-	@:optional var length:Float;
 }

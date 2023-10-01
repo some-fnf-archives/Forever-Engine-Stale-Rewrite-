@@ -9,6 +9,11 @@ import forever.config.Settings;
 **/
 class ForeverSprite extends FlxSprite {
 	/**
+	 * Animation Offset Map
+	**/
+	public var animOffsets:haxe.ds.StringMap<Array<Float>> = new haxe.ds.StringMap();
+
+	/**
 	 * Creates a new Forever Sprite.
 	 *
 	 * @param x				The initial X Position of the Sprite.
@@ -58,6 +63,19 @@ class ForeverSprite extends FlxSprite {
 			animation.addByIndices(name, prefix, indices, "", frameRate, looped);
 		else
 			animation.addByPrefix(name, prefix, frameRate, looped);
+	}
+
+	public function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
+		animation.play(name, forced, reversed, frame);
+
+		var offsets:Array<Float> = [0.0, 0.0];
+		if (animOffsets.exists(name))
+			offsets = animOffsets.get(name);
+		frameOffset.set(offsets[0], offsets[1]);
+	}
+
+	public function setOffset(name:String, ?x:Float = 0, ?y:Float = 0):Void {
+		animOffsets.set(name, [x, y]);
 	}
 
 	//////////////

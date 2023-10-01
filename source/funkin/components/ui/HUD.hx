@@ -1,4 +1,4 @@
-package funkin.ui;
+package funkin.components.ui;
 
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
@@ -14,7 +14,6 @@ class HUD extends FlxSpriteGroup {
 
 	public function new():Void {
 		super();
-
 
 		var engineText:String = 'FOREVER ENGINE v${Main.version}' + //
 			'\nEverything here is\nsubjective of change!';
