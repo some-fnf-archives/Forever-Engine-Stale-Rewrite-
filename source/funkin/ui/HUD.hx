@@ -16,14 +16,18 @@ class HUD extends FlxSpriteGroup {
 		super();
 
 		var downscroll:Bool = true;
-		var font:String = AssetHelper.getAsset("vcr", FONT);
 
-		cornerMark = new ForeverText(0, 0, 0, 'FOREVER ENGINE v${Main.version}', 16);
+		var engineText:String = 'Forever Engine v${Main.version}' + //
+			'\nEverything here is\nsubjective of change!';
+
+		cornerMark = new ForeverText(0, 0, 0, engineText.toUpperCase(), 16);
 		cornerMark.setPosition(FlxG.width - (cornerMark.width + 5), 5);
+		cornerMark.alignment = RIGHT;
 		cornerMark.borderSize = 2.0;
 		add(cornerMark);
 
 		centerMark = new ForeverText(0, (downscroll ? FlxG.height - 40 : 10), 0, '- NO SONG [NO DIFFICULTY] -', 20);
+		centerMark.alignment = CENTER;
 		centerMark.borderSize = 2.0;
 		centerMark.screenCenter(X);
 		centerMark.antialiasing = true;

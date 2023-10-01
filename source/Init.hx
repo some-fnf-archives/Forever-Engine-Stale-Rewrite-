@@ -36,13 +36,18 @@ class Init extends FlxState {
 	}
 
 	function setupTransition():Void {
-		var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
-		diamond.persist = true;
-		diamond.destroyOnNoUse = false;
+		var graphic:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
+		graphic.destroyOnNoUse = false;
 
-		FlxTransitionableState.defaultTransIn = new TransitionData(FADE, 0xFF000000, 1, new FlxPoint(0, -1), {asset: diamond, width: 32, height: 32},
-			new FlxRect(-200, -200, FlxG.width * 4.0, FlxG.height * 4.0));
-		FlxTransitionableState.defaultTransOut = new TransitionData(FADE, 0xFF000000, 0.7, new FlxPoint(0, 1), {asset: diamond, width: 32, height: 32},
-			new FlxRect(-200, -200, FlxG.width * 4.0, FlxG.height * 4.0));
+		var transition:TransitionTileData = {
+			asset: graphic,
+			width: 32,
+			height: 32,
+			frameRate: 24
+		};
+		var transitionArea:FlxRect = FlxRect.get(-200, -200, FlxG.width * 2.0, FlxG.height * 2.0);
+
+		FlxTransitionableState.defaultTransIn = new TransitionData(TILES, 0xFF000000, 0.4, FlxPoint.get(-1, 0), transition, transitionArea);
+		FlxTransitionableState.defaultTransOut = new TransitionData(TILES, 0xFF000000, 0.4, FlxPoint.get(1, 0), transition, transitionArea);
 	}
 }

@@ -27,28 +27,23 @@ class PlayState extends FNFState {
 		hudCamera.bgColor = 0x00000000;
 		FlxG.cameras.add(hudCamera, false);
 
-		FlxTransitionableState.transCams = [hudCamera];
-
 		Conductor.reset();
 		ChartLoader.load("test", "hard");
 		Conductor.bpm = 150.0;
 
-		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
+		add(bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: FlxColor.BLUE}));
+		add(playField = new PlayField());
+		add(hud = new HUD());
 
-		bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: FlxColor.BLUE});
-		add(bg);
-
-		playField = new PlayField();
 		playField.camera = hudCamera;
-		add(playField);
-
-		hud = new HUD();
 		hud.camera = hudCamera;
-		add(hud);
 
 		Conductor.onBeat.add(function(beat:Int):Void {
 			processEvent(PlaySound("metronome.wav", 1.0));
 		});
+
+		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
+		FlxTransitionableState.transCams = [hudCamera];
 	}
 
 	public override function update(elapsed:Float):Void {
