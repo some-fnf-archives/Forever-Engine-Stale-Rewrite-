@@ -65,6 +65,14 @@ class ForeverSprite extends FlxSprite {
 			animation.addByPrefix(name, prefix, frameRate, looped);
 	}
 
+	/**
+	 * Plays an animation in the current sprite, while also offsetting it.
+	 *
+	 * @param name			The name of the animation to play.
+	 * @param forced		Will force the animation to play, interrupting existing ones and resetting the frame.
+	 * @param reversed		Will play the animation backwards.
+	 * @param frame			Defines the starting frame of the animation.
+	**/
 	public function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
 		animation.play(name, forced, reversed, frame);
 
@@ -74,6 +82,13 @@ class ForeverSprite extends FlxSprite {
 		frameOffset.set(offsets[0], offsets[1]);
 	}
 
+	/**
+	 * Sets the offset of an animation.
+	 *
+	 * @param name			The name of the animation.
+	 * @param x				The X coordinate of the offset.
+	 * @param y				The Y coordinate of the offset.
+	**/
 	public function setOffset(name:String, ?x:Float = 0, ?y:Float = 0):Void {
 		animOffsets.set(name, [x, y]);
 	}
