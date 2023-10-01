@@ -1,5 +1,6 @@
 package funkin.states.editors;
 
+import flixel.math.FlxMath;
 import flixel.FlxCamera;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.display.FlxTiledSprite;
@@ -25,48 +26,28 @@ class ChartEditor extends FNFState {
 	var noteFields:Int = 2;
 	var stepLength:Int = 16;
 
-	public function new():Void {
-		super(true);
-	}
-
-	public override function create():Void {
-		super.create();
-
-		// show the mouse cursor
-		FlxG.mouse.visible = true;
-
-		// set up cameras
-		editorCamera = FlxG.camera;
-		uiCamera = new FlxCamera();
-		uiCamera.bgColor = 0x00000000;
-		FlxG.cameras.add(uiCamera, false);
-
-		createBackground();
-		createCharterElements();
-		createCharterHUD();
-	}
+	var charterZoom:Float = 1.0;
 
 	function createBackground():Void {
 		backgroundLayer = new FlxSpriteGroup();
 		backgroundLayer.camera = editorCamera;
 		add(backgroundLayer);
 
-		var gridBG = new FlxTiledSprite(AssetHelper.getAsset('images/menus/chart/gridPurple', IMAGE), FlxG.width, FlxG.height);
+		// var gridBG = new FlxTiledSprite(AssetHelper.getAsset('images/menus/charter/gridPurple', IMAGE), FlxG.width, FlxG.height);
 
 		var bg1:FlxSprite = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
-		bg1.setGraphicSize(Std.int(FlxG.width));
-		bg1.screenCenter();
-		bg1.alpha = 0.7;
+		var bg2:FlxSprite = new FlxSprite().loadGraphic(AssetHelper.getAsset("images/menus/backgrounds/bgBlack", IMAGE));
 
-		var coolBgPath:String = "images/menus/backgrounds/bgBlack";
-
-		var bg2:FlxSprite = new FlxSprite().loadGraphic(AssetHelper.getAsset(coolBgPath, IMAGE));
-		bg2.setGraphicSize(Std.int(FlxG.width));
 		bg2.blend = DIFFERENCE;
-		bg2.screenCenter();
+		bg1.alpha = 0.7;
 		bg2.alpha = 0.07;
 
-		backgroundLayer.add(gridBG);
+		for (bg in [bg1, bg2]) {
+			bg.scale.set(FlxG.width);
+			bg.screenCenter();
+		}
+
+		// backgroundLayer.add(gridBG);
 		backgroundLayer.add(bg1);
 		backgroundLayer.add(bg2);
 	}
@@ -92,9 +73,45 @@ class ChartEditor extends FNFState {
 		updateHUDNodes();
 	}
 
+	public override function create():Void {
+		super.create();
+
+		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
+
+		// show the mouse cursor
+		FlxG.mouse.visible = true;
+
+		// set up cameras
+		editorCamera = FlxG.camera;
+		uiCamera = new FlxCamera();
+		uiCamera.bgColor = 0x00000000;
+		FlxG.cameras.add(uiCamera, false);
+
+		createBackground();
+		createCharterElements();
+		createCharterHUD();
+	}
+
+	public override function update(elapsed:Float):Void {
+		checkerboard.scale.y = charterZoom;
+		checkerboard.height = ((FlxG.sound.music.length / ((Conductor.bpm / 60.0) * 1000.0)) * gridSize) * charterZoom;
+
+		if (FlxG.mouse.wheel != 0) {
+			if (FlxG.keys.pressed.SHIFT) {
+				charterZoom = FlxMath.roundDecimal(FlxMath.bound(charterZoom + FlxG.mouse.wheel * 0.1, 0.5, 3.0), 3);
+				trace(checkerboard.scale.y);
+			}
+		}
+
+		if (FlxG.keys.justPressed.ESCAPE)
+			FlxG.switchState(new PlayState());
+
+		super.update(elapsed);
+	}
+
 	function updateHUDNodes():Void {
-		infoBar.text = 'Step: ${conductor.step} - Beat: ${conductor.beat}' + //
-			' - Bar: ${conductor.bar}\nBPM: ${conductor.bpm}';
+		infoBar.text = 'Step: ${Conductor.step} - Beat: ${Conductor.beat}' + //
+			' - Bar: ${Conductor.bar}\nBPM: ${Conductor.bpm}';
 		infoBar.x = FlxG.width - infoBar.width - 5;
 	}
 }

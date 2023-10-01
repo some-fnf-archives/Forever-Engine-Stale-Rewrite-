@@ -50,7 +50,6 @@ class Note extends ForeverSprite {
 	///////////////////////////////////////////////
 	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
 	///////////////////////////////////////////////
-
 	// do gay ass sustain nae nae shit here later
 	// because I think tiled sprites will need it
 	@:noCompletion function set_speed(v:Float):Float

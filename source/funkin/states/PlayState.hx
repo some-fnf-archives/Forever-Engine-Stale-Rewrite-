@@ -15,16 +15,14 @@ class PlayState extends FNFState {
 	public var hud:HUD;
 	public var playField:PlayField;
 
-	public function new():Void {
-		super(true); // initialize conductor when creating playstate
-	}
-
 	public override function create():Void {
 		super.create();
 
 		FlxG.mouse.visible = true;
+
+		Conductor.reset();
 		ChartLoader.load("test", "hard");
-		conductor.bpm = 150.0;
+		Conductor.bpm = 150.0;
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
 
@@ -37,16 +35,16 @@ class PlayState extends FNFState {
 		hud = new HUD();
 		add(hud);
 
-		conductor.onBeat.add(function(beat:Int):Void {
+		Conductor.onBeat.add(function(beat:Int):Void {
 			processEvent(PlaySound("metronome.wav", 1.0));
 		});
 	}
 
 	public override function update(elapsed:Float):Void {
-		conductor.time += elapsed;
+		Conductor.time += elapsed;
 		// interpolation.
-		if (Math.abs(conductor.time - FlxG.sound.music.time / 1000.0) >= 0.05) {
-			conductor.time = FlxG.sound.music.time / 1000.0;
+		if (Math.abs(Conductor.time - FlxG.sound.music.time / 1000.0) >= 0.05) {
+			Conductor.time = FlxG.sound.music.time / 1000.0;
 		}
 
 		super.update(elapsed);
@@ -56,6 +54,7 @@ class PlayState extends FNFState {
 	private function checkKeys():Void {
 		if (FlxG.keys.justPressed.R)
 			FlxG.resetState();
+
 		if (FlxG.keys.justPressed.SEVEN) {
 			FlxG.sound.music.stop();
 			FlxG.switchState(new ChartEditor());

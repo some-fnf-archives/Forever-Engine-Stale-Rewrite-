@@ -107,7 +107,6 @@ class Controls {
 	 * to have a shortcut to your key, simply create a function here for it
 	 * to access your shortcut, use the expression `Controls.YOURCONTROL`
 	**/
-
 	// --------------- //
 	// COMMON ACTIONS  //
 	// --------------- //

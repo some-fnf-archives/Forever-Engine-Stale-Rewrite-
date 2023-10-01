@@ -14,6 +14,7 @@ class Init extends FlxState {
 
 		FlxG.fixedTimestep = false;
 		FlxG.mouse.useSystemCursor = true;
+		flixel.graphics.FlxGraphic.defaultPersist = true;
 		FlxG.mouse.visible = false;
 
 		Controls.current = new BaseControls();

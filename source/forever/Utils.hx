@@ -24,7 +24,8 @@ class Utils {
 	 * @param value			The new value for the variable given.
 	**/
 	public static macro function safeSet(variable:Null<Expr>, value:Null<Expr>):Null<Expr> {
-		return macro if (${value} != null) ${variable} = ${value};
+		return macro if (${value} != null)
+			${variable} = ${value};
 	}
 
 	/**
@@ -32,6 +33,7 @@ class Utils {
 	 * if used outside of the create function.
 	**/
 	public static macro function safeReflection(variable:Null<Expr>, value:Null<Expr>, field:Null<Expr>):Null<Expr> {
-		return macro if (Reflect.hasField(${value}, ${field})) ${variable} = Reflect.field(${value}, ${field});
+		return macro if (Reflect.hasField(${value}, ${field}))
+			${variable} = Reflect.field(${value}, ${field});
 	}
 }

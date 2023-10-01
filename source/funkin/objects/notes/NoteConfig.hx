@@ -6,8 +6,18 @@ import openfl.Assets as OpenFLAssets;
  * Configuration Typedef for Note Skins
 **/
 typedef NoteConfigFile = {
-	var strums:{image:String, anims:Array<AnimationConfig>, spacing:Null<Int>, size:Null<Float>};
-	var splashes:{image:String, anims:Array<AnimationConfig>, alpha:Null<Float>, size:Null<Float>};
+	var strums:{
+		image:String,
+		anims:Array<AnimationConfig>,
+		spacing:Null<Int>,
+		size:Null<Float>
+	};
+	var splashes:{
+		image:String,
+		anims:Array<AnimationConfig>,
+		alpha:Null<Float>,
+		size:Null<Float>
+	};
 	var notes:{image:String, anims:Array<AnimationConfig>, size:Null<Float>};
 }
 
@@ -61,79 +71,79 @@ class NoteConfig {
 				}
 			}
 			catch (e:haxe.Exception)
-				trace('Unexpected Error when setting up note skinning, error: ${e.message}');
+				trace('[NoteConfig:reloadConfig]: Error! ${e.message}');
 		}
 	}
 
 	public static function getDummyConfig():NoteConfigFile {
 		return {
 			strums: {
-			    image: "default/receptors",
-			    anims: [
-			        {
-			            name: "static",
-			            prefix: "${dir} static",
-			            fps: 24,
-			            looped: false
-			        },
-			        {
-			            name: "pressed",
-			            prefix: "${dir} press",
-			            fps: 24,
-			            looped: false
-			        },
-			        {
-			            name: "confirm",
-			            prefix: "${dir} confirm",
-			            fps: 24,
-			            looped: false
-			        }
-			    ],
-			    spacing: 160,
-			    size: 0.7
+				image: "default/receptors",
+				anims: [
+					{
+						name: "static",
+						prefix: "${dir} static",
+						fps: 24,
+						looped: false
+					},
+					{
+						name: "pressed",
+						prefix: "${dir} press",
+						fps: 24,
+						looped: false
+					},
+					{
+						name: "confirm",
+						prefix: "${dir} confirm",
+						fps: 24,
+						looped: false
+					}
+				],
+				spacing: 160,
+				size: 0.7
 			},
 			notes: {
-			    image: "default/notes",
-			    anims: [
-			        {
-			            name: "scroll",
-			            prefix: "${dir}0",
-			            fps: 24,
-			            looped: false
-			        },
-			        {
-			            name: "hold",
-			            prefix: "${dir} hold piece",
-			            fps: 24,
-			            looped: false
-			        },
-			        {
-			            name: "end",
-			            prefix: "${dir} hold end",
-			            fps: 24,
-			            looped: false
-			        }
-			    ],
-			    size: 0.7
+				image: "default/notes",
+				anims: [
+					{
+						name: "scroll",
+						prefix: "${dir}0",
+						fps: 24,
+						looped: false
+					},
+					{
+						name: "hold",
+						prefix: "${dir} hold piece",
+						fps: 24,
+						looped: false
+					},
+					{
+						name: "end",
+						prefix: "${dir} hold end",
+						fps: 24,
+						looped: false
+					}
+				],
+				size: 0.7
 			},
 			splashes: {
-			    image: "default/splashes",
-			    anims: [
-			        {
-			            name: "1",
-			            prefix: "${dir}1",
-			            fps: 24,
-			            looped: false
-			        },
-			        {
-			            name: "2",
-			            prefix: "${dir}2",
-			            fps: 24,
-			            looped: false
-			        }
-			    ],
-			    alpha: 0.6,
-			    size: 1.0
+				image: "default/splashes",
+				anims: [
+					{
+						name: "1",
+						prefix: "${dir}1",
+						fps: 24,
+						looped: false
+					},
+					{
+						name: "2",
+						prefix: "${dir}2",
+						fps: 24,
+						looped: false
+					}
+				],
+				alpha: 0.6,
+				size: 1.0
 			}
 		}
 	}
