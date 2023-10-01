@@ -5,12 +5,15 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+
 // FOREVER IMPORTS
 import forever.AssetHelper;
+import forever.config.Settings;
 import forever.config.Controls;
-import forever.Utils;
+
 // FUNKIN IMPORTS
 import funkin.components.Conductor;
 
 using StringTools;
+using forever.Utils;
 #end
