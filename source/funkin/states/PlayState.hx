@@ -75,7 +75,7 @@ class PlayState extends FNFState {
 
 		if (FlxG.keys.justPressed.SEVEN) {
 			FlxG.sound.music.pause();
-			DiscordRPC.updatePresence('Charting: ${songName}?', '${hud.scoreBar.text}');
+			DiscordRPC.updatePresence('Charting: ${songName}', '${hud.scoreBar.text}');
 
 			var charter:Charter = new Charter();
 			charter.camera = altCamera;
@@ -100,7 +100,7 @@ class PlayState extends FNFState {
 	public override function closeSubState():Void {
 		switch (FlxG.state.subState.ID) {
 			case 1:
-				DiscordRPC.updatePresence('Playing: ${songName}?', '${hud.scoreBar.text}');
+				DiscordRPC.updatePresence('Playing: ${songName}', '${hud.scoreBar.text}');
 		}
 
 		super.closeSubState();
