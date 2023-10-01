@@ -79,6 +79,7 @@ class AssetHelper {
 					OpenFLAssets.cache.removeBitmapData(keyGraphic);
 
 				actualGraphic.destroy();
+				loadedGraphics.remove(keyGraphic);
 				graphicCounter++;
 			}
 		}
@@ -97,6 +98,7 @@ class AssetHelper {
 				if (OpenFLAssets.cache.hasSound(keySound))
 					OpenFLAssets.cache.removeSound(keySound);
 
+				loadedSounds.remove(keySound);
 				soundCounter++;
 			}
 		}
