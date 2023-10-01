@@ -2,17 +2,89 @@ package funkin.components;
 
 import funkin.objects.notes.Note.NoteData;
 
+enum abstract ChartType(String) to String {
+	/** Forever Engine Style Chart. **/
+	var FOREVER = "forever";
+
+	/** Base Game (pre-0.3) Style Chart. **/
+	var VANILLA_V1 = "vanilla_v1";
+
+	/** Codename Engine Style Chart. **/
+	var CODENAME = "codename";
+
+	/** Crow Engine Style Chart. **/
+	var CROW = "crow"; // the engine, not the user. -CrowPlexus
+
+}
+
 class ChartLoader {
-	public static function load(folder:String, file:String):Void {
-		var json:ChartFormat = cast AssetHelper.getAsset('songs/${folder}/${file}', JSON).song;
-		var isBaseGame:Bool = json != null && json.notes != null;
-		// trace(json);
+	public static function load(folder:String, file:String):Chart {
+		var chart:Chart = new Chart();
+
+		var json = cast AssetHelper.getAsset('songs/${folder}/${file}', JSON).song;
+		var dataType:String = FOREVER;
+
+		if (Reflect.hasField(json, "notes"))
+			dataType = VANILLA_V1;
+		if (Reflect.hasField(json, "codenameChart"))
+			dataType = CODENAME;
+		if (Reflect.hasField(json, "extraData"))
+			dataType = CROW;
+
+		switch (dataType) {
+			case VANILLA_V1:
+				var bpm:Float = Reflect.field(json, "bpm");
+				var speed:Float = Reflect.field(json, "speed");
+				var bars:Array<Dynamic> = Reflect.field(json, "notes");
+
+				// default bpm
+				chart.metadata.bpmChanges.push({bpm: bpm, step: Math.NaN});
+				// default velocity/speed
+				chart.metadata.velocityChanges.push({speed: speed, step: Math.NaN});
+
+				for (bar in bars) {
+					var notes:Array<Dynamic> = Reflect.field(bar, "sectionNotes");
+					if (Reflect.field(bar, "changeBPM") == true && Reflect.field(bar, "bpm") != bpm)
+						bpm = Std.parseFloat(Reflect.field(bar, "bpm"));
+
+					for (note in notes) {
+						var funkyNote:NoteData = {
+							time: note[0],
+							step: Conductor.timeToStep(note[0] / 1000.0, bpm),
+							direction: Std.int(note[1] % 4),
+							type: note[3] != null && Std.isOfType(note[3], String) ? note[3] : "default",
+							animation: note[3] != null && Std.isOfType(note[3], Bool) && note[3] == true ? "-alt" : "",
+							length: note[2] / Conductor.stepDelta
+						}
+						chart.notes.push(funkyNote);
+					}
+				}
+
+				// Psych Events.
+				var events:Array<Dynamic> = Reflect.field(json, "events");
+
+			case CROW:
+				trace('Crow Engine Charts are not implemented *yet*');
+			case FOREVER:
+				trace("Forever Engine Charts are not implemented *yet*"); // lol ironic i guess.
+			case CODENAME:
+				trace('Codename Engine Charts are not implemented *yet*');
+		}
+
+		return chart;
 	}
 }
 
-typedef ChartFormat = {
-	var notes:Array<NoteData>;
-	var events:Array<ChartEvent<ForeverEvents>>;
+class Chart {
+	public var notes:Array<NoteData> = [];
+	public var events:Array<ChartEvent<ForeverEvents>> = [];
+	public var metadata:ChartMetadata = {bpmChanges: [], velocityChanges: []};
+
+	public static var current:Chart;
+
+	public function new():Void {
+		current = this;
+	}
 }
 
 typedef ChartEvent<T> = {
@@ -20,6 +92,23 @@ typedef ChartEvent<T> = {
 	var step:Int;
 	// meta info, used to tell which bar/section this has been triggered
 	var ?bar:Int;
+}
+
+typedef ChartMetadata = {
+	/** Chart BPM Changes. **/
+	var bpmChanges:Array<{bpm:Float, step:Float}>;
+
+	/** Chart Velocity (Scroll Speed) Changes. **/
+	var velocityChanges:Array<{speed:Float, step:Float}>;
+
+	/** Player Character. **/
+	@:optional var playerChar:String;
+
+	/** Opponent Character. **/
+	@:optional var opponentChar:String;
+
+	/** Spectator/GF/Crowd Character. **/
+	@:optional var crowdChar:String;
 }
 
 enum ForeverEvents {

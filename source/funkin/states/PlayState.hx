@@ -11,8 +11,8 @@ import funkin.ui.HUD;
 
 class PlayState extends FNFState {
 	public var bg:ForeverSprite;
-	public var hud:HUD;
 	public var playField:PlayField;
+	public var hud:HUD;
 
 	public var gameCamera:FlxCamera;
 	public var hudCamera:FlxCamera;
@@ -33,7 +33,11 @@ class PlayState extends FNFState {
 
 		Conductor.reset();
 		ChartLoader.load("test", "hard");
-		Conductor.bpm = 150.0;
+
+		Conductor.bpm = Chart.current.metadata.bpmChanges[0].bpm;
+
+		trace(Chart.current.notes);
+		trace(Chart.current.metadata);
 
 		add(bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: FlxColor.BLUE}));
 		add(playField = new PlayField());

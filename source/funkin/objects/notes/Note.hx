@@ -67,9 +67,9 @@ class Note extends ForeverSprite {
 **/
 typedef NoteData = {
 	var step:Float;
-	// original millisecond timing, used for conversion to steps
-	var ?time:Float;
 	var direction:Int;
-	var type:String;
-	var length:Float;
+	@:optional var time:Float; // original millisecond timing, used for conversion to steps
+	@:optional var type:String;
+	@:optional var animation:String;
+	@:optional var length:Float;
 }

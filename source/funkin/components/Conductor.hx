@@ -4,8 +4,9 @@ import flixel.util.FlxSignal;
 
 class Conductor {
 	static var _timeDelta:Float = 0.0;
-	static var _beatDelta(get, never):Float;
-	static var _stepDelta(get, never):Float;
+
+	public static var beatDelta(get, never):Float;
+	public static var stepDelta(get, never):Float;
 
 	static var _lastTime:Float = -1.0;
 	static var _lastStep:Int = -1;
@@ -39,8 +40,8 @@ class Conductor {
 	public static function update(elapsed:Float):Void {
 		_timeDelta = time - _lastTime;
 		if (time >= 0.0) {
-			stepTime += _stepDelta;
-			beatTime += _beatDelta;
+			stepTime += stepDelta;
+			beatTime += beatDelta;
 
 			if (step > _lastStep) {
 				onStep.dispatch(step);
@@ -93,12 +94,12 @@ class Conductor {
 	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
 	///////////////////////////////////////////////
 
-	@:noCompletion static function get__beatDelta():Float {
+	@:noCompletion static function get_beatDelta():Float {
 		return (bpm / 60.0) * _timeDelta;
 	}
 
-	@:noCompletion static function get__stepDelta():Float
-		return _beatDelta * 4.0;
+	@:noCompletion static function get_stepDelta():Float
+		return beatDelta * 4.0;
 
 	@:noCompletion static function get_step():Int
 		return Math.floor(stepTime);
