@@ -17,10 +17,10 @@ class HUD extends FlxSpriteGroup {
 
 		var downscroll:Bool = true;
 
-		var engineText:String = 'Forever Engine v${Main.version}' + //
+		var engineText:String = 'FOREVER ENGINE v${Main.version}' + //
 			'\nEverything here is\nsubjective of change!';
 
-		cornerMark = new ForeverText(0, 0, 0, engineText.toUpperCase(), 16);
+		cornerMark = new ForeverText(0, 0, 0, engineText, 16);
 		cornerMark.setPosition(FlxG.width - (cornerMark.width + 5), 5);
 		cornerMark.alignment = RIGHT;
 		cornerMark.borderSize = 2.0;
