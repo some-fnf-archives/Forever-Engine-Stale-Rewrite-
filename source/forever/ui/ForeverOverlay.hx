@@ -12,9 +12,9 @@ import openfl.text.TextFormat;
 **/
 class ForeverOverlay extends TextField {
 	public var currentFPS:Int = 0;
-	public var currentRAM(get, never):Float;
+	public var staticRAM(get, never):Float;
 
-	@:noCompletion private var peakRAM:Float;
+	@:noCompletion private var peakRAM:Float = 0.0;
 	@:noCompletion private var times:Array<Float> = [];
 
 	public function new(x:Float = 0, y:Float = 0, color:Int = 0xFFFFFFFF):Void {
@@ -36,11 +36,11 @@ class ForeverOverlay extends TextField {
 			times.shift();
 
 		currentFPS = currentFPS < FlxG.drawFramerate ? times.length : FlxG.drawFramerate;
-		if (currentRAM > peakRAM)
-			peakRAM = currentRAM;
+		if (staticRAM > peakRAM)
+			peakRAM = staticRAM;
 
 		text = '${currentFPS} FPS' //
-			+ '\n${FlxStringUtil.formatBytes(currentRAM)} / ${FlxStringUtil.formatBytes(peakRAM)}' //
+			+ '\n${FlxStringUtil.formatBytes(staticRAM)} / ${FlxStringUtil.formatBytes(peakRAM)} RAM / PEAK' //
 			+ getExtraInfo();
 	}
 
@@ -57,15 +57,7 @@ class ForeverOverlay extends TextField {
 	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
 	///////////////////////////////////////////////
 
-	function get_currentRAM():Float {
-		return {
-			#if openfl
-			openfl.system.System.totalMemory;
-			#elseif cpp
-			cpp.vm.Gc.memInfo(MEM_INFO_CURRENT);
-			#elseif hl
-			hl.Gc.stats().mem;
-			#end
-		}
+	function get_staticRAM():Float {
+		return openfl.system.System.totalMemory;
 	}
 }
