@@ -47,7 +47,7 @@ class Init extends FlxState {
 		};
 		var transitionArea:FlxRect = FlxRect.get(-200, -200, FlxG.width * 2.0, FlxG.height * 2.0);
 
-		FlxTransitionableState.defaultTransIn = new TransitionData(TILES, 0xFF000000, 0.4, FlxPoint.get(-1, 0), transition, transitionArea);
-		FlxTransitionableState.defaultTransOut = new TransitionData(TILES, 0xFF000000, 0.4, FlxPoint.get(1, 0), transition, transitionArea);
+		FlxTransitionableState.defaultTransIn = new TransitionData(FADE, 0xFF000000, 0.4, FlxPoint.get(-1, 0), transition, transitionArea);
+		FlxTransitionableState.defaultTransOut = new TransitionData(FADE, 0xFF000000, 0.4, FlxPoint.get(1, 0), transition, transitionArea);
 	}
 }

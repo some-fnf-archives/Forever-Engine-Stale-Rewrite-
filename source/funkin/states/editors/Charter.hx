@@ -96,8 +96,10 @@ class Charter extends FNFState {
 	}
 
 	public override function update(elapsed:Float):Void {
-		checkerboard.scale.y = charterZoom;
-		checkerboard.height = ((FlxG.sound.music.length / ((Conductor.bpm / 60.0) * 1000.0)) * gridSize) * charterZoom;
+		/*
+			checkerboard.scale.y = charterZoom;
+			checkerboard.height = ((FlxG.sound.music.length / ((Conductor.bpm / 60.0) * 1000.0)) * gridSize) * charterZoom;
+		 */
 
 		if (FlxG.mouse.wheel != 0) {
 			if (FlxG.keys.pressed.SHIFT) {
