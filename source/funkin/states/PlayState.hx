@@ -1,13 +1,12 @@
 package funkin.states;
 
-import funkin.states.editors.ChartEditor;
-import flixel.FlxSprite;
-import flixel.FlxState;
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.FlxCamera;
 import forever.ForeverSprite;
-import funkin.components.FNFState;
 import funkin.components.ChartLoader;
+import funkin.components.FNFState;
 import funkin.objects.*;
+import funkin.states.editors.ChartEditor;
 import funkin.ui.HUD;
 
 class PlayState extends FNFState {
@@ -15,10 +14,20 @@ class PlayState extends FNFState {
 	public var hud:HUD;
 	public var playField:PlayField;
 
+	public var gameCamera:FlxCamera;
+	public var hudCamera:FlxCamera;
+
 	public override function create():Void {
 		super.create();
 
 		FlxG.mouse.visible = true;
+
+		gameCamera = FlxG.camera;
+		hudCamera = new FlxCamera();
+		hudCamera.bgColor = 0x00000000;
+		FlxG.cameras.add(hudCamera, false);
+
+		FlxTransitionableState.transCams = [hudCamera];
 
 		Conductor.reset();
 		ChartLoader.load("test", "hard");
@@ -30,9 +39,11 @@ class PlayState extends FNFState {
 		add(bg);
 
 		playField = new PlayField();
+		playField.camera = hudCamera;
 		add(playField);
 
 		hud = new HUD();
+		hud.camera = hudCamera;
 		add(hud);
 
 		Conductor.onBeat.add(function(beat:Int):Void {

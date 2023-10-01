@@ -1,5 +1,6 @@
 package funkin.states.editors;
 
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.math.FlxMath;
 import flixel.FlxCamera;
 import flixel.addons.display.FlxGridOverlay;
@@ -90,6 +91,8 @@ class ChartEditor extends FNFState {
 		createBackground();
 		createCharterElements();
 		createCharterHUD();
+
+		FlxTransitionableState.transCams = [uiCamera];
 	}
 
 	public override function update(elapsed:Float):Void {

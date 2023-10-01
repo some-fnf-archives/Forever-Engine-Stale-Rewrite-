@@ -2,6 +2,12 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
+import flixel.addons.transition.FlxTransitionSprite;
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.transition.TransitionData;
+import flixel.graphics.FlxGraphic;
+import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import forever.config.Controls;
 
 /**
@@ -14,16 +20,29 @@ class Init extends FlxState {
 
 		FlxG.fixedTimestep = false;
 		FlxG.mouse.useSystemCursor = true;
-		flixel.graphics.FlxGraphic.defaultPersist = true;
 		FlxG.mouse.visible = false;
 
-		Controls.current = new BaseControls();
-
+		FlxGraphic.defaultPersist = true;
 		flixel.FlxSprite.defaultAntialiasing = forever.config.Settings.globalAntialias;
+
+		setupTransition();
+
+		Controls.current = new BaseControls();
 
 		// make sure there is a note configuration set
 		funkin.objects.notes.NoteConfig.reloadConfig();
 
 		FlxG.switchState(Type.createInstance(Main.initialState, []));
+	}
+
+	function setupTransition():Void {
+		var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
+		diamond.persist = true;
+		diamond.destroyOnNoUse = false;
+
+		FlxTransitionableState.defaultTransIn = new TransitionData(FADE, 0xFF000000, 1, new FlxPoint(0, -1), {asset: diamond, width: 32, height: 32},
+			new FlxRect(-200, -200, FlxG.width * 4.0, FlxG.height * 4.0));
+		FlxTransitionableState.defaultTransOut = new TransitionData(FADE, 0xFF000000, 0.7, new FlxPoint(0, 1), {asset: diamond, width: 32, height: 32},
+			new FlxRect(-200, -200, FlxG.width * 4.0, FlxG.height * 4.0));
 	}
 }
