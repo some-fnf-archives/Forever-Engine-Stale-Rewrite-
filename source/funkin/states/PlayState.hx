@@ -1,12 +1,12 @@
 package funkin.states;
 
-import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxCamera;
+import flixel.addons.transition.FlxTransitionableState;
 import forever.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.components.FNFState;
 import funkin.objects.*;
-import funkin.states.editors.ChartEditor;
+import funkin.states.editors.*;
 import funkin.ui.HUD;
 
 class PlayState extends FNFState {
@@ -63,7 +63,7 @@ class PlayState extends FNFState {
 
 		if (FlxG.keys.justPressed.SEVEN) {
 			FlxG.sound.music.stop();
-			FlxG.switchState(new ChartEditor());
+			FlxG.switchState(new Charter());
 		}
 
 		/*if (FlxG.keys.justPressed.SPACE) {

@@ -14,7 +14,7 @@ class ForeverSprite extends FlxSprite {
 	 * @param x				The initial X Position of the Sprite.
 	 * @param y				The initial Y Position of the Sprite.
 	 * @param graphic		The name of the graphic (will be searched for in `assets/images`).
-	 * @param properties	The properties to modify for this graphic, refer to `SpriteOptions` in `ForeverSprite.hx`.
+	 * @param properties	The properties to modify for this graphic, options: alpha, color, "scale.x", "scale.y".
 	**/
 	public function new(?x:Float = 0, ?y:Float = 0, ?image:String, ?properties:Dynamic):Void {
 		super(x, y);
@@ -28,7 +28,7 @@ class ForeverSprite extends FlxSprite {
 	 * Loads a Graphic with the given set of properties.
 	 *
 	 * @param graphic		The name of the graphic (will be searched for in `assets/images`).
-	 * @param properties	The properties to modify for this graphic, refer to `SpriteOptions` in `ForeverSprite.hx`.
+	 * @param properties	The properties to modify for this graphic, options: alpha, color, "scale.x", "scale.y".
 	**/
 	public function addGraphic(graphic:String, ?properties:Dynamic):ForeverSprite {
 		loadGraphic(AssetHelper.getAsset('images/$graphic', IMAGE));

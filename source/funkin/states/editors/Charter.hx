@@ -12,7 +12,7 @@ import funkin.components.FNFState;
 import openfl.geom.ColorTransform;
 import openfl.geom.Rectangle;
 
-class ChartEditor extends FNFState {
+class Charter extends FNFState {
 	public var backgroundLayer:FlxSpriteGroup;
 	public var checkerboard:FlxTiledSprite;
 
