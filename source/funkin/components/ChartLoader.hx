@@ -9,7 +9,7 @@ class ChartLoader {
 		var json = cast AssetHelper.getAsset('songs/${folder}/${file}', JSON).song;
 		var dataType:String = VANILLA_V1;
 
-		if (Reflect.hasField(json, "notes"))
+		if (Reflect.hasField(json, "player2"))
 			dataType = VANILLA_V1;
 		if (Reflect.hasField(json, "codenameChart"))
 			dataType = CODENAME;
@@ -21,12 +21,16 @@ class ChartLoader {
 				case VANILLA_V1:
 					var bars:Array<Dynamic> = Reflect.field(json, "notes");
 					var curBPM:Float = json.bpm;
-					chart.data.keyAmount = 4;
 
-					// default bpm
-					chart.data.initialBPM = curBPM;
-					// default velocity/speed
-					chart.data.initialSpeed = json.speed;
+					chart.data = {
+						initialBPM: curBPM,
+						initialSpeed: json.speed,
+						keyAmount: 4,
+						playerChar: json.player1 ?? "bf",
+						enemyChar: json.player2 ?? "dad",
+						crowdChar: json.player3 ?? json.gfVersion ?? "gf",
+						stageBG: json.stage ?? getVanillaStage(json.song),
+					}
 
 					for (bar in bars) {
 						var barNotes:Array<Dynamic> = bar.sectionNotes;
@@ -69,6 +73,20 @@ class ChartLoader {
 			trace('Failed to parse chart, type was ${dataType}');
 
 		return chart;
+	}
+
+	public static inline function getVanillaStage(song:String):String {
+		return switch (song.toLowerCase().replace(" ", "-")) {
+			case "ugh", "guns", "stress": "militaryZone";
+			case "thorns": "schoolGlitch";
+			case "senpai", "roses": "school";
+			case "winter-horrorland": "redMall";
+			case "cocoa", "eggnog": "mall";
+			case "satin-panties", "high", "milf": "highway";
+			case "pico", "philly", "philly-nice", "blammed": "phillyCity";
+			case "spookeez", "south", "monster": "spookyHouse";
+			default: "stage";
+		}
 	}
 }
 
@@ -123,11 +141,14 @@ typedef ChartExtraData = {
 	/** Player Character. **/
 	@:optional var playerChar:String;
 
-	/** Opponent Character. **/
-	@:optional var opponentChar:String;
+	/** Enemy Character. **/
+	@:optional var enemyChar:String;
 
 	/** Spectator/GF/Crowd Character. **/
 	@:optional var crowdChar:String;
+
+	/** Stage Background Name. **/
+	@:optional var stageBG:String;
 }
 
 enum ForeverEvents {

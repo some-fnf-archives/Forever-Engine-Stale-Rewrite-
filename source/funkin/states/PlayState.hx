@@ -29,7 +29,7 @@ class PlayState extends FNFState {
 	public var altCamera:FlxCamera;
 
 	public var player:Character;
-	public var opponent:Character;
+	public var enemy:Character;
 	public var crowd:Character;
 
 	public var inst:FlxSound;
@@ -59,13 +59,13 @@ class PlayState extends FNFState {
 			lane.changeStrumSpeed(Chart.current.data.initialSpeed);
 
 		add(player = new Character(0, 0, "bf-psych", true));
-		add(opponent = new Character(0, 0, "pico-crow", false));
+		add(enemy = new Character(0, 0, "pico-crow", false));
 
 		// test position characters
 		player.screenCenter(XY);
-		opponent.screenCenter(XY);
+		enemy.screenCenter(XY);
 		player.x = FlxG.width / 2.0;
-		opponent.x = FlxG.width / 6.0;
+		enemy.x = FlxG.width / 6.0;
 
 		playField.camera = hud.camera = hudCamera;
 
@@ -97,7 +97,7 @@ class PlayState extends FNFState {
 		for (i in 0...controls.length) {
 			if (controls[i] == true) {
 				player.playAnim(player.singingSteps[i], true);
-				opponent.playAnim(opponent.singingSteps[i], true);
+				enemy.playAnim(enemy.singingSteps[i], true);
 			}
 		}
 
@@ -120,7 +120,7 @@ class PlayState extends FNFState {
 
 	public override function onBeat(beat:Int):Void {
 		// processEvent(PlaySound("metronome.wav", 1.0));
-		var chars:Array<Character> = [player, opponent];
+		var chars:Array<Character> = [player, enemy];
 		if (crowd != null)
 			chars.push(crowd);
 
@@ -191,7 +191,7 @@ class PlayState extends FNFState {
 	function getCharacterFromID(id:Int):Character {
 		return switch (id) {
 			case 0: player;
-			default: opponent;
+			default: enemy;
 			case 2: crowd;
 		}
 	}
