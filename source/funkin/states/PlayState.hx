@@ -1,7 +1,7 @@
 package funkin.states;
 
 import flixel.FlxCamera;
-import flixel.addons.transition.FlxTransitionableState;
+import flixel.sound.FlxSound;
 import forever.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.states.base.FNFState;
@@ -17,7 +17,7 @@ enum abstract GameplayMode(Int) to Int {
 }
 
 class PlayState extends FNFState {
-	public var songName:String = "Test";
+	public var songName:String = "lost-cause";
 	public var playMode:Int = FREEPLAY;
 
 	public var bg:ForeverSprite;
@@ -32,6 +32,9 @@ class PlayState extends FNFState {
 	public var opponent:Character;
 	public var crowd:Character;
 
+	public var inst:FlxSound;
+	public var vocals:FlxSound;
+
 	public override function create():Void {
 		super.create();
 
@@ -45,12 +48,15 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(hudCamera, false);
 		FlxG.cameras.add(altCamera, false);
 
-		ChartLoader.load("test", "hard");
-		Conductor.bpm = Chart.current.metadata.bpmChanges[0].bpm;
+		ChartLoader.load(songName, "hard");
+		Conductor.bpm = Chart.current.metadata.initialBPM;
 
 		add(bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: FlxColor.BLUE}));
 		add(playField = new PlayField());
 		add(hud = new HUD());
+
+		for (lane in playField.lanes)
+			lane.changeStrumSpeed(Chart.current.metadata.initialSpeed);
 
 		add(player = new Character(0, 0, "bf-psych", true));
 		add(opponent = new Character(0, 0, "pico-crow", false));
@@ -63,8 +69,15 @@ class PlayState extends FNFState {
 
 		playField.camera = hud.camera = hudCamera;
 
+		inst = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${songName}/audio/Inst.ogg'));
+		vocals = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${songName}/audio/Voices.ogg'));
+		FlxG.sound.list.add(vocals);
+		FlxG.sound.music = inst;
+
+		FlxG.sound.music.play();
+		vocals.play();
+
 		DiscordRPC.updatePresence('Playing: ${songName}', '${hud.scoreBar.text}');
-		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
 	}
 
 	public override function update(elapsed:Float):Void {
@@ -79,12 +92,7 @@ class PlayState extends FNFState {
 		if (FlxG.keys.justPressed.SEVEN)
 			openCharter();
 
-		var controls:Array<Bool> = [
-			FlxG.keys.justPressed.LEFT,
-			FlxG.keys.justPressed.DOWN,
-			FlxG.keys.justPressed.UP,
-			FlxG.keys.justPressed.RIGHT
-		];
+		var controls:Array<Bool> = [Controls.LEFT, Controls.DOWN, Controls.UP, Controls.RIGHT];
 
 		for (i in 0...controls.length) {
 			if (controls[i] == true) {
@@ -171,6 +179,7 @@ class PlayState extends FNFState {
 
 	function endPlay():Void {
 		FlxG.sound.music.stop();
+		vocals.stop();
 
 		switch (playMode) {
 			default:

@@ -19,12 +19,12 @@ class Utils {
 	}
 
 	#if !macro
-	public static function centerToObject(base:FlxObject, object:FlxObject, axes:FlxAxes = XY):FlxObject {
+	public static function centerToObject(object:FlxObject, target:FlxObject, axes:FlxAxes = XY):FlxObject {
 		// literally just FlxObject.screenCenter but it uses `base` instead of `FlxG.width` and `FlxG.height`
 		if (axes.x)
-			object.x = base.x + (base.width / 2.0) - (object.width / 2.0);
+			object.x = target.x + (target.width / 2.0) - (object.width / 2.0);
 		if (axes.y)
-			object.y = base.y + (base.height / 2.0) - (object.height / 2.0);
+			object.y = target.y + (target.height / 2.0) - (object.height / 2.0);
 		return object;
 	}
 

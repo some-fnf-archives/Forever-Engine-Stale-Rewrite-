@@ -1,5 +1,7 @@
 package funkin.components;
 
+import flixel.util.FlxSort;
+
 class ChartLoader {
 	public static function load(folder:String, file:String):Chart {
 		var chart:Chart = new Chart();
@@ -21,9 +23,9 @@ class ChartLoader {
 					var curBPM:Float = json.bpm;
 
 					// default bpm
-					chart.metadata.bpmChanges.push({bpm: curBPM, step: Math.NaN});
+					chart.metadata.initialBPM = curBPM;
 					// default velocity/speed
-					chart.metadata.velocityChanges.push({speed: json.speed, step: Math.NaN});
+					chart.metadata.initialSpeed = json.speed;
 
 					for (bar in bars) {
 						var notes:Array<Dynamic> = bar.sectionNotes;
@@ -33,15 +35,16 @@ class ChartLoader {
 						}
 
 						for (note in notes) {
-							var funkyNote:NoteData = {
-								time: note[0],
+							var mustPress:Bool = (note[1] >= 4) ? !bar.mustHitSection : bar.mustHitSection;
+							chart.notes.push({
+								time: note[0] / 1000.0,
 								step: Conductor.timeToStep(note[0], curBPM),
 								direction: Std.int(note[1] % 4),
+								lane: mustPress ? 1 : 0,
 								type: note[3] != null && Std.isOfType(note[3], String) ? note[3] : "default",
 								animation: note[3] != null && Std.isOfType(note[3], Bool) && note[3] == true ? "-alt" : "",
-								length: note[2] / (curBPM / 60.0) * 4.0
-							}
-							chart.notes.push(funkyNote);
+								length: (note[2] / 1000.0) / (curBPM / 60.0) * 4.0
+							});
 						}
 					}
 
@@ -55,6 +58,8 @@ class ChartLoader {
 				case CODENAME:
 					trace('Codename Engine Charts are not implemented *yet*');
 			}
+
+			chart.notes.sort(function(a:NoteData, b:NoteData):Int return FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 		}
 		catch (e:haxe.Exception)
 			trace('Failed to parse chart, type was ${dataType}');
@@ -66,7 +71,7 @@ class ChartLoader {
 class Chart {
 	public var notes:Array<NoteData> = [];
 	public var events:Array<ChartEvent<ForeverEvents>> = [];
-	public var metadata:ChartMetadata = {bpmChanges: [], velocityChanges: []};
+	public var metadata:ChartMetadata = {initialBPM: 100.0, initialSpeed: 1.0};
 
 	public static var current:Chart;
 
@@ -83,6 +88,7 @@ typedef NoteData = {
 	var direction:Int;
 	@:optional var time:Float; // original millisecond timing, used for conversion to steps
 	@:optional var type:String;
+	@:optional var lane:Int;
 	@:optional var animation:String;
 	@:optional var length:Float;
 }
@@ -95,11 +101,17 @@ typedef ChartEvent<T> = {
 }
 
 typedef ChartMetadata = {
+	/** Chart's Initial BPM. **/
+	var initialBPM:Float;
+
+	/** Chart's Initial Speed. **/
+	var initialSpeed:Float;
+
 	/** Chart BPM Changes. **/
-	var bpmChanges:Array<{bpm:Float, step:Float}>;
+	@:optional var bpmChanges:Array<{bpm:Float, step:Float}>;
 
 	/** Chart Velocity (Scroll Speed) Changes. **/
-	var velocityChanges:Array<{speed:Float, step:Float}>;
+	@:optional var velocityChanges:Array<{speed:Float, step:Float}>;
 
 	/** Player Character. **/
 	@:optional var playerChar:String;

@@ -1,19 +1,39 @@
 package funkin.objects;
 
 import flixel.group.FlxGroup;
+import funkin.components.ChartLoader.Chart;
 import funkin.objects.notes.*;
 
 /**
  * Play Field contains basic objects to handle gameplay
- * including notefields and a Heads-Up Display
+ * Notefeilds, Notes, etc.
 **/
 class PlayField extends FlxGroup {
-	public var strums:FlxTypedGroup<NoteField>;
+	public var lanes:FlxTypedGroup<NoteField>;
+	public var noteSpawner:NoteSpawner;
 
 	public function new():Void {
 		super();
 
-		add(strums = new FlxTypedGroup<NoteField>());
-		strums.add(new NoteField(100, 100, "default"));
+		var strumY:Float = Settings.downScroll ? FlxG.height - 150 : 50;
+
+		add(lanes = new FlxTypedGroup<NoteField>());
+		lanes.add(new NoteField(98, strumY, "default"));
+		lanes.add(new NoteField(FlxG.width - 542, strumY, "default"));
+		add(noteSpawner = new NoteSpawner(Chart.current.notes.length));
+
+		for (i in 0...Chart.current.notes.length)
+			noteSpawner.noteList[i] = Chart.current.notes[i];
+	}
+
+	public override function update(elapsed:Float):Void {
+		if (noteSpawner.noteList != null && noteSpawner.noteList.length > 0) {
+			var laneID:Int = noteSpawner.curNoteData?.lane ?? -1;
+			var lane:NoteField = lanes.members[laneID];
+			if (lane != null && laneID != -1)
+				noteSpawner.spawnNotes(lane);
+		}
+
+		super.update(elapsed);
 	}
 }

@@ -72,6 +72,7 @@ class DiscordWrapper {
 	@:allow(Init)
 	function new(clientID:String):Void {}
 
-	public static function updatePresence(state:String = "", details:String = "", ?imageInfo:ImageInfo = null):Void {}
+	public static function updatePresence(state:String = "", details:String = "", ?largeImage:String = "forevermic", ?largeText:String = null,
+		?smallImage:String = "", ?smallText:String = ""):Void {}
 }
 #end

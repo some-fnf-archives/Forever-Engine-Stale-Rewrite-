@@ -7,7 +7,7 @@ import openfl.display.Sprite;
 import openfl.utils.Assets as OpenFLAssets;
 
 class Main extends Sprite {
-	public static var framerate:Int = 60;
+	public static var framerate:Int = 120;
 
 	public static var overlay:ForeverOverlay;
 

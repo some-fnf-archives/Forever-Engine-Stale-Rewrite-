@@ -4,6 +4,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import forever.ForeverSprite;
 
 class Strum extends ForeverSprite {
+	public var speed:Float = 1.0;
+
 	public function new(x:Float, y:Float, skin:String = "default", id:Int):Void {
 		super(x, y);
 
@@ -45,6 +47,16 @@ class NoteField extends FlxTypedGroup<Strum> {
 			strum.updateHitbox();
 			add(strum);
 		}
+	}
+
+	public function changeStrumSpeed(newSpeed:Float, strumID:Int = -1):Void {
+		if (strumID == -1 || strumID > members.indexOf(members.last())) {
+			for (i in 0...members.length)
+				if (members[i] is Strum)
+					members[i].speed = newSpeed;
+		}
+		else
+			members[strumID].speed = newSpeed;
 	}
 
 	@:dox(hide) @:noCompletion function get_spacing():Int {

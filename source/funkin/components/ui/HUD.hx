@@ -31,7 +31,7 @@ class HUD extends FlxSpriteGroup {
 		centerMark.antialiasing = true;
 		add(centerMark);
 
-		scoreBar = new ForeverText(0, 0, 650, "", 18);
+		scoreBar = new ForeverText(0, 0, 700, "", 18);
 		scoreBar.alignment = CENTER;
 		scoreBar.borderSize = 1.5;
 		add(scoreBar);
@@ -49,7 +49,7 @@ class HUD extends FlxSpriteGroup {
 		tempScore += divider + "Combo Breaks: 0"; // PlayState.gameInfo.comboBreaks;
 		tempScore += divider + "Rank: S"; // PlayState.gameInfo.rank;
 
-		scoreBar.text = '${tempScore}\n';
+		scoreBar.text = '< ${tempScore} >\n';
 
 		scoreBar.screenCenter(X);
 	}

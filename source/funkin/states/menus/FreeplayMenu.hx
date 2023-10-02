@@ -26,12 +26,12 @@ class FreeplayMenu extends FNFState {
 			var name:String = song[0];
 			var folder:String = song[1];
 			var icon:String = song[2];
-			var color:Null<FlxColor> = FlxColor.WHITE;
+			var color:Null<FlxColor> = 0xFF606060;
 
 			songs.push(new FreeplaySong(name, folder, icon, color));
 		};
 
-		add(bg = new ForeverSprite(0, 0, "bg", {color: FlxColor.WHITE}));
+		add(bg = new ForeverSprite(0, 0, "bg", {color: 0xFF606060}));
 		add(songGroup = new FlxTypedGroup());
 
 		for (i in 0...songs.length) {

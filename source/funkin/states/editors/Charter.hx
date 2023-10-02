@@ -59,7 +59,7 @@ class Charter extends FlxSubState {
 
 	function createCharterHUD():Void {
 		add(statusBar = new CharterStatusBar());
-		statusBar.y = FlxG.height - 80;
+		statusBar.y = FlxG.height - 110;
 		updateHUDNodes();
 	}
 

@@ -15,4 +15,5 @@ import funkin.components.Conductor;
 
 using StringTools;
 using forever.Utils;
+using flixel.util.FlxArrayUtil;
 #end
