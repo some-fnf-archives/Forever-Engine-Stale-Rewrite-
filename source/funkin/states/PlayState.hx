@@ -21,6 +21,8 @@ class PlayState extends FNFState {
 	public var songName:String = "Test";
 
 	public var player:Character;
+	public var opponent:Character;
+	public var crowd:Character;
 
 	public override function create():Void {
 		super.create();
@@ -43,18 +45,25 @@ class PlayState extends FNFState {
 		add(playField = new PlayField());
 		add(hud = new HUD());
 
-		player = new Character(0, 0, true);
-		player.loadCharacter("bf-psych");
-		add(player);
+		add(player = new Character(0, 0, "bf-psych", true));
+		add(opponent = new Character(0, 0, "pico-crow", false));
+
+		// test position characters
+		player.screenCenter(XY);
+		opponent.screenCenter(XY);
+		player.x = FlxG.width / 2.0;
+		opponent.x = FlxG.width / 6.0;
 
 		playField.camera = hud.camera = hudCamera;
 
 		DiscordRPC.updatePresence('Playing: ${songName}', '${hud.scoreBar.text}');
 
 		Conductor.onBeat.add(function(beat:Int):Void {
-			processEvent(PlaySound("metronome.wav", 1.0));
-			if (beat % player.danceInterval == 0)
-				player.dance();
+			// processEvent(PlaySound("metronome.wav", 1.0));
+			for (character in [player, opponent]) {
+				if (beat % character.danceInterval == 0)
+					character.dance();
+			}
 		});
 
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
@@ -87,6 +96,23 @@ class PlayState extends FNFState {
 			openSubState(charter);
 		}
 
+		var controls:Array<Bool> = [
+			FlxG.keys.justPressed.LEFT,
+			FlxG.keys.justPressed.DOWN,
+			FlxG.keys.justPressed.UP,
+			FlxG.keys.justPressed.RIGHT
+		];
+
+		for (i in 0...controls.length) {
+			if (controls[i] == true) {
+				player.playAnim(player.singingSteps[i], true);
+				opponent.playAnim(opponent.singingSteps[i], true);
+			}
+		}
+
+		if (FlxG.keys.justPressed.SPACE)
+			player.playAnim("hey", true);
+
 		/*if (FlxG.keys.justPressed.SPACE) {
 			Settings.downScroll = !Settings.downScroll;
 			Settings.flush();
@@ -113,13 +139,10 @@ class PlayState extends FNFState {
 	public function preloadEvent(which:ForeverEvents):Void {
 		switch (which) {
 			case ChangeCharacter(who, toCharacter):
-			/*
-				// character preloader here, so like
 				var newChar:Character = new Character(0, 0);
 				newChar.loadCharacter(toCharacter);
 				newChar.alpha = 0.000001;
-				characterGroup.add(newChar);
-			 */
+			// characterGroup.add(newChar);
 			default:
 				// do nothing
 		}

@@ -75,10 +75,7 @@ class ForeverSprite extends FlxSprite {
 	**/
 	public function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
 		animation.play(name, forced, reversed, frame);
-
-		var offsets:Array<Float> = [0.0, 0.0];
-		if (animOffsets.exists(name))
-			offsets = animOffsets.get(name);
+		var offsets:Array<Float> = animOffsets.get(name) ?? [0.0, 0.0];
 		frameOffset.set(offsets[0], offsets[1]);
 	}
 
@@ -89,8 +86,8 @@ class ForeverSprite extends FlxSprite {
 	 * @param x				The X coordinate of the offset.
 	 * @param y				The Y coordinate of the offset.
 	**/
-	public function setOffset(name:String, ?x:Float = 0, ?y:Float = 0):Void {
-		animOffsets.set(name, [x, y]);
+	public function setOffset(name:String, ?x:Null<Float> = 0, ?y:Null<Float> = 0):Void {
+		animOffsets.set(name, [x ?? 0.0, y ?? 0.0]);
 	}
 
 	//////////////
