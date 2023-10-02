@@ -17,28 +17,29 @@ class ChartLoader {
 		try {
 			switch (dataType) {
 				case VANILLA_V1:
-					var bpm:Float = Reflect.field(json, "bpm");
-					var speed:Float = Reflect.field(json, "speed");
 					var bars:Array<Dynamic> = Reflect.field(json, "notes");
+					var curBPM:Float = json.bpm;
 
 					// default bpm
-					chart.metadata.bpmChanges.push({bpm: bpm, step: Math.NaN});
+					chart.metadata.bpmChanges.push({bpm: curBPM, step: Math.NaN});
 					// default velocity/speed
-					chart.metadata.velocityChanges.push({speed: speed, step: Math.NaN});
+					chart.metadata.velocityChanges.push({speed: json.speed, step: Math.NaN});
 
 					for (bar in bars) {
-						var notes:Array<Dynamic> = Reflect.field(bar, "sectionNotes");
-						if (Reflect.field(bar, "changeBPM") == true && Reflect.field(bar, "bpm") != bpm)
-							bpm = Std.parseFloat(Reflect.field(bar, "bpm"));
+						var notes:Array<Dynamic> = bar.sectionNotes;
+						if (bar.changeBPM == true && bar.bpm != curBPM) {
+							curBPM = bar.bpm;
+							// chart.metadata.bpmChanges.push({bpm: bar.bpm, step: Conductor.timeToStep()});
+						}
 
 						for (note in notes) {
 							var funkyNote:NoteData = {
 								time: note[0],
-								step: Conductor.timeToStep(note[0], bpm),
+								step: Conductor.timeToStep(note[0], curBPM),
 								direction: Std.int(note[1] % 4),
 								type: note[3] != null && Std.isOfType(note[3], String) ? note[3] : "default",
 								animation: note[3] != null && Std.isOfType(note[3], Bool) && note[3] == true ? "-alt" : "",
-								length: note[2] / (bpm / 60.0) * 4.0
+								length: note[2] / (curBPM / 60.0) * 4.0
 							}
 							chart.notes.push(funkyNote);
 						}
