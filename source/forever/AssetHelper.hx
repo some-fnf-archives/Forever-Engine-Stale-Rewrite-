@@ -80,10 +80,10 @@ class AssetHelper {
 	}
 
 	public static function clearCacheEntirely(major:Bool = false):Void {
-		AssetHelper.clearCachedGraphics(major);
-		AssetHelper.clearCachedSounds(major);
+		clearCachedGraphics(major);
+		clearCachedSounds(major);
 		if (major)
-			@:privateAccess AssetHelper._clearCacheMajor();
+			_clearCacheMajor();
 	}
 
 	public static function clearCachedGraphics(force:Bool = false):Void {
