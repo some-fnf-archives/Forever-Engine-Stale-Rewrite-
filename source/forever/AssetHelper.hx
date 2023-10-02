@@ -42,7 +42,7 @@ class AssetHelper {
 			case JSON: tjson.TJSON.parse(OpenFLAssets.getText(gottenAsset));
 			case FONT: getPath('fonts/${asset}', FONT);
 			case ATLAS:
-				if (OpenFLAssets.exists(getPath(asset, TEXT), TEXT))
+				if (type.assetExists(getPath(asset, TEXT)))
 					return getAsset(asset, ATLAS_PACKER);
 				else
 					return getAsset(asset, ATLAS_SPARROW);
@@ -174,12 +174,15 @@ enum abstract ForeverAsset(String) to String {
 					if (OpenFLAssets.exists('${path}${i}', toOpenFL()))
 						return '${path}${i}';
 			}
-			else if (OpenFLAssets.exists('${path}${extensionLoader[0]}', toOpenFL()))
+			else if (assetExists('${path}${extensionLoader[0]}'))
 				return '${path}${extensionLoader[0]}';
 		}
 
 		return Std.string(path);
 	}
+
+	public function assetExists(asset:String):Bool
+		return OpenFLAssets.exists(asset, toOpenFL());
 
 	public function toOpenFL():Dynamic {
 		return switch (this) {
