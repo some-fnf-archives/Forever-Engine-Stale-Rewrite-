@@ -52,7 +52,6 @@ class DiscordWrapper {
 	static function _onReady(req:cpp.RawConstPointer<DiscordUser>):Void {
 		final pointer:cpp.Star<DiscordUser> = cpp.ConstPointer.fromRaw(req).ptr;
 		trace('[DiscordWrapper:_onReady] Connection Established, Welcome ${cast (pointer.username)}.');
-		updatePresence("In the Menus", "...");
 	}
 
 	static function _onDc(errorCode:Int, message:cpp.ConstCharStar):Void {

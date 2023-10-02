@@ -4,12 +4,22 @@ import flixel.FlxCamera;
 import flixel.addons.transition.FlxTransitionableState;
 import forever.ForeverSprite;
 import funkin.components.ChartLoader;
-import funkin.components.FNFState;
+import funkin.states.base.FNFState;
 import funkin.objects.*;
 import funkin.states.editors.*;
+import funkin.states.menus.*;
 import funkin.components.ui.HUD;
 
+enum abstract GameplayMode(Int) to Int {
+	var STORY = 0;
+	var FREEPLAY = 1;
+	var CHARTER = 2;
+}
+
 class PlayState extends FNFState {
+	public var songName:String = "Test";
+	public var playMode:Int = FREEPLAY;
+
 	public var bg:ForeverSprite;
 	public var playField:PlayField;
 	public var hud:HUD;
@@ -17,8 +27,6 @@ class PlayState extends FNFState {
 	public var gameCamera:FlxCamera;
 	public var hudCamera:FlxCamera;
 	public var altCamera:FlxCamera;
-
-	public var songName:String = "Test";
 
 	public var player:Character;
 	public var opponent:Character;
@@ -37,7 +45,6 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(hudCamera, false);
 		FlxG.cameras.add(altCamera, false);
 
-		Conductor.reset();
 		ChartLoader.load("test", "hard");
 		Conductor.bpm = Chart.current.metadata.bpmChanges[0].bpm;
 
@@ -57,44 +64,20 @@ class PlayState extends FNFState {
 		playField.camera = hud.camera = hudCamera;
 
 		DiscordRPC.updatePresence('Playing: ${songName}', '${hud.scoreBar.text}');
-
-		Conductor.onBeat.add(function(beat:Int):Void {
-			// processEvent(PlaySound("metronome.wav", 1.0));
-			for (character in [player, opponent]) {
-				if (beat % character.danceInterval == 0)
-					character.dance();
-			}
-		});
-
 		FlxG.sound.playMusic(AssetHelper.getSound("songs/test/audio/Inst.ogg"));
 	}
 
 	public override function update(elapsed:Float):Void {
-		Conductor.time += elapsed;
-		// interpolation.
-		if (Math.abs(Conductor.time - FlxG.sound.music.time / 1000.0) >= 0.05) {
-			Conductor.time = FlxG.sound.music.time / 1000.0;
-		}
-
 		super.update(elapsed);
 		checkKeys();
 	}
 
 	private function checkKeys():Void {
-		if (FlxG.keys.justPressed.ESCAPE) {
-			FlxG.sound.music.stop();
-			FlxG.switchState(new funkin.states.menus.FreeplayMenu());
-		}
+		if (FlxG.keys.justPressed.ESCAPE)
+			endPlay();
 
-		if (FlxG.keys.justPressed.SEVEN) {
-			FlxG.sound.music.pause();
-			DiscordRPC.updatePresence('Charting: ${songName}', '${hud.scoreBar.text}');
-
-			var charter:Charter = new Charter();
-			charter.camera = altCamera;
-			charter.ID = 1;
-			openSubState(charter);
-		}
+		if (FlxG.keys.justPressed.SEVEN)
+			openCharter();
 
 		var controls:Array<Bool> = [
 			FlxG.keys.justPressed.LEFT,
@@ -127,6 +110,18 @@ class PlayState extends FNFState {
 		}*/
 	}
 
+	public override function onBeat(beat:Int):Void {
+		// processEvent(PlaySound("metronome.wav", 1.0));
+		var chars:Array<Character> = [player, opponent];
+		if (crowd != null)
+			chars.push(crowd);
+
+		for (character in chars) {
+			if (beat % character.danceInterval == 0)
+				character.dance();
+		}
+	}
+
 	public override function closeSubState():Void {
 		switch (FlxG.state.subState.ID) {
 			case 1:
@@ -153,11 +148,42 @@ class PlayState extends FNFState {
 			case FocusCamera(who, noEasing):
 			//
 			case ChangeCharacter(who, toCharacter):
-			//
+				getCharacterFromID(who).loadCharacter(toCharacter);
 			case PlaySound(soundName, volume):
 				FlxG.sound.play(AssetHelper.getSound('sounds/${soundName}'), volume);
 			default:
 				// do nothing
+		}
+	}
+
+	// -- HELPER FUNCTIONS -- //
+
+	function openCharter():Void {
+		FlxG.sound.music.pause();
+		DiscordRPC.updatePresence('Charting: ${songName}', '${hud.scoreBar.text}');
+
+		var charter:Charter = new Charter();
+		charter.camera = altCamera;
+		charter.ID = 1;
+
+		openSubState(charter);
+	}
+
+	function endPlay():Void {
+		FlxG.sound.music.stop();
+
+		switch (playMode) {
+			default:
+				FlxG.switchState(new FreeplayMenu());
+		}
+	}
+
+	@:noCompletion @:noPrivateAccess
+	function getCharacterFromID(id:Int):Character {
+		return switch (id) {
+			case 0: player;
+			default: opponent;
+			case 2: crowd;
 		}
 	}
 }

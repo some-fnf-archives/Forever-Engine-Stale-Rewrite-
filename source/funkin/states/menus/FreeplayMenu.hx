@@ -3,7 +3,7 @@ package funkin.states.menus;
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
-import funkin.components.FNFState;
+import funkin.states.base.FNFState;
 import funkin.components.ui.Alphabet;
 import forever.ForeverSprite;
 import forever.ui.ForeverText;

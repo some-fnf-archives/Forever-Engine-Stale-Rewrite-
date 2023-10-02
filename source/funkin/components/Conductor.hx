@@ -1,44 +1,52 @@
 package funkin.components;
 
+import flixel.FlxBasic;
 import flixel.util.FlxSignal;
 
-class Conductor {
-	static var _timeDelta:Float = 0.0;
+class Conductor extends FlxBasic {
+	var _timeDelta:Float = 0.0;
+	var _lastTime:Float = -1.0;
+	var _lastStep:Int = -1;
+	var _lastBeat:Int = -1;
+	var _lastBar:Int = -1;
 
-	public static var beatDelta(get, never):Float;
-	public static var stepDelta(get, never):Float;
-
-	static var _lastTime:Float = -1.0;
-	static var _lastStep:Int = -1;
-	static var _lastBeat:Int = -1;
-	static var _lastBar:Int = -1;
-
+	/* -- GLOBAL VARIABLES -- */
 	public static var bpm:Float = 100.0;
 	public static var time:Float = 0.0;
 
-	public static var stepTime:Float = 0.0;
-	public static var beatTime:Float = 0.0;
-
-	public static var step(get, never):Int;
+	public static var step:Int;
 	public static var beat(get, never):Int;
 	public static var bar(get, never):Int;
 
-	public static var onStep:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
-	public static var onBeat:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
-	public static var onBar:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	/* -- INSTANCE VARIABLES -- */
+	public var beatDelta(get, never):Float;
+	public var stepDelta(get, never):Float;
 
-	public static function reset():Void {
-		time = stepTime = beatTime = _lastTime = 0.0;
-		_lastStep = _lastBeat = _lastBar = -1;
-		bpm = 100.0;
+	public var stepTime:Float = 0.0;
+	public var beatTime:Float = 0.0;
 
-		onStep.removeAll();
-		onBeat.removeAll();
-		onBar.removeAll();
+	public var onStep:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	public var onBeat:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	public var onBar:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+
+	public function new():Void {
+		super();
+		time = 0.0;
+		step = 0;
 	}
 
-	public static function update():Void {
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
+
 		_timeDelta = time - _lastTime;
+
+		time += elapsed;
+		if (FlxG.sound.music != null && FlxG.sound.music.playing) {
+			if (Math.abs(time - FlxG.sound.music.time / 1000.0) >= 0.05) // interpolation.
+				time = FlxG.sound.music.time / 1000.0;
+		}
+		step = Math.floor(timeToStep(time, bpm));
+
 		if (time >= 0.0) {
 			stepTime += stepDelta;
 			beatTime += beatDelta;
@@ -94,15 +102,12 @@ class Conductor {
 	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
 	///////////////////////////////////////////////
 
-	@:noCompletion static function get_beatDelta():Float {
+	@:noCompletion function get_beatDelta():Float {
 		return (bpm / 60.0) * _timeDelta;
 	}
 
-	@:noCompletion static function get_stepDelta():Float
+	@:noCompletion function get_stepDelta():Float
 		return beatDelta * 4.0;
-
-	@:noCompletion static function get_step():Int
-		return Math.floor(stepTime);
 
 	@:noCompletion static function get_beat():Int
 		return Math.floor(step / 4.0);

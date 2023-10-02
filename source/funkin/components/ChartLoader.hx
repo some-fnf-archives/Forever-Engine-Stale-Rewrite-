@@ -38,7 +38,7 @@ class ChartLoader {
 								direction: Std.int(note[1] % 4),
 								type: note[3] != null && Std.isOfType(note[3], String) ? note[3] : "default",
 								animation: note[3] != null && Std.isOfType(note[3], Bool) && note[3] == true ? "-alt" : "",
-								length: note[2] / Conductor.stepDelta
+								length: note[2] / (bpm / 60.0) * 4.0
 							}
 							chart.notes.push(funkyNote);
 						}

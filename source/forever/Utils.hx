@@ -2,7 +2,9 @@ package forever;
 
 import openfl.Assets as OpenFLAssets;
 #if !macro
+import flixel.FlxObject;
 import flixel.math.FlxMath;
+import flixel.util.FlxAxes;
 #end
 
 class Utils {
@@ -17,6 +19,15 @@ class Utils {
 	}
 
 	#if !macro
+	public static function centerToObject(base:FlxObject, object:FlxObject, axes:FlxAxes = XY):FlxObject {
+		// literally just FlxObject.screenCenter but it uses `base` instead of `FlxG.width` and `FlxG.height`
+		if (axes.x)
+			object.x = base.x + (base.width / 2.0) - (object.width / 2.0);
+		if (axes.y)
+			object.y = base.y + (base.height / 2.0) - (object.height / 2.0);
+		return object;
+	}
+
 	public static function fpsLerp(from:Float, to:Float, weight:Float) {
 		return FlxMath.lerp(from, to, FlxG.elapsed * 60.0 * weight);
 	}

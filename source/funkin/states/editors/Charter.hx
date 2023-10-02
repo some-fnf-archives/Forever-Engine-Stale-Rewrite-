@@ -1,21 +1,20 @@
 package funkin.states.editors;
 
+import flixel.FlxSubState;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.display.FlxTiledSprite;
-import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.FlxGraphic;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
-import forever.ui.ForeverText;
-import funkin.components.FNFSubState;
+import funkin.states.editors.CharterUI;
 import openfl.geom.ColorTransform;
 import openfl.geom.Rectangle;
 
-class Charter extends FNFSubState {
+@:access(funkin.states.PlayState)
+class Charter extends FlxSubState {
 	public var backgroundLayer:FlxSpriteGroup;
 	public var checkerboard:FlxTiledSprite;
-
-	public var infoBar:ForeverText;
+	public var statusBar:CharterStatusBar;
 
 	var gridSize:Int = 50;
 
@@ -59,10 +58,8 @@ class Charter extends FNFSubState {
 	}
 
 	function createCharterHUD():Void {
-		infoBar = new ForeverText(0, 0, 0, "", 24);
-		infoBar.alignment = RIGHT;
-		add(infoBar);
-
+		add(statusBar = new CharterStatusBar());
+		statusBar.y = FlxG.height - 80;
 		updateHUDNodes();
 	}
 
@@ -78,6 +75,8 @@ class Charter extends FNFSubState {
 	}
 
 	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
+
 		/*
 			checkerboard.scale.y = charterZoom;
 			checkerboard.height = ((FlxG.sound.music.length / ((Conductor.bpm / 60.0) * 1000.0)) * gridSize) * charterZoom;
@@ -90,17 +89,29 @@ class Charter extends FNFSubState {
 			}
 		}
 
+		if (FlxG.keys.justPressed.SPACE) {
+			if (FlxG.sound.music != null) {
+				if (FlxG.sound.music.playing)
+					FlxG.sound.music.pause();
+				else
+					FlxG.sound.music.resume();
+			}
+		}
+
 		if (FlxG.keys.justPressed.ESCAPE) {
 			FlxG.state.closeSubState();
 			AssetHelper.clearCacheEntirely();
 		}
 
-		super.update(elapsed);
+		if (FlxG.sound.music != null && FlxG.sound.music.playing) {
+			updateHUDNodes();
+		}
 	}
 
 	function updateHUDNodes():Void {
-		infoBar.text = 'Step: ${Conductor.step} - Beat: ${Conductor.beat}' + //
-			' - Bar: ${Conductor.bar}\nBPM: ${Conductor.bpm}';
-		infoBar.x = FlxG.width - infoBar.width - 5;
+		statusBar.updateStatusText("" //
+			+ '> Step: ${Conductor.step} • Beat: ${Conductor.beat}' //
+			+ '\n> Bar: ${Conductor.bar} • BPM: ${Conductor.bpm}' //
+		);
 	}
 }
