@@ -49,14 +49,14 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(altCamera, false);
 
 		ChartLoader.load(songName, "hard");
-		Conductor.bpm = Chart.current.metadata.initialBPM;
+		Conductor.bpm = Chart.current.data.initialBPM;
 
 		add(bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: FlxColor.BLUE}));
 		add(playField = new PlayField());
 		add(hud = new HUD());
 
 		for (lane in playField.lanes)
-			lane.changeStrumSpeed(Chart.current.metadata.initialSpeed);
+			lane.changeStrumSpeed(Chart.current.data.initialSpeed);
 
 		add(player = new Character(0, 0, "bf-psych", true));
 		add(opponent = new Character(0, 0, "pico-crow", false));

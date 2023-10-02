@@ -21,25 +21,29 @@ class ChartLoader {
 				case VANILLA_V1:
 					var bars:Array<Dynamic> = Reflect.field(json, "notes");
 					var curBPM:Float = json.bpm;
+					chart.data.keyAmount = 4;
 
 					// default bpm
-					chart.metadata.initialBPM = curBPM;
+					chart.data.initialBPM = curBPM;
 					// default velocity/speed
-					chart.metadata.initialSpeed = json.speed;
+					chart.data.initialSpeed = json.speed;
 
 					for (bar in bars) {
-						var notes:Array<Dynamic> = bar.sectionNotes;
+						var barNotes:Array<Dynamic> = bar.sectionNotes;
 						if (bar.changeBPM == true && bar.bpm != curBPM) {
 							curBPM = bar.bpm;
-							// chart.metadata.bpmChanges.push({bpm: bar.bpm, step: Conductor.timeToStep()});
+							// chart.data.bpmChanges.push({bpm: bar.bpm, step: Conductor.timeToStep()});
 						}
 
-						for (note in notes) {
-							var mustPress:Bool = (note[1] >= 4) ? !bar.mustHitSection : bar.mustHitSection;
+						for (note in barNotes) {
+							var mustPress:Bool = bar.mustHitSection;
+							if (Std.int(note[1]) >= chart.data.keyAmount)
+								mustPress = !mustPress;
+
 							chart.notes.push({
 								time: note[0] / 1000.0,
 								step: Conductor.timeToStep(note[0], curBPM),
-								direction: Std.int(note[1] % 4),
+								direction: Std.int(note[1] % chart.data.keyAmount),
 								lane: mustPress ? 1 : 0,
 								type: note[3] != null && Std.isOfType(note[3], String) ? note[3] : "default",
 								animation: note[3] != null && Std.isOfType(note[3], Bool) && note[3] == true ? "-alt" : "",
@@ -71,7 +75,7 @@ class ChartLoader {
 class Chart {
 	public var notes:Array<NoteData> = [];
 	public var events:Array<ChartEvent<ForeverEvents>> = [];
-	public var metadata:ChartMetadata = {initialBPM: 100.0, initialSpeed: 1.0};
+	public var data:ChartExtraData = {initialBPM: 100.0, initialSpeed: 1.0, keyAmount: 4};
 
 	public static var current:Chart;
 
@@ -100,7 +104,10 @@ typedef ChartEvent<T> = {
 	var ?bar:Int;
 }
 
-typedef ChartMetadata = {
+typedef ChartExtraData = {
+	/** Chart's Amount of Keys. **/
+	var keyAmount:Int;
+
 	/** Chart's Initial BPM. **/
 	var initialBPM:Float;
 
