@@ -49,7 +49,7 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(hudCamera, false);
 		FlxG.cameras.add(altCamera, false);
 
-		// -- PREPARE PLAYFIELD --
+		// -- PREPARE PLAYFIELD -- //
 		ChartLoader.load(songName, "hard");
 		Conductor.bpm = Chart.current.data.initialBPM;
 

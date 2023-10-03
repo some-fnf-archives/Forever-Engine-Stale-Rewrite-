@@ -70,9 +70,7 @@ class Conductor extends FlxBasic {
 		}
 	}
 
-	/////////////////////////////////
-	// HELPER CONVERSION FUNCTIONS //
-	/////////////////////////////////
+	// -- HELPER CONVERSION FUNCTIONS -- //
 
 	public static inline function timeToBeat(time:Float, _bpm:Float):Float {
 		return (time * _bpm) / 60.0;
@@ -98,9 +96,7 @@ class Conductor extends FlxBasic {
 		return beatToTime(time, _bpm) / 4.0;
 	}
 
-	///////////////////////////////////////////////
-	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
-	///////////////////////////////////////////////
+	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
 	@:noCompletion function get_beatDelta():Float {
 		return (bpm / 60.0) * _timeDelta;

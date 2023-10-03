@@ -90,9 +90,7 @@ class ForeverSprite extends FlxSprite {
 		animOffsets.set(name, [x ?? 0.0, y ?? 0.0]);
 	}
 
-	//////////////
-	// TWEENING //
-	//////////////
+	// -- TWEENING -- //
 
 	/**
 	 * Tweens the sprite with any given values,

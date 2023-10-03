@@ -10,9 +10,7 @@ class ScoreManager {
 
 	public var judgementsHit:StringMap<Int> = ["miss" => 0,];
 
-	///////////////////////////////////////////////
-	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
-	///////////////////////////////////////////////
+	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
 	@:noCompletion function get_misses():Int
 		return judgementsHit.exists("miss") ? judgementsHit.get("miss") : 0;

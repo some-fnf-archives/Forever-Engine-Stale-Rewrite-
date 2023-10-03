@@ -65,7 +65,7 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 		super.update(elapsed);
 	}
 
-	// ##==-- DON'T TOUCH THESE VARS AND FUNCS --==##//
+	// -- DON'T TOUCH THESE VARS AND FUNCS -- //
 
 	@:noCompletion
 	private function updateText(newText:String, ?force:Bool = false) {

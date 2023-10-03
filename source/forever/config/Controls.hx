@@ -107,9 +107,8 @@ class Controls {
 	 * to have a shortcut to your key, simply create a function here for it
 	 * to access your shortcut, use the expression `Controls.YOURCONTROL`
 	**/
-	// --------------- //
-	// COMMON ACTIONS  //
-	// --------------- //
+
+	// -- COMMON ACTIONS -- //
 
 	function ACCEPT(jp_accept:Bool) {}
 
@@ -119,9 +118,7 @@ class Controls {
 
 	function RESET(jp_reset:Bool) {}
 
-	// ------------- //
-	// SINGLE PRESS  //
-	// ------------- //
+	// -- SINGLE PRESS -- //
 
 	function LEFT_P(jp_left:Bool) {}
 
@@ -139,9 +136,7 @@ class Controls {
 
 	function UI_RIGHT_P(jp_ui_right:Bool) {}
 
-	// ------- //
-	// HOLDING //
-	// ------- //
+	// -- HOLDING -- //
 
 	function LEFT(p_left:Bool) {}
 

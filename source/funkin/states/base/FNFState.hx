@@ -22,9 +22,7 @@ class FNFState extends FlxTransitionableState {
 
 	public function onBar(bar:Int):Void {}
 
-	///////////////////////////////////////////////
-	// GETTERS & SETTERS, DO NOT MESS WITH THESE //
-	///////////////////////////////////////////////
+	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
 	function get_controls():BaseControls
 		return Controls.current;

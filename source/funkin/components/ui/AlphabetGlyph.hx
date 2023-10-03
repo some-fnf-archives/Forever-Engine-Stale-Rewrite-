@@ -42,7 +42,7 @@ class AlphabetGlyph extends ForeverSprite {
 		}
 	}
 
-	// ##==-- DON'T TOUCH THESE VARS AND FUNCS --==##//
+	// -- DON'T TOUCH THESE VARS AND FUNCS -- //
 
 	@:noCompletion
 	private inline function updateBoldOffset():Void {
