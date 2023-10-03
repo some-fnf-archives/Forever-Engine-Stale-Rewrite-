@@ -101,7 +101,7 @@ class Note extends ForeverSprite {
 		return speed = flixel.math.FlxMath.roundDecimal(v, 3);
 
 	@:noCompletion function get_isSustain():Bool
-		return data?.length > 0.0 ?? false;
+		return false;
 
 	@:noCompletion function get_direction():Int
 		return data?.direction ?? 0;
