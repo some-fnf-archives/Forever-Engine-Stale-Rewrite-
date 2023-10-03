@@ -1,5 +1,6 @@
 package forever.ui;
 
+import external.memory.Memory;
 import flixel.FlxG;
 import flixel.util.FlxStringUtil;
 import haxe.Timer as HaxeTimer;
@@ -41,7 +42,8 @@ class ForeverOverlay extends TextField {
 			peakRAM = staticRAM;
 
 		text = '${currentFPS} FPS' //
-			+ '\n${FlxStringUtil.formatBytes(staticRAM)} / ${FlxStringUtil.formatBytes(peakRAM)}' //
+			#if cpp + '\n${FlxStringUtil.formatBytes(Memory.getCurrentUsage())} / ${FlxStringUtil.formatBytes(Memory.getPeakUsage())} [STATIC]' #end //
+			+ '\n${FlxStringUtil.formatBytes(staticRAM)} / ${FlxStringUtil.formatBytes(peakRAM)} [GC]' //
 			+ getExtraInfo();
 	}
 
