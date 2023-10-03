@@ -18,6 +18,24 @@ class Utils {
 		];
 	}
 
+	public static function removeSpaces(str:String, trim:Bool = true):String {
+		if (trim)
+			StringTools.trim(str);
+		return StringTools.replace(str, " ", "");
+	}
+
+	public static function replaceSpaces(str:String, with:String = "-", trim:Bool = true):String {
+		if (trim)
+			StringTools.trim(str);
+		return StringTools.replace(str, " ", with);
+	}
+
+	public static function replaceDashes(str:String, with:String = " ", trim:Bool = true):String {
+		if (trim)
+			StringTools.trim(str);
+		return StringTools.replace(str, "-", with);
+	}
+
 	#if !macro
 	public static function centerToObject(object:FlxObject, target:FlxObject, axes:FlxAxes = XY):FlxObject {
 		// literally just FlxObject.screenCenter but it uses `base` instead of `FlxG.width` and `FlxG.height`

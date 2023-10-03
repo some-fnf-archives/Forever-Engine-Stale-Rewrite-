@@ -14,15 +14,13 @@ class FreeplayMenu extends FNFState {
 
 	public var songGroup:FlxTypedGroup<Alphabet>;
 
-	var folderIndicator:ForeverText;
-
 	public override function create():Void {
 		var localSongData:Array<String> = Utils.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
 
 		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
 
 		for (i in localSongData) {
-			var song:Array<String> = i.split(" || ");
+			var song:Array<String> = Utils.removeSpaces(i).split("|");
 			var name:String = song[0];
 			var folder:String = song[1];
 			var icon:String = song[2];
@@ -36,19 +34,11 @@ class FreeplayMenu extends FNFState {
 
 		for (i in 0...songs.length) {
 			var songTxt:Alphabet = new Alphabet(0, 10 + (60 * i), songs[i].name);
-			songTxt.alignment = CENTER;
 			songTxt.isMenuItem = true;
-			songTxt.menuSpacing.y = 100;
 			songTxt.alpha = 0.6;
 			songTxt.targetY = i;
 			songGroup.add(songTxt);
 		}
-
-		folderIndicator = new ForeverText(0, 0, FlxG.width, "", 20);
-		folderIndicator.alignment = CENTER;
-		folderIndicator.screenCenter(XY);
-		folderIndicator.y = (FlxG.height - folderIndicator.height) - 5;
-		add(folderIndicator);
 
 		updateSelection();
 	}
@@ -73,8 +63,6 @@ class FreeplayMenu extends FNFState {
 			i.alpha = i.targetY == 0 ? 1.0 : 0.6;
 			bs++;
 		}
-
-		folderIndicator.text = 'Folder: ${songs[curSelection].folder}';
 	}
 }
 

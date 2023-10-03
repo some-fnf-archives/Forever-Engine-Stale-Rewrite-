@@ -1,33 +1,33 @@
-# Display Name || Folder Name || Icon
+# Display Name | Folder Name | Icon
 # Starting lines with a hash (#) gets ignored since its a comment
 # Empty lines also get ignored
 
-Tutorial || tutorial || gf
+Tutorial | tutorial | gf
 
-Bopeebo || bopeebo || dad
-Fresh || fresh || dad
-Dad Battle || dadbattle || dad
+Bopeebo | bopeebo | dad
+Fresh | fresh | dad
+Dad Battle | dadbattle | dad
 
-Spookeez || spookeez || spooky
-South || south || spooky
-Monster || monster || monster
+Spookeez | spookeez | spooky
+South | south | spooky
+Monster | monster | monster
 
-Pico || pico || pico
-Philly Nice || philly || pico
-Blammed || blammed || pico
+Pico | pico | pico
+Philly Nice | philly | pico
+Blammed | blammed | pico
 
-Satin Panties || satin-panties || mom
-High || high || mom
-M.I.L.F || milf || mom
+Satin Panties | satin-panties | mom
+High | high | mom
+M.I.L.F | milf | mom
 
-Cocoa || cocoa || parents
-Eggnog || eggnog || parents
-Winter Horrorland || winter-horrorland || monster
+Cocoa | cocoa | parents
+Eggnog | eggnog | parents
+Winter Horrorland | winter-horrorland | monster
 
-Senpai || senpai || senpai
-Roses || roses || senpai
-Thorns || thorns || spirit
+Senpai | senpai | senpai
+Roses | roses | senpai
+Thorns | thorns | spirit
 
-Ugh || ugh || tankman
-Guns || guns || tankman
-Stress || stress || tankman
+Ugh | ugh | tankman
+Guns | guns | tankman
+Stress | stress | tankman

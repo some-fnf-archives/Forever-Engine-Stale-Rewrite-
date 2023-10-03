@@ -71,7 +71,7 @@ class Character extends ForeverSprite {
 		if (_isPlayer)
 			flipX = !flipX;
 
-		dance(true);
+		dance();
 
 		return this;
 	}
@@ -88,6 +88,58 @@ class Character extends ForeverSprite {
 	private function parseFromImpl(file:Dynamic, impl:String):Void {
 		switch (impl) {
 			case FOREVER:
+				var animationsFile:Array<String> = Utils.listFromFile(AssetHelper.getAsset('data/characters/${name}/animList', TEXT));
+				var hasOffsetFile:Bool = OpenFLAssets.exists(AssetHelper.getPath('data/characters/${name}/offsetList', TEXT));
+
+				for (data in animationsFile) {
+					if (data.contains(":")) {
+						// -- CHARACTER DATA -- //
+						var conf:String = Utils.removeSpaces(data);
+
+						if (conf.startsWith("spritesheet:"))
+							frames = AssetHelper.getAsset('images/${conf.replace("spritesheet:", "")}', ATLAS);
+						if (conf.startsWith("flipX:"))
+							flipX = conf.replace("flipX:", "") == "true";
+						if (conf.startsWith("flipY:"))
+							flipY = conf.replace("flipY:", "") == "true";
+
+						if (data.trim().startsWith("position:")) {
+							var chrPos:Array<String> = conf.replace("position:", "").split(",");
+							positionDisplace = FlxPoint.get(Std.parseFloat(chrPos[0]), Std.parseFloat(chrPos[1]));
+						}
+
+						if (data.trim().startsWith("dancingSteps:")) {
+							var danceSteps:Array<String> = conf.replace("dancingSteps:", "").split(",");
+							dancingSteps = danceSteps;
+						}
+
+						if (data.trim().startsWith("singingSteps:")) {
+							var singSteps:Array<String> = conf.replace("singingSteps:", "").split(",");
+							singingSteps = singSteps;
+						}
+					}
+					else {
+						// -- CHARACTER ANIMATIONS -- //
+
+						var animData:Array<String> = data.split(" | ");
+						addAtlasAnim(animData[0], animData[1], Std.parseInt(animData[2]), animData[3] == "true");
+
+						if (!hasOffsetFile && animData.length > 3) {
+							var offsets:Array<String> = Utils.removeSpaces(animData[4]).split(",");
+							setOffset(animData[0], Std.parseFloat(offsets[0]), Std.parseFloat(offsets[1]));
+						}
+					}
+				}
+
+				if (hasOffsetFile) {
+					var offsetsFile:Array<String> = Utils.listFromFile(AssetHelper.getAsset('data/characters/${name}/offsetList', TEXT));
+					for (i in offsetsFile) {
+						var split:Array<String> = Utils.removeSpaces(i).split("|");
+						var offset:Array<String> = Utils.removeSpaces(split[1]).split(",");
+						setOffset(split[0], Std.parseFloat(offset[0]), Std.parseFloat(offset[1]));
+					}
+				}
+
 			case PSYCH:
 				var charImage:String = file?.image ?? 'characters/${name}';
 				frames = AssetHelper.getAsset('images/${charImage}', ATLAS);

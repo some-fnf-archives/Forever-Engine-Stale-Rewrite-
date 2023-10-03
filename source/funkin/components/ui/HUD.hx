@@ -16,7 +16,7 @@ class HUD extends FlxSpriteGroup {
 		super();
 
 		var engineText:String = 'FOREVER ENGINE v${Main.version}' + //
-			'\nEverything here is\nsubjective of change!';
+			'\nEverything here is\npretty much unfinished!';
 
 		cornerMark = new ForeverText(0, 0, 0, engineText, 16);
 		cornerMark.setPosition(FlxG.width - (cornerMark.width + 5), 5);

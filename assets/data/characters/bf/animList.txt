@@ -1,0 +1,33 @@
+# [Forever Engine Animation List Offset]
+
+# Order: name | prefix (in xml) | framerate | looped or not | offsets (separate with comma)
+# offset field can be blank, or overriden by a file called offsetList.txt
+
+spritesheet: characters/bf/normal
+# Idle Animations, separate with comma
+dancingSteps: idle
+# Sing Animations, separate with comma
+singingSteps: singLEFT, singDOWN, singUP, singRIGHT
+# Character Flipping X
+flipX: true
+# Character Flipping Y
+flipY: false
+
+# Position X, Position Y, this is a global offset
+position: 0.0, 0.0
+# Scale X, Scale Y
+scale: 1.0, 1.0
+
+idle | BF idle dance | 24 | false | 0.0, 0.0
+scared | BF idle shaking | 24 | false | 0.0, 0.0
+hey | BF HEY!! | 24 | false | 0.0, 0.0
+
+singLEFT | BF NOTE LEFT0 | 24 | false
+singDOWN | BF NOTE DOWN0 | 24 | false
+singUP | BF NOTE UP0 | 24 | false
+singRIGHT | BF NOTE RIGHT0 | 24 | false
+
+singLEFTmiss | BF NOTE LEFT MISS | 24 | false
+singDOWNmiss | BF NOTE DOWN MISS | 24 | false
+singUPmiss | BF NOTE UP MISS | 24 | false
+singRIGHTmiss | BF NOTE RIGHT MISS | 24 | false
