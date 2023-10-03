@@ -38,8 +38,9 @@ class PlayState extends FNFState {
 	public override function create():Void {
 		super.create();
 
-		FlxG.mouse.visible = true;
+		FlxG.mouse.visible = false;
 
+		// -- SET UP CAMERAS -- //
 		gameCamera = FlxG.camera;
 		hudCamera = new FlxCamera();
 		altCamera = new FlxCamera();
@@ -48,6 +49,7 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(hudCamera, false);
 		FlxG.cameras.add(altCamera, false);
 
+		// -- PREPARE PLAYFIELD --
 		ChartLoader.load(songName, "hard");
 		Conductor.bpm = Chart.current.data.initialBPM;
 
@@ -55,9 +57,12 @@ class PlayState extends FNFState {
 		add(playField = new PlayField());
 		add(hud = new HUD());
 
+		playField.camera = hud.camera = hudCamera;
+
 		for (lane in playField.lanes)
 			lane.changeStrumSpeed(Chart.current.data.initialSpeed);
 
+		// -- PREPARE CHARACTERS -- //
 		add(player = new Character(0, 0, "bf", true));
 		add(enemy = new Character(0, 0, "bf", false));
 
@@ -67,8 +72,7 @@ class PlayState extends FNFState {
 		player.x = FlxG.width / 2.0;
 		enemy.x = FlxG.width / 6.0;
 
-		playField.camera = hud.camera = hudCamera;
-
+		// -- PREPARE AUDIO -- //
 		inst = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${songName}/audio/Inst.ogg'));
 		vocals = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${songName}/audio/Voices.ogg'));
 		FlxG.sound.list.add(vocals);
@@ -104,18 +108,20 @@ class PlayState extends FNFState {
 		if (FlxG.keys.justPressed.SPACE)
 			player.playAnim("hey", true);
 
-		/*if (FlxG.keys.justPressed.SPACE) {
-			Settings.downScroll = !Settings.downScroll;
-			Settings.flush();
+		/*
+			if (FlxG.keys.justPressed.SPACE) {
+				Settings.downScroll = !Settings.downScroll;
+				Settings.flush();
 
-			if (!Settings.downScroll) {
-				trace('uhhhhhh');
-				bg.tween({y: FlxG.height}, 1, {ease: FlxEase.expoOut});
-			} else {
-				trace('peekaboo');
-				bg.tween({y: 0}, 1, {ease: FlxEase.expoOut});
+				if (!Settings.downScroll) {
+					trace('uhhhhhh');
+					bg.colorTween(FlxColor.LIME, 1, {ease: FlxEase.expoOut});
+				} else {
+					trace('peekaboo');
+					bg.colorTween(FlxColor.BLUE, 1, {ease: FlxEase.expoOut});
+				}
 			}
-		}*/
+		 */
 	}
 
 	public override function onBeat(beat:Int):Void {

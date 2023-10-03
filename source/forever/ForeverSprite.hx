@@ -115,11 +115,8 @@ class ForeverSprite extends FlxSprite {
 	 * @param duration		The duration of the tween.
 	 * @param options		The tween options, such as delay, type, easing, and callbacks.
 	**/
-	public function colorTween(toColor:FlxColor, ?fromColor:FlxColor, duration:Float, ?options:TweenOptions):Void {
-		if (fromColor == null)
-			fromColor = this.color;
-
-		FlxTween.color(this, duration, fromColor, toColor, options);
+	public function colorTween(toColor:FlxColor, duration:Float, ?options:TweenOptions):Void {
+		FlxTween.color(this, duration, this.color, toColor, options);
 	}
 
 	/**

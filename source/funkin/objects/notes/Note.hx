@@ -59,6 +59,7 @@ class Note extends ForeverSprite {
 	public function appendData(data:NoteData):Note {
 		this.data = data;
 
+		// TEMPORARY //
 		frames = AssetHelper.getAsset('images/notes/default/notes', ATLAS_SPARROW);
 		addAtlasAnim("scroll", '${Utils.NOTE_DIRECTIONS[direction]}0', 24, false);
 		playAnim("scroll");

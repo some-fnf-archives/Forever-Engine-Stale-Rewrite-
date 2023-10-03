@@ -7,15 +7,14 @@ import haxe.ds.Vector;
 class NoteSpawner extends FlxTypedSpriteGroup<Note> {
 	public var noteList:Vector<NoteData>;
 	public var curNoteData(get, never):NoteData;
-	public var laneSpeed:Float = 1.0;
 	public var curNote:Int = 0;
 
 	public function new(totalNotes:Int):Void {
 		super();
 
-		noteList = new Vector(totalNotes);
+		noteList = new Vector<NoteData>(totalNotes);
 		// allocate notes before beginning
-		for (i in 0...15) {
+		for (i in 0...16) {
 			var alloc:Note = new Note();
 			add(alloc);
 		}

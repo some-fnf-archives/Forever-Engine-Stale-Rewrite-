@@ -3,6 +3,7 @@ package;
 import flixel.FlxGame;
 import flixel.FlxState;
 import forever.ui.ForeverOverlay;
+import forever.ui.overlay.*;
 import openfl.display.Sprite;
 import openfl.utils.Assets as OpenFLAssets;
 
@@ -26,7 +27,7 @@ class Main extends Sprite {
 		#end
 
 		addChild(new FlxGame(1280, 720, Init, framerate, framerate, true));
-		addChild(overlay = new ForeverOverlay(0, 0, 0xFFFFFFFF));
+		addChild(overlay = new ForeverOverlay([new FramerateMonitor(), new MemoryMonitor()]));
 	}
 
 	private function onResizeGame(width:Int, height:Int):Void {
