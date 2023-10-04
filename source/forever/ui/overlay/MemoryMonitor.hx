@@ -36,7 +36,6 @@ class MemoryMonitor extends BaseOverlayMonitor {
 			#end
 		}
 	 */
-
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
 	function get_staticRAM():Float {

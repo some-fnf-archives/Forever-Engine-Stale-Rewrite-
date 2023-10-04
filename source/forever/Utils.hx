@@ -7,6 +7,8 @@ import flixel.math.FlxMath;
 import flixel.util.FlxAxes;
 #end
 
+using StringTools;
+
 class Utils {
 	public static final NOTE_DIRECTIONS:Array<String> = ["left", "down", "up", "right"];
 	public static final NOTE_COLORS:Array<String> = ["purple", "blue", "green", "red"];
@@ -34,6 +36,28 @@ class Utils {
 		if (trim)
 			StringTools.trim(str);
 		return StringTools.replace(str, "-", with);
+	}
+
+	public static function listFolders(path:String):Array<String> {
+		var assetsLibrary:Array<String> = [];
+		for (folder in OpenFLAssets.list().filter(list -> list.contains('${path}'))) {
+			var daFolder:String = folder.replace('${path}/', '');
+			if (daFolder.contains('/'))
+				daFolder = daFolder.replace(daFolder.substring(daFolder.indexOf('/'), daFolder.length), ''); // fancy
+
+			if (!daFolder.startsWith('.') && !assetsLibrary.contains(daFolder))
+				assetsLibrary.push(daFolder);
+		}
+
+		assetsLibrary.sort(function(a:String, b:String):Int {
+			a = a.toUpperCase();
+			b = b.toUpperCase();
+
+			return (a < b ? -1 : a > b ? 1 : 0);
+		});
+
+		trace(assetsLibrary);
+		return assetsLibrary;
 	}
 
 	#if !macro

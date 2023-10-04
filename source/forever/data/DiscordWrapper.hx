@@ -8,7 +8,7 @@ import hxdiscord_rpc.Types.DiscordUser;
 
 class DiscordWrapper {
 	@:allow(Init)
-	function new(clientID:String):Void {
+	static function initialize(clientID:String):Void {
 		var evHandler:DiscordEventHandlers = DiscordEventHandlers.create();
 		evHandler.ready = cpp.Function.fromStaticFunction(_onReady);
 		evHandler.disconnected = cpp.Function.fromStaticFunction(_onDc);
