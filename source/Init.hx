@@ -28,7 +28,7 @@ class Init extends FlxState {
 		setupTransition();
 
 		Controls.current = new BaseControls();
-		forever.data.DiscordWrapper.initialize("1157951594667708416");
+		#if DISCORD forever.data.DiscordWrapper.initialize("1157951594667708416"); #end
 		#if MODS forever.data.ModManager.initialize(); #end
 
 		// make sure there is a note configuration set
