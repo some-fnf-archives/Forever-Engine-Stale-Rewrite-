@@ -4,7 +4,7 @@ package forever.data;
 import haxe.ds.StringMap;
 import polymod.Polymod;
 
-class ForeverModManager {
+class ModManager {
 	/** Default Mods Folder. **/
 	public static final MODS_FOLDER:String = "mods";
 
