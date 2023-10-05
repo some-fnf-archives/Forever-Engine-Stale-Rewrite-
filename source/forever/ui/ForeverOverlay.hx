@@ -6,19 +6,25 @@ import forever.ui.overlay.*;
 import openfl.display.Sprite;
 
 /**
- * Displays FPS and Memory Info on-screen.
- *
- * based on this tutorial: https://keyreal-code.github.io/haxecoder-tutorials/17_displaying_fps_and_memory_usage_using_openfl.html
+ * Displays a Bar at the top of the screen with Text Information,
+ * such as Current Framerate, RAM Usage, etc,
+ * all the displayed info can be customized.
 **/
 class ForeverOverlay extends Sprite {
-	public var bar:Sprite;
+	/** List of Monitors that have been appended to this Overlay. **/
 	public var monitors:Array<BaseOverlayMonitor> = [];
+	/** Counts your Current Frames per Second. **/
 	public var currentFPS:Int = 0;
 
-	@:noCompletion
+	@:noCompletion @:dox(hide)
 	private var deltaTimeout:Int = 0;
 	private var times:Array<Float> = [];
 
+	/**
+	 * Instantiates the Overlay.
+	 * 
+	 * @param monis 		the Monitors that should be appended by default when creating the overlay.
+	**/
 	public function new(monis:Array<BaseOverlayMonitor>):Void {
 		super();
 
@@ -38,6 +44,7 @@ class ForeverOverlay extends Sprite {
 		doMonitorUpdate();
 	}
 
+	/** Updates each overlay monitor (if any). **/
 	public function doMonitorUpdate():Void {
 		if (monitors.length == 0 || monitors == null)
 			return;

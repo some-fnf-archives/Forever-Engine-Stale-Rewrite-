@@ -1,5 +1,6 @@
 package forever.ui.overlay;
 
+@:dox(hide)
 /** Displays your current Framerate Usage. **/
 class FramerateMonitor extends BaseOverlayMonitor {
 	public function new():Void {

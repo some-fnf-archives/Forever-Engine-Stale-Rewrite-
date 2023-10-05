@@ -21,12 +21,12 @@ class ForeverSprite extends FlxSprite {
 	 * @param graphic		The name of the graphic (will be searched for in `assets/images`).
 	 * @param properties	The properties to modify for this graphic, options: alpha, color, "scale.x", "scale.y".
 	**/
-	public function new(?x:Float = 0, ?y:Float = 0, ?image:String, ?properties:Dynamic):Void {
+	public function new(?x:Float = 0, ?y:Float = 0, ?graphic:String, ?properties:Dynamic):Void {
 		super(x, y);
 
 		antialiasing = Settings.globalAntialias;
-		if (image != null)
-			addGraphic(image, properties);
+		if (graphic != null)
+			addGraphic(graphic, properties);
 	}
 
 	/**

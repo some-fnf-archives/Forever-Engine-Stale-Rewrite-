@@ -8,6 +8,11 @@ import hxdiscord_rpc.Types.DiscordUser;
 
 class DiscordWrapper {
 	@:allow(Init)
+	/**
+	 * Initializes the Discord Rich Presence Wrapper.
+	 * 
+	 * @param clientID			your app's ClientID, from Discord Developer Portal.
+	**/
 	static function initialize(clientID:String):Void {
 		var evHandler:DiscordEventHandlers = DiscordEventHandlers.create();
 		evHandler.ready = cpp.Function.fromStaticFunction(_onReady);
@@ -32,6 +37,16 @@ class DiscordWrapper {
 		openfl.Lib.application.onExit.add((exitCode:Int) -> Discord.Shutdown());
 	}
 
+	/**
+	 * Updates your Discord Rich Presence Status, including icons and text
+	 * 
+	 * @param state 				Rich Presence State, e.g: IN FREEPLAY
+	 * @param details 				Rich Presence Details, e.g: In the Menus
+	 * @param largeImage 			Image that displays when viewing your status on Discord.
+	 * @param largeText 			Text that displays when hovering over the large image on Discord.
+	 * @param smallImage 			Small image that displays near the large image on Discord.
+	 * @param smallText
+	**/
 	public static function updatePresence(state:String = "", details:String = "", ?largeImage:String = "forevermic", ?largeText:String = null,
 			?smallImage:String = "", ?smallText:String = ""):Void {
 		final presence:DiscordRichPresence = DiscordRichPresence.create();
@@ -49,21 +64,23 @@ class DiscordWrapper {
 		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(presence));
 	}
 
+	@:dox(hide) @:noCompletion
 	static function _onReady(req:cpp.RawConstPointer<DiscordUser>):Void {
 		final pointer:cpp.Star<DiscordUser> = cpp.ConstPointer.fromRaw(req).ptr;
 		trace('[DiscordWrapper:_onReady] Connection Established, Welcome ${cast (pointer.username)}.');
 	}
 
+	@:dox(hide) @:noCompletion
 	static function _onDc(errorCode:Int, message:cpp.ConstCharStar):Void {
 		trace('[DiscordWrapper:_onDc] Connection Lost with message: ${message}! - Error Code: ${errorCode}');
 	}
 
+	@:dox(hide) @:noCompletion
 	static function _onErr(errorCode:Int, message:cpp.ConstCharStar):Void {
 		trace('[DiscordWrapper:_onErr] An Error has occurred, message: ${message}! - Error Code: ${errorCode}');
 	}
 }
 #else
-
 /**
  * This Platform cannot use Discord Rich Presence.
  * thus, this is a stub class.
@@ -72,6 +89,7 @@ class DiscordWrapper {
 	@:allow(Init)
 	function new(clientID:String):Void {}
 
+	@:dox(hide)
 	public static function updatePresence(state:String = "", details:String = "", ?largeImage:String = "forevermic", ?largeText:String = null,
 		?smallImage:String = "", ?smallText:String = ""):Void {}
 }

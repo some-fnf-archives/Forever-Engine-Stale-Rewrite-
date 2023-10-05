@@ -4,9 +4,20 @@ import haxe.macro.*;
 import haxe.macro.Expr;
 
 /**
- * Macro by @Ne_Eo
+ * Macro that generates Control Callbacks for the Controls Class,
+ * Example Usage:
+ * 
+ * ```haxe
+ * // empty function, the macro automatically handles the contents of this function by
+ * function MY_CUSTOM_KEY(jp_my_custom_key):Void {}
+ * ```
+ * 
+ * @author Ne_Eo
 **/
 class ControlsMacro {
+	/**
+	 * Builds the Controls Macro.
+	**/
 	public static function build() {
 		var fields = Context.getBuildFields();
 

@@ -9,17 +9,13 @@ using StringTools;
 
 /**
  * Contains helpers for settings along with macros to save settings
- * Macros were written by @Ne_Eo
+ * @author @Ne_Eo
 **/
 class ConfigHelper {
-	/**
-	 * Returns the actual save path for settings
-	**/
-	// if I ever plan to make scriptable saves I need to remember
-	// to use this at all costs when doing the new stuff and all -Crow
+	/** Returns the actual save path for settings. **/
 	public static var savePath(get, never):String;
 
-	@:noCompletion
+	@:noCompletion @:dox(hide)
 	static function get_savePath():String {
 		var companyName:String = lime.app.Application.current.meta["company"];
 		return '${companyName}/${lime.app.Application.current.meta["file"]}';

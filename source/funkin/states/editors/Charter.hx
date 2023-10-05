@@ -100,7 +100,7 @@ class Charter extends FlxSubState {
 
 		if (FlxG.keys.justPressed.ESCAPE) {
 			FlxG.state.closeSubState();
-			AssetHelper.clearCacheEntirely();
+			@:privateAccess AssetHelper.clearCacheEntirely();
 		}
 
 		if (FlxG.sound.music != null && FlxG.sound.music.playing) {

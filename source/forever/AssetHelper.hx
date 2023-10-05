@@ -7,6 +7,10 @@ import openfl.utils.Assets as OpenFLAssets;
 import openfl.media.Sound;
 import openfl.utils.AssetType as FLAssetType;
 
+/**
+ * Helper Enum for Engine Names, used for conversion methods
+ * in order to provide greater compatibility with other FNF Engines.
+**/
 enum abstract EngineImpl(String) to String {
 	/** Forever Engine Implementation Style. **/
 	var FOREVER = "forever";
@@ -25,15 +29,41 @@ enum abstract EngineImpl(String) to String {
 
 }
 
+/** Asset Helper Class, handles asset loading and caching. **/
 class AssetHelper {
 	@:noPrivateAccess static var loadedGraphics:Map<String, FlxGraphic> = [];
 	@:noPrivateAccess static var loadedSounds:Map<String, Sound> = [];
 	@:noPrivateAccess static var currentUsedAssets:Array<String> = [];
 
+	/**
+	 * Creates a formatted asset path with an extension if needed
+	 * use this in case you do not wish to cache your assets and instead just grab their base path.
+	 * 
+	 * @param asset 			Asset name/folder name you want to format.
+	 * @param type 				Type of asset, is unspecified, file extensions won't be added to the formatted path.
+	 * 
+	 * @return String
+	**/
 	public static function getPath(?asset:String, ?type:ForeverAsset):String {
 		return type.getExtension('assets/${asset}');
 	}
 
+	/**
+	 * As the name implies, this allows you to grab specifically assets with their specified type,
+	 * unlike `getPath`, this returns the actual object of an asset and also caches it.
+	 * 
+	 * Example:
+	 * 
+	 * ```haxe
+	 * var myGraphic = AssetHelper.getAsset('images/myImage', IMAGE); // flixel.graphics.FlxGraphic
+	 * var mySound = AssetHelper.getAsset('sounds/mySound', SOUND); // openfl.media.Sound
+	 * ```
+	 * 
+	 * @param asset 			Asset name you want to grab.
+	 * @param type 				Type of asset, to append extensions and get the asset you want.
+	 * 
+	 * @return Dynamic
+	**/
 	public static function getAsset(asset:String, ?type:ForeverAsset):Dynamic {
 		var gottenAsset:String = getPath(asset, type);
 
@@ -49,6 +79,11 @@ class AssetHelper {
 		}
 	}
 
+	/**
+	 * Internal Usage and Caching, use this only when absolutely necessary
+	 * 
+	 * @param file 				File to extract the graphic from
+	**/
 	public static function getGraphic(file:String):FlxGraphic {
 		try {
 			var bd:BitmapData = OpenFLAssets.getBitmapData(file);
@@ -66,6 +101,11 @@ class AssetHelper {
 		return null;
 	}
 
+	/**
+	 * Internal Usage and Caching, use this only when absolutely necessary
+	 * 
+	 * @param file 				File to extract the sound from
+	**/
 	public static function getSound(file:String):Sound {
 		try {
 			var sound:Sound = OpenFLAssets.getSound(getAsset(file, SOUND));
@@ -79,14 +119,14 @@ class AssetHelper {
 		return null;
 	}
 
-	public static function clearCacheEntirely(major:Bool = false):Void {
+	@:dox(hide) static function clearCacheEntirely(major:Bool = false):Void {
 		clearCachedGraphics(major);
 		clearCachedSounds(major);
 		if (major)
 			_clearCacheMajor();
 	}
 
-	public static function clearCachedGraphics(force:Bool = false):Void {
+	@:dox(hide) static function clearCachedGraphics(force:Bool = false):Void {
 		var graphicCounter:Int = 0;
 
 		for (keyGraphic in loadedGraphics.keys()) {
@@ -108,7 +148,7 @@ class AssetHelper {
 		trace('cleared ${graphicCounter} graphics from cache.');
 	}
 
-	public static function clearCachedSounds(force:Bool = false):Void {
+	@:dox(hide) static function clearCachedSounds(force:Bool = false):Void {
 		var soundCounter:Int = 0;
 
 		for (keySound in loadedSounds.keys()) {
@@ -136,6 +176,10 @@ class AssetHelper {
 	}
 }
 
+/**
+ * Abstract that defines asset types with functions to get the extensions
+ * for a given asset type.
+**/
 enum abstract ForeverAsset(String) to String {
 	var IMAGE = "image";
 	var VIDEO = "video";

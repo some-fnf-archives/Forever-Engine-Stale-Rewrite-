@@ -9,10 +9,12 @@ import flixel.util.FlxAxes;
 
 using StringTools;
 
+/** Global Utilities. **/
 class Utils {
 	public static final NOTE_DIRECTIONS:Array<String> = ["left", "down", "up", "right"];
 	public static final NOTE_COLORS:Array<String> = ["purple", "blue", "green", "red"];
 
+	/** Creates a list from a filepath, it is recommended to use this with plaintext files. **/
 	public static function listFromFile(path:String):Array<String> {
 		return [
 			for (t in OpenFLAssets.getText(path).split("\n"))
@@ -20,24 +22,56 @@ class Utils {
 		];
 	}
 
+	/**
+	 * Removes every space from a string.
+	 * 
+	 * @param str 			The string to remove spaces from.
+	 * @param trim 			If leading and trailing spaces should also be removed.
+	 * 
+	 * @return String
+	**/
 	public static function removeSpaces(str:String, trim:Bool = true):String {
 		if (trim)
 			StringTools.trim(str);
 		return StringTools.replace(str, " ", "");
 	}
 
+	/**
+	 * Replaces every space from a string with something else.
+	 * 
+	 * @param str 			The string to replace spaces from.
+	 * @param with 			Another string defining what to replace the spaces with (default "-").
+	 * @param trim 			If leading and trailing spaces should also be removed.
+	 * 
+	 * @return String
+	**/
 	public static function replaceSpaces(str:String, with:String = "-", trim:Bool = true):String {
 		if (trim)
 			StringTools.trim(str);
 		return StringTools.replace(str, " ", with);
 	}
 
+	/**
+	 * Replaces every dash (-) from a string with something else.
+	 * 
+	 * @param str 			The string to replace dashes from.
+	 * @param with 			Another string defining what to replace the dashes with (default " ").
+	 * @param trim 			If leading and trailing spaces should be removed.
+	 * 
+	 * @return String
+	**/
 	public static function replaceDashes(str:String, with:String = " ", trim:Bool = true):String {
 		if (trim)
 			StringTools.trim(str);
 		return StringTools.replace(str, "-", with);
 	}
 
+	/**
+	 * Lists every folder in the specified path
+	 * 
+	 * @param path 				the path to get folders from
+	 * @return Array<String>
+	**/
 	public static function listFolders(path:String):Array<String> {
 		var assetsLibrary:Array<String> = [];
 		for (folder in OpenFLAssets.list().filter(list -> list.contains('${path}'))) {
@@ -61,6 +95,13 @@ class Utils {
 	}
 
 	#if !macro
+	/**
+	 * Centers an object to the center of another object
+	 * 
+	 * @param axes 			in which axes should this be centered at (X, Y, XY)
+	 * 
+	 * @return FlxObject
+	**/
 	public static function centerToObject(object:FlxObject, target:FlxObject, axes:FlxAxes = XY):FlxObject {
 		// literally just FlxObject.screenCenter but it uses `base` instead of `FlxG.width` and `FlxG.height`
 		if (axes.x)

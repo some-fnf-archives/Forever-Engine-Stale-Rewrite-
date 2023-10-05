@@ -6,6 +6,13 @@ import funkin.components.ui.AlphabetGlyph;
 
 using StringTools;
 
+/** Alignment Mode for your Alphabet Font. **/
+enum abstract AlphabetAlignment(String) from String to String {
+	var LEFT = "left";
+	var CENTER = "center";
+	var RIGHT = "right";
+}
+
 /**
  * A class for rendering text in a special funky font!
  * Includes left, center, and right sided aligning!
@@ -15,14 +22,10 @@ using StringTools;
 class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	public var type(default, set):AlphabetGlyphType;
 
-	/**
-	 * The currently set alignment type for the text.
-	 */
+	/** The currently set alignment type for the text. **/
 	public var alignment(default, set):AlphabetAlignment;
 
-	/**
-	 * The currently set text.
-	 */
+	/** The currently set text. **/
 	public var text(default, set):String;
 
 	/**
@@ -30,22 +33,16 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	 *
 	 * It is recommended to use this instead of `scale`
 	 * as it auto-adjusts the position of each glyph/letter.
-	 */
+	**/
 	public var size(default, set):Float = 1.0;
 
-	/**
-	 * The index of this text when displayed in a list.
-	 */
+	/** The index of this text when displayed in a list. **/
 	public var targetY:Int = 0;
 
-	/**
-	 * Whether this object displays in a list like format.
-	 */
+	/** Whether this object displays in a list like format. **/
 	public var isMenuItem:Bool = false;
 
-	/**
-	 * The spacing between items in menus like freeplay or options.
-	 */
+	/** The spacing between items in menus like freeplay or options. **/
 	public var menuSpacing:FlxPoint = FlxPoint.get(20, 120);
 
 	public function new(x:Float = 0, y:Float = 0, text:String = "", ?type:AlphabetGlyphType = BOLD, ?alignment:AlphabetAlignment = LEFT, ?size:Float = 1.0) {
@@ -181,10 +178,4 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 		menuSpacing.put();
 		super.destroy();
 	}
-}
-
-enum abstract AlphabetAlignment(String) from String to String {
-	var LEFT = "left";
-	var CENTER = "center";
-	var RIGHT = "right";
 }

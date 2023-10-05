@@ -3,6 +3,7 @@ package forever.ui.overlay;
 import external.memory.Memory;
 import flixel.util.FlxStringUtil;
 
+@:dox(hide)
 /** Displays your current (and highest) Memory Usage. **/
 class MemoryMonitor extends BaseOverlayMonitor {
 	public var staticRAM(get, never):Float;
