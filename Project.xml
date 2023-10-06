@@ -4,8 +4,8 @@
 	<!-- [ Forever Engine Custom Nodes ] -->
 	<!-- _______________________________ -->
 
-	<define name="TRANSLATIONS" if="TEST_COMP" />
 	<define name="DISCORD" if="cpp" />
+	<define name="TRANSLATIONS" if="TEST_COMP" />
 	<define name="CRASH_HANDLER" />
 	<define name="MODS" />
 
