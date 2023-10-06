@@ -24,7 +24,7 @@ class NoteSpawner extends FlxTypedSpriteGroup<Note> {
 		if (noteList == null || noteList.length == 0)
 			return;
 
-		while (curNote < noteList.length - 1) {
+		while (curNote < noteList.length) {
 			var timeDifference:Float = curNoteData.time - Conductor.time;
 			if (curNoteData == null || timeDifference > 2.0)
 				break;

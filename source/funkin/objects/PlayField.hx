@@ -10,6 +10,9 @@ import funkin.objects.notes.*;
 **/
 class PlayField extends FlxGroup {
 	public var lanes:FlxTypedGroup<NoteField>;
+	public var playerLane:NoteField;
+	public var enemyLane:NoteField;
+
 	public var noteSpawner:NoteSpawner;
 
 	public function new():Void {
@@ -18,22 +21,22 @@ class PlayField extends FlxGroup {
 		var strumY:Float = Settings.downScroll ? FlxG.height - 150 : 50;
 
 		add(lanes = new FlxTypedGroup<NoteField>());
-		lanes.add(new NoteField(98, strumY, "default"));
-		lanes.add(new NoteField(FlxG.width - 542, strumY, "default"));
 		add(noteSpawner = new NoteSpawner(Chart.current.notes.length));
+
+		lanes.add(enemyLane = new NoteField(98, strumY, "default"));
+		lanes.add(playerLane = new NoteField(FlxG.width - 542, strumY, "default"));
 
 		for (i in 0...Chart.current.notes.length)
 			noteSpawner.noteList[i] = Chart.current.notes[i];
 	}
 
 	public override function update(elapsed:Float):Void {
-		if (noteSpawner.noteList != null && noteSpawner.noteList.length > 0) {
-			var laneID:Int = noteSpawner.curNoteData?.lane ?? -1;
-			var lane:NoteField = lanes.members[laneID];
-			if (lane != null && laneID != -1)
-				noteSpawner.spawnNotes(lane);
-		}
-
 		super.update(elapsed);
+
+		if (noteSpawner.curNoteData != null) {
+			var laneID:Int = noteSpawner.curNoteData?.lane ?? -1;
+			if (laneID != -1)
+				noteSpawner.spawnNotes(lanes.members[laneID]);
+		}
 	}
 }

@@ -48,8 +48,14 @@ class FreeplayMenu extends FNFState {
 
 		if (Controls.UP_P || Controls.DOWN_P)
 			updateSelection(Controls.UP_P ? -1 : 1);
-		if (Controls.ACCEPT)
-			FlxG.switchState(new funkin.states.PlayState());
+		if (Controls.ACCEPT) {
+			var song:funkin.states.PlayState.PlaySong = {
+				display: songs[curSelection].name,
+				folder: songs[curSelection].folder,
+				difficulty: "hard"
+			};
+			FlxG.switchState(new funkin.states.PlayState(song));
+		}
 	}
 
 	public var curSelection:Int = 0;

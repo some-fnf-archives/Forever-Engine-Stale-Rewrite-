@@ -69,7 +69,14 @@ class AssetHelper {
 
 		return switch (type) {
 			case IMAGE: getGraphic('${gottenAsset}');
-			case JSON: tjson.TJSON.parse(OpenFLAssets.getText(gottenAsset));
+			case JSON:
+				var json:String = OpenFLAssets.getText(gottenAsset).trim();
+				while (!json.endsWith("}")) // ensure its not broken.
+					json = json.substr(0, json.length - 1);
+
+				// return
+				tjson.TJSON.parse(json);
+
 			case FONT: getPath('fonts/${asset}', FONT);
 			case ATLAS:
 				if (type.assetExists(getPath(asset, TEXT))) return getAsset(asset, ATLAS_PACKER); else return getAsset(asset, ATLAS_SPARROW);

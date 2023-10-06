@@ -58,12 +58,8 @@ class Note extends ForeverSprite {
 
 	public function appendData(data:NoteData):Note {
 		this.data = data;
-
-		// TEMPORARY //
-		frames = AssetHelper.getAsset('images/notes/default/notes', ATLAS_SPARROW);
-		addAtlasAnim("scroll", '${Utils.NOTE_DIRECTIONS[direction]}0', 24, false);
-		playAnim("scroll");
-
+		this.type = data.type;
+		playAnim("scroll", true);
 		return this;
 	}
 
@@ -111,19 +107,14 @@ class Note extends ForeverSprite {
 	@noCompletion function set_type(v:String):String {
 		switch (v) {
 			default:
-				/*
-					frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.notes.image}', ATLAS_SPARROW);
-					if (NoteConfig.config.notes.anims.length > 0) {
-						for (i in NoteConfig.config.notes.anims) {
-							var dir:String = Utils.NOTE_DIRECTIONS[direction ?? 0];
-							var color:String = Utils.NOTE_COLORS[direction ?? 0];
-							addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
-						}
+				frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.notes.image}', ATLAS_SPARROW);
+				if (NoteConfig.config.notes.anims.length > 0) {
+					for (i in NoteConfig.config.notes.anims) {
+						var dir:String = Utils.NOTE_DIRECTIONS[direction ?? 0];
+						var color:String = Utils.NOTE_COLORS[direction ?? 0];
+						addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
 					}
-				 */
-				frames = AssetHelper.getAsset('images/notes/default/notes', ATLAS_SPARROW);
-				addAtlasAnim("scroll", '${Utils.NOTE_DIRECTIONS[direction ?? 0]}0', 24, false);
-				playAnim("scroll");
+				}
 		}
 
 		return v;

@@ -6,7 +6,7 @@ class ChartLoader {
 	public static function load(folder:String, file:String):Chart {
 		var chart:Chart = new Chart();
 
-		var json = cast AssetHelper.getAsset('songs/${folder}/${file}', JSON).song;
+		var json = cast AssetHelper.getAsset('songs/${folder}/${file}', JSON);
 		var dataType:String = VANILLA_V1;
 
 		if (Reflect.hasField(json, "player2"))
@@ -19,46 +19,55 @@ class ChartLoader {
 		try {
 			switch (dataType) {
 				case VANILLA_V1:
-					var bars:Array<Dynamic> = Reflect.field(json, "notes");
-					var curBPM:Float = json.bpm;
+					var curBPM:Float = json.song.bpm;
+					var keys:Int = 4; // TODO: convert shaggy charts??
+					var totalSteps:Int = 0;
 
 					chart.data = {
 						initialBPM: curBPM,
-						initialSpeed: json.speed,
-						keyAmount: 4,
-						playerChar: json.player1 ?? "bf",
-						enemyChar: json.player2 ?? "dad",
-						crowdChar: json.player3 ?? json.gfVersion ?? "gf",
-						stageBG: json.stage ?? getVanillaStage(json.song),
+						initialSpeed: json.song.speed,
+						keyAmount: keys,
+						playerChar: json.song.player1 ?? "bf",
+						enemyChar: json.song.player2 ?? "dad",
+						crowdChar: json.song.player3 ?? json.song.gfVersion ?? "gf",
+						stageBG: json.song.stage ?? getVanillaStage(json.song.song),
 					}
 
-					for (bar in bars) {
-						var barNotes:Array<Dynamic> = bar.sectionNotes;
+					var bars:Array<Dynamic> = cast(json.song.notes, Array<Dynamic>);
+
+					for (i in 0...bars.length) {
+						var bar:Dynamic = bars[i];
+						var dtSteps:Int = bars[i].lengthInSteps;
+						totalSteps += dtSteps;
+
 						if (bar.changeBPM == true && bar.bpm != curBPM) {
 							curBPM = bar.bpm;
-							// chart.data.bpmChanges.push({bpm: bar.bpm, step: Conductor.timeToStep()});
+							chart.data.bpmChanges.push({bpm: bar.bpm, step: totalSteps});
 						}
 
-						for (note in barNotes) {
-							var mustPress:Bool = bar.mustHitSection;
-							if (Std.int(note[1]) >= chart.data.keyAmount)
-								mustPress = !mustPress;
+						for (j in cast(bar.sectionNotes, Array<Dynamic>)) {
+							if (j[0] < 0) {
+								// trace('event note at ${j[1]}, skipping');
+								continue;
+							}
+
+							var noteAnim:String = "sing" + Utils.NOTE_DIRECTIONS[Std.int(j[1] % chart.data.keyAmount)].toUpperCase();
+							if (Std.isOfType(j[3], Bool) && j[3] == true || bar.altAnim)
+								noteAnim += "-alt";
+
+							final laneID:Int = (Std.int(j[1]) >= chart.data.keyAmount != bar.mustHitSection) ? 1 : 0;
 
 							chart.notes.push({
-								time: note[0] / 1000.0,
-								step: Conductor.timeToStep(note[0], curBPM),
-								direction: Std.int(note[1] % chart.data.keyAmount),
-								lane: mustPress ? 1 : 0,
-								type: note[3] != null && Std.isOfType(note[3], String) ? note[3] : "default",
-								animation: note[3] != null && Std.isOfType(note[3], Bool) && note[3] == true ? "-alt" : "",
-								length: (note[2] / 1000.0) / (curBPM / 60.0) * 4.0
+								time: j[0] / 1000.0,
+								step: Conductor.timeToStep(j[0], curBPM),
+								direction: Std.int(j[1] % chart.data.keyAmount),
+								lane: laneID,
+								type: j[3] != null && Std.isOfType(j[3], String) ? j[3] : "default",
+								animation: noteAnim,
+								length: j[2] / 1000.0
 							});
 						}
 					}
-
-					// Psych Events.
-					var events:Array<Dynamic> = Reflect.field(json, "events");
-
 				case CROW:
 					trace('Crow Engine Charts are not implemented *yet*');
 				case FOREVER:
@@ -107,10 +116,11 @@ class Chart {
 **/
 typedef NoteData = {
 	var step:Float;
+	var time:Float; // original millisecond timing, used for conversion to steps
 	var direction:Int;
-	@:optional var time:Float; // original millisecond timing, used for conversion to steps
+	var lane:Int;
+
 	@:optional var type:String;
-	@:optional var lane:Int;
 	@:optional var animation:String;
 	@:optional var length:Float;
 }

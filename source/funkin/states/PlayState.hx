@@ -16,8 +16,14 @@ enum abstract GameplayMode(Int) to Int {
 	var CHARTER = 2;
 }
 
+typedef PlaySong = {
+	var display:String;
+	var folder:String;
+	var difficulty:String;
+}
+
 class PlayState extends FNFState {
-	public var songName:String = "lost-cause";
+	public var currentSong:PlaySong = {display: "Test", folder: "test", difficulty: "normal"};
 	public var playMode:Int = FREEPLAY;
 
 	public var bg:ForeverSprite;
@@ -35,8 +41,20 @@ class PlayState extends FNFState {
 	public var inst:FlxSound;
 	public var vocals:FlxSound;
 
+	/**
+	 * Constructs the Gameplay State
+	 * 
+	 * @param songInfo 			Assigns a new song to the PlayState.
+	**/
+	public function new(songInfo:PlaySong):Void {
+		super();
+		this.currentSong = songInfo;
+	}
+
 	public override function create():Void {
 		super.create();
+
+		Conductor.time = -(60.0 / Conductor.bpm) * 4.0;
 
 		FlxG.mouse.visible = false;
 
@@ -50,7 +68,7 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(altCamera, false);
 
 		// -- PREPARE PLAYFIELD -- //
-		ChartLoader.load(songName, "hard");
+		ChartLoader.load(currentSong.folder, "hard");
 		Conductor.bpm = Chart.current.data.initialBPM;
 
 		add(bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: 0xFF606060}));
@@ -73,19 +91,21 @@ class PlayState extends FNFState {
 		enemy.x = FlxG.width / 6.0;
 
 		// -- PREPARE AUDIO -- //
-		inst = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${songName}/audio/Inst.ogg'));
-		vocals = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${songName}/audio/Voices.ogg'));
+		inst = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${currentSong.folder}/audio/Inst.ogg'));
+		vocals = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${currentSong.folder}/audio/Voices.ogg'));
 		FlxG.sound.list.add(vocals);
 		FlxG.sound.music = inst;
 
-		FlxG.sound.music.play();
-		vocals.play();
-
-		DiscordRPC.updatePresence('Playing: ${songName}', '${hud.scoreBar.text}');
+		DiscordRPC.updatePresence('Playing: ${currentSong.display}', '${hud.scoreBar.text}');
 	}
 
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
+
+		if (Conductor.time >= 0 && !FlxG.sound.music.playing) {
+			FlxG.sound.music.play();
+			vocals.play();
+		}
 		checkKeys();
 	}
 
@@ -139,7 +159,7 @@ class PlayState extends FNFState {
 	public override function closeSubState():Void {
 		switch (FlxG.state.subState.ID) {
 			case 1:
-				DiscordRPC.updatePresence('Playing: ${songName}', '${hud.scoreBar.text}');
+				DiscordRPC.updatePresence('Playing: ${currentSong.display}', '${hud.scoreBar.text}');
 		}
 
 		super.closeSubState();
@@ -174,7 +194,7 @@ class PlayState extends FNFState {
 
 	function openCharter():Void {
 		FlxG.sound.music.pause();
-		DiscordRPC.updatePresence('Charting: ${songName}', '${hud.scoreBar.text}');
+		DiscordRPC.updatePresence('Charting: ${currentSong.display}', '${hud.scoreBar.text}');
 
 		var charter:Charter = new Charter();
 		charter.camera = altCamera;
