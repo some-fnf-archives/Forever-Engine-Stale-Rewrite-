@@ -4,9 +4,10 @@
 	<!-- [ Forever Engine Custom Nodes ] -->
 	<!-- _______________________________ -->
 
+	<define name="TRANSLATIONS" if="TEST_COMP" />
 	<define name="DISCORD" if="cpp" />
-	<define name="MODS" />
 	<define name="CRASH_HANDLER" />
+	<define name="MODS" />
 
 	<section if="MODS" >
 		<haxedef name="POLYMOD_DEBUG" value="true" if="debug" />
@@ -73,7 +74,9 @@
 
 	<source path="source" />
 	<assets path="assets" />
-	<assets path="mods" if="MODS" />
+
+	<assets path="mods" rename="mods" if="MODS" />
+	<assets path="locale" rename="assets/data/locale" if="TRANSLATIONS" />
 
 	<!-- _____________ -->
 	<!-- [ Libraries ] -->
@@ -82,8 +85,10 @@
 	<haxelib name="flixel-nova" version="git" url="https://github.com/swordcube/flixel" />
 	<haxelib name="flixel-addons-nova" version="git" url="https://github.com/swordcube/flixel-addons" />
 	<haxelib name="hxcpp-debug-server" if="debug" />
-	<haxelib name="hxdiscord_rpc" if="DISCORD" />
+
 	<haxelib name="polymod" if="MODS" />
+	<haxelib name="hxdiscord_rpc" if="DISCORD" />
+	<haxelib name="firetongue" if="TRANSLATIONS" />
 	<haxelib name="tjson" />
 
 	<!-- _______________ -->
