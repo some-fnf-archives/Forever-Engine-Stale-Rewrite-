@@ -71,7 +71,7 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(altCamera, false);
 
 		// -- PREPARE PLAYFIELD -- //
-		ChartLoader.load(currentSong.folder, "hard");
+		ChartLoader.load(currentSong.folder, currentSong.difficulty);
 		Conductor.bpm = Chart.current.data.initialBPM;
 
 		add(bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: 0xFF606060}));

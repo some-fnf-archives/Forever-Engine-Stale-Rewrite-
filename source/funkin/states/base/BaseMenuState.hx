@@ -48,7 +48,7 @@ class BaseMenuState extends FNFState {
 			updateSelection(pressUp ? -1 : 1);
 
 		if (pressLeft || pressRight)
-			updateSelection(pressLeft ? -1 : 1);
+			updateSelectionAlt(pressLeft ? -1 : 1);
 
 		if (Controls.ACCEPT && canAccept) {
 			if (onAccept != null)
@@ -82,6 +82,6 @@ class BaseMenuState extends FNFState {
 		if (!canChangeAlternative || maxSelectionsAlt < 2)
 			return;
 
-		curSel = FlxMath.wrap(curSelAlt + newSelAlt, 0, maxSelectionsAlt);
+		curSelAlt = FlxMath.wrap(curSelAlt + newSelAlt, 0, maxSelectionsAlt);
 	}
 }
