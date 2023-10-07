@@ -13,6 +13,7 @@ import openfl.display.Sprite;
 class ForeverOverlay extends Sprite {
 	/** List of Monitors that have been appended to this Overlay. **/
 	public var monitors:Array<BaseOverlayMonitor> = [];
+
 	/** Counts your Current Frames per Second. **/
 	public var currentFPS:Int = 0;
 

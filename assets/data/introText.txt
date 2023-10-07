@@ -1,0 +1,4 @@
+# use "--" for a manual line break
+# lines should break automatically if the text is too big
+
+funkin--forever

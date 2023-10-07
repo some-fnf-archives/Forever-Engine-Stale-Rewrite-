@@ -41,7 +41,8 @@ class ModManager {
 	public static function refreshMods():Void {
 		// activeMods = [];
 		var scanner:Array<ModMetadata> = Polymod.scan({modRoot: MODS_FOLDER});
-		for (i in scanner) modsMap.set(i.id, true);
+		for (i in scanner)
+			modsMap.set(i.id, true);
 
 		for (mod in modsMap.keys()) {
 			if (modsMap.get(mod) == true) {

@@ -35,13 +35,16 @@ class AssetHelper {
 	@:noPrivateAccess static var loadedSounds:Map<String, Sound> = [];
 	@:noPrivateAccess static var currentUsedAssets:Array<String> = [];
 
+	public static var excludedSounds:Map<String, Sound> = [];
+	public static var excludedGraphics:Map<String, FlxGraphic> = [];
+
 	/**
 	 * Creates a formatted asset path with an extension if needed
 	 * use this in case you do not wish to cache your assets and instead just grab their base path.
-	 * 
+	 *
 	 * @param asset 			Asset name/folder name you want to format.
 	 * @param type 				Type of asset, is unspecified, file extensions won't be added to the formatted path.
-	 * 
+	 *
 	 * @return String
 	**/
 	public static function getPath(?asset:String, ?type:ForeverAsset):String {
@@ -51,17 +54,17 @@ class AssetHelper {
 	/**
 	 * As the name implies, this allows you to grab specifically assets with their specified type,
 	 * unlike `getPath`, this returns the actual object of an asset and also caches it.
-	 * 
+	 *
 	 * Example:
-	 * 
+	 *
 	 * ```haxe
 	 * var myGraphic = AssetHelper.getAsset('images/myImage', IMAGE); // flixel.graphics.FlxGraphic
 	 * var mySound = AssetHelper.getAsset('sounds/mySound', SOUND); // openfl.media.Sound
 	 * ```
-	 * 
+	 *
 	 * @param asset 			Asset name you want to grab.
 	 * @param type 				Type of asset, to append extensions and get the asset you want.
-	 * 
+	 *
 	 * @return Dynamic
 	**/
 	public static function getAsset(asset:String, ?type:ForeverAsset):Dynamic {
@@ -90,15 +93,22 @@ class AssetHelper {
 	 * Internal Usage and Caching, use this only when absolutely necessary
 	 * 
 	 * @param file 				File to extract the graphic from
+	 * @param customKey 		What to save this file in the cache as
 	**/
-	public static function getGraphic(file:String):FlxGraphic {
+	public static function getGraphic(file:String, ?customKey:String = null):FlxGraphic {
 		try {
+			var keyName:String = customKey != null ? customKey : file;
+
+			// prevent remapping
+			if (loadedGraphics.get(keyName) != null)
+				return loadedGraphics.get(keyName);
+
 			var bd:BitmapData = OpenFLAssets.getBitmapData(file);
 
 			if (bd != null) {
 				var graphic:FlxGraphic = FlxGraphic.fromBitmapData(bd, false, file);
-				loadedGraphics.set(file, graphic);
-				currentUsedAssets.push(file);
+				loadedGraphics.set(keyName, graphic);
+				currentUsedAssets.push(keyName);
 				return graphic;
 			}
 		}
@@ -110,14 +120,21 @@ class AssetHelper {
 
 	/**
 	 * Internal Usage and Caching, use this only when absolutely necessary
-	 * 
+	 *
 	 * @param file 				File to extract the sound from
+	 * @param customKey 		What to save this file in the cache as
 	**/
-	public static function getSound(file:String):Sound {
+	public static function getSound(file:String, ?customKey:String = null):Sound {
 		try {
+			var keyName:String = customKey != null ? customKey : file;
+
+			// prevent remapping
+			if (loadedSounds.get(keyName) != null)
+				return loadedSounds.get(keyName);
+
 			var sound:Sound = OpenFLAssets.getSound(getAsset(file, SOUND));
-			loadedSounds.set(file, sound);
-			currentUsedAssets.push(file);
+			loadedSounds.set(keyName, sound);
+			currentUsedAssets.push(keyName);
 			return sound;
 		}
 		catch (e:haxe.Exception)
@@ -137,6 +154,9 @@ class AssetHelper {
 		var graphicCounter:Int = 0;
 
 		for (keyGraphic in loadedGraphics.keys()) {
+			if (excludedGraphics.get(keyGraphic) != null)
+				continue;
+
 			if (!currentUsedAssets.contains(keyGraphic) || force) {
 				var actualGraphic:FlxGraphic = loadedGraphics.get(keyGraphic);
 
@@ -159,6 +179,9 @@ class AssetHelper {
 		var soundCounter:Int = 0;
 
 		for (keySound in loadedSounds.keys()) {
+			if (excludedSounds.get(keySound) != null)
+				continue;
+
 			if (!currentUsedAssets.contains(keySound) || force) {
 				var actualSound:Sound = loadedSounds.get(keySound);
 				actualSound.close();

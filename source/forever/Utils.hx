@@ -1,11 +1,12 @@
 package forever;
 
-import openfl.Assets as OpenFLAssets;
 #if !macro
+import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.math.FlxMath;
 import flixel.util.FlxAxes;
 #end
+import openfl.Assets as OpenFLAssets;
 
 using StringTools;
 
@@ -13,6 +14,7 @@ using StringTools;
 class Utils {
 	public static final NOTE_DIRECTIONS:Array<String> = ["left", "down", "up", "right"];
 	public static final NOTE_COLORS:Array<String> = ["purple", "blue", "green", "red"];
+	private static var curMenuMusic:String = "";
 
 	/** Creates a list from a filepath, it is recommended to use this with plaintext files. **/
 	public static function listFromFile(path:String):Array<String> {
@@ -94,7 +96,26 @@ class Utils {
 		return assetsLibrary;
 	}
 
-	#if !macro
+	#if !macro // prevent flixel classes from printing errors to the console (in haxe 4.3+)
+	/**
+	 * Checks whether or not the menu music is playing
+	 * and plays it if its not.
+	 * 
+	 * @param music 		Music filename you want to play.
+	 * @param doFadeIn 		Quite self explanatory right?
+	 * @param bpm 			The BPM of the music (needed for beat events and such).
+	**/
+	public static function checkMenuMusic(music:String, doFadeIn:Bool = false, bpm:Float = 102.0):Void {
+		if (FlxG.sound.music == null || (FlxG.sound.music != null && !FlxG.sound.music.playing) || curMenuMusic != music) {
+			FlxG.sound.playMusic(AssetHelper.getAsset("music/" + music, SOUND), doFadeIn ? 0.0 : 0.7);
+			if (doFadeIn)
+				FlxG.sound.music.fadeIn(4, 0, 0.7);
+
+			Conductor.bpm = bpm;
+			curMenuMusic = music;
+		}
+	}
+
 	/**
 	 * Centers an object to the center of another object
 	 * 

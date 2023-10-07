@@ -3,22 +3,22 @@ package funkin.states.menus;
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
-import funkin.states.base.FNFState;
-import funkin.components.ui.Alphabet;
 import forever.ForeverSprite;
-import forever.ui.ForeverText;
+import funkin.components.ui.Alphabet;
+import funkin.states.base.BaseMenuState;
 
-class FreeplayMenu extends FNFState {
+class FreeplayMenu extends BaseMenuState {
 	public var bg:ForeverSprite;
 	public var songs:Array<FreeplaySong> = [];
 
 	public var songGroup:FlxTypedGroup<Alphabet>;
 
 	public override function create():Void {
-		var localSongData:Array<String> = Utils.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
-
+		Utils.checkMenuMusic("foreverMenu", false, 102.0);
 		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
 
+		var localSongData:Array<String> = Utils.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
+	
 		for (i in localSongData) {
 			var song:Array<String> = Utils.removeSpaces(i).split("|");
 			var name:String = song[0];
@@ -30,6 +30,9 @@ class FreeplayMenu extends FNFState {
 		};
 
 		add(bg = new ForeverSprite(0, 0, "bg", {color: 0xFF606060}));
+		bg.scale.set(1.15, 1.15);
+		bg.updateHitbox();
+
 		add(songGroup = new FlxTypedGroup());
 
 		for (i in 0...songs.length) {
@@ -40,32 +43,40 @@ class FreeplayMenu extends FNFState {
 			songGroup.add(songTxt);
 		}
 
+		maxSelections = songs.length - 1;
+
+		onAccept = function() {
+			// ensuring.
+			canChangeSelection = canChangeAlternative = false;
+			canAccept = canBackOut = false;
+
+			var song:funkin.states.PlayState.PlaySong = {
+				display: songs[curSel].name,
+				folder: songs[curSel].folder,
+				difficulty: "hard"
+			};
+
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.stop();
+
+			FlxG.switchState(new funkin.states.PlayState(song));
+		};
+
+		onBack = function()
+			FlxG.switchState(new MainMenu());
+
 		updateSelection();
 	}
 
-	public override function update(elapsed:Float):Void {
-		super.update(elapsed);
+	public override function updateSelection(newSel:Int = 0):Void {
+		super.updateSelection(newSel);
 
-		if (Controls.UP_P || Controls.DOWN_P)
-			updateSelection(Controls.UP_P ? -1 : 1);
-		if (Controls.ACCEPT) {
-			var song:funkin.states.PlayState.PlaySong = {
-				display: songs[curSelection].name,
-				folder: songs[curSelection].folder,
-				difficulty: "hard"
-			};
-			FlxG.switchState(new funkin.states.PlayState(song));
-		}
-	}
-
-	public var curSelection:Int = 0;
-
-	public function updateSelection(newSelection:Int = 0):Void {
-		curSelection = flixel.math.FlxMath.wrap(curSelection + newSelection, 0, songs.length - 1);
+		if (newSel != 0)
+			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 
 		var bs:Int = 0;
 		for (i in songGroup.members) {
-			i.targetY = bs - curSelection;
+			i.targetY = bs - curSel;
 			i.alpha = i.targetY == 0 ? 1.0 : 0.6;
 			bs++;
 		}

@@ -81,6 +81,7 @@ class DiscordWrapper {
 	}
 }
 #else
+
 /**
  * This Platform cannot use Discord Rich Presence.
  * thus, this is a stub class.

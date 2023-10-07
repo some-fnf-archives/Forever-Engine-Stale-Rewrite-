@@ -1,0 +1,189 @@
+package funkin.states.menus;
+
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.group.FlxSpriteGroup;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
+import forever.ForeverSprite;
+import funkin.components.ui.Alphabet;
+import funkin.states.base.FNFState;
+
+class TitleScreen extends FNFState {
+	public var bg:FlxSprite;
+	public var logo:FlxSprite;
+	public var gfDance:ForeverSprite;
+	public var enterTxt:ForeverSprite;
+
+	public var textGroup:TitleTextGroup;
+	public var mainGroup:FlxSpriteGroup;
+	public var curWacky:Array<String> = ["blah", "blahblah"];
+
+	// -- BEHAVIOR FILEDS -- //
+	public static var seenIntro:Bool = false;
+	var transitioning:Bool = false;
+
+	public override function create():Void {
+		super.create();
+
+		FlxTransitionableState.skipNextTransIn = false;
+		FlxTransitionableState.skipNextTransOut = false;
+
+		Utils.checkMenuMusic("foreverMenu", true, 102.0);
+
+		add(bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000));
+		add(textGroup = new TitleTextGroup());
+		add(mainGroup = new FlxSpriteGroup());
+		mainGroup.visible = false;
+
+		logo = new FlxSprite(20, 50);
+		logo.loadGraphic(AssetHelper.getAsset('images/menus/title/logo', IMAGE));
+
+		gfDance = new ForeverSprite(FlxG.width * 0.4, FlxG.height * 0.07);
+		gfDance.frames = AssetHelper.getAsset('images/menus/title/gfDanceTitle', ATLAS_SPARROW);
+		gfDance.addAtlasAnim('danceLeft', 'gfDance', 24, false, [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+		gfDance.addAtlasAnim('danceRight', 'gfDance', 24, false, [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]);
+		mainGroup.add(gfDance);
+		mainGroup.add(logo);
+
+		enterTxt = new ForeverSprite(100, FlxG.height * 0.8);
+		enterTxt.frames = AssetHelper.getAsset('images/menus/title/titleEnter', ATLAS_SPARROW);
+		enterTxt.addAtlasAnim('idle', "Press Enter to Begin", 24);
+		enterTxt.addAtlasAnim('press', "ENTER PRESSED", 24, true);
+		enterTxt.playAnim('idle', true);
+		enterTxt.updateHitbox();
+		mainGroup.add(enterTxt);
+
+		if (seenIntro)
+			skipIntro();
+	}
+
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
+
+		if (seenIntro) {
+			if (logo != null) {
+				logo.scale.x = Utils.fpsLerp(logo.scale.x, 1.0, 0.05);
+				logo.scale.y = Utils.fpsLerp(logo.scale.y, 1.0, 0.05);
+			}
+
+			if (Controls.ACCEPT && !transitioning) {
+				FlxG.camera.flash(0xFFFFFFFF, 0.6);
+				FlxG.sound.play(AssetHelper.getAsset("music/sfx/confirmMenu", SOUND));
+				enterTxt.playAnim('press');
+				transitioning = true;
+
+				new flixel.util.FlxTimer().start(1.85, function(tmr) {
+					FlxG.switchState(new MainMenu());
+				});
+			}
+		}
+		else {
+			if (Controls.ACCEPT) {
+				skipIntro();
+				FlxG.sound.music.time = 9400;
+			}
+		}
+	}
+
+	var gfBopped:Bool = false;
+
+	public override function onBeat(beat:Int):Void {
+		if (logo != null) {
+			logo.scale.x += 0.025; // kinda stupid but yea, its this or a really weird tween -Crow
+			logo.scale.y += 0.025;
+		}
+
+		if (gfDance != null) {
+			var dir:String = gfBopped ? 'Left' : 'Right';
+			gfDance.playAnim('dance${dir}');
+			gfBopped = !gfBopped;
+		}
+
+		if (seenIntro)
+			return;
+
+		switch (beat) { // hardcoding for now lmfao
+			case 1:
+				textGroup.createText(["crowplexus", "ne_eo", "itsaizakku", "nxtvithor", "sayofthelor"]);
+			case 3:
+				textGroup.addText("PRESENT");
+			case 4:
+				textGroup.deleteText();
+			case 5:
+				textGroup.createText(["*Not* associated", "with"]);
+			case 7:
+				textGroup.addText("Newgrounds");
+			case 8:
+				textGroup.deleteText();
+			case 9:
+				textGroup.createText([curWacky[0]]);
+			case 11:
+				textGroup.addText(curWacky[1]);
+			case 12:
+				textGroup.deleteText();
+			case 13:
+				textGroup.addText("Funkin'", true);
+			case 14:
+				textGroup.addText('Forever');
+			case 15:
+				textGroup.addText('Engine');
+			case 16:
+				skipIntro();
+		}
+	}
+
+	public function skipIntro():Void {
+		FlxG.camera.flash(0xFFFFFFFF, 0.6);
+		seenIntro = true;
+
+		if (textGroup != null) {
+			textGroup.deleteText();
+			textGroup.destroy();
+			remove(textGroup);
+		}
+
+		mainGroup.visible = true;
+	}
+}
+
+class TitleTextGroup extends FlxTypedSpriteGroup<Alphabet> {
+	var hasTextDisplayed:Bool = false;
+
+	public function createText(text:Array<String>, ?forceCreate:Bool = false):Void {
+		if (hasTextDisplayed && !forceCreate) {
+			var str:String = "";
+			for (i in 0...text.length)
+				str += text[i] + "\n";
+
+			return addText(str);
+		}
+
+		for (i in 0...text.length) {
+			var swagShit:Alphabet = new Alphabet(0, 0, text[i], BOLD, CENTER);
+			swagShit.y += (i * 65) + 150;
+			swagShit.screenCenter(X);
+			this.add(swagShit);
+		}
+
+		hasTextDisplayed = true;
+	}
+
+	public function addText(text:String, ?forceAdd:Bool = false):Void {
+		if (!hasTextDisplayed) {
+			if (!forceAdd)
+				return createText(text.split("\n"));
+			else // ensure there's stuff to see.
+				hasTextDisplayed = true;
+		}
+
+		var moneyMoney:Alphabet = new Alphabet(0, 0, text, BOLD, CENTER);
+		moneyMoney.y += (this.members.length * 65) + 150;
+		moneyMoney.screenCenter(X);
+		this.add(moneyMoney);
+	}
+
+	public function deleteText():Void {
+		this.clear();
+		hasTextDisplayed = false;
+	}
+}

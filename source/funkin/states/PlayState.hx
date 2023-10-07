@@ -54,6 +54,9 @@ class PlayState extends FNFState {
 	public override function create():Void {
 		super.create();
 
+		if (FlxG.sound.music != null)
+			FlxG.sound.music.stop();
+
 		Conductor.time = -(60.0 / Conductor.bpm) * 4.0;
 
 		FlxG.mouse.visible = false;

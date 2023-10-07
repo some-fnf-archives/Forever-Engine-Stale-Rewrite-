@@ -135,11 +135,6 @@ typedef NoteData = {
 	@:optional var length:Float;
 }
 
-typedef ChartEvent<T> = {
-	var event:T;
-	var step:Float;
-}
-
 typedef ChartExtraData = {
 	/** Chart's Amount of Keys. **/
 	var keyAmount:Int;
@@ -161,6 +156,11 @@ typedef ChartExtraData = {
 
 	/** Stage Background Name. **/
 	@:optional var stageBG:String;
+}
+
+typedef ChartEvent<T> = {
+	var event:T;
+	var step:Float;
 }
 
 enum ForeverEvents {
