@@ -82,7 +82,7 @@ class Note extends ForeverSprite {
 			speed = strum.speed;
 			scale = strum.scale;
 
-			var distance:Float = 0.45 * (Conductor.time - data.time) * (800.0 * Math.abs(speed)) / scale.y;
+			var distance:Float = 0.45 * (Conductor.time - data.time) * (1000.0 * Math.abs(speed)) / scale.y;
 
 			x = strum.x - 10;
 			y = strum.y + distance * scrollDifference;

@@ -1,7 +1,5 @@
 package funkin.components;
 
-import flixel.util.FlxSort;
-
 class ChartLoader {
 	public static function load(folder:String, file:String):Chart {
 		var chart:Chart = new Chart();
@@ -20,8 +18,7 @@ class ChartLoader {
 			switch (dataType) {
 				case VANILLA_V1:
 					var curBPM:Float = json.song.bpm;
-					var keys:Int = 4; // TODO: convert shaggy charts??
-					var totalSteps:Int = 0;
+					var keys:Int = 4;
 
 					chart.data = {
 						initialBPM: curBPM,
@@ -33,20 +30,27 @@ class ChartLoader {
 						stageBG: json.song.stage ?? getVanillaStage(json.song.song),
 					}
 
-					var bars:Array<Dynamic> = cast(json.song.notes, Array<Dynamic>);
+					for (bar in cast(json.song.notes, Array<Dynamic>)) {
+						if (bar == null)
+							continue;
 
-					for (i in 0...bars.length) {
-						var bar:Dynamic = bars[i];
-						var dtSteps:Int = bars[i].lengthInSteps;
-						totalSteps += dtSteps;
+						final curBar:Int = json.song.notes.indexOf(bar);
 
 						if (bar.changeBPM == true && bar.bpm != curBPM) {
 							curBPM = bar.bpm;
-							chart.data.bpmChanges.push({bpm: bar.bpm, step: totalSteps});
+							chart.events.push({
+								event: BPMChange(bar.bpm),
+								step: (60.0 / curBPM) * bar.lengthInSteps * curBar
+							});
 						}
 
+						chart.events.push({
+							event: FocusCamera(bar.mustHitSection ? 1 : 0, false),
+							step: (60.0 / curBPM) * bar.lengthInSteps * curBar
+						});
+
 						for (j in cast(bar.sectionNotes, Array<Dynamic>)) {
-							if (j[0] < 0) {
+							if (j[0] < 0 || bar.sectionNotes == null) {
 								// trace('event note at ${j[1]}, skipping');
 								continue;
 							}
@@ -55,13 +59,13 @@ class ChartLoader {
 							if (Std.isOfType(j[3], Bool) && j[3] == true || bar.altAnim)
 								noteAnim += "-alt";
 
-							final laneID:Int = (Std.int(j[1]) >= chart.data.keyAmount != bar.mustHitSection) ? 1 : 0;
+							final dirRaw:Int = Std.int(j[1]);
 
 							chart.notes.push({
 								time: j[0] / 1000.0,
 								step: Conductor.timeToStep(j[0], curBPM),
-								direction: Std.int(j[1] % chart.data.keyAmount),
-								lane: laneID,
+								direction: dirRaw % keys,
+								lane: dirRaw >= keys != bar.mustHitSection ? 1 : 0,
 								type: j[3] != null && Std.isOfType(j[3], String) ? j[3] : "default",
 								animation: noteAnim,
 								length: j[2] / 1000.0
@@ -76,7 +80,13 @@ class ChartLoader {
 					trace('Codename Engine Charts are not implemented *yet*');
 			}
 
-			chart.notes.sort(function(a:NoteData, b:NoteData):Int return FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
+			chart.notes.sort(function(a:NoteData, b:NoteData):Int {
+				return Std.int(a.time - b.time);
+			});
+
+			chart.events.sort(function(a:ChartEvent<ForeverEvents>, b:ChartEvent<ForeverEvents>):Int {
+				return Std.int(a.step - b.step);
+			});
 		}
 		catch (e:haxe.Exception)
 			trace('Failed to parse chart, type was ${dataType}');
@@ -127,9 +137,7 @@ typedef NoteData = {
 
 typedef ChartEvent<T> = {
 	var event:T;
-	var step:Int;
-	// meta info, used to tell which bar/section this has been triggered
-	var ?bar:Int;
+	var step:Float;
 }
 
 typedef ChartExtraData = {
@@ -141,12 +149,6 @@ typedef ChartExtraData = {
 
 	/** Chart's Initial Speed. **/
 	var initialSpeed:Float;
-
-	/** Chart BPM Changes. **/
-	@:optional var bpmChanges:Array<{bpm:Float, step:Float}>;
-
-	/** Chart Velocity (Scroll Speed) Changes. **/
-	@:optional var velocityChanges:Array<{speed:Float, step:Float}>;
 
 	/** Player Character. **/
 	@:optional var playerChar:String;
@@ -162,16 +164,9 @@ typedef ChartExtraData = {
 }
 
 enum ForeverEvents {
-	BPMChange(step:Int, nextBPM:Float);
+	BPMChange(nextBPM:Float);
 	PlayAnimation(who:Int, animation:String);
 	ChangeCharacter(who:Int, toCharacter:String);
 	FocusCamera(who:Int, noEasing:Bool);
 	PlaySound(soundName:String, volume:Float);
-	NoteFieldChange(who:Int, event:NoteFieldEvents);
-}
-
-enum NoteFieldEvents {
-	VelocityChange(newSpeed:Float, duration:Float);
-	NoteRotate(newRotation:Int, duration:Float);
-	NoteShake(intensity:Int, duration:Float);
 }
