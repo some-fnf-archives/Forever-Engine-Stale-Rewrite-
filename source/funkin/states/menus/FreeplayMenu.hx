@@ -18,7 +18,7 @@ class FreeplayMenu extends BaseMenuState {
 		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
 
 		var localSongData:Array<String> = Utils.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
-	
+
 		for (i in localSongData) {
 			var song:Array<String> = Utils.removeSpaces(i).split("|");
 			var name:String = song[0];
@@ -62,8 +62,7 @@ class FreeplayMenu extends BaseMenuState {
 			FlxG.switchState(new funkin.states.PlayState(song));
 		};
 
-		onBack = function()
-			FlxG.switchState(new MainMenu());
+		onBack = function() FlxG.switchState(new MainMenu());
 
 		updateSelection();
 	}

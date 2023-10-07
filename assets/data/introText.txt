@@ -1,4 +1,14 @@
-# use "--" for a manual line break
-# lines should break automatically if the text is too big
+# use "--" for a line break
+# spaces get ignored, lines starting with a hashtag get ignored
 
-funkin--forever
+# CrowPlexus
+
+kinda late--but here we are
+every copy--is personalized
+experience the best--experience deez nuts
+if you think about it--you might be real!
+solta a pisadinha--solta a pisadinha kkj
+the 4th forever rewrite--possibly 5th?
+oh you're awake!--welcome to...
+forever engine--mario mix
+penis--wenis

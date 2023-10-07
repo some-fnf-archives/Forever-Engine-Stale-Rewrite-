@@ -97,6 +97,7 @@ class Utils {
 	}
 
 	#if !macro // prevent flixel classes from printing errors to the console (in haxe 4.3+)
+
 	/**
 	 * Checks whether or not the menu music is playing
 	 * and plays it if its not.

@@ -20,6 +20,7 @@ class Init extends FlxState {
 
 		FlxG.fixedTimestep = false;
 		FlxG.mouse.useSystemCursor = true;
+		FlxG.game.focusLostFramerate = 10;
 		FlxG.mouse.visible = false;
 
 		FlxGraphic.defaultPersist = true;
@@ -35,11 +36,11 @@ class Init extends FlxState {
 		funkin.objects.notes.NoteConfig.reloadConfig();
 
 		// precache and exclude some stuff from being cleared in cache.
-		var cacheGraphics:haxe.ds.StringMap<flixel.graphics.FlxGraphic> = [
+		final cacheGraphics:haxe.ds.StringMap<flixel.graphics.FlxGraphic> = [
 			"boldAlphabet" => AssetHelper.getGraphic(AssetHelper.getPath("images/ui/letters/bold", IMAGE), "boldAlphabet")
 		];
 
-		var cacheSounds:haxe.ds.StringMap<openfl.media.Sound> = [
+		final cacheSounds:haxe.ds.StringMap<openfl.media.Sound> = [
 			"scrollMenu" => AssetHelper.getSound("music/sfx/scrollMenu", "scrollMenu"),
 			"cancelMenu" => AssetHelper.getSound("music/sfx/cancelMenu", "cancelMenu"),
 			"confirmMenu" => AssetHelper.getSound("music/sfx/confirmMenu", "confirmMenu")

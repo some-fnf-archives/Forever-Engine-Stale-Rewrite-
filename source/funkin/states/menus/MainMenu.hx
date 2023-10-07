@@ -21,9 +21,9 @@ class MainMenu extends BaseMenuState {
 	public var buttons:FlxTypedGroup<FlxSprite>;
 
 	var options:Array<MainMenuOption> = [
-		{ name: "story", callback: function() FlxG.switchState(new FreeplayMenu()) },
-		{ name: "freeplay", callback: function() FlxG.switchState(new FreeplayMenu()) },
-		{ name: "options", callback: function() FlxG.switchState(new FreeplayMenu()) }
+		{name: "story", callback: function() FlxG.switchState(new FreeplayMenu())},
+		{name: "freeplay", callback: function() FlxG.switchState(new FreeplayMenu())},
+		{name: "options", callback: function() FlxG.switchState(new FreeplayMenu())}
 	];
 
 	public override function create():Void {
@@ -94,13 +94,11 @@ class MainMenu extends BaseMenuState {
 						if (options[curSel].callback != null)
 							options[curSel].callback();
 					});
-					
 				}
 			}
 		}
 
-		onBack = function()
-			FlxG.switchState(new TitleScreen());
+		onBack = function() FlxG.switchState(new TitleScreen());
 	}
 
 	public override function update(elapsed:Float):Void {

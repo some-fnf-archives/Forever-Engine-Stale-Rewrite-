@@ -16,14 +16,17 @@ class TitleScreen extends FNFState {
 
 	public var textGroup:TitleTextGroup;
 	public var mainGroup:FlxSpriteGroup;
-	public var curWacky:Array<String> = ["blah", "blahblah"];
+	public var randomBlurb:Array<String> = ["blahblah", "coolswag"];
 
-	// -- BEHAVIOR FILEDS -- //
+	// -- BEHAVIOR FIELDS -- //
 	public static var seenIntro:Bool = false;
+
 	var transitioning:Bool = false;
 
 	public override function create():Void {
 		super.create();
+
+		randomBlurb = FlxG.random.getObject(getRandomText());
 
 		FlxTransitionableState.skipNextTransIn = false;
 		FlxTransitionableState.skipNextTransOut = false;
@@ -116,9 +119,9 @@ class TitleScreen extends FNFState {
 			case 8:
 				textGroup.deleteText();
 			case 9:
-				textGroup.createText([curWacky[0]]);
+				textGroup.createText([randomBlurb[0]]);
 			case 11:
-				textGroup.addText(curWacky[1]);
+				textGroup.addText(randomBlurb[1]);
 			case 12:
 				textGroup.deleteText();
 			case 13:
@@ -143,6 +146,16 @@ class TitleScreen extends FNFState {
 		}
 
 		mainGroup.visible = true;
+	}
+
+	function getRandomText():Array<Array<String>> {
+		var textFile:Array<String> = Utils.listFromFile(AssetHelper.getAsset("data/introText", TEXT));
+		var textBoxes:Array<Array<String>> = [];
+
+		for (i in textFile) // remind me to make this automatic per txt length later -Crow
+			textBoxes.push(i.split("--"));
+
+		return textBoxes;
 	}
 }
 
