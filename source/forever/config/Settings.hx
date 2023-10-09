@@ -12,11 +12,17 @@ package forever.config;
  * any further than just creating a new setting
 **/
 class Settings {
+	/** Check this if you want the game not to pause when unfocusing the window. **/
+	public static var autoPause:Bool = false;
+
 	/** Check this if you want your notes to come from top to bottom. **/
 	public static var downScroll:Bool = false;
 
 	/** Check this to center your notes to the screen, and hide the Enemy's notes. **/
 	public static var centerNotefield:Bool = false;
+
+	/** Check this if you want to be able to mash keys while there's no notes to hit. **/
+	public static var ghostTapping:Bool = true;
 
 	/** Style of the healthbar, score popups, etc. **/
 	public static var uiStyle:String = "default";

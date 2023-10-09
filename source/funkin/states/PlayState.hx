@@ -74,7 +74,7 @@ class PlayState extends FNFState {
 		ChartLoader.load(currentSong.folder, currentSong.difficulty);
 		Conductor.bpm = Chart.current.data.initialBPM;
 
-		add(bg = new ForeverSprite(0, 0, 'bg', {alpha: 0.3, color: 0xFF606060}));
+		// add(stage = new Stage());
 		add(playField = new PlayField());
 		add(hud = new HUD());
 

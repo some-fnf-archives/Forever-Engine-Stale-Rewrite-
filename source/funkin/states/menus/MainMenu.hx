@@ -23,7 +23,7 @@ class MainMenu extends BaseMenuState {
 	var options:Array<MainMenuOption> = [
 		{name: "story", callback: function() FlxG.switchState(new FreeplayMenu())},
 		{name: "freeplay", callback: function() FlxG.switchState(new FreeplayMenu())},
-		{name: "options", callback: function() FlxG.switchState(new FreeplayMenu())}
+		{name: "options", callback: function() FlxG.switchState(new OptionsMenu())}
 	];
 
 	public override function create():Void {

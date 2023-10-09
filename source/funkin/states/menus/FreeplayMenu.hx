@@ -41,7 +41,7 @@ class FreeplayMenu extends BaseMenuState {
 			songs.push(new FreeplaySong(name, folder, icon, color, difficulties));
 		};
 
-		add(bg = new ForeverSprite(0, 0, "bg", {color: 0xFF606060}));
+		add(bg = new ForeverSprite(0, 0, "menus/backgrounds/menuDesat", {color: 0xFF606060}));
 		bg.scale.set(1.15, 1.15);
 		bg.updateHitbox();
 
@@ -49,7 +49,7 @@ class FreeplayMenu extends BaseMenuState {
 		add(pbBackground = new FlxSprite().makeGraphic(FlxG.width, 60, 0xFF000000));
 		pbBackground.alpha = 0.6;
 
-		add(difficultyTxt = new ForeverText(0, pbBackground.height - 25, Std.int(pbBackground.width), "-", 20));
+		add(difficultyTxt = new ForeverText(0, pbBackground.height - 25, pbBackground.width, "-", 20));
 		difficultyTxt.alignment = CENTER;
 
 		for (i in 0...songs.length) {
