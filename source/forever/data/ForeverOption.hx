@@ -56,6 +56,11 @@ class ForeverOption {
 		this.type = type;
 	}
 
+	/**
+	 * Changes the value of the option
+	 *
+	 * @param increment 		by how much should it be changed (used by `NUMBER` and `CHOICE` options)
+	**/
 	public function changeValue(increment:Int = 0):Void {
 		switch (type) {
 			case CHECKMARK:
