@@ -25,7 +25,7 @@ enum ForeverOptionType {
 	 *
 	 * @param options 		A list with options that this option can be changed to.
 	**/
-	LETTER(options:Array<String>);
+	CHOICE(options:Array<String>);
 }
 
 /** Class Structure that handles options. **/
@@ -65,7 +65,7 @@ class ForeverOption {
 			case NUMBER(min, max, decimals, clamp):
 				value = (clamp ? FlxMath.bound : Utils.wrapf)(value + increment * decimals, min, max);
 
-			case LETTER(options):
+			case CHOICE(options):
 				var curValue:Int = options.indexOf(value);
 				var stringFound:String = options[FlxMath.wrap(curValue + increment, 0, options.length - 1)];
 				value = stringFound;
