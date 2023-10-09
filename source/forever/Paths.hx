@@ -26,6 +26,10 @@ class Paths {
 		return AssetHelper.getAsset('images/${image}', ATLAS_PACKER);
 	}
 
+	public static inline function font(font:String):Sound {
+		return AssetHelper.getAsset('fonts/${font}', FONT);
+	}
+
 	public static inline function sound(sound:String):Sound {
 		return AssetHelper.getAsset('sounds/${sound}', SOUND);
 	}
