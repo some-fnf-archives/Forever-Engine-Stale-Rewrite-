@@ -33,9 +33,9 @@ class OptionsMenu extends BaseMenuState {
 			new ForeverOption("Ghost Tapping", "Check this if you want to be able to mash keys while there's no notes to hit.", "ghostTapping", CHECKMARK),
 		],
 		"visuals" => [
-			new ForeverOption("Clip Style", "Where should the sustain clip to?", "sustainLayer", LETTER(["stepmania", "fnf"])),
-			new ForeverOption("Note Skin", "Style of your scrolling notes.", LETTER(["default"])),
-			new ForeverOption("UI Skin", "Style of the healthbar, score popups, etc.", "uiStyle", LETTER(["default"])),
+			new ForeverOption("Clip Style", "Where should the sustain clip to?", "sustainLayer", CHOICE(["stepmania", "fnf"])),
+			new ForeverOption("Note Skin", "Style of your scrolling notes.", CHOICE(["default"])),
+			new ForeverOption("UI Skin", "Style of the healthbar, score popups, etc.", "uiStyle", CHOICE(["default"])),
 		],
 	];
 
