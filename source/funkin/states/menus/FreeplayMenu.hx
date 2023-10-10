@@ -2,11 +2,13 @@ package funkin.states.menus;
 
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import forever.ForeverSprite;
 import forever.ui.ForeverText;
-import funkin.components.ui.Alphabet;
 import funkin.components.DifficultyHelper;
+import funkin.components.Highscore;
+import funkin.components.ui.Alphabet;
 import funkin.states.base.BaseMenuState;
 
 class FreeplayMenu extends BaseMenuState {
@@ -15,8 +17,13 @@ class FreeplayMenu extends BaseMenuState {
 
 	public var songGroup:FlxTypedGroup<Alphabet>;
 
-	public var pbBackground:FlxSprite;
+	// -- SCORE UI STUFF -- //
+	public var backPB:FlxSprite;
+	public var scoreTxt:ForeverText;
 	public var difficultyTxt:ForeverText;
+
+	var lerpScore:Int = 0;
+	var intendedScore:Int = 0;
 
 	public override function create():Void {
 		Utils.checkMenuMusic("foreverMenu", false, 102.0);
@@ -46,11 +53,23 @@ class FreeplayMenu extends BaseMenuState {
 		bg.updateHitbox();
 
 		add(songGroup = new FlxTypedGroup<Alphabet>());
-		add(pbBackground = new FlxSprite().makeGraphic(FlxG.width, 60, 0xFF000000));
-		pbBackground.alpha = 0.6;
 
-		add(difficultyTxt = new ForeverText(0, pbBackground.height - 25, pbBackground.width, "-", 20));
-		difficultyTxt.alignment = CENTER;
+		// -- UI -- //
+		final position = FlxG.width * 0.7;
+
+		add(backPB = new FlxSprite(position - 6, 0).makeGraphic(1, 60, 0xFF000000));
+		add(scoreTxt = new ForeverText(position, 5, 0, "", 32));
+
+		scoreTxt.alignment = RIGHT;
+		backPB.alpha = 0.6;
+
+		add(difficultyTxt = new ForeverText(0, scoreTxt.y + 30, 0, "-", 24));
+		difficultyTxt.centerToObject(backPB, X);
+
+		for (t in [scoreTxt, difficultyTxt])
+			t.borderSize = 0;
+
+		// -- -- -- //
 
 		for (i in 0...songs.length) {
 			var songTxt:Alphabet = new Alphabet(0, 10 + (60 * i), songs[i].name);
@@ -82,6 +101,21 @@ class FreeplayMenu extends BaseMenuState {
 		onBack = function() FlxG.switchState(new MainMenu());
 
 		updateSelection();
+	}
+
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
+
+		lerpScore = Math.floor(Utils.fpsLerp(lerpScore, intendedScore, 0.1));
+		scoreTxt.text = 'PERSONAL BEST:${lerpScore}';
+
+		// just copied from base game lol
+		scoreTxt.x = FlxG.width - scoreTxt.width - 6;
+		backPB.scale.x = FlxG.width - scoreTxt.x + 6;
+		backPB.x = FlxG.width - backPB.scale.x / 2;
+
+		difficultyTxt.x = Math.floor(backPB.x + backPB.width / 2);
+		difficultyTxt.x -= (difficultyTxt.width / 2);
 	}
 
 	public override function updateSelection(newSel:Int = 0):Void {
@@ -120,7 +154,9 @@ class FreeplayMenu extends BaseMenuState {
 		if (newSelAlt != 0)
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 
-		difficultyTxt.text = '< ${DifficultyHelper.toString(curSelAlt).toUpperCase()} >';
+		difficultyTxt.text = '« ${DifficultyHelper.toString(curSelAlt).toUpperCase()} »';
+
+		intendedScore = Highscore.getSongScore(songs[curSel].folder).score;
 	}
 }
 

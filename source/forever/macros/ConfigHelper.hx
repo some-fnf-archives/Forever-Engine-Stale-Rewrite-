@@ -1,4 +1,4 @@
-package forever.config.macros;
+package forever.macros;
 
 #if macro
 import haxe.macro.*;
@@ -13,12 +13,12 @@ using StringTools;
 **/
 class ConfigHelper {
 	/** Returns the actual save path for settings. **/
-	public static var savePath(get, never):String;
+	public static var savePath(get, default):String = "forever";
 
 	@:noCompletion @:dox(hide)
 	static function get_savePath():String {
 		var companyName:String = lime.app.Application.current.meta["company"];
-		return '${companyName}/${lime.app.Application.current.meta["file"]}';
+		return '${companyName}/${lime.app.Application.current.meta["file"]}/${savePath}';
 	}
 
 	#if macro // Macro Variables and Functions go here!
@@ -28,7 +28,6 @@ class ConfigHelper {
 	**/
 	public static function buildSaveMacro():Array<Field> {
 		var fields = Context.getBuildFields();
-
 		var savedFields = [];
 
 		for (field in fields) {
@@ -50,6 +49,8 @@ class ConfigHelper {
 						for (name in savedFields) {
 							arr.push(macro {
 								flixel.FlxG.save.data.$name = $i{name};
+								flixel.FlxG.save.flush();
+								Settings.update();
 							});
 						}
 						fun.expr = macro $b{arr};
@@ -57,7 +58,7 @@ class ConfigHelper {
 
 					if (field.name == "load") {
 						var arr = [];
-						arr.push(macro flixel.FlxG.save.bind("Settings", ConfigHelper.savePath));
+						arr.push(macro flixel.FlxG.save.bind("Settings", forever.macros.ConfigHelper.savePath));
 						for (name in savedFields) {
 							arr.push(macro {
 								if (flixel.FlxG.save.data.$name != null)

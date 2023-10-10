@@ -1,4 +1,4 @@
-package forever.config.macros;
+package forever.macros;
 
 import haxe.macro.*;
 import haxe.macro.Expr;

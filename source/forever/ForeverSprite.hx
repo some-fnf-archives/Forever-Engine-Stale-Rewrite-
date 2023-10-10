@@ -1,5 +1,6 @@
 package forever;
 
+import funkin.components.ui.Alphabet;
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import forever.config.Settings;
@@ -138,5 +139,29 @@ class ForeverSprite extends FlxSprite {
 	**/
 	public function stopTweens(?fieldPaths:Array<String>):Void {
 		FlxTween.cancelTweensOf(this, fieldPaths);
+	}
+}
+
+class ChildSprite extends ForeverSprite {
+	/** This sprite's parent. **/
+	public var parent:Alphabet;
+
+	/** This sprite's alignment. **/
+	public var align:AlphabetAlignment = RIGHT;
+
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
+
+		if (parent != null) {
+			switch (align) {
+				case LEFT:
+					setPosition(parent.x - 80, parent.y - 30);
+				case CENTER:
+					Utils.centerToObject(this, parent, X);
+					this.y = parent.y - 30;
+				default:
+					setPosition(parent.x + parent.width + 10, parent.y - 30);
+			}
+		}
 	}
 }

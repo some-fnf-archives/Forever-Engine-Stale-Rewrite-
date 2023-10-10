@@ -9,7 +9,7 @@ typedef KeyMap = Map<String, Array<FlxKey>>;
 
 // typedef GamepadKey = ; // TODO
 
-@:build(forever.config.macros.ControlsMacro.build())
+@:build(forever.macros.ControlsMacro.build())
 class Controls {
 	/**
 	 * the global dominant instance of Controls

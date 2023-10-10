@@ -42,6 +42,9 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	/** Whether this object displays in a list like format. **/
 	public var isMenuItem:Bool = false;
 
+	/** Forced custom lerp values. **/
+	public var forceLerp:FlxPoint = FlxPoint.get(-1, -1);
+
 	/** The spacing between items in menus like freeplay or options. **/
 	public var menuSpacing:FlxPoint = FlxPoint.get(20, 120);
 
@@ -56,8 +59,8 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	override function update(elapsed:Float) {
 		if (isMenuItem) {
 			final scaledY:Float = targetY * 1.3;
-			x = Utils.fpsLerp(x, (targetY * menuSpacing.x) + 90, 0.16);
-			y = Utils.fpsLerp(y, (scaledY * menuSpacing.y) + (FlxG.height * 0.48), 0.16);
+			x = forceLerp.x != -1 ? forceLerp.x : Utils.fpsLerp(x, (targetY * menuSpacing.x) + 90, 0.16);
+			y = forceLerp.y != -1 ? forceLerp.y : Utils.fpsLerp(y, (scaledY * menuSpacing.y) + (FlxG.height * 0.48), 0.16);
 		}
 		super.update(elapsed);
 	}
@@ -176,6 +179,7 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 
 	override function destroy() {
 		menuSpacing.put();
+		forceLerp.put();
 		super.destroy();
 	}
 }

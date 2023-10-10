@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.math.FlxMath;
 import flixel.util.FlxAxes;
+import forever.ForeverSprite;
 #end
 import openfl.Assets as OpenFLAssets;
 
@@ -97,6 +98,29 @@ class Utils {
 	}
 
 	#if !macro // prevent flixel classes from printing errors to the console (in haxe 4.3+)
+	public static function generateCheckmark():ChildSprite {
+		var newCheckmark:ChildSprite = new ChildSprite();
+		newCheckmark.frames = Paths.getSparrowAtlas("menus/options/checkboxThingie");
+
+		newCheckmark.animation.addByPrefix('false finished', 'uncheckFinished');
+		newCheckmark.animation.addByPrefix('false', 'uncheck', 12, false);
+		newCheckmark.animation.addByPrefix('true finished', 'checkFinished');
+		newCheckmark.animation.addByPrefix('true', 'check', 12, false);
+
+		newCheckmark.scale.set(0.7, 0.7);
+		newCheckmark.updateHitbox();
+
+		///*
+		var offsetByX:Int = 45;
+		var offsetByY:Int = 5;
+		newCheckmark.setOffset('false', offsetByX, offsetByY);
+		newCheckmark.setOffset('true', offsetByX, offsetByY);
+		newCheckmark.setOffset('true finished', offsetByX, offsetByY);
+		newCheckmark.setOffset('false finished', offsetByX, offsetByY);
+		// */
+
+		return newCheckmark;
+	}
 
 	/**
 	 * Checks whether or not the menu music is playing
@@ -161,7 +185,8 @@ class Utils {
 	 * @param value			The new value for the variable given.
 	**/
 	public static macro function safeSet(variable:Null<haxe.macro.Expr>, value:Null<haxe.macro.Expr>):Null<haxe.macro.Expr> {
-		return macro if (${value} != null) ${variable} = ${value};
+		return macro if (${value} != null)
+			${variable} = ${value};
 	}
 
 	/**
@@ -170,6 +195,7 @@ class Utils {
 	**/
 	public static macro function safeReflection(variable:Null<haxe.macro.Expr>, value:Null<haxe.macro.Expr>,
 			field:Null<haxe.macro.Expr>):Null<haxe.macro.Expr> {
-		return macro if (Reflect.hasField(${value}, ${field})) ${variable} = Reflect.field(${value}, ${field});
+		return macro if (Reflect.hasField(${value}, ${field}))
+			${variable} = Reflect.field(${value}, ${field});
 	}
 }

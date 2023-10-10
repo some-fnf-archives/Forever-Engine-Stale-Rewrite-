@@ -11,6 +11,7 @@ package forever.config;
  * Settings get automatically saved so it is not recommended to mess with this class
  * any further than just creating a new setting
 **/
+@:build(forever.macros.ConfigHelper.buildSaveMacro())
 class Settings {
 	/** Check this if you want the game not to pause when unfocusing the window. **/
 	public static var autoPause:Bool = false;
@@ -44,14 +45,21 @@ class Settings {
 	public static var globalAntialias:Bool = true;
 
 	/**
-	 * Saves your set settings, managed by a macro at `forever.config.macros.ConfigHelper`.
+	 * Saves your set settings, managed by a macro at `forever.macros.ConfigHelper`.
 	 * [IT IS NOT RECOMMENDED TO MESS WITH THIS]
 	**/
 	public static function flush():Void {}
 
 	/**
-	 * Loads Settings from your save file, managed by a macro at `forever.config.macros.ConfigHelper`.
+	 * Loads Settings from your save file, managed by a macro at `forever.macros.ConfigHelper`.
 	 * [IT IS NOT RECOMMENDED TO MESS WITH THIS]
 	**/
 	public static function load():Void {}
+
+	/**
+	 * Updates the game's settings to match your current set preferences.
+	**/
+	public static function update():Void {
+		FlxG.autoPause = Settings.autoPause;
+	}
 }
