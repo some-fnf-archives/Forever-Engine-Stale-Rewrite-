@@ -30,6 +30,7 @@ typedef AnimationConfig = {
 	var fps:Null<Int>;
 	var looped:Bool;
 	var ?offsets:{x:Null<Float>, y:Null<Float>};
+	@:optional var type:Int;
 }
 
 /**
@@ -84,18 +85,21 @@ class NoteConfig {
 						name: "static",
 						prefix: "${dir} static",
 						fps: 24,
+						type: 0,
 						looped: false
 					},
 					{
 						name: "pressed",
 						prefix: "${dir} press",
 						fps: 24,
+						type: 1,
 						looped: false
 					},
 					{
 						name: "confirm",
 						prefix: "${dir} confirm",
 						fps: 24,
+						type: 2,
 						looped: false
 					}
 				],
@@ -109,18 +113,21 @@ class NoteConfig {
 						name: "scroll",
 						prefix: "${dir}0",
 						fps: 24,
+						type: 0,
 						looped: false
 					},
 					{
 						name: "hold",
 						prefix: "${dir} hold piece",
 						fps: 24,
+						type: 1,
 						looped: false
 					},
 					{
 						name: "end",
 						prefix: "${dir} hold end",
 						fps: 24,
+						type: 2,
 						looped: false
 					}
 				],

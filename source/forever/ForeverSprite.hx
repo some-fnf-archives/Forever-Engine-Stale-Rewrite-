@@ -45,6 +45,9 @@ class ForeverSprite extends FlxSprite {
 			Utils.safeReflection(this.color, properties, "colour"); // british
 			Utils.safeReflection(this.scale.x, properties, "scale.x");
 			Utils.safeReflection(this.scale.y, properties, "scale.y");
+
+			Utils.safeReflection(this.scrollFactor.x, properties, "scroll.x");
+			Utils.safeReflection(this.scrollFactor.y, properties, "scroll.y");
 		}
 
 		return this;

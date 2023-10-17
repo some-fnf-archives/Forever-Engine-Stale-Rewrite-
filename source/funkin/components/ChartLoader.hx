@@ -63,9 +63,9 @@ class ChartLoader {
 
 							chart.notes.push({
 								time: j[0] / 1000.0,
-								step: Conductor.timeToStep(j[0], curBPM),
 								direction: dirRaw % keys,
-								lane: dirRaw >= keys != bar.mustHitSection ? 1 : 0,
+								// barely works, I need to rewrite this later -Crow
+								notefield: dirRaw >= keys != bar.mustHitSection ? 1 : 0,
 								type: j[3] != null && Std.isOfType(j[3], String) ? j[3] : "default",
 								animation: noteAnim,
 								length: j[2] / 1000.0
@@ -125,10 +125,9 @@ class Chart {
  * Note Data Config
 **/
 typedef NoteData = {
-	var step:Float;
-	var time:Float; // original millisecond timing, used for conversion to steps
+	var time:Float;
 	var direction:Int;
-	var lane:Int;
+	var notefield:Int;
 
 	@:optional var type:String;
 	@:optional var animation:String;

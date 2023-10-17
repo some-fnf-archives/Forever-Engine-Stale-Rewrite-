@@ -9,6 +9,8 @@ class NoteSpawner extends FlxTypedSpriteGroup<Note> {
 	public var curNoteData(get, never):NoteData;
 	public var curNote:Int = 0;
 
+	var _preventSpawning:Bool = false;
+
 	public function new(totalNotes:Int):Void {
 		super();
 
@@ -20,11 +22,16 @@ class NoteSpawner extends FlxTypedSpriteGroup<Note> {
 		}
 	}
 
+	public override function destroy():Void {
+		_preventSpawning = true;
+		super.destroy();
+	}
+
 	public function spawnNotes(lane:NoteField):Void {
 		if (noteList == null || noteList.length == 0)
 			return;
 
-		while (curNote < noteList.length) {
+		while (curNote < noteList.length && !_preventSpawning) {
 			var timeDifference:Float = curNoteData.time - Conductor.time;
 			if (curNoteData == null || timeDifference > 2.0)
 				break;

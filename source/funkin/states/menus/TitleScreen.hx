@@ -26,12 +26,11 @@ class TitleScreen extends FNFState {
 	public override function create():Void {
 		super.create();
 
+		DiscordRPC.updatePresence("In the Menus", "TITLE SCREEN");
 		randomBlurb = FlxG.random.getObject(getRandomText());
 
 		FlxTransitionableState.skipNextTransIn = false;
 		FlxTransitionableState.skipNextTransOut = false;
-
-		Utils.checkMenuMusic("foreverMenu", true, 102.0);
 
 		add(bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000));
 		add(textGroup = new TitleTextGroup());
@@ -40,6 +39,8 @@ class TitleScreen extends FNFState {
 
 		logo = new FlxSprite(20, 50);
 		logo.loadGraphic(AssetHelper.getAsset('images/menus/title/logo', IMAGE));
+		logo.scale.set(0.9, 0.9);
+		logo.updateHitbox();
 
 		gfDance = new ForeverSprite(FlxG.width * 0.4, FlxG.height * 0.07);
 		gfDance.frames = AssetHelper.getAsset('images/menus/title/gfDanceTitle', ATLAS_SPARROW);
@@ -55,6 +56,11 @@ class TitleScreen extends FNFState {
 		enterTxt.playAnim('idle', true);
 		enterTxt.updateHitbox();
 		mainGroup.add(enterTxt);
+
+		new flixel.util.FlxTimer().start(0.05, function(tmr)
+		{
+			Utils.checkMenuMusic("foreverMenu", true, 102.0);
+		});
 
 		if (seenIntro)
 			skipIntro();
@@ -83,17 +89,23 @@ class TitleScreen extends FNFState {
 		else {
 			if (Controls.ACCEPT) {
 				skipIntro();
-				FlxG.sound.music.time = 9400;
+				FlxG.sound.music.time = 9400.0;
 			}
 		}
 	}
 
 	var gfBopped:Bool = false;
+	var logoTween:FlxTween;
 
 	public override function onBeat(beat:Int):Void {
 		if (logo != null) {
-			logo.scale.x += 0.025; // kinda stupid but yea, its this or a really weird tween -Crow
-			logo.scale.y += 0.025;
+			if (logoTween != null)
+				logoTween.cancel();
+
+			logo.scale.set(1.05, 1.05);
+			logo.updateHitbox();
+
+			logoTween = FlxTween.tween(logo.scale, {x: 0.9, y: 0.9}, (60.0 / Conductor.bpm), {ease: FlxEase.expoOut});
 		}
 
 		if (gfDance != null) {

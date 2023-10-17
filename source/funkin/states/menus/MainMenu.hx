@@ -29,6 +29,7 @@ class MainMenu extends BaseMenuState {
 	public override function create():Void {
 		super.create();
 
+		DiscordRPC.updatePresence("In the Menus", "MAIN MENU");
 		Utils.checkMenuMusic("foreverMenu", false, 102.0);
 
 		add(bg = new ForeverSprite(0, 0, "menus/backgrounds/menuBG"));

@@ -13,7 +13,7 @@ class OptionsMenu extends BaseMenuState {
 	public var bg:ForeverSprite;
 
 	public var optionsGroup:FlxTypedGroup<Alphabet>;
-	public var iconGroup:FlxTypedGroup<ForeverSprite>;
+	public var iconGroup:FlxTypedGroup<Dynamic>;
 
 	public var topBarTxt:ForeverText;
 
@@ -32,8 +32,7 @@ class OptionsMenu extends BaseMenuState {
 		],
 		"gameplay" => [
 			new ForeverOption("Downscroll", "Check this if you want your notes to come from top to bottom.", "downScroll", CHECKMARK),
-			new ForeverOption("Centered Notefield", "Check this to center your notes to the screen, and hide the Enemy's notes.", "centerNotefield",
-				CHECKMARK),
+			new ForeverOption("Centered Notefield", "Check this to center your notes to the screen, and hide the Enemy's notes.", "centerNotefield", CHECKMARK),
 			new ForeverOption("Ghost Tapping", "Check this if you want to be able to mash keys while there's no notes to hit.", "ghostTapping", CHECKMARK),
 		],
 		"visuals" => [
@@ -54,7 +53,7 @@ class OptionsMenu extends BaseMenuState {
 		bg.updateHitbox();
 
 		add(optionsGroup = new FlxTypedGroup<Alphabet>());
-		add(iconGroup = new FlxTypedGroup<ForeverSprite>());
+		add(iconGroup = new FlxTypedGroup<Dynamic>());
 
 		var topBar:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 50, 0xFF000000);
 		topBar.alpha = 0.6;
@@ -81,11 +80,20 @@ class OptionsMenu extends BaseMenuState {
 					reloadCategory(option.name);
 				default:
 					option.changeValue();
+					var isSelector:Bool = false;
+
 					switch (option.type) {
 						case CHECKMARK:
 							iconGroup.members[curSel].playAnim('${option.value}');
+						case CHOICE(options):
+							isSelector = true;
+						case NUMBER(min, max, decimals, clamp):
+							isSelector = true;
 						default:
 					}
+
+					if (isSelector)
+						iconGroup.members[curSel].text = '${option.value}';
 			}
 		}
 
@@ -130,7 +138,7 @@ class OptionsMenu extends BaseMenuState {
 		}
 
 		while (iconGroup.members.length != 0) {
-			var i:ForeverSprite = iconGroup.members.last();
+			var i = iconGroup.members.last();
 			if (i != null)
 				i.destroy();
 			iconGroup.remove(i, true);
@@ -150,6 +158,8 @@ class OptionsMenu extends BaseMenuState {
 			optionLabel.targetY = i;
 			optionsGroup.add(optionLabel);
 
+			var isSelector:Bool = false;
+
 			switch (cataOptions[i].type) { // create an attachment
 				case CHECKMARK:
 					var newCheckmark:ChildSprite = Utils.generateCheckmark();
@@ -158,7 +168,19 @@ class OptionsMenu extends BaseMenuState {
 
 					newCheckmark.playAnim('${cataOptions[i].value} finished');
 					iconGroup.add(newCheckmark);
+
+				case CHOICE(options):
+					isSelector = true;
+				case NUMBER(min, max, decimals, clamp):
+					isSelector = true;
+
 				default:
+			}
+
+			if (isSelector) {
+				var selectorName:ChildAlphabet = new ChildAlphabet('${cataOptions[i].value}', BOLD, RIGHT);
+				selectorName.parent = optionLabel;
+				iconGroup.add(selectorName);
 			}
 		}
 

@@ -12,9 +12,11 @@ class StageBuilder extends FlxSpriteGroup {
 	/** The default hud zoom of this stage. **/
 	public var hudZoom:Float = 1.0;
 
-	public function new(stageName:String = ""):Void {
+	public function new(stageName:String = "", cameraZoom:Float = 1.05, hudZoom:Float = 1.0):Void {
 		super();
 
 		this.stageName = stageName;
+		this.cameraZoom = cameraZoom;
+		this.hudZoom = hudZoom;
 	}
 }

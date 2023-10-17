@@ -18,7 +18,7 @@ enum ForeverOptionType {
 	 * @param decimals 	How many decimals the option has.
 	 * @param clamp 	If the value should stop updating once the `max` is reached
 	**/
-	NUMBER(min:Float, max:Float, decimals:Float, ?clamp:Bool);
+	NUMBER(min:Float, max:Float, ?decimals:Null<Float>, ?clamp:Bool);
 
 	/**
 	 * StringArray Type Option.
@@ -29,7 +29,6 @@ enum ForeverOptionType {
 }
 
 /** Class Structure that handles options. **/
-@:structInit
 class ForeverOption {
 	/** Name of the Option. **/
 	public var name:String = "NO NAME.";
@@ -68,6 +67,9 @@ class ForeverOption {
 					value = !value;
 
 			case NUMBER(min, max, decimals, clamp):
+				if (decimals == null) decimals = 0.01;
+				if (clamp == null) clamp = false;
+
 				value = (clamp ? FlxMath.bound : Utils.wrapf)(value + increment * decimals, min, max);
 
 			case CHOICE(options):

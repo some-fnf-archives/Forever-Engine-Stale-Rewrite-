@@ -1,5 +1,6 @@
 package funkin.components.ui;
 
+import funkin.states.PlayState;
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
 import forever.ui.ForeverText;
@@ -41,12 +42,14 @@ class HUD extends FlxSpriteGroup {
 	public var divider:String = " • ";
 
 	public function updateScore():Void {
+		final game:PlayState = PlayState.current;
+
 		var tempScore:String = "";
 
-		tempScore = "Score: 5000"; // PlayState.gameInfo.score;
-		tempScore += divider + "Accuracy: 95.35%"; // PlayState.gameInfo.accuracy;
-		tempScore += divider + "Combo Breaks: 0"; // PlayState.gameInfo.comboBreaks;
-		tempScore += divider + "Rank: S"; // PlayState.gameInfo.rank;
+		tempScore = 'Score: ${game.playStats.score}';
+		tempScore += divider + 'Accuracy: ${game.playStats.accuracy}%';
+		tempScore += divider + 'Combo Breaks: ${game.playStats.comboBreaks}';
+		tempScore += divider + 'Rank: ${game.playStats.rank}';
 
 		scoreBar.text = '< ${tempScore} >\n';
 

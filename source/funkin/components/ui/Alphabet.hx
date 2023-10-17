@@ -183,3 +183,32 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 		super.destroy();
 	}
 }
+
+class ChildAlphabet extends Alphabet {
+	public var parent:Alphabet;
+	public var increment:FlxPoint = FlxPoint.get(0, 0);
+
+	public function new(text:String = "", ?type:AlphabetGlyphType = BOLD, ?alignment:AlphabetAlignment = LEFT, ?size:Float = 1.0):Void {
+		super(0, 0, text, type, alignment, size);
+	}
+
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
+
+		if (parent != null) {
+			switch (alignment) {
+				case LEFT:
+					this.x = x;
+				case CENTER:
+					this.x = x + ((width - parent.width) * 0.5);
+				case RIGHT:
+					this.x = x + (width - parent.width);
+			}
+		}
+	}
+
+	public override function destroy():Void {
+		increment.put();
+		super.destroy();
+	}
+}

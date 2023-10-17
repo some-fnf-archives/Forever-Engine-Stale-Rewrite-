@@ -2,6 +2,7 @@ package forever.data;
 
 #if MODS
 import haxe.ds.StringMap;
+import openfl.utils.Assets as OpenFLAssets;
 import polymod.Polymod;
 
 /**
@@ -21,6 +22,9 @@ class ModManager {
 	@:allow(Init)
 	/** Initializes the Mod Manager. **/
 	static function initialize():Void {
+		if (!OpenFLAssets.exists(MODS_FOLDER))
+			return;
+
 		var polyInit = Polymod.init({
 			modRoot: MODS_FOLDER,
 			dirs: [],
@@ -39,6 +43,9 @@ class ModManager {
 	 * Rescans the mods in the mods folder and activates the mods that should be enabled.
 	**/
 	public static function refreshMods():Void {
+		if (!OpenFLAssets.exists(MODS_FOLDER))
+			return;
+
 		// activeMods = [];
 		var scanner:Array<ModMetadata> = Polymod.scan({modRoot: MODS_FOLDER});
 		for (i in scanner)

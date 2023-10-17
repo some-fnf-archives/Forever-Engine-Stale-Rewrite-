@@ -26,22 +26,26 @@ class FreeplayMenu extends BaseMenuState {
 	var intendedScore:Int = 0;
 
 	public override function create():Void {
-		Utils.checkMenuMusic("foreverMenu", false, 102.0);
 		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
+		Utils.checkMenuMusic("foreverMenu", false, 102.0);
 
 		canChangeAlternative = true;
 
 		var localSongData:Array<String> = Utils.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
 
 		for (i in localSongData) {
-			var song:Array<String> = Utils.removeSpaces(i).split("|");
-			var name:String = song[0];
-			var folder:String = song[1];
-			var icon:String = song[2];
+			final song:Array<String> = i.trim().split("|");
+
+			// gotta do manual trimming here
+			var name:String = song[0].trim();
+			var folder:String = song[1].trim();
+			var icon:String = song[2].trim();
+
 			var color:Null<FlxColor> = 0xFF606060;
+
 			var difficulties:Array<String> = null;
 			if (song[3] != null)
-				color = FlxColor.fromString(song[3]);
+				color = FlxColor.fromString(song[3].trim());
 			if (song[4] != null)
 				difficulties = Utils.removeSpaces(song[4]).split(",");
 

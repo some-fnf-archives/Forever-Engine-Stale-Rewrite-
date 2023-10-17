@@ -4,11 +4,14 @@ import flixel.FlxCamera;
 import flixel.sound.FlxSound;
 import forever.ForeverSprite;
 import funkin.components.ChartLoader;
-import funkin.states.base.FNFState;
+import funkin.components.ScoreManager;
+import funkin.components.ui.HUD;
 import funkin.objects.*;
+import funkin.objects.notes.Note;
+import funkin.stages.DadStage;
+import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
-import funkin.components.ui.HUD;
 
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
@@ -23,16 +26,21 @@ typedef PlaySong = {
 }
 
 class PlayState extends FNFState {
+	public static var current:PlayState;
+
 	public var currentSong:PlaySong = {display: "Test", folder: "test", difficulty: "normal"};
 	public var playMode:Int = FREEPLAY;
 
 	public var bg:ForeverSprite;
 	public var playField:PlayField;
+	public var playStats:ScoreManager;
 	public var hud:HUD;
 
 	public var gameCamera:FlxCamera;
 	public var hudCamera:FlxCamera;
 	public var altCamera:FlxCamera;
+
+	public var stage:StageBuilder;
 
 	public var player:Character;
 	public var enemy:Character;
@@ -52,6 +60,8 @@ class PlayState extends FNFState {
 	}
 
 	public override function create():Void {
+		current = this;
+
 		super.create();
 
 		if (FlxG.sound.music != null)
@@ -73,15 +83,23 @@ class PlayState extends FNFState {
 		// -- PREPARE PLAYFIELD -- //
 		ChartLoader.load(currentSong.folder, currentSong.difficulty);
 		Conductor.bpm = Chart.current.data.initialBPM;
+		playStats = new ScoreManager();
 
-		// add(stage = new Stage());
+		add(stage = new DadStage());
 		add(playField = new PlayField());
 		add(hud = new HUD());
 
+		// update song display so it shows song name and difficulty (like intended)
+		hud.centerMark.text = '- ${currentSong.display} [${currentSong.difficulty.toUpperCase()}] -';
+		hud.centerMark.screenCenter(X);
+
 		playField.camera = hud.camera = hudCamera;
 
-		for (lane in playField.lanes)
+		for (lane in playField.noteFields) {
 			lane.changeStrumSpeed(Chart.current.data.initialSpeed);
+			lane.onNoteHit.add(hitBehavior);
+			lane.onNoteMiss.add(missBehavior);
+		}
 
 		// -- PREPARE CHARACTERS -- //
 		add(player = new Character(0, 0, "bf", true));
@@ -109,47 +127,54 @@ class PlayState extends FNFState {
 			FlxG.sound.music.play();
 			vocals.play();
 		}
-		checkKeys();
-	}
-
-	private function checkKeys():Void {
-		if (FlxG.keys.justPressed.ESCAPE)
-			endPlay();
 
 		if (FlxG.keys.justPressed.SEVEN)
 			openCharter();
+		if (FlxG.keys.justPressed.ESCAPE)
+			endPlay();
+	}
 
-		var controls:Array<Bool> = [Controls.LEFT, Controls.DOWN, Controls.UP, Controls.RIGHT];
+	public override function destroy():Void {
+		current = null;
+		super.destroy();
+	}
 
-		for (i in 0...controls.length) {
-			if (controls[i] == true) {
-				player.playAnim(player.singingSteps[i], true);
-				enemy.playAnim(enemy.singingSteps[i], true);
-			}
+	public function hitBehavior(note:Note):Void {
+		if (note.wasHit)
+			return;
+
+		final isEnemy:Bool = note.parent == playField.enemyField;
+		final character:Character = isEnemy ? enemy : player;
+
+		// TODO: a better system -Crow
+		character.playAnim(character.singingSteps[note.data.direction], true);
+		// character.holdTimer = 0.0;
+
+		if (!note.parent.cpuControl) {
+			PlayState.current.playStats.combo++;
+			// note.parent.doNoteSplash(note);
+			playStats.updateRank();
+			hud.updateScore();
 		}
 
-		if (FlxG.keys.justPressed.SPACE)
-			player.playAnim("hey", true);
+		note.parent.invalidateNote(note);
+		// note.wasHit = true;
+	}
 
-		/*
-			if (FlxG.keys.justPressed.SPACE) {
-				Settings.downScroll = !Settings.downScroll;
-				Settings.flush();
+	public function missBehavior(dir:Int, note:Note = null):Void {
+		if (note != null)
+			note.parent.invalidateNote(note);
 
-				if (!Settings.downScroll) {
-					trace('uhhhhhh');
-					bg.colorTween(FlxColor.LIME, 1, {ease: FlxEase.expoOut});
-				} else {
-					trace('peekaboo');
-					bg.colorTween(FlxColor.BLUE, 1, {ease: FlxEase.expoOut});
-				}
-			}
-		 */
+		playStats.misses++;
+		playStats.updateRank();
+		hud.updateScore();
 	}
 
 	public override function onBeat(beat:Int):Void {
 		// processEvent(PlaySound("metronome.wav", 1.0));
-		var chars:Array<Character> = [player, enemy];
+		var chars:Array<Character> = [player];
+		if (enemy != null)
+			chars.push(enemy);
 		if (crowd != null)
 			chars.push(crowd);
 

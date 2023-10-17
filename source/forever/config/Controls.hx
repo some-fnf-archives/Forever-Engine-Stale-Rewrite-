@@ -21,7 +21,6 @@ class Controls {
 	 * to access your shortcut, use the expression `Controls.YOURCONTROL`
 	**/
 	// -- COMMON ACTIONS -- //
-
 	function ACCEPT(jp_accept:Bool) {}
 
 	function BACK(jp_back:Bool) {}
@@ -105,8 +104,8 @@ class BaseControls {
 	/** Creates a new instance of the Controls Base Class. **/
 	public function new():Void {
 		myControls = cloneControlsMap();
-		gamepadMode = false;
 		onPadFind = new FlxTypedSignal();
+		gamepadMode = false;
 	}
 
 	/** Checks if a Control Key is held. **/
@@ -125,7 +124,7 @@ class BaseControls {
 	public inline function justReleased(act:String):Bool
 		return keyChecker(act, JUST_RELEASED);
 
-	// Helpers
+	// -- HELPERS -- //
 
 	@:dox(hide) @:noCompletion private function keyChecker(act:String, state:FlxInputState):Bool {
 		for (key in myControls.get(act))
@@ -139,5 +138,24 @@ class BaseControls {
 		for (key => value in defaultControls)
 			newMap[key] = value.copy();
 		return newMap;
+	}
+
+	@:dox(hide) public static inline function getKeyFromAction(action:String):Int {
+		var key:Int = -1;
+		for (name => keysArray in Controls.current.myControls) {
+			if (action == name && keysArray != null)
+				key = keysArray[0];
+		}
+		return key;
+	}
+
+	@:dox(hide) public static inline function getActionFromKey(key:FlxKey):String {
+		var action:String = null;
+		for (name => keysArray in Controls.current.myControls) {
+			for (k in keysArray)
+				if (k == key)
+					action = name;
+		}
+		return action;
 	}
 }

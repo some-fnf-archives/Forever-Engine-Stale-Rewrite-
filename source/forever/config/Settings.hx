@@ -13,6 +13,8 @@ package forever.config;
 **/
 @:build(forever.macros.ConfigHelper.buildSaveMacro())
 class Settings {
+	// -- GAMEPLAY -- //
+
 	/** Check this if you want the game not to pause when unfocusing the window. **/
 	public static var autoPause:Bool = false;
 
@@ -24,6 +26,11 @@ class Settings {
 
 	/** Check this if you want to be able to mash keys while there's no notes to hit. **/
 	public static var ghostTapping:Bool = true;
+
+	/** Define your framerate limit. **/
+	public static var framerateCap:Int = 60;
+
+	// -- VISUALS -- //
 
 	/** Style of the healthbar, score popups, etc. **/
 	public static var uiStyle:String = "default";
@@ -61,5 +68,7 @@ class Settings {
 	**/
 	public static function update():Void {
 		FlxG.autoPause = Settings.autoPause;
+		if (FlxG.drawFramerate != Settings.framerateCap)
+			Main.setFPSCap(Settings.framerateCap);
 	}
 }

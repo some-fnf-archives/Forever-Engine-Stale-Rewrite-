@@ -5,18 +5,21 @@
             {
                 "name": "static",
                 "prefix": "${dir} static",
+                "type": 0,
                 "fps": 24,
                 "looped": false
             },
             {
                 "name": "pressed",
                 "prefix": "${dir} press",
+                "type": 1,
                 "fps": 24,
                 "looped": false
             },
             {
                 "name": "confirm",
                 "prefix": "${dir} confirm",
+                "type": 2,
                 "fps": 24,
                 "looped": false
             }
@@ -30,18 +33,21 @@
             {
                 "name": "scroll",
                 "prefix": "${dir}0",
+                "type": 0,
                 "fps": 24,
                 "looped": false
             },
             {
                 "name": "hold",
                 "prefix": "${dir} hold piece",
+                "type": 1,
                 "fps": 24,
                 "looped": false
             },
             {
                 "name": "end",
                 "prefix": "${dir} hold end",
+                "type": 2,
                 "fps": 24,
                 "looped": false
             }

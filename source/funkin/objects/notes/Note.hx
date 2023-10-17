@@ -1,8 +1,11 @@
 package funkin.objects.notes;
 
+import funkin.states.PlayState;
 import forever.ForeverSprite;
 import funkin.components.ChartLoader.NoteData;
+import funkin.components.ScoreManager;
 import funkin.objects.notes.NoteField;
+import haxe.ds.IntMap;
 
 /**
  * Base Note Object, may appear differently visually depending on its type
@@ -16,40 +19,37 @@ class Note extends ForeverSprite {
 	**/
 	public var data:NoteData;
 
-	/**
-	 * Note Parent Lane
-	**/
+	/** Note Parent Notefield. **/
 	public var parent:NoteField;
 
-	/**
-	 * If this note should follow its parent.
-	**/
+	/** If this note should follow its parent. **/
 	public var mustFollowParent:Bool = true;
 
-	/**
-	 * Note Speed Multiplier
-	**/
+	/** Note Speed Multiplier. **/
 	public var speedMult:Float = 0.0;
 
-	/**
-	 * the Type Data of this note, often defines behavior and texture
-	**/
+	/** the Type Data of this note, often defines behavior and texture. **/
 	public var type(get, set):String;
 
-	/**
-	 * the Direction of this note, simply returns what the direction on `data` is
-	**/
+	/** the Direction of this note, simply returns what the direction on `data` is. **/
 	public var direction(get, never):Int;
 
-	/**
-	 * Checks if this note is a sustain note
-	**/
+	/** Checks if this note is a sustain note. **/
 	public var isSustain(get, never):Bool;
 
-	/**
-	 * the Scrolling Speed of this Note
-	**/
+	/** the Scrolling Speed of this Note. **/
 	public var speed(default, set):Float = 1.0;
+
+	// INPUT BEHAVIOR //
+	public var wasHit:Bool = false;
+	public var isLate:Bool = false;
+	public var canBeHit:Bool = false;
+	public var lowPriority:Bool = false;
+
+	public static var scrollDifference(get, never):Int;
+
+	// NOTESKIN CONFIG STUFF //
+	var animations:IntMap<String> = new IntMap<String>();
 
 	public function new():Void {
 		super(-5000, -5000); // make sure its offscreen initially
@@ -59,17 +59,27 @@ class Note extends ForeverSprite {
 	public function appendData(data:NoteData):Note {
 		this.data = data;
 		this.type = data.type;
-		playAnim("scroll", true);
+		playAnim(animations.get(0), true);
 		return this;
 	}
 
 	public override function update(elapsed:Float):Void {
-		if (parent != null && mustFollowParent)
-			followParent();
+		if (parent != null && alive) {
+			if (mustFollowParent)
+				followParent();
+
+			if (!parent.cpuControl) {
+				final timings = ScoreManager.timings.get("fnf");
+				final hitTime = (data.time - Conductor.time);
+				canBeHit = hitTime < (timings.last() / 1000.0);
+			}
+			else // you can never be so sure.
+				canBeHit = false;
+		}
 	}
 
 	public function followParent():Void {
-		if (parent == null || this.data == null)
+		if (parent == null || this.data == null || !alive)
 			return;
 
 		var strum:Strum = parent.members[direction];
@@ -77,15 +87,31 @@ class Note extends ForeverSprite {
 		if (strum != null) {
 			if (!visible)
 				visible = true;
-			var scrollDifference:Int = Settings.downScroll ? 1 : -1;
 
 			speed = strum.speed;
 			scale = strum.scale;
 
-			var distance:Float = 0.45 * (Conductor.time - data.time) * (1000.0 * Math.abs(speed)) / scale.y;
+			final distance:Float = 0.45 * (Conductor.time - data.time) * (1000.0 * Math.abs(speed)) / scale.y;
 
 			x = strum.x - 10;
 			y = strum.y + distance * scrollDifference;
+
+			if (parent.cpuControl) {
+				if (data.time <= Conductor.time)
+					parent.onNoteHit.dispatch(this);
+			}
+
+			// kill notes that are far from the screen view.
+			var positionDifference:Float = parent.cpuControl ? (y - strum.y + 10.0) : 100.0;
+			if (!parent.cpuControl && scrollDifference>0)
+				positionDifference = -positionDifference;
+
+			if (-distance <= (positionDifference * scrollDifference)) {
+				if (!wasHit) {
+					parent.onNoteMiss.dispatch(direction, this);
+					isLate = true;
+				}
+			}
 		}
 	}
 
@@ -104,7 +130,7 @@ class Note extends ForeverSprite {
 	@:noCompletion function get_type():String
 		return data?.type ?? "default";
 
-	@noCompletion function set_type(v:String):String {
+	@:noCompletion function set_type(v:String):String {
 		switch (v) {
 			default:
 				frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.notes.image}', ATLAS_SPARROW);
@@ -113,10 +139,15 @@ class Note extends ForeverSprite {
 						var dir:String = Utils.NOTE_DIRECTIONS[direction ?? 0];
 						var color:String = Utils.NOTE_COLORS[direction ?? 0];
 						addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
+						if (i.type != null)
+							animations.set(i.type, i.name);
 					}
 				}
 		}
 
 		return v;
 	}
+
+	static function get_scrollDifference():Int
+		return Settings.downScroll ? 1 : -1;
 }

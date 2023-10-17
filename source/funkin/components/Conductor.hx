@@ -14,7 +14,7 @@ class Conductor extends FlxBasic {
 	public static var bpm:Float = 100.0;
 	public static var time:Float = 0.0;
 
-	public static var step:Int;
+	public static var step(get, never):Int;
 	public static var beat(get, never):Int;
 	public static var bar(get, never):Int;
 
@@ -31,8 +31,8 @@ class Conductor extends FlxBasic {
 
 	public function new():Void {
 		super();
+
 		time = 0.0;
-		step = 0;
 	}
 
 	public override function update(elapsed:Float):Void {
@@ -45,7 +45,6 @@ class Conductor extends FlxBasic {
 			if (Math.abs(time - FlxG.sound.music.time / 1000.0) >= 0.05) // interpolation.
 				time = FlxG.sound.music.time / 1000.0;
 		}
-		step = Math.floor(timeToStep(time, bpm));
 
 		if (time >= 0.0) {
 			stepTime += stepDelta;
@@ -104,6 +103,9 @@ class Conductor extends FlxBasic {
 
 	@:noCompletion function get_stepDelta():Float
 		return beatDelta * 4.0;
+
+	@:noCompletion static function get_step():Int
+		return Math.floor(timeToStep(time, bpm));
 
 	@:noCompletion static function get_beat():Int
 		return Math.floor(step / 4.0);
