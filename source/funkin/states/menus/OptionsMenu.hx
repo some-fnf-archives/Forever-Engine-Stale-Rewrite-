@@ -1,6 +1,5 @@
 package funkin.states.menus;
 
-import funkin.states.menus.options.NoteConfigurator;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import forever.ForeverSprite;
@@ -8,6 +7,7 @@ import forever.data.ForeverOption;
 import forever.ui.ForeverText;
 import funkin.components.ui.Alphabet;
 import funkin.states.base.BaseMenuState;
+import funkin.states.subStates.NoteConfigurator;
 import haxe.ds.StringMap;
 
 class OptionsMenu extends BaseMenuState {
@@ -128,11 +128,12 @@ class OptionsMenu extends BaseMenuState {
 		if (newSel != 0)
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 
-		var bs:Int = 0;
-		for (i in optionsGroup.members) {
-			i.targetY = bs - curSel;
-			i.alpha = i.targetY == 0 ? 1.0 : 0.6;
-			bs++;
+		for (i in 0...optionsGroup.members.length) {
+			var let:Alphabet = optionsGroup.members[i];
+			let.targetY = i - curSel;
+			let.alpha = let.targetY == 0 ? 1.0 : 0.6;
+			if (iconGroup.members[i] != null)
+				iconGroup.members[i].alpha = let.alpha;
 		}
 	}
 

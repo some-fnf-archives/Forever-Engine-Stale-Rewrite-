@@ -20,6 +20,9 @@ class Strum extends ForeverSprite {
 	public var animations:IntMap<String> = new IntMap<String>();
 	public var animPlayed:Int = -1;
 
+	// todo: make a better splash system that doesn't suck ass -Crow
+	public var splash:ForeverSprite = null;
+
 	public function new(x:Float, y:Float, skin:String = "default", id:Int):Void {
 		super(x, y);
 
@@ -40,11 +43,51 @@ class Strum extends ForeverSprite {
 		playStrum(STATIC, true);
 	}
 
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
+		if (splash != null && splash.alive)
+			splash.update(elapsed);
+	}
+
 	public function playStrum(type:Int, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
 		playAnim(animations.get(type), forced, reversed, frame);
 		centerOrigin();
 		centerOffsets();
 		animPlayed = type;
+	}
+
+	public function doNoteSplash(note:Note = null, cache:Bool = false):Void {
+		if (splash == null) {
+			splash = new ForeverSprite();
+			splash.frames = Paths.getSparrowAtlas('notes/${NoteConfig.config.splashes.image}');
+
+			for (i in NoteConfig.config.splashes.anims) {
+				var dir:String = Utils.NOTE_DIRECTIONS[ID];
+				var color:String = Utils.NOTE_COLORS[ID];
+
+				splash.addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
+				/*
+					if (i.type != null)
+						splash.animations.set(i.type, i.name);
+				 */
+			}
+
+			splash.centerToObject(this, XY);
+			splash.scale.set(NoteConfig.config.splashes.size, NoteConfig.config.splashes.size);
+			splash.updateHitbox();
+
+			splash.animation.finishCallback = function(anim:String):Void splash.kill();
+		}
+
+		splash.revive();
+		splash.alpha = cache ? 0.000001 : NoteConfig.config.splashes.alpha;
+		splash.playAnim('${FlxG.random.int(1, 2)}', true);
+	}
+
+	public override function draw():Void {
+		super.draw();
+		if (splash != null && splash.alive)
+			splash.draw();
 	}
 }
 

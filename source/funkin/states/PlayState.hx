@@ -121,6 +121,11 @@ class PlayState extends FNFState {
 			lane.onNoteMiss.add(missBehavior);
 		}
 
+		for (i in 0...playField.playerField.members.length) {
+			var strum = playField.playerField.members[i];
+			strum.doNoteSplash(null, true);
+		}
+
 		// -- PREPARE CHARACTERS -- //
 		add(player = new Character(stage.playerPosition.x, stage.playerPosition.y, "bf", true));
 		add(enemy = new Character(stage.enemyPosition.x, stage.enemyPosition.y, "bf", false));
@@ -167,8 +172,7 @@ class PlayState extends FNFState {
 		if (note.wasHit)
 			return;
 
-		final isEnemy:Bool = note.parent == playField.enemyField;
-		final character:Character = isEnemy ? enemy : player;
+		final character:Character = (note.parent == playField.enemyField) ? enemy : player;
 
 		// TODO: a better system -Crow
 		character.playAnim(character.singingSteps[note.data.direction], true);
@@ -189,9 +193,9 @@ class PlayState extends FNFState {
 			playStats.accuracyWindow += Math.max(0, judgement.getParameters()[2]);
 			playStats.increaseJudgeHits(judgement.getParameters()[0]);
 
-			trace(judgement.getParameters()[0]);
+			if (judgement.getParameters()[3] || note.splash)
+				note.parent.members[note.direction].doNoteSplash(note);
 
-			// note.parent.doNoteSplash(note);
 			playStats.updateRank();
 			hud.updateScore();
 		}

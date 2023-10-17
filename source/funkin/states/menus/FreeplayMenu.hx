@@ -186,6 +186,9 @@ class FreeplayMenu extends BaseMenuState {
 		if (newSelAlt != 0)
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 
+		if (DifficultyHelper.currentList.length == 1)
+			difficultyTxt.text = '${DifficultyHelper.toString(curSelAlt).toUpperCase()}';
+		else
 		difficultyTxt.text = '« ${DifficultyHelper.toString(curSelAlt).toUpperCase()} »';
 
 		intendedScore = Highscore.getSongScore(songs[curSel].folder).score;

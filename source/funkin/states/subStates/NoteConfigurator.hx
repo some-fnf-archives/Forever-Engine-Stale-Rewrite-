@@ -1,4 +1,4 @@
-package funkin.states.menus.options;
+package funkin.states.subStates;
 
 import flixel.FlxSubState;
 import funkin.objects.notes.Note;

@@ -90,6 +90,7 @@ class BaseControls {
 		"back" => [BACKSPACE, ESCAPE],
 		"pause" => [ENTER, ESCAPE],
 		"reset" => [R],
+		"switch mods" => [SLASH, CONTROL],
 	];
 
 	/** Your own Custom Controls. **/
@@ -140,11 +141,11 @@ class BaseControls {
 		return newMap;
 	}
 
-	@:dox(hide) public static inline function getKeyFromAction(action:String):Int {
+	@:dox(hide) public static inline function getKeyFromAction(action:String, id:Int = 0):FlxKey {
 		var key:Int = -1;
 		for (name => keysArray in Controls.current.myControls) {
 			if (action == name && keysArray != null)
-				key = keysArray[0];
+				key = keysArray[id];
 		}
 		return key;
 	}

@@ -3,10 +3,11 @@ package funkin.states.menus;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
-import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import forever.ForeverSprite;
 import funkin.states.base.BaseMenuState;
+import funkin.states.subStates.ModsMenu;
 
 using flixel.effects.FlxFlicker;
 
@@ -66,7 +67,10 @@ class MainMenu extends BaseMenuState {
 			buttons.add(bttn);
 		}
 
-		var versionLabel:FlxText = new FlxText(5, FlxG.height - 20, 0, 'Forever Engine v${Main.version}');
+		var modKb1:String = BaseControls.getKeyFromAction("switch mods").toString();
+		var modKb2:String = BaseControls.getKeyFromAction("switch mods", 1).toString();
+
+		var versionLabel:FlxText = new FlxText(5, FlxG.height - 35, 0, 'Forever Engine v${Main.version}' + '\nPress ${modKb1} or ${modKb2} to Switch Mods');
 		versionLabel.setFormat(AssetHelper.getAsset("vcr", FONT), 16, 0xFFFFFFFF, LEFT, FlxTextBorderStyle.OUTLINE, 0xFF000000);
 		versionLabel.scrollFactor.set();
 		add(versionLabel);
@@ -108,9 +112,12 @@ class MainMenu extends BaseMenuState {
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		buttons.forEach(function(button:FlxSprite) {
-			button.screenCenter(X);
-		});
+		buttons.forEach(function(button:FlxSprite) button.screenCenter(X));
+
+		if (Controls.current.justPressed("switch mods")) {
+			FlxG.state.persistentUpdate = false;
+			openSubState(new ModsMenu());
+		}
 	}
 
 	public override function updateSelection(newSel:Int = 0):Void {

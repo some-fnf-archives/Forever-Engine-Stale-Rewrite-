@@ -1,4 +1,5 @@
-# Display Name | Folder Name | Icon
+# Display Name | Folder Name | Icon | difficultya, difficultyb, difficultyc
+# Difficulties are optional and separated by commas
 # Starting lines with a hash (#) gets ignored since its a comment
 # Empty lines also get ignored
 

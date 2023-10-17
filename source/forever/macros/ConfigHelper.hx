@@ -63,6 +63,7 @@ class ConfigHelper {
 							arr.push(macro {
 								if (flixel.FlxG.save.data.$name != null)
 									$i{name} = flixel.FlxG.save.data.$name;
+								Settings.update();
 							});
 						}
 						fun.expr = macro $b{arr};

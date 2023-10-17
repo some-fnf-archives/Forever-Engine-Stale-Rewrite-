@@ -13,18 +13,15 @@ class ModManager {
 	/** Default Mods Folder. **/
 	public static final MODS_FOLDER:String = "mods";
 
-	/** List of Found Mod Folders. **/
-	public static var modFolders:Array<String> = [];
+	/** List of Mods found. **/
+	public static var mods:Array<ModMetadata> = [];
 
-	/** List of Mod Folders. **/
-	public static var modsMap:StringMap<Bool>;
+	/** Current Active Mod. **/
+	public static var currentMod:ModMetadata;
 
 	@:allow(Init)
 	/** Initializes the Mod Manager. **/
 	static function initialize():Void {
-		if (!OpenFLAssets.exists(MODS_FOLDER))
-			return;
-
 		var polyInit = Polymod.init({
 			modRoot: MODS_FOLDER,
 			dirs: [],
@@ -33,34 +30,26 @@ class ModManager {
 			ignoredFiles: Polymod.getDefaultIgnoreList(),
 			framework: Framework.FLIXEL
 		});
-		modsMap = new StringMap<Bool>();
 
-		var modIDs:Array<String> = polyInit.map(function(mod:ModMetadata) return mod.id);
-		refreshMods();
+		mods = polyInit.map(function(mod:ModMetadata) return mod);
 	}
 
 	/**
 	 * Rescans the mods in the mods folder and activates the mods that should be enabled.
 	**/
 	public static function refreshMods():Void {
-		if (!OpenFLAssets.exists(MODS_FOLDER))
+		mods = Polymod.scan({modRoot: MODS_FOLDER});
+	}
+
+	public static function loadMod(mod:String):Void {
+		if (mod == "Friday Night Funkin'") {
+			Polymod.unloadAllMods();
 			return;
-
-		// activeMods = [];
-		var scanner:Array<ModMetadata> = Polymod.scan({modRoot: MODS_FOLDER});
-		for (i in scanner)
-			modsMap.set(i.id, true);
-
-		for (mod in modsMap.keys()) {
-			if (modsMap.get(mod) == true) {
-				modFolders.push(mod);
-				Polymod.loadMod(mod);
-			}
-			else {
-				if (Polymod.getLoadedModIds().contains(mod))
-					Polymod.unloadMod(mod);
-			}
 		}
+
+		var modStrings:Array<String> = mods.map(function(coolMod:ModMetadata) return coolMod.id);
+		if (modStrings.contains(mod))
+			Polymod.loadMod(mod);
 	}
 
 	@:noCompletion @:noPrivateAccess @:dox(hide)

@@ -12,6 +12,8 @@ import haxe.ds.IntMap;
  * it can be a spinning mine, a arrow, and less commonly a bar or circle
 **/
 class Note extends ForeverSprite {
+	public static var scrollDifference(get, never):Int;
+
 	/**
 	 * the Data of the note, often set when spawning it
 	 *
@@ -46,7 +48,9 @@ class Note extends ForeverSprite {
 	public var canBeHit:Bool = false;
 	public var lowPriority:Bool = false;
 
-	public static var scrollDifference(get, never):Int;
+	// NOTE TYPE BEHAVIOR //
+	public var splash:Bool = false;
+	public var isMine:Bool = false;
 
 	// NOTESKIN CONFIG STUFF //
 	var animations:IntMap<String> = new IntMap<String>();
