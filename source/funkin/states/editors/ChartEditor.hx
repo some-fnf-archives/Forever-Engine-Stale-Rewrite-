@@ -6,12 +6,12 @@ import flixel.addons.display.FlxTiledSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
-import funkin.states.editors.CharterUI;
+import funkin.states.editors.objects.CharterUI;
 import openfl.geom.ColorTransform;
 import openfl.geom.Rectangle;
 
 @:access(funkin.states.PlayState)
-class Charter extends FlxSubState {
+class ChartEditor extends FlxSubState {
 	public var backgroundLayer:FlxSpriteGroup;
 	public var checkerboard:FlxTiledSprite;
 	public var statusBar:CharterStatusBar;

@@ -49,7 +49,7 @@ class Strum extends ForeverSprite {
 }
 
 class NoteField extends FlxTypedGroup<Strum> {
-	public var skin:String = "default";
+	public var skin:String;
 	public var playField:PlayField;
 	public var cpuControl:Bool;
 

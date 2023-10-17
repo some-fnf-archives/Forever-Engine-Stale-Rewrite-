@@ -1,13 +1,13 @@
 package funkin.stages;
 
 import forever.ForeverSprite;
-import funkin.objects.StageBuilder;
+import funkin.objects.StageBase;
 
 /**
  * Tutorial
  * Week 1: Bopeebo, Fresh, Dadbattle
 **/
-class DadStage extends StageBuilder {
+class DadStage extends StageBase {
 	public function new():Void {
 		super("stage", 0.9);
 

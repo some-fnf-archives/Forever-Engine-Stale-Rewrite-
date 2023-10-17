@@ -3,7 +3,7 @@ package funkin.objects;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
 
-class StageBuilder extends FlxSpriteGroup {
+class StageBase extends FlxSpriteGroup {
 	/** Stage Name Identifier. **/
 	public var stageName:String = "stage";
 

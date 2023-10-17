@@ -51,7 +51,7 @@ class PlayState extends FNFState {
 	public var hudCamera:FlxCamera;
 	public var altCamera:FlxCamera;
 
-	public var stage:StageBuilder;
+	public var stage:StageBase;
 
 	public var player:Character;
 	public var enemy:Character;
@@ -153,7 +153,7 @@ class PlayState extends FNFState {
 		}
 
 		if (FlxG.keys.justPressed.SEVEN)
-			openCharter();
+			openChartEditor();
 		if (FlxG.keys.justPressed.ESCAPE)
 			endPlay();
 	}
@@ -174,28 +174,26 @@ class PlayState extends FNFState {
 		character.playAnim(character.singingSteps[note.data.direction], true);
 		character.holdTmr = 0.0;
 
-		if (character == player) {
-			var millisecondTiming:Float = note.data.time - Conductor.time;
+		if (!note.parent.cpuControl) {
+			var millisecondTiming:Float = Math.abs((note.data.time - Conductor.time) * 1000.0);
 			var judgement:Judgement = ScoreManager.judgeNote(millisecondTiming);
 			playStats.totalMs += millisecondTiming;
 
-			playStats.score += judgement.score;
+			playStats.score += judgement.getParameters()[1];
 			playStats.health += 0.035;
 			if (playStats.combo < 0)
 				playStats.combo = 0;
 			playStats.combo += 1;
 
 			playStats.totalNotesHit += 1;
-			playStats.accuracyWindow += Math.max(0, judgement.accuracy);
-			playStats.judgementsHit.set(judgement.name, playStats.judgementsHit.get(judgement.name) + 1);
+			playStats.accuracyWindow += Math.max(0, judgement.getParameters()[2]);
+			playStats.increaseJudgeHits(judgement.getParameters()[0]);
 
-			trace(judgement.name);
+			trace(judgement.getParameters()[0]);
 
 			// note.parent.doNoteSplash(note);
 			playStats.updateRank();
 			hud.updateScore();
-
-			DiscordRPC.updatePresence('Playing: ${currentSong.display}', '${hud.scoreBar.text}');
 		}
 
 		note.parent.invalidateNote(note);
@@ -209,8 +207,6 @@ class PlayState extends FNFState {
 		playStats.misses += 1;
 		playStats.updateRank();
 		hud.updateScore();
-
-		DiscordRPC.updatePresence('Playing: ${currentSong.display}', '${hud.scoreBar.text}');
 	}
 
 	public override function onBeat(beat:Int):Void {
@@ -275,11 +271,11 @@ class PlayState extends FNFState {
 
 	// -- HELPER FUNCTIONS -- //
 
-	function openCharter():Void {
+	function openChartEditor():Void {
 		FlxG.sound.music.pause();
 		DiscordRPC.updatePresence('Charting: ${currentSong.display}', '${hud.scoreBar.text}');
 
-		var charter:Charter = new Charter();
+		var charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
 		charter.ID = 1;
 

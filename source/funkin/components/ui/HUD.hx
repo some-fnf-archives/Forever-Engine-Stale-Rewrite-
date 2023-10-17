@@ -44,7 +44,7 @@ class HUD extends FlxSpriteGroup {
 		centerMark.screenCenter(X);
 		add(centerMark);
 
-		scoreBar = new ForeverText(healthBar.x - healthBar.width - 190, healthBar.y + 50, Std.int(healthBar.width + 50), "", 18);
+		scoreBar = new ForeverText(healthBar.x - healthBar.width - 190, healthBar.y + 40, Std.int(healthBar.width + 150), "", 18);
 		scoreBar.alignment = CENTER;
 		scoreBar.borderSize = 1.5;
 		add(scoreBar);
@@ -78,5 +78,7 @@ class HUD extends FlxSpriteGroup {
 		scoreBar.text = '< ${tempScore} >\n';
 
 		scoreBar.screenCenter(X);
+		
+		DiscordRPC.updatePresence('Playing: ${game.currentSong.display}', '${scoreBar.text}');
 	}
 }

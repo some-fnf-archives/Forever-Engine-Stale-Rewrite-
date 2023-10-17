@@ -1,4 +1,4 @@
-package funkin.states.editors;
+package funkin.states.editors.objects;
 
 import flixel.group.FlxSpriteGroup;
 import forever.ui.ForeverText;
