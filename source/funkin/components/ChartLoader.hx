@@ -34,19 +34,22 @@ class ChartLoader {
 						if (bar == null)
 							continue;
 
-						final curBar:Int = json.song.notes.indexOf(bar);
+						var curBar:Int = json.song.notes.indexOf(bar);
+						var barTime:Float = (60.0 / curBPM) / 4.0;
 
 						if (bar.changeBPM == true && bar.bpm != curBPM) {
 							curBPM = bar.bpm;
 							chart.events.push({
 								event: BPMChange(bar.bpm),
-								step: (60.0 / curBPM) * bar.lengthInSteps * curBar
+								step: barTime * bar.lengthInSteps * curBar,
+								delay: 0.0
 							});
 						}
 
 						chart.events.push({
 							event: FocusCamera(bar.mustHitSection ? 1 : 0, false),
-							step: (60.0 / curBPM) * bar.lengthInSteps * curBar
+							step: barTime * bar.lengthInSteps * curBar,
+							delay: 0.0
 						});
 
 						for (j in cast(bar.sectionNotes, Array<Dynamic>)) {
@@ -160,6 +163,7 @@ typedef ChartExtraData = {
 typedef ChartEvent<T> = {
 	var event:T;
 	var step:Float;
+	var delay:Float;
 }
 
 enum ForeverEvents {

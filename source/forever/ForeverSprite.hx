@@ -1,9 +1,9 @@
 package forever;
 
-import funkin.components.ui.Alphabet;
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import forever.config.Settings;
+import funkin.components.ui.Alphabet.AlphabetAlignment;
 
 /**
  * Global Sprite tools
@@ -147,7 +147,7 @@ class ForeverSprite extends FlxSprite {
 
 class ChildSprite extends ForeverSprite {
 	/** This sprite's parent. **/
-	public var parent:Alphabet;
+	public var parent:FlxSprite;
 
 	/** This sprite's alignment. **/
 	public var align:AlphabetAlignment = RIGHT;

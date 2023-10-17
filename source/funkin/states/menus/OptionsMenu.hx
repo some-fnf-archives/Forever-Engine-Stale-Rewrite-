@@ -1,5 +1,6 @@
 package funkin.states.menus;
 
+import funkin.states.menus.options.NoteConfigurator;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import forever.ForeverSprite;
@@ -36,8 +37,9 @@ class OptionsMenu extends BaseMenuState {
 			new ForeverOption("Ghost Tapping", "Check this if you want to be able to mash keys while there's no notes to hit.", "ghostTapping", CHECKMARK),
 		],
 		"visuals" => [
+			new ForeverOption("Note Skin >", CATEGORY),
 			new ForeverOption("Clip Style", "Where should the sustain clip to?", "sustainLayer", CHOICE(["stepmania", "fnf"])),
-			new ForeverOption("Note Skin", "Style of your scrolling notes.", CHOICE(["default"])),
+			// new ForeverOption("Note Skin", "Style of your scrolling notes.", CHOICE(["default"])),
 			new ForeverOption("UI Skin", "Style of the healthbar, score popups, etc.", "uiStyle", CHOICE(["default"])),
 		],
 	];
@@ -48,7 +50,7 @@ class OptionsMenu extends BaseMenuState {
 	override function create():Void {
 		super.create();
 
-		add(bg = new ForeverSprite(0, 0, "menus/backgrounds/menuDesat", {color: 0xFFEA71FD}));
+		add(bg = new ForeverSprite(0, 0, "menus/menuDesat", {color: 0xFFEA71FD}));
 		bg.scale.set(1.15, 1.15);
 		bg.updateHitbox();
 
@@ -65,20 +67,25 @@ class OptionsMenu extends BaseMenuState {
 		reloadOptions();
 
 		onAccept = function() {
-			if (optionsListed.get(curCateg)[curSel].name.toLowerCase() == "exit") {
-				FlxG.sound.play(AssetHelper.getAsset('music/sfx/cancelMenu', SOUND));
-				exitMenu();
-				return;
-			}
-
-			FlxG.sound.play(AssetHelper.getAsset('music/sfx/confirmMenu', SOUND));
-
 			var option:ForeverOption = optionsListed.get(curCateg)[curSel];
 
 			switch (option.type) {
 				case CATEGORY:
-					reloadCategory(option.name);
+					switch (option.name.toLowerCase()) {
+						case "note skin >":
+							persistentUpdate = false;
+							openSubState(new NoteConfigurator());
+						case "exit":
+							FlxG.sound.play(AssetHelper.getAsset('music/sfx/cancelMenu', SOUND));
+							canChangeSelection = false;
+							canBackOut = false;
+							canAccept = false;
+							exitMenu();
+						default: reloadCategory(option.name);
+					}
 				default:
+					FlxG.sound.play(AssetHelper.getAsset('music/sfx/confirmMenu', SOUND));
+
 					option.changeValue();
 					var isSelector:Bool = false;
 

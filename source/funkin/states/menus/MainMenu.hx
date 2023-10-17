@@ -32,8 +32,8 @@ class MainMenu extends BaseMenuState {
 		DiscordRPC.updatePresence("In the Menus", "MAIN MENU");
 		Utils.checkMenuMusic("foreverMenu", false, 102.0);
 
-		add(bg = new ForeverSprite(0, 0, "menus/backgrounds/menuBG"));
-		add(magenta = new ForeverSprite(0, 0, "menus/backgrounds/menuDesat"));
+		add(bg = new ForeverSprite(0, 0, "menus/menuBG"));
+		add(magenta = new ForeverSprite(0, 0, "menus/menuDesat"));
 		magenta.visible = false;
 		magenta.color = 0xFFFD719B;
 
@@ -74,7 +74,10 @@ class MainMenu extends BaseMenuState {
 		maxSelections = options.length - 1;
 
 		onAccept = function() {
-			canChangeSelection = canBackOut = canAccept = false;
+			canChangeSelection = false;
+			canBackOut = false;
+			canAccept = false;
+
 			magenta.flicker(1.1, 0.15);
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/confirmMenu', SOUND));
 

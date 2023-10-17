@@ -1,6 +1,5 @@
 package funkin.objects;
 
-import funkin.states.PlayState;
 import flixel.group.FlxGroup;
 import funkin.components.ChartLoader.Chart;
 import funkin.objects.notes.*;
@@ -27,6 +26,7 @@ class PlayField extends FlxGroup {
 
 		// I know this is dumb as shit and I should just make a group but I don't wanna lol
 		forEachOfType(NoteField, function(n:NoteField) noteFields.push(n));
+		// also arrays are just easier to iterate !!!
 
 		for (i in 0...Chart.current.notes.length)
 			noteSpawner.noteList[i] = Chart.current.notes[i];

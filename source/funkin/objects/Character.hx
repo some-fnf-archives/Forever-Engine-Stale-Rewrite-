@@ -4,6 +4,12 @@ import flixel.math.FlxPoint;
 import forever.ForeverSprite;
 import openfl.utils.Assets as OpenFLAssets;
 
+enum abstract CharAnimationState(Int) to Int {
+	var IDLE = 0;
+	var SING = 1;
+	var MISS = 2;
+}
+
 /**
  * Character Object used during gameplay.
 **/
@@ -11,10 +17,7 @@ class Character extends ForeverSprite {
 	/** Used to track the character's name **/
 	public var name:String = "bf";
 
-	/**
-	 * Dance Steps, used to track which animations to play when calling `dance()`
-	 * on a character.
-	**/
+	/** Dance Steps, used to track which animations to play when calling `dance()` on a character. **/
 	public var dancingSteps:Array<String> = ["idle"];
 
 	/**
@@ -24,21 +27,27 @@ class Character extends ForeverSprite {
 	public var singingSteps:Array<String> = ["singLEFT", "singDOWN", "singUP", "singRIGHT"];
 
 	/**
-	 * Character Displacement in-game, doesn't affect the main offsets of the animations
+	 * Character offset in-game, doesn't affect the main offsets of the animations
 	 * and simply acts as a global offset.
 	**/
 	public var positionDisplace:FlxPoint = FlxPoint.get(0, 0);
 
-	/**
-	 * Character Camera Displacement, acts lie `positionDisplace`, but for the camera.
-	**/
+	/** Character camera offset, acts lie `positionDisplace`, but for the camera. **/
 	public var cameraDisplace:FlxPoint = FlxPoint.get(0, 0);
 
-	/** The Beat Interval a character takes to headbop. **/
+	/** The sing duration time, makes the character idle after reaching 0. **/
+	public var singDuration:Float = 4.0;
+
+	/** The beat interval a character takes to headbop. **/
 	public var danceInterval:Int = 2;
 
-	private var _curDanceStep:Int = 0;
-	private var _isPlayer:Bool = false;
+	/** Which animation state the character is currently at. **/
+	public var animationState:Int = IDLE;
+
+	@:dox(hide) public var holdTmr:Float = 0.0;
+
+	@:dox(hide) private var _curDanceStep:Int = 0;
+	@:dox(hide) private var _isPlayer:Bool = false;
 
 	public function new(?x:Float = 0, ?y:Float = 0, ?character:String = null, player:Bool = false):Void {
 		super(x, y);
@@ -46,6 +55,12 @@ class Character extends ForeverSprite {
 
 		if (character != null)
 			loadCharacter(character);
+	}
+
+	public override function destroy():Void {
+		positionDisplace.put();
+		cameraDisplace.put();
+		super.destroy();
 	}
 
 	public function loadCharacter(character:String):Character {
@@ -76,12 +91,39 @@ class Character extends ForeverSprite {
 		return this;
 	}
 
+	public override function update(elapsed:Float):Void {
+		updateAnimation(elapsed);
+		if (animation.curAnim != null) {
+			if (animationState == SING)
+				holdTmr += elapsed;
+			else {
+				if (_isPlayer)
+					holdTmr = 0.0;
+			}
+
+			var stepDt:Float = ((60.0 / Conductor.bpm) * 4.0);
+			if (holdTmr >= (stepDt * 1000.0) * singDuration * 0.0001) {
+				dance();
+				holdTmr = 0.0;
+			}
+		}
+	}
+
 	public function dance(forced:Bool = false):Void {
 		playAnim(dancingSteps[_curDanceStep], forced);
+		if (animationState != IDLE)
+			animationState = IDLE;
 
 		_curDanceStep += 1;
 		if (_curDanceStep > dancingSteps.length - 1)
 			_curDanceStep = 0;
+	}
+
+	public override function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
+		super.playAnim(name, forced, reversed, frame);
+
+		if (singingSteps.contains(name) && animationState != SING)
+			animationState = SING;
 	}
 
 	@:noPrivateAccess
@@ -106,6 +148,11 @@ class Character extends ForeverSprite {
 						if (data.trim().startsWith("position:")) {
 							var chrPos:Array<String> = conf.replace("position:", "").split(",");
 							positionDisplace = FlxPoint.get(Std.parseFloat(chrPos[0]), Std.parseFloat(chrPos[1]));
+						}
+
+						if (data.trim().startsWith("cameraPosition:")) {
+							var chrPos:Array<String> = conf.replace("cameraPosition:", "").split(",");
+							cameraDisplace = FlxPoint.get(Std.parseFloat(chrPos[0]), Std.parseFloat(chrPos[1]));
 						}
 
 						if (data.trim().startsWith("dancingSteps:")) {

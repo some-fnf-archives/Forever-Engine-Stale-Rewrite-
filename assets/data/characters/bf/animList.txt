@@ -15,6 +15,8 @@ flipY: false
 
 # Position X, Position Y, this is a global offset
 position: 0.0, 0.0
+# X, Y, this is a global camera offset
+cameraPosition: 0.0, -150.0
 # Scale X, Scale Y
 scale: 1.0, 1.0
 
