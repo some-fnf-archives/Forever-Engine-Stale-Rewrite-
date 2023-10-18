@@ -134,7 +134,7 @@ class PlayState extends FNFState {
 		DiscordRPC.updatePresence('Playing: ${currentSong.display}', '${hud.scoreBar.text}');
 
 		countdownRoutine();
-		processEvent(FocusCamera(1, false));
+		processEvent(Chart.current.events[0].event);
 	}
 
 	public override function update(elapsed:Float):Void {
@@ -215,6 +215,7 @@ class PlayState extends FNFState {
 
 	public override function onBeat(beat:Int):Void {
 		// let 'em do their thing!
+		hud.onBeat(beat);
 		doDancersDance(beat);
 	}
 

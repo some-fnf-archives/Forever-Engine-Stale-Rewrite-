@@ -61,7 +61,12 @@ class Init extends FlxState {
 		var graphic:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
 		graphic.destroyOnNoUse = false;
 
-		final transition:TransitionTileData = {asset: graphic, width: 32, height: 32, frameRate: 24};
+		final transition:TransitionTileData = {
+			asset: graphic,
+			width: 32,
+			height: 32,
+			frameRate: 24
+		};
 		final transitionArea:FlxRect = FlxRect.get(-200, -200, FlxG.width * 2.0, FlxG.height * 2.0);
 
 		FlxTransitionableState.defaultTransIn = new TransitionData(FADE, 0xFF000000, 0.4, FlxPoint.get(0, -1), transition, transitionArea);

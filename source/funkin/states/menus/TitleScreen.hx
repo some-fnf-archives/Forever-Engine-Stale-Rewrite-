@@ -57,8 +57,7 @@ class TitleScreen extends FNFState {
 		enterTxt.updateHitbox();
 		mainGroup.add(enterTxt);
 
-		new flixel.util.FlxTimer().start(0.05, function(tmr)
-		{
+		new flixel.util.FlxTimer().start(0.05, function(tmr) {
 			Utils.checkMenuMusic("foreverMenu", true, 102.0);
 		});
 

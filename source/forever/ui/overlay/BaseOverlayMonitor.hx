@@ -1,5 +1,6 @@
 package forever.ui.overlay;
 
+import funkin.components.ui.Alphabet.AlphabetAlignment;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 
@@ -9,13 +10,16 @@ import openfl.text.TextFormat;
  * add your own custom behavior in a separate class.
 **/
 class BaseOverlayMonitor extends TextField {
+	public var align:AlphabetAlignment = LEFT;
+
 	/** Creates a new Base Overlay Monitor **/
-	public function new():Void {
+	public function new(align:AlphabetAlignment = LEFT):Void {
 		super();
 
 		defaultTextFormat = new TextFormat(AssetHelper.getAsset("vcr", FONT), 20, 0xFFFFFFFF);
 		autoSize = LEFT;
 		mouseEnabled = false;
+		this.align = align;
 		selectable = false;
 	}
 

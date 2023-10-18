@@ -22,7 +22,7 @@ class HealthBar extends FlxSpriteGroup {
 
 		bar.createFilledBar(0xFFFF0000, 0xFF66FF33);
 
-        width = bg.width;
-        height = bg.height;
+		width = bg.width;
+		height = bg.height;
 	}
 }

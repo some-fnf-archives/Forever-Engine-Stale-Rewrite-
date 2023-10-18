@@ -55,9 +55,8 @@ class Timings {
 	public var accuracy(get, never):Float;
 
 	public var misses(get, set):Int; // real misses.
-
+	public var comboBreaks(get, never):Int;
 	public var combo:Int = 0;
-	public var comboBreaks(get, default):Int = 0;
 
 	public var rank:String = "N/A";
 
@@ -120,8 +119,11 @@ class Timings {
 	@:dox(hide) function get_averageMs():Float
 		return totalMs / totalNotesHit;
 
-	@:dox(hide) function get_comboBreaks():Int
-		return misses + comboBreaks;
+	@:dox(hide) function get_comboBreaks():Int {
+		final worst = judgements.last().getParameters()[0];
+		var shits:Int = judgementsHit.exists(worst) ? judgementsHit.get(worst) : 0;
+		return misses + shits;
+	}
 
 	@:dox(hide) function set_health(v:Float):Float
 		return health = FlxMath.bound(v, 0.0, maxHealth);

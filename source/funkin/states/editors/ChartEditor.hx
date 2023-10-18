@@ -32,18 +32,20 @@ class ChartEditor extends FlxSubState {
 		backgroundLayer = new FlxSpriteGroup();
 		add(backgroundLayer);
 
-		// var gridBG = new FlxTiledSprite(AssetHelper.getAsset('images/menus/charter/gridPurple', IMAGE), FlxG.width, FlxG.height);
+		var bg1:FlxSprite;
+		var bg2:FlxSprite;
 
-		var bg1:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		var bg2:FlxSprite = new FlxSprite().loadGraphic(AssetHelper.getAsset("images/menus/bgBlack", IMAGE));
+		backgroundLayer.add(bg1 = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK));
+		backgroundLayer.add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("images/menus/bgBlack", IMAGE)));
 
 		bg2.blend = DIFFERENCE;
 		bg1.alpha = 0.7;
 		bg2.alpha = 0.07;
 
-		// backgroundLayer.add(gridBG);
-		backgroundLayer.add(bg1);
-		backgroundLayer.add(bg2);
+		for (i in [bg1, bg2]) {
+			i.scale.set(1.15, 1.15);
+			i.updateHitbox();
+		}
 	}
 
 	function createCharterElements():Void {

@@ -43,7 +43,7 @@ class PlayField extends FlxGroup {
 		super.update(elapsed);
 
 		if (noteSpawner.curNoteData != null) {
-			var nf:NoteField = noteFields[noteSpawner.curNoteData?.notefield ?? -1];
+			var nf:NoteField = noteFields[noteSpawner.curNoteData.notefield];
 			if (nf != null)
 				noteSpawner.spawnNotes(nf);
 		}

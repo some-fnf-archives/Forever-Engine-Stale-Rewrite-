@@ -27,6 +27,11 @@ class ModsMenu extends FlxSubState {
 		bg1.alpha = 0.7;
 		bg2.alpha = 0.07;
 
+		for (i in [bg1, bg2]) {
+			i.scale.set(1.15, 1.15);
+			i.updateHitbox();
+		}
+
 		add(modsGroup = new FlxTypedGroup<Alphabet>());
 
 		if (ModManager.mods.length > 0) {
@@ -43,13 +48,13 @@ class ModsMenu extends FlxSubState {
 			if (curSel < 0 || curSel > ModManager.mods.length - 1)
 				curSel = 0;
 
-            updateSelection();
+			updateSelection();
 		}
 		else {
-            var errorText:Alphabet = new Alphabet(0, 0, "No mods were found, please check your mods folder.", BOLD, CENTER);
+			var errorText:Alphabet = new Alphabet(0, 0, "No mods were found, please check your mods folder.", BOLD, CENTER);
 			errorText.screenCenter();
 			add(errorText);
-        }
+		}
 	}
 
 	public override function update(elapsed:Float):Void {

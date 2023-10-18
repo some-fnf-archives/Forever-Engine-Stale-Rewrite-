@@ -20,6 +20,11 @@ class NoteConfigurator extends FlxSubState {
 		bg2.blend = DIFFERENCE;
 		bg1.alpha = 0.7;
 		bg2.alpha = 0.07;
+
+		for (i in [bg1, bg2]) {
+			i.scale.set(1.15, 1.15);
+			i.updateHitbox();
+		}
 	}
 
 	public override function update(elapsed:Float):Void {

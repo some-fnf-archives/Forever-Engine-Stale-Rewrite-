@@ -189,7 +189,7 @@ class FreeplayMenu extends BaseMenuState {
 		if (DifficultyHelper.currentList.length == 1)
 			difficultyTxt.text = '${DifficultyHelper.toString(curSelAlt).toUpperCase()}';
 		else
-		difficultyTxt.text = '« ${DifficultyHelper.toString(curSelAlt).toUpperCase()} »';
+			difficultyTxt.text = '« ${DifficultyHelper.toString(curSelAlt).toUpperCase()} »';
 
 		intendedScore = Highscore.getSongScore(songs[curSel].folder).score;
 	}

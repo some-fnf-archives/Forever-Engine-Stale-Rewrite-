@@ -9,19 +9,17 @@ import funkin.states.PlayState;
 
 class HUD extends FlxSpriteGroup {
 	public var scoreBar:ForeverText;
-	public var cornerMark:ForeverText;
 	public var centerMark:ForeverText;
 
 	public var healthBar:HealthBar;
-	public var iconP1:ForeverSprite;
-	public var iconP2:ForeverSprite;
+	public var iconP1:HealthIcon;
+	public var iconP2:HealthIcon;
 
 	public function new():Void {
 		super();
 
 		this.moves = false;
 
-		final engineText:String = 'FOREVER ENGINE v${Main.version}';
 		final hbY:Float = Settings.downScroll ? FlxG.height * 0.1 : FlxG.height * 0.875;
 
 		add(healthBar = new HealthBar(0, hbY));
@@ -32,13 +30,7 @@ class HUD extends FlxSpriteGroup {
 		for (i in [iconP1, iconP2])
 			i.y = healthBar.y - (i.height / 2.0);
 
-		cornerMark = new ForeverText(0, 0, 0, engineText, 16);
-		cornerMark.setPosition(FlxG.width - (cornerMark.width + 5), 5);
-		cornerMark.alignment = RIGHT;
-		cornerMark.borderSize = 2.0;
-		add(cornerMark);
-
-		centerMark = new ForeverText(0, (Settings.downScroll ? FlxG.height - 40 : 10), 0, '- NO SONG [NO DIFFICULTY] -', 20);
+		centerMark = new ForeverText(0, (Settings.downScroll ? FlxG.height - 40 : 15), 0, '- NO SONG [NO DIFFICULTY] -', 20);
 		centerMark.alignment = CENTER;
 		centerMark.borderSize = 2.0;
 		centerMark.screenCenter(X);
@@ -60,6 +52,12 @@ class HUD extends FlxSpriteGroup {
 		final iconOffset:Int = 26;
 		iconP1.x = healthBar.x + (healthBar.bar.width * (1 - healthBar.bar.percent / 100)) - iconOffset;
 		iconP2.x = healthBar.x + (healthBar.bar.width * (1 - healthBar.bar.percent / 100)) - (iconP2.width - iconOffset);
+
+		for (icon in [iconP1, iconP2]) {
+			var weight:Float = 1.0 - 1.0 / Math.exp(5.0 * elapsed);
+			icon.scale.set(FlxMath.lerp(icon.scale.x, 1.0, weight), FlxMath.lerp(icon.scale.y, 1.0, weight));
+			// icon.updateHitbox();
+		}
 	}
 
 	public var divider:String = " • ";
@@ -78,7 +76,13 @@ class HUD extends FlxSpriteGroup {
 		scoreBar.text = '< ${tempScore} >\n';
 
 		scoreBar.screenCenter(X);
-		
+
 		DiscordRPC.updatePresence('Playing: ${game.currentSong.display}', '${scoreBar.text}');
+	}
+
+	public function onBeat(beat:Int):Void {
+		var icon:HealthIcon = (beat % 2 == 0) ? iconP2 : iconP1;
+		icon.scale.set(1.15, 1.15);
+		// icon.updateHitbox();
 	}
 }

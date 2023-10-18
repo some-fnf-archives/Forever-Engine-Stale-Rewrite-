@@ -157,8 +157,12 @@ class Utils {
 		return object;
 	}
 
-	public static function fpsLerp(from:Float, to:Float, weight:Float) {
+	public static inline function fpsLerp(from:Float, to:Float, weight:Float) {
 		return FlxMath.lerp(from, to, FlxG.elapsed * 60.0 * weight);
+	}
+
+	public static inline function framerateAdjust(input:Float) {
+		return input * (60 / FlxG.drawFramerate);
 	}
 
 	/**
@@ -185,8 +189,7 @@ class Utils {
 	 * @param value			The new value for the variable given.
 	**/
 	public static macro function safeSet(variable:Null<haxe.macro.Expr>, value:Null<haxe.macro.Expr>):Null<haxe.macro.Expr> {
-		return macro if (${value} != null)
-			${variable} = ${value};
+		return macro if (${value} != null) ${variable} = ${value};
 	}
 
 	/**
@@ -195,7 +198,6 @@ class Utils {
 	**/
 	public static macro function safeReflection(variable:Null<haxe.macro.Expr>, value:Null<haxe.macro.Expr>,
 			field:Null<haxe.macro.Expr>):Null<haxe.macro.Expr> {
-		return macro if (Reflect.hasField(${value}, ${field}))
-			${variable} = Reflect.field(${value}, ${field});
+		return macro if (Reflect.hasField(${value}, ${field})) ${variable} = Reflect.field(${value}, ${field});
 	}
 }

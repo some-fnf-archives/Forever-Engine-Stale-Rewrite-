@@ -100,10 +100,17 @@ class ForeverOverlay extends Sprite {
 		if (monitors.length > 1) {
 			for (i in 1...monitors.length) {
 				var mon:BaseOverlayMonitor = monitors[i];
+				var width:Int = flixel.FlxG.stage.application.window.width;
 				var last = monitors[i - 1];
 
-				mon.x = last.x + (last.width + 20);
-				mon.y = last.y;
+				switch (mon.align) {
+					case RIGHT:
+						mon.x = Math.floor(width - mon.width);
+						mon.y = last.y;
+					default:
+						mon.x = last.x + (last.width + 20);
+						mon.y = last.y;
+				}
 			}
 		}
 	}

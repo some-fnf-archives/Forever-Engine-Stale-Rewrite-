@@ -67,8 +67,10 @@ class ForeverOption {
 					value = !value;
 
 			case NUMBER(min, max, decimals, clamp):
-				if (decimals == null) decimals = 0.01;
-				if (clamp == null) clamp = false;
+				if (decimals == null)
+					decimals = 0.01;
+				if (clamp == null)
+					clamp = false;
 
 				value = (clamp ? FlxMath.bound : Utils.wrapf)(value + increment * decimals, min, max);
 
