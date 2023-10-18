@@ -3,7 +3,7 @@ package funkin.objects.notes;
 import funkin.states.PlayState;
 import forever.ForeverSprite;
 import funkin.components.ChartLoader.NoteData;
-import funkin.components.ScoreManager;
+import funkin.components.Timings;
 import funkin.objects.notes.NoteField;
 import haxe.ds.IntMap;
 
@@ -73,7 +73,7 @@ class Note extends ForeverSprite {
 				followParent();
 
 			if (!parent.cpuControl) {
-				final timings = ScoreManager.timings.get("fnf");
+				final timings = Timings.timings.get("fnf");
 				final hitTime = (data.time - Conductor.time);
 				canBeHit = hitTime < (timings.last() / 1000.0);
 			}

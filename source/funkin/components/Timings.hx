@@ -19,7 +19,7 @@ enum Rank {
 	Rank(name:String, accuracy:Float);
 }
 
-class ScoreManager {
+class Timings {
 	public static final rankings:Array<Rank> = [
 		Rank("S+", 100),
 		Rank("S", 95),
@@ -33,9 +33,9 @@ class ScoreManager {
 
 	public static final judgements:Array<Judgement> = [
 		Judgement("sick", 350, 100, true),
-		Judgement("good", 150, 80, true),
-		Judgement("bad", 0, 45, true),
-		Judgement("shit", -150, 0, true)
+		Judgement("good", 150, 80, false),
+		Judgement("bad", 0, 45, false),
+		Judgement("shit", -150, 0, false)
 	];
 
 	public static final timings:StringMap<Array<Float>> = [
@@ -100,7 +100,7 @@ class ScoreManager {
 		if (judgementsHit.exists(name))
 			judgementsHit.set(name, judgementsHit.get(name) + increment);
 		else
-			trace('[ScoreManager:increaseJudgeHits]: there\'s no judgement going by the name of "${name}"...');
+			trace('[Timings:increaseJudgeHits]: there\'s no judgement going by the name of "${name}"...');
 	}
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //

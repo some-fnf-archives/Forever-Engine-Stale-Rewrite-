@@ -7,7 +7,7 @@ import flixel.sound.FlxSound;
 import flixel.util.FlxTimer;
 import forever.ForeverSprite;
 import funkin.components.ChartLoader;
-import funkin.components.ScoreManager;
+import funkin.components.Timings;
 import funkin.components.ui.HUD;
 import funkin.objects.*;
 import funkin.objects.notes.Note;
@@ -42,7 +42,7 @@ class PlayState extends FNFState {
 
 	public var bg:ForeverSprite;
 	public var playField:PlayField;
-	public var playStats:ScoreManager;
+	public var playStats:Timings;
 	public var hud:HUD;
 
 	public var camLead:FlxObject;
@@ -99,7 +99,7 @@ class PlayState extends FNFState {
 		// -- PREPARE BACKGROUNDS AND USER INTERFACE -- //
 		ChartLoader.load(currentSong.folder, currentSong.difficulty);
 		Conductor.bpm = Chart.current.data.initialBPM;
-		playStats = new ScoreManager();
+		playStats = new Timings();
 
 		add(stage = new DadStage());
 		add(playField = new PlayField());
@@ -180,7 +180,7 @@ class PlayState extends FNFState {
 
 		if (!note.parent.cpuControl) {
 			var millisecondTiming:Float = Math.abs((note.data.time - Conductor.time) * 1000.0);
-			var judgement:Judgement = ScoreManager.judgeNote(millisecondTiming);
+			var judgement:Judgement = Timings.judgeNote(millisecondTiming);
 			playStats.totalMs += millisecondTiming;
 
 			playStats.score += judgement.getParameters()[1];
