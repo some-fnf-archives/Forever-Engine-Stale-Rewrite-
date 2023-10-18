@@ -5,7 +5,7 @@ import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 import forever.ui.ForeverText;
 import funkin.components.DifficultyHelper;
 import funkin.components.Highscore;

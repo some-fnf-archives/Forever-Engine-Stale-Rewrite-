@@ -4,7 +4,7 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxSpriteGroup;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 import funkin.components.ui.Alphabet;
 import funkin.states.base.FNFState;
 

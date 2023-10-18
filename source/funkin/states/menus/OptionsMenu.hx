@@ -1,8 +1,7 @@
 package funkin.states.menus;
 
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.text.FlxText;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 import forever.data.ForeverOption;
 import forever.ui.ForeverText;
 import funkin.components.ui.Alphabet;

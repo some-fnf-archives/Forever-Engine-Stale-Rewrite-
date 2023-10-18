@@ -1,17 +1,11 @@
 package funkin.components.ui;
 
-import flixel.math.FlxPoint;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxPoint;
 import funkin.components.ui.AlphabetGlyph;
+import openfl.text.TextFormatAlign;
 
 using StringTools;
-
-/** Alignment Mode for your Alphabet Font. **/
-enum abstract AlphabetAlignment(String) from String to String {
-	var LEFT = "left";
-	var CENTER = "center";
-	var RIGHT = "right";
-}
 
 /**
  * A class for rendering text in a special funky font!
@@ -23,7 +17,7 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	public var type(default, set):AlphabetGlyphType;
 
 	/** The currently set alignment type for the text. **/
-	public var alignment(default, set):AlphabetAlignment;
+	public var alignment(default, set):TextFormatAlign;
 
 	/** The currently set text. **/
 	public var text(default, set):String;
@@ -48,7 +42,7 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	/** The spacing between items in menus like freeplay or options. **/
 	public var menuSpacing:FlxPoint = FlxPoint.get(20, 120);
 
-	public function new(x:Float = 0, y:Float = 0, text:String = "", ?type:AlphabetGlyphType = BOLD, ?alignment:AlphabetAlignment = LEFT, ?size:Float = 1.0) {
+	public function new(x:Float = 0, y:Float = 0, text:String = "", ?type:AlphabetGlyphType = BOLD, ?alignment:TextFormatAlign = LEFT, ?size:Float = 1.0) {
 		super(x, y);
 		@:bypassAccessor this.type = type;
 		@:bypassAccessor this.alignment = alignment;
@@ -114,11 +108,11 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	}
 
 	@:noCompletion
-	private function updateAlignment(align:AlphabetAlignment) {
+	private function updateAlignment(align:TextFormatAlign) {
 		final totalWidth:Float = width;
 		for (line in members) {
 			switch (align) {
-				case LEFT:
+				default:
 					line.x = x;
 				case CENTER:
 					line.x = x + ((totalWidth - line.width) * 0.5);
@@ -157,7 +151,7 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	}
 
 	@:noCompletion
-	private inline function set_alignment(newAlign:AlphabetAlignment):AlphabetAlignment {
+	private inline function set_alignment(newAlign:TextFormatAlign):TextFormatAlign {
 		alignment = newAlign;
 		updateSize(size);
 		return newAlign;
@@ -188,7 +182,7 @@ class ChildAlphabet extends Alphabet {
 	public var parent:Alphabet;
 	public var increment:FlxPoint = FlxPoint.get(0, 0);
 
-	public function new(text:String = "", ?type:AlphabetGlyphType = BOLD, ?alignment:AlphabetAlignment = LEFT, ?size:Float = 1.0):Void {
+	public function new(text:String = "", ?type:AlphabetGlyphType = BOLD, ?alignment:TextFormatAlign = LEFT, ?size:Float = 1.0):Void {
 		super(0, 0, text, type, alignment, size);
 	}
 
@@ -197,7 +191,7 @@ class ChildAlphabet extends Alphabet {
 
 		if (parent != null) {
 			switch (alignment) {
-				case LEFT:
+				default:
 					this.x = x;
 				case CENTER:
 					this.x = x + ((width - parent.width) * 0.5);

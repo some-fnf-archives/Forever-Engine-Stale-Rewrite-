@@ -1,6 +1,6 @@
 package funkin.stages;
 
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 import funkin.objects.StageBase;
 
 /**

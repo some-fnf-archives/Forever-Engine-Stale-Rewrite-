@@ -1,7 +1,7 @@
 package funkin.objects;
 
 import flixel.math.FlxPoint;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 import openfl.utils.Assets as OpenFLAssets;
 
 enum abstract CharAnimationState(Int) to Int {

@@ -2,7 +2,7 @@ package funkin.components.ui;
 
 import flixel.group.FlxSpriteGroup;
 import flixel.ui.FlxBar;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 
 /**
  * Health Bar class handles an alternative to FlxBar that can easily have its colors changed  and tweened

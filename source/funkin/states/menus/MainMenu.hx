@@ -2,10 +2,10 @@ package funkin.states.menus;
 
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
-import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
+import forever.ui.ForeverText;
 import funkin.states.base.BaseMenuState;
 import funkin.states.subStates.ModsMenu;
 
@@ -70,9 +70,8 @@ class MainMenu extends BaseMenuState {
 		var modKb1:String = BaseControls.getKeyFromAction("switch mods").toString();
 		var modKb2:String = BaseControls.getKeyFromAction("switch mods", 1).toString();
 
-		var versionLabel:FlxText = new FlxText(5, FlxG.height - 35, 0, 'Forever Engine v${Main.version}' + '\nPress ${modKb1} or ${modKb2} to Switch Mods');
-		versionLabel.setFormat(AssetHelper.getAsset("vcr", FONT), 16, 0xFFFFFFFF, LEFT, FlxTextBorderStyle.OUTLINE, 0xFF000000);
-		versionLabel.scrollFactor.set();
+		var versionLabel:ForeverText = new ForeverText(5, FlxG.height - 35, 0,
+			'Forever Engine v${Main.version}' + '\nPress ${modKb1} or ${modKb2} to Switch Mods', 16);
 		add(versionLabel);
 
 		maxSelections = options.length - 1;

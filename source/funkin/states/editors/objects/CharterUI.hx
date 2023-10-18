@@ -17,7 +17,7 @@ class CharterStatusBar extends FlxSpriteGroup {
 		info = new ForeverText(bar.x + 5, bar.y, bar.width - 5, '- Status Bar Text -', 24);
 		info.alignment = LEFT;
 		info.centerToObject(bar);
-		add(info);
+		add(cast(info, FlxSprite));
 	}
 
 	/**

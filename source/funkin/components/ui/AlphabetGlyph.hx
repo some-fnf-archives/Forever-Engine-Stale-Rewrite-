@@ -1,7 +1,7 @@
 package funkin.components.ui;
 
 import flixel.math.FlxPoint;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 
 class AlphabetGlyph extends ForeverSprite {
 	public static final Y_PER_ROW:Float = 60;

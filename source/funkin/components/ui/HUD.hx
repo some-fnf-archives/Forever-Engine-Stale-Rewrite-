@@ -1,13 +1,12 @@
 package funkin.components.ui;
 
 import flixel.FlxG;
-import flixel.group.FlxSpriteGroup;
+import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
-import forever.ForeverSprite;
 import forever.ui.ForeverText;
 import funkin.states.PlayState;
 
-class HUD extends FlxSpriteGroup {
+class HUD extends FlxGroup {
 	public var scoreBar:ForeverText;
 	public var centerMark:ForeverText;
 
@@ -18,7 +17,7 @@ class HUD extends FlxSpriteGroup {
 	public function new():Void {
 		super();
 
-		this.moves = false;
+		// this.moves = false;
 
 		final hbY:Float = Settings.downScroll ? FlxG.height * 0.1 : FlxG.height * 0.875;
 

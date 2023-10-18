@@ -1,7 +1,7 @@
 package funkin.components.ui;
 
 import flixel.graphics.FlxGraphic;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 import funkin.states.PlayState;
 import haxe.ds.IntMap;
 import openfl.utils.Assets as OpenFLAssets;

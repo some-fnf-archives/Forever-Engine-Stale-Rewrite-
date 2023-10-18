@@ -1,9 +1,9 @@
-package forever;
+package forever.display;
 
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import forever.config.Settings;
-import funkin.components.ui.Alphabet.AlphabetAlignment;
+import openfl.text.TextFormatAlign;
 
 /**
  * Global Sprite tools
@@ -150,7 +150,7 @@ class ChildSprite extends ForeverSprite {
 	public var parent:FlxSprite;
 
 	/** This sprite's alignment. **/
-	public var align:AlphabetAlignment = RIGHT;
+	public var align:TextFormatAlign = RIGHT;
 
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);

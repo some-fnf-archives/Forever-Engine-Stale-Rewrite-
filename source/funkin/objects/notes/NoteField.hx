@@ -4,7 +4,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSignal.FlxTypedSignal;
 import flixel.util.FlxSort;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 import haxe.ds.IntMap;
 import haxe.ds.StringMap;
 import openfl.events.KeyboardEvent;

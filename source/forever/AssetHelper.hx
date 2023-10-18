@@ -80,7 +80,10 @@ class AssetHelper {
 				// return
 				tjson.TJSON.parse(json);
 
-			case FONT: getPath('fonts/${asset}', FONT);
+			case FONT:
+				var path:String = getPath('fonts/${asset}', FONT);
+				// todo: make it return the font's actual name when found
+				return path;
 			case ATLAS:
 				if (type.assetExists(getPath(asset, TEXT))) return getAsset(asset, ATLAS_PACKER); else return getAsset(asset, ATLAS_SPARROW);
 			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset, XML));

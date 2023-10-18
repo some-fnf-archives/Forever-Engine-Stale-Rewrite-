@@ -5,7 +5,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.math.FlxMath;
 import flixel.util.FlxAxes;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 #end
 import openfl.Assets as OpenFLAssets;
 

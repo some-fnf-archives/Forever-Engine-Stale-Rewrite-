@@ -5,7 +5,7 @@ import flixel.FlxObject;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import flixel.util.FlxTimer;
-import forever.ForeverSprite;
+import forever.display.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.components.Timings;
 import funkin.components.ui.HUD;
@@ -131,7 +131,7 @@ class PlayState extends FNFState {
 		add(enemy = new Character(stage.enemyPosition.x, stage.enemyPosition.y, "bf", false));
 		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, "bf", false));
 
-		DiscordRPC.updatePresence('Playing: ${currentSong.display}', '${hud.scoreBar.text}');
+		DiscordRPC.updatePresence('Playing: ${currentSong.display}', '');
 
 		countdownRoutine();
 		processEvent(Chart.current.events[0].event);
@@ -326,6 +326,9 @@ class PlayState extends FNFState {
 					}
 				});
 			}
+
+			if (tmr.loopsLeft == 0)
+				sprCount.destroy();
 
 			FlxG.sound.play(AssetHelper.getAsset('sounds/countdown/normal/${sounds[countdownPosition]}', SOUND), 0.8);
 			countdownPosition += 1;
