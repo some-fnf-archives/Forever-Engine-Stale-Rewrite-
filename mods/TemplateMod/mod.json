@@ -1,0 +1,9 @@
+{
+	"title": "Template Mod",
+	"description": "This is a template mod for the FNF Forever Engine.",
+	"authors": ["CrowPlexus", "Ne_Eo", "swordcube", "NxtVithor", "DiegoTV"],
+
+	"modVersion": "1.0.0",
+	"apiVersions": "1.0.0",
+	"license": "MIT"
+}

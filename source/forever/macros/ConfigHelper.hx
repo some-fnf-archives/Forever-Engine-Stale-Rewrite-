@@ -36,6 +36,7 @@ class ConfigHelper {
 					if (!field.name.startsWith("_")) // prevents saving internal or final variables
 						savedFields.push(field.name);
 				default:
+					continue;
 			}
 		}
 
@@ -43,9 +44,22 @@ class ConfigHelper {
 		for (field in fields) {
 			switch (field.kind) {
 				case FFun(fun):
+					if (field.name == "load") {
+						var arr = [(macro flixel.FlxG.save.bind("Settings", forever.macros.ConfigHelper.savePath))];
+						for (name in savedFields) {
+							arr.push(macro {
+								if (flixel.FlxG.save.data.$name != null)
+									$i{name} = flixel.FlxG.save.data.$name;
+								Settings.update();
+							});
+						}
+						fun.expr = macro $b{arr};
+					}
+
 					if (field.name == "flush") {
-						var arr = [];
+						var arr = [(macro flixel.FlxG.save.bind("Settings", forever.macros.ConfigHelper.savePath))];
 						// i have 0 clue if this even works, it did work first try
+						trace('saving settings');
 						for (name in savedFields) {
 							arr.push(macro {
 								flixel.FlxG.save.data.$name = $i{name};
@@ -56,19 +70,8 @@ class ConfigHelper {
 						fun.expr = macro $b{arr};
 					}
 
-					if (field.name == "load") {
-						var arr = [];
-						arr.push(macro flixel.FlxG.save.bind("Settings", forever.macros.ConfigHelper.savePath));
-						for (name in savedFields) {
-							arr.push(macro {
-								if (flixel.FlxG.save.data.$name != null)
-									$i{name} = flixel.FlxG.save.data.$name;
-								Settings.update();
-							});
-						}
-						fun.expr = macro $b{arr};
-					}
 				default:
+					continue;
 			}
 		}
 

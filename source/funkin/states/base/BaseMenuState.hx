@@ -63,7 +63,6 @@ class BaseMenuState extends FNFState {
 
 	/**
 	 * Updates your current selected item
-	 *
 	 * @param newSel        By how much should the current selection be increment/decremented?
 	**/
 	public function updateSelection(newSel:Int = 0):Void {
@@ -75,7 +74,6 @@ class BaseMenuState extends FNFState {
 
 	/**
 	 * Updates your alternative selected item
-	 *
 	 * @param newSelAlt     By how much should the alternative selection be increment/decremented?
 	**/
 	public function updateSelectionAlt(newSelAlt:Int = 0):Void {

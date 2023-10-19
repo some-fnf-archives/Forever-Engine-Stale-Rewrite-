@@ -3,7 +3,7 @@ package funkin.states.subStates;
 import flixel.FlxSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
-import forever.data.ModManager;
+import forever.data.Mods;
 import funkin.components.ui.Alphabet;
 
 class ModsMenu extends FlxSubState {
@@ -14,7 +14,7 @@ class ModsMenu extends FlxSubState {
 	public function new():Void {
 		super();
 
-		ModManager.refreshMods();
+		Mods.refreshMods();
 
 		// placeholder
 		var bg1:FlxSprite;
@@ -34,24 +34,31 @@ class ModsMenu extends FlxSubState {
 
 		add(modsGroup = new FlxTypedGroup<Alphabet>());
 
-		if (ModManager.mods.length > 0) {
-			var listThing:Array<String> = ModManager.mods.map(function(mod) return mod.id);
+		if (Mods.mods.length > 0) {
+			var listThing:Array<String> = Mods.mods.map(function(mod) return mod.title);
 			listThing.insert(0, "Friday Night Funkin'");
+			var modsAdded:Array<String> = []; // stupid fix for duplicated mods
 
 			for (i in 0...listThing.length) {
+				if (modsAdded.contains(listThing[i]))
+					continue;
+
 				var modLetter:Alphabet = new Alphabet(0, 0, listThing[i], BOLD, LEFT);
 				modLetter.isMenuItem = true;
 				modLetter.targetY = i;
 				modsGroup.add(modLetter);
+
+				modsAdded.push(listThing[i]);
 			}
 
-			if (curSel < 0 || curSel > ModManager.mods.length - 1)
+			if (curSel < 0 || curSel > Mods.mods.length - 1)
 				curSel = 0;
 
 			updateSelection();
 		}
 		else {
-			var errorText:Alphabet = new Alphabet(0, 0, "No mods were found, please check your mods folder.", BOLD, CENTER);
+			final txt:String = "No mods were found,\nplease check your mods folder.";
+			final errorText:Alphabet = new Alphabet(0, 0, txt, BOLD, CENTER, 0.8);
 			errorText.screenCenter();
 			add(errorText);
 		}
@@ -68,7 +75,7 @@ class ModsMenu extends FlxSubState {
 
 		if (Controls.ACCEPT) {
 			trace('loading "${modsGroup.members[curSel].text}" mod...');
-			ModManager.loadMod(modsGroup.members[curSel].text);
+			Mods.loadMod(modsGroup.members[curSel].text);
 			FlxG.resetState();
 		}
 		if (FlxG.keys.justPressed.ESCAPE) {

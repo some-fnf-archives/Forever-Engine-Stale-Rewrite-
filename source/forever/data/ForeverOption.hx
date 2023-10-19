@@ -12,7 +12,6 @@ enum ForeverOptionType {
 
 	/**
 	 * Number Type Option.
-	 *
 	 * @param min 		The minimum Value the option can go.
 	 * @param max 		The maximum Value the option can go.
 	 * @param decimals 	How many decimals the option has.
@@ -22,7 +21,6 @@ enum ForeverOptionType {
 
 	/**
 	 * StringArray Type Option.
-	 *
 	 * @param options 		A list with options that this option can be changed to.
 	**/
 	CHOICE(options:Array<String>);
@@ -57,7 +55,6 @@ class ForeverOption {
 
 	/**
 	 * Changes the value of the option
-	 *
 	 * @param increment 		by how much should it be changed (used by `NUMBER` and `CHOICE` options)
 	**/
 	public function changeValue(increment:Int = 0):Void {

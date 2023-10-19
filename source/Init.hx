@@ -23,6 +23,8 @@ class Init extends FlxState {
 		FlxG.game.focusLostFramerate = 10;
 		FlxG.mouse.visible = false;
 
+		forever.config.Settings.load();
+
 		FlxGraphic.defaultPersist = true;
 		flixel.FlxSprite.defaultAntialiasing = forever.config.Settings.globalAntialias;
 
@@ -30,7 +32,7 @@ class Init extends FlxState {
 
 		Controls.current = new BaseControls();
 		#if DISCORD forever.data.DiscordWrapper.initialize("1157951594667708416"); #end
-		#if MODS forever.data.ModManager.initialize(); #end
+		#if MODS forever.data.Mods.initialize(); #end
 
 		// make sure there is a note configuration set
 		funkin.objects.notes.NoteConfig.reloadConfig();

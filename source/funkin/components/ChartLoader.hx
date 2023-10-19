@@ -38,7 +38,7 @@ class ChartLoader {
 						if (bar == null)
 							continue;
 
-						var curBar:Int = json.song.notes.indexOf(bar);
+						var curBar:Int = bars.indexOf(bar);
 						var barTime:Float = (60.0 / curBPM) / 4.0;
 
 						chart.events.push({
@@ -56,7 +56,7 @@ class ChartLoader {
 							});
 						}
 
-						var barNotes:Array<Array<Dynamic>> = Reflect.field(bar, "sectionNotes");
+						var barNotes:Array<Array<Dynamic>> = cast(bar.sectionNotes);
 
 						if (barNotes != null) {
 							for (j in barNotes) {
@@ -91,7 +91,7 @@ class ChartLoader {
 			chart.events.sort(function(a:ForeverEvent, b:ForeverEvent):Int return Std.int(a.step - b.step));
 		}
 		catch (e:haxe.Exception)
-			trace('Failed to parse chart, type was ${dataType}');
+			trace('Failed to parse chart, type was ${dataType}, Error:\n${e.details()}');
 		return chart;
 	}
 

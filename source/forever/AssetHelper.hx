@@ -1,5 +1,6 @@
 package forever;
 
+import forever.data.Mods;
 import openfl.display.BitmapData;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -35,81 +36,86 @@ class AssetHelper {
 	@:noPrivateAccess static var loadedSounds:Map<String, Sound> = [];
 	@:noPrivateAccess static var currentUsedAssets:Array<String> = [];
 
-	public static var excludedSounds:Map<String, Sound> = [];
 	public static var excludedGraphics:Map<String, FlxGraphic> = [];
+	public static var excludedSounds:Map<String, Sound> = [];
+
+	public static var searchLevel:String = "";
 
 	/**
 	 * Creates a formatted asset path with an extension if needed
 	 * use this in case you do not wish to cache your assets and instead just grab their base path.
-	 *
 	 * @param asset 			Asset name/folder name you want to format.
 	 * @param type 				Type of asset, is unspecified, file extensions won't be added to the formatted path.
-	 *
 	 * @return String
 	**/
 	public static function getPath(?asset:String, ?type:ForeverAsset):String {
-		return type.getExtension('assets/${asset}');
+		var gottenPath:String = type.getExtension('assets/${asset}');
+		#if MODS
+		if (searchLevel != null && searchLevel != "") {
+			final modPath:String = type.getExtension('${Mods.MODS_FOLDER}/${searchLevel}/${asset}');
+			if (sys.FileSystem.exists(modPath))
+				gottenPath = modPath;
+		}
+		#end
+		return gottenPath;
 	}
 
 	/**
 	 * As the name implies, this allows you to grab specifically assets with their specified type,
 	 * unlike `getPath`, this returns the actual object of an asset and also caches it.
-	 *
 	 * Example:
-	 *
 	 * ```haxe
 	 * var myGraphic = AssetHelper.getAsset('images/myImage', IMAGE); // flixel.graphics.FlxGraphic
 	 * var mySound = AssetHelper.getAsset('sounds/mySound', SOUND); // openfl.media.Sound
 	 * ```
-	 *
 	 * @param asset 			Asset name you want to grab.
 	 * @param type 				Type of asset, to append extensions and get the asset you want.
-	 *
 	 * @return Dynamic
 	**/
 	public static function getAsset(asset:String, ?type:ForeverAsset):Dynamic {
 		var gottenAsset:String = getPath(asset, type);
 
 		return switch (type) {
-			case IMAGE: getGraphic('${gottenAsset}');
+			case IMAGE: getGraphic(gottenAsset);
 			case JSON:
-				var json:String = OpenFLAssets.getText(gottenAsset).trim();
+				var json:String = #if sys sys.io.File.getContent #else OpenFLAssets.getText #end (gottenAsset).trim();
 				while (!json.endsWith("}")) // ensure its not broken.
 					json = json.substr(0, json.length - 1);
-
 				// return
 				tjson.TJSON.parse(json);
-
 			case FONT:
-				var path:String = getPath('fonts/${asset}', FONT);
-				// todo: make it return the font's actual name when found
+				final path:String = getPath('fonts/${asset}', FONT);
+				// todo: make it return the font's actual name when found, this should work for now.
 				return path;
 			case ATLAS:
-				if (type.assetExists(getPath(asset, TEXT))) return getAsset(asset, ATLAS_PACKER); else return getAsset(asset, ATLAS_SPARROW);
-			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset, XML));
-			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getPath(asset, TEXT));
+				var txtPath:String = getPath(asset + ".txt");
+				#if sys if (sys.FileSystem.exists(txtPath)) #else if (OpenFLAssets.exists(txtPath, TEXT)) #end
+				return getAsset(asset, ATLAS_PACKER);
+				else
+					return getAsset(asset, ATLAS_SPARROW);
+			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset + ".xml"));
+			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getPath(asset + ".txt"));
 			default: gottenAsset;
 		}
 	}
 
 	/**
 	 * Internal Usage and Caching, use this only when absolutely necessary
-	 * 
 	 * @param file 				File to extract the graphic from
 	 * @param customKey 		What to save this file in the cache as
 	**/
 	public static function getGraphic(file:String, ?customKey:String = null):FlxGraphic {
 		try {
-			var keyName:String = customKey != null ? customKey : file;
+			final keyName:String = customKey != null ? customKey : file;
 
 			// prevent remapping
 			if (loadedGraphics.get(keyName) != null)
 				return loadedGraphics.get(keyName);
 
-			var bd:BitmapData = OpenFLAssets.getBitmapData(file);
+			final bd:BitmapData = #if sys BitmapData.fromFile(file) #else OpenFLAssets.getBitmapData(file) #end;
 
 			if (bd != null) {
-				var graphic:FlxGraphic = FlxGraphic.fromBitmapData(bd, false, file);
+				final graphic:FlxGraphic = FlxGraphic.fromBitmapData(bd, false, file);
 				loadedGraphics.set(keyName, graphic);
 				currentUsedAssets.push(keyName);
 				return graphic;
@@ -123,7 +129,6 @@ class AssetHelper {
 
 	/**
 	 * Internal Usage and Caching, use this only when absolutely necessary
-	 *
 	 * @param file 				File to extract the sound from
 	 * @param customKey 		What to save this file in the cache as
 	**/
@@ -131,11 +136,13 @@ class AssetHelper {
 		try {
 			var keyName:String = customKey != null ? customKey : file;
 
-			// prevent remapping
+			// prevent remappin
 			if (loadedSounds.get(keyName) != null)
 				return loadedSounds.get(keyName);
 
-			var sound:Sound = OpenFLAssets.getSound(getAsset(file, SOUND));
+			var snd:String = getAsset(file, SOUND);
+
+			var sound:Sound = #if sys Sound.fromFile(snd) #else OpenFLAssets.getSound(snd) #end;
 			loadedSounds.set(keyName, sound);
 			currentUsedAssets.push(keyName);
 			return sound;
@@ -244,19 +251,20 @@ enum abstract ForeverAsset(String) to String {
 
 		if (extensionLoader != null) {
 			if (extensionLoader.length > 1) {
-				for (i in extensionLoader)
-					if (OpenFLAssets.exists('${path}${i}', toOpenFL()))
-						return '${path}${i}';
+				for (i in extensionLoader) {
+					#if sys if (sys.FileSystem.exists('${path}${i}')) #else if (OpenFLAssets.exists('${path}${i}', toOpenFL())) #end
+					path = '${path}${i}';
+				}
 			}
-			else if (assetExists('${path}${extensionLoader[0]}'))
-				return '${path}${extensionLoader[0]}';
+			else {
+				var thing:String = '${path}${extensionLoader[0]}';
+				#if sys if (sys.FileSystem.exists(thing)) #else if (OpenFLAssets.exists(thing, toOpenFL())) #end
+				path = thing;
+			}
 		}
 
-		return Std.string(path);
+		return path;
 	}
-
-	public function assetExists(asset:String):Bool
-		return OpenFLAssets.exists(asset, toOpenFL());
 
 	public function toOpenFL():Dynamic {
 		return switch (this) {

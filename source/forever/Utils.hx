@@ -19,18 +19,17 @@ class Utils {
 
 	/** Creates a list from a filepath, it is recommended to use this with plaintext files. **/
 	public static function listFromFile(path:String):Array<String> {
+		final existsCall = #if sys sys.io.File.getContent #else OpenFLAssets.getText #end;
 		return [
-			for (t in OpenFLAssets.getText(path).split("\n"))
+			for (t in existsCall(path).split("\n"))
 				if (t != "" && !StringTools.startsWith(t, "#")) t
 		];
 	}
 
 	/**
 	 * Removes every space from a string.
-	 *
 	 * @param str 			The string to remove spaces from.
 	 * @param trim 			If leading and trailing spaces should also be removed.
-	 *
 	 * @return String
 	**/
 	public static function removeSpaces(str:String, trim:Bool = true):String {
@@ -41,11 +40,9 @@ class Utils {
 
 	/**
 	 * Replaces every space from a string with something else.
-	 *
 	 * @param str 			The string to replace spaces from.
 	 * @param with 			Another string defining what to replace the spaces with (default "-").
 	 * @param trim 			If leading and trailing spaces should also be removed.
-	 *
 	 * @return String
 	**/
 	public static function replaceSpaces(str:String, with:String = "-", trim:Bool = true):String {
@@ -56,11 +53,9 @@ class Utils {
 
 	/**
 	 * Replaces every dash (-) from a string with something else.
-	 *
 	 * @param str 			The string to replace dashes from.
 	 * @param with 			Another string defining what to replace the dashes with (default " ").
 	 * @param trim 			If leading and trailing spaces should be removed.
-	 *
 	 * @return String
 	**/
 	public static function replaceDashes(str:String, with:String = " ", trim:Bool = true):String {
@@ -71,7 +66,6 @@ class Utils {
 
 	/**
 	 * Lists every folder in the specified path
-	 *
 	 * @param path 				the path to get folders from
 	 * @return Array<String>
 	**/
@@ -125,7 +119,6 @@ class Utils {
 	/**
 	 * Checks whether or not the menu music is playing
 	 * and plays it if its not.
-	 *
 	 * @param music 		Music filename you want to play.
 	 * @param doFadeIn 		Quite self explanatory right?
 	 * @param bpm 			The BPM of the music (needed for beat events and such).
@@ -143,9 +136,7 @@ class Utils {
 
 	/**
 	 * Centers an object to the center of another object
-	 *
 	 * @param axes 			in which axes should this be centered at (X, Y, XY)
-	 *
 	 * @return FlxObject
 	**/
 	public static function centerToObject(object:FlxObject, target:FlxObject, axes:FlxAxes = XY):FlxObject {
@@ -168,9 +159,7 @@ class Utils {
 	/**
 	 * Makes sure that value always stays between 0 and max,
 	 * by wrapping the value around.
-	 *
 	 * Float-safe version of `FlxMath.wrap`
-	 *
 	 * @param 	value 	The value to wrap around
 	 * @param 	min		The minimum the value is allowed to be
 	 * @param 	max 	The maximum the value is allowed to be
@@ -184,7 +173,6 @@ class Utils {
 	/**
 	 * Replaces the code to not set if the value is null
 	 * if an error appears here, then the error is where its called, not in here, since it replaces the code
-	 *
 	 * @param variable		The variable with the value we wanna modify
 	 * @param value			The new value for the variable given.
 	**/

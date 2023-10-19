@@ -17,7 +17,6 @@ class ForeverTiledSprite extends ForeverSprite {
 
 	/**
 	 * Creates a new Tiled Sprite.
-	 *
 	 * @param x				The initial X Position of the Sprite.
 	 * @param y				The initial Y Position of the Sprite.
 	 * @param graphic		The name of the graphic (will be searched for in `assets/images`).

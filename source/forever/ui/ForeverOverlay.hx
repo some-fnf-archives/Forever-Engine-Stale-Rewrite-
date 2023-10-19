@@ -23,7 +23,6 @@ class ForeverOverlay extends Sprite {
 
 	/**
 	 * Instantiates the Overlay.
-	 * 
 	 * @param monis 		the Monitors that should be appended by default when creating the overlay.
 	**/
 	public function new(monis:Array<BaseOverlayMonitor>):Void {

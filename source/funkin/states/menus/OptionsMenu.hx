@@ -1,8 +1,9 @@
 package funkin.states.menus;
 
+import flixel.FlxBasic;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import forever.display.ForeverSprite;
 import forever.data.ForeverOption;
+import forever.display.ForeverSprite;
 import forever.ui.ForeverText;
 import funkin.components.ui.Alphabet;
 import funkin.states.base.BaseMenuState;
@@ -90,7 +91,8 @@ class OptionsMenu extends BaseMenuState {
 
 					switch (option.type) {
 						case CHECKMARK:
-							iconGroup.members[curSel].playAnim('${option.value}');
+							// safe casting, HashLink won't let me write unsafe code :( -Crow
+							cast(iconGroup.members[curSel], ForeverSprite).playAnim('${option.value}');
 						case CHOICE(options):
 							isSelector = true;
 						case NUMBER(min, max, decimals, clamp):
@@ -99,7 +101,7 @@ class OptionsMenu extends BaseMenuState {
 					}
 
 					if (isSelector)
-						iconGroup.members[curSel].text = '${option.value}';
+						cast(iconGroup.members[curSel], Alphabet).text = '${option.value}';
 			}
 		}
 
@@ -145,7 +147,7 @@ class OptionsMenu extends BaseMenuState {
 		}
 
 		while (iconGroup.members.length != 0) {
-			var i = iconGroup.members.last();
+			var i:FlxBasic = cast(iconGroup.members.last(), FlxBasic);
 			if (i != null)
 				i.destroy();
 			iconGroup.remove(i, true);

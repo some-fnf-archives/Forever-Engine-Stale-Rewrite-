@@ -10,7 +10,6 @@ class DiscordWrapper {
 	@:allow(Init)
 	/**
 	 * Initializes the Discord Rich Presence Wrapper.
-	 * 
 	 * @param clientID			your app's ClientID, from Discord Developer Portal.
 	**/
 	static function initialize(clientID:String):Void {
@@ -39,7 +38,6 @@ class DiscordWrapper {
 
 	/**
 	 * Updates your Discord Rich Presence Status, including icons and text
-	 * 
 	 * @param state 				Rich Presence State, e.g: IN FREEPLAY
 	 * @param details 				Rich Presence Details, e.g: In the Menus
 	 * @param largeImage 			Image that displays when viewing your status on Discord.

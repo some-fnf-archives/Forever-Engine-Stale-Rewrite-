@@ -62,7 +62,6 @@ class PlayState extends FNFState {
 
 	/**
 	 * Constructs the Gameplay State
-	 * 
 	 * @param songInfo 			Assigns a new song to the PlayState.
 	**/
 	public function new(songInfo:PlaySong):Void {
@@ -134,7 +133,8 @@ class PlayState extends FNFState {
 		DiscordRPC.updatePresence('Playing: ${currentSong.display}', '');
 
 		countdownRoutine();
-		processEvent(Chart.current.events[0].event);
+		if (Chart.current != null && Chart.current.events[0] != null)
+			processEvent(Chart.current.events[0].event);
 	}
 
 	public override function update(elapsed:Float):Void {

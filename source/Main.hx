@@ -5,7 +5,6 @@ import flixel.FlxState;
 import forever.ui.ForeverOverlay;
 import forever.ui.overlay.*;
 import openfl.display.Sprite;
-import openfl.utils.Assets as OpenFLAssets;
 
 class Main extends Sprite {
 	public static var framerate:Int = 120;

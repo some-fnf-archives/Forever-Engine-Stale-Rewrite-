@@ -90,7 +90,9 @@ class BaseControls {
 		"back" => [BACKSPACE, ESCAPE],
 		"pause" => [ENTER, ESCAPE],
 		"reset" => [R],
+		#if MODS
 		"switch mods" => [SLASH, CONTROL],
+		#end
 	];
 
 	/** Your own Custom Controls. **/

@@ -62,8 +62,7 @@ class ForeverTextField extends FlxObject {
 	var _canRender(get, never):Bool;
 
 	/**
-	 * Creates a new `ForeverText` object at the specified position.
-	 *
+	 * Creates a new `ForeverTextField` object at the specified position.
 	 * @param   X              The x position of the text.
 	 * @param   Y              The y position of the text.
 	 * @param   FieldWidth     The `width` of the text object. Enables `autoSize` if `<= 0`.
