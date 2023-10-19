@@ -102,7 +102,7 @@ class MainMenu extends BaseMenuState {
 					});
 				}
 				else {
-					button.flicker(1.0, 0.06, function(flk:FlxFlicker) {
+					button.flicker(1.0, 0.06, false, function(flk:FlxFlicker) {
 						if (options[curSel].callback != null)
 							options[curSel].callback();
 					});

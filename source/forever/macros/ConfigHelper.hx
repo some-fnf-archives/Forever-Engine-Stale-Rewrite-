@@ -59,7 +59,6 @@ class ConfigHelper {
 					if (field.name == "flush") {
 						var arr = [(macro flixel.FlxG.save.bind("Settings", forever.macros.ConfigHelper.savePath))];
 						// i have 0 clue if this even works, it did work first try
-						trace('saving settings');
 						for (name in savedFields) {
 							arr.push(macro {
 								flixel.FlxG.save.data.$name = $i{name};

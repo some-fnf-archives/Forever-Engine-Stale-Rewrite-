@@ -28,6 +28,8 @@ class FreeplayMenu extends BaseMenuState {
 	var intendedScore:Int = 0;
 
 	public override function create():Void {
+		super.create();
+
 		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
 		Utils.checkMenuMusic("foreverMenu", false, 102.0);
 
