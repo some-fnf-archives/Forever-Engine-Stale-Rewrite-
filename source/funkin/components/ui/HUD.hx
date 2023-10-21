@@ -48,7 +48,7 @@ class HUD extends FlxGroup {
 
 		healthBar.bar.percent = PlayState.current.playStats.health * 50;
 
-		final iconOffset:Int = 26;
+		final iconOffset:Int = 25;
 		iconP1.x = healthBar.x + (healthBar.bar.width * (1 - healthBar.bar.percent / 100)) - iconOffset;
 		iconP2.x = healthBar.x + (healthBar.bar.width * (1 - healthBar.bar.percent / 100)) - (iconP2.width - iconOffset);
 

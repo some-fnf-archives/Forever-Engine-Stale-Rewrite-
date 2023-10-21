@@ -14,6 +14,8 @@ class ModsMenu extends FlxSubState {
 	public function new():Void {
 		super();
 
+		camera = FlxG.cameras.list.last();
+
 		Mods.refreshMods();
 
 		// placeholder

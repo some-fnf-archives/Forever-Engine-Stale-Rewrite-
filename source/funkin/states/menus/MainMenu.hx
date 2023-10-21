@@ -1,5 +1,6 @@
 package funkin.states.menus;
 
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.tweens.FlxEase;
@@ -7,11 +8,12 @@ import flixel.tweens.FlxTween;
 import forever.display.ForeverSprite;
 import forever.ui.ForeverText;
 import funkin.states.base.BaseMenuState;
+
+using flixel.effects.FlxFlicker;
+
 #if MODS
 import funkin.states.subStates.ModsMenu;
 #end
-
-using flixel.effects.FlxFlicker;
 
 typedef MainMenuOption = {
 	var name:String;
@@ -22,6 +24,8 @@ class MainMenu extends BaseMenuState {
 	public var bg:ForeverSprite;
 	public var magenta:ForeverSprite;
 	public var buttons:FlxTypedGroup<FlxSprite>;
+
+	public var camLead:FlxObject;
 
 	var options:Array<MainMenuOption> = [
 		{name: "story", callback: function() FlxG.switchState(new FreeplayMenu())},
@@ -35,6 +39,10 @@ class MainMenu extends BaseMenuState {
 		DiscordRPC.updatePresence("In the Menus", "MAIN MENU");
 		Utils.checkMenuMusic("foreverMenu", false, 102.0);
 
+		camLead = new FlxObject(0, 0, 1, 1);
+		camLead.moves = false;
+		add(camLead);
+
 		add(bg = new ForeverSprite(0, 0, "menus/menuBG"));
 		add(magenta = new ForeverSprite(0, 0, "menus/menuDesat"));
 		magenta.visible = false;
@@ -43,7 +51,7 @@ class MainMenu extends BaseMenuState {
 		for (i in [bg, magenta]) {
 			i.screenCenter();
 			i.scale.set(1.15, 1.15);
-			i.scrollFactor.set(0.0, 0.17);
+			i.scrollFactor.set(0.0, 0.18);
 			i.updateHitbox();
 		}
 
@@ -69,14 +77,15 @@ class MainMenu extends BaseMenuState {
 			buttons.add(bttn);
 		}
 
-		var versionLabel:ForeverText = new ForeverText(5, FlxG.height - #if MODS 35 #else 30 #end, 0, 'Forever Engine v${Main.version}', 16);
+		FlxG.camera.follow(camLead, null, 0.16);
 
+		var versionLabel:ForeverText = new ForeverText(5, FlxG.height - #if MODS 35 #else 30 #end, 0, 'Forever Engine v${Main.version}', 16);
 		#if MODS
 		var modKb1:String = BaseControls.getKeyFromAction("switch mods").toString();
 		var modKb2:String = BaseControls.getKeyFromAction("switch mods", 1).toString();
 		versionLabel.text += '\nPress ${modKb1} or ${modKb2} to Switch Mods';
 		#end
-
+		versionLabel.scrollFactor.set();
 		add(versionLabel);
 
 		maxSelections = options.length - 1;
@@ -111,6 +120,8 @@ class MainMenu extends BaseMenuState {
 		}
 
 		onBack = function() FlxG.switchState(new TitleScreen());
+
+		updateSelection();
 	}
 
 	public override function update(elapsed:Float):Void {
@@ -119,7 +130,7 @@ class MainMenu extends BaseMenuState {
 		buttons.forEach(function(button:FlxSprite) button.screenCenter(X));
 
 		#if MODS
-		if (Controls.current.justPressed("switch mods")) {
+		if (canChangeSelection && Controls.current.justPressed("switch mods")) {
 			FlxG.state.persistentUpdate = false;
 			openSubState(new ModsMenu());
 		}
@@ -134,11 +145,10 @@ class MainMenu extends BaseMenuState {
 
 		for (i in 0...buttons.members.length) {
 			var button:FlxSprite = buttons.members[i];
-
 			button.animation.play(i == curSel ? "selected" : "idle", true);
 			button.updateHitbox();
 
-			// camFollow.setPosition(button.getGraphicMidpoint().x, button.getGraphicMidpoint().y);
+			camLead.setPosition(button.getGraphicMidpoint().x, button.getGraphicMidpoint().y);
 		}
 	}
 }

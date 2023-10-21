@@ -50,11 +50,15 @@ class Mods {
 	 * Rescans the mods in the mods folder and activates the mods that should be enabled.
 	**/
 	public static function refreshMods():Void {
+		mods = [];
+
 		var rawModsList:Array<String> = Utils.listFolders('${MODS_FOLDER}');
 
 		for (folder in rawModsList) {
-			if (!sys.FileSystem.exists('${MODS_FOLDER}/${folder}/mod.json'))
+			if (!sys.FileSystem.exists('${MODS_FOLDER}/${folder}/mod.json')) {
+				trace('[${MODS_FOLDER}/${folder}]: "mod.json" file does not exist.');
 				continue;
+			}
 
 			var modJson:ForeverMod = cast sys.io.File.getContent('./${MODS_FOLDER}/${folder}/mod.json');
 

@@ -192,12 +192,14 @@ class ChildAlphabet extends Alphabet {
 		if (parent != null) {
 			switch (alignment) {
 				default:
-					this.x = x;
+					this.x = parent.x;
 				case CENTER:
-					this.x = x + ((width - parent.width) * 0.5);
+					this.x = parent.x + ((width - parent.width) * 0.5);
 				case RIGHT:
-					this.x = x + (width - parent.width);
+					this.x = parent.x + (parent.width + 30);
 			}
+			this.x += increment.x;
+			this.y = parent.y + increment.y;
 		}
 	}
 

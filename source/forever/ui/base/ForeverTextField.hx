@@ -78,7 +78,6 @@ class ForeverTextField extends FlxObject {
 		_behindRenders = []; // I feel like I'm gonna need this for borders.
 
 		_textFormatStyle = new TextFormat(font, size, color);
-		_textFormatStyle.align = alignment;
 
 		_textF = _makeField();
 		_textF.height = (text.length == 0) ? 1 : 100;
@@ -164,6 +163,7 @@ class ForeverTextField extends FlxObject {
 					i.text = _textF.text;
 			_textF.text = newText;
 		}
+		_refreshWidth(true);
 		return text;
 	}
 
@@ -171,7 +171,7 @@ class ForeverTextField extends FlxObject {
 	function set_alignment(newAlign:TextFormatAlign):TextFormatAlign {
 		alignment = newAlign;
 		_textFormatStyle.align = newAlign;
-		_updateTextFormat();
+		_updateTextFormat(ALIGN_CHANGE);
 		return alignment;
 	}
 
@@ -179,7 +179,7 @@ class ForeverTextField extends FlxObject {
 	function set_font(newFont:String):String {
 		font = newFont;
 		_textFormatStyle.font = newFont;
-		_updateTextFormat();
+		_updateTextFormat(FONT_CHANGE);
 		return font;
 	}
 
@@ -205,7 +205,7 @@ class ForeverTextField extends FlxObject {
 	function set_size(newSize:Int):Int {
 		size = newSize < 1 ? 10 : newSize;
 		_textFormatStyle.size = newSize;
-		_updateTextFormat();
+		_updateTextFormat(SIZE_CHANGE);
 		return size;
 	}
 
@@ -272,6 +272,16 @@ class ForeverTextField extends FlxObject {
 	}
 
 	@:dox(hide) @:noCompletion
+	inline function alignToSize() {
+		return switch alignment {
+			case LEFT: TextFieldAutoSize.LEFT;
+			case START | END | JUSTIFY: TextFieldAutoSize.NONE;
+			case RIGHT: TextFieldAutoSize.RIGHT;
+			case CENTER: TextFieldAutoSize.CENTER;
+		}
+	}
+
+	@:dox(hide) @:noCompletion
 	function _updateTextFormat(?reason:FormatChangeReason = NONE):Void {
 		if (_canRender) {
 			if (_behindRenders.length != 0) {
@@ -286,28 +296,37 @@ class ForeverTextField extends FlxObject {
 			_textF.setTextFormat(_textFormatStyle);
 
 			switch (reason) {
-				case FONT_CHANGE: _refreshWidth(true);
+				case FONT_CHANGE | SIZE_CHANGE | ALIGN_CHANGE:
+					if (reason == ALIGN_CHANGE) {
+						for (i in _behindRenders)
+							i.autoSize = alignToSize();
+						_textF.autoSize = alignToSize();
+					}
+					_refreshWidth(true);
 				default: // dont do anything
 			}
 		}
 	}
 
-	@:dox(hide) @:noCompletion
-	function _queueDraw():Void {
-		if (_rendererSprite != null && _rendererSprite.graphic != null && _rendererSprite.visible) {
-			_rendererSprite.draw();
+	/*
+		@:dox(hide) @:noCompletion
+		function _queueDraw():Void {
+			if (_rendererSprite != null && _rendererSprite.graphic != null && _rendererSprite.visible) {
+				_rendererSprite.draw();
 
-			if (_canRender) {
-				@:privateAccess
-				_rendererSprite.graphic.bitmap.fillRect(_rendererSprite._flashRect, FlxColor.TRANSPARENT);
+				if (_canRender) {
+					@:privateAccess
+					_rendererSprite.graphic.bitmap.fillRect(_rendererSprite._flashRect, FlxColor.TRANSPARENT);
 
-				if (_behindRenders.length != 0)
-					for (i in _behindRenders)
-						_rendererSprite.graphic.bitmap.draw(i);
-				_rendererSprite.graphic.bitmap.draw(_textF);
+					if (_behindRenders.length != 0)
+						for (i in _behindRenders)
+							_rendererSprite.graphic.bitmap.draw(i);
+					_rendererSprite.graphic.bitmap.draw(_textF);
+				}
 			}
 		}
-	}
+	 */
+	//
 
 	@:dox(hide) @:noCompletion
 	function _makeField():TextField {
@@ -318,8 +337,8 @@ class ForeverTextField extends FlxObject {
 		newTextField.wordWrap = true;
 
 		newTextField.defaultTextFormat = _textFormatStyle;
-		newTextField.autoSize = TextFieldAutoSize.LEFT;
-		newTextField.sharpness = 100;
+		newTextField.autoSize = alignToSize();
+		// newTextField.sharpness = 100;
 
 		return newTextField;
 	}
@@ -367,21 +386,28 @@ class ForeverTextField extends FlxObject {
 
 	@:dox(hide) @:noCompletion
 	function _refreshWidth(andHeight:Bool = true):Void {
-		this.width = width <= 0 ? Math.ceil(_textF.width * HORIZONTAL_GUTTER * size) : Math.floor(width);
+		final widthThing:Float = _textF.textWidth == 0 ? _textF.width : _textF.textWidth;
+		final hGutter:Int = _textF.autoSize == NONE ? HORIZONTAL_GUTTER : 0;
+		final vGutter:Int = _textF.autoSize == NONE ? VERTICAL_GUTTER : 0;
+
+		final newWidth:Float = width <= 0 ? Math.ceil(widthThing * (size * 0.25)) + hGutter : Math.floor(width);
+
 		if (andHeight)
-			this.height = Math.ceil(_textF.height + VERTICAL_GUTTER);
+			this.height = Math.ceil(_textF.height) + vGutter;
 
 		if (_textF != null) {
 			if (_behindRenders.length != 0)
 				for (i in _behindRenders) {
 					i.width = this.width;
 					if (andHeight)
-						i.height = this.height;
+						i.height = newWidth;
 				}
-			_textF.width = this.width;
+			_textF.width = newWidth;
 			if (andHeight)
 				_textF.height = this.height;
 		}
+
+		this.width = newWidth;
 	}
 
 	@:dox(hide) @:noCompletion

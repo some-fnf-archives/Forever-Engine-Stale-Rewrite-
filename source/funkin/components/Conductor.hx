@@ -80,7 +80,7 @@ class Conductor extends FlxBasic {
 	}
 
 	public static inline function timeToBar(time:Float, _bpm:Float):Float {
-		return timeToBeat(time, _bpm) / 4.0;
+		return timeToBeat(time, _bpm) * 0.25; // (*0.25 = /4.0)
 	}
 
 	public static inline function beatToTime(beatTime:Float, _bpm:Float):Float {
@@ -92,7 +92,7 @@ class Conductor extends FlxBasic {
 	}
 
 	public static inline function barToTime(time:Float, _bpm:Float):Float {
-		return beatToTime(time, _bpm) / 4.0;
+		return beatToTime(time, _bpm) * 0.25;
 	}
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
@@ -108,8 +108,8 @@ class Conductor extends FlxBasic {
 		return Math.floor(timeToStep(time, bpm));
 
 	@:noCompletion static function get_beat():Int
-		return Math.floor(step / 4.0);
+		return Math.floor(step * 0.25);
 
 	@:noCompletion static function get_bar():Int
-		return Math.floor(beat / 4.0);
+		return Math.floor(beat * 0.25);
 }

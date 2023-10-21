@@ -57,13 +57,12 @@ class ChartLoader {
 						}
 
 						var barNotes:Array<Array<Dynamic>> = cast(bar.sectionNotes);
+						if (barNotes == null)
+							barNotes = [];
 
-						if (barNotes != null) {
-							for (j in barNotes) {
-								// old psych events
-								if (Std.int(j[1]) < 0)
-									continue;
-
+						for (j in barNotes) {
+							// old psych events
+							if (Std.int(j[1]) >= 0) {
 								var noteAnim:String = "";
 								if (Std.isOfType(j[3], Bool) && j[3] == true || bar.altAnim)
 									noteAnim = "-alt";
@@ -172,4 +171,13 @@ enum ForeverEvents {
 	ChangeCharacter(who:Int, toCharacter:String);
 	FocusCamera(who:Int, noEasing:Bool);
 	PlaySound(soundName:String, volume:Float);
+
+	/**
+	 * HScript Event
+	 * 
+	 * @param name 		Name (in the chart editor).
+	 * @param script	Script to run for the event.
+	 * @param args 		Arguments for the event.
+	**/
+	Scripted(name:String, script:String, args:Array<String>);
 }

@@ -18,6 +18,15 @@ class Settings {
 	/** Check this if you want the game not to pause when unfocusing the window. **/
 	public static var autoPause:Bool = false;
 
+	/** Your game's master volume **/
+	public static var masterVolume:Int = 100;
+
+	/** Your game's music volume **/
+	public static var musicVolume:Int = 100;
+
+	/** Your game's sfx volume **/
+	public static var soundVolume:Int = 100;
+
 	/** Check this if you want your notes to come from top to bottom. **/
 	public static var downScroll:Bool = false;
 

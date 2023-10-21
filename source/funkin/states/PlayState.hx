@@ -216,6 +216,7 @@ class PlayState extends FNFState {
 	public override function onBeat(beat:Int):Void {
 		// let 'em do their thing!
 		hud.onBeat(beat);
+		FlxG.sound.play(Paths.sound("metronome"));
 		doDancersDance(beat);
 	}
 
@@ -248,6 +249,8 @@ class PlayState extends FNFState {
 				newChar.loadCharacter(toCharacter);
 				newChar.alpha = 0.000001;
 			// characterGroup.add(newChar);
+			case Scripted(name, script, args):
+			// init hscript here.
 			default:
 				// do nothing
 		}
@@ -269,6 +272,8 @@ class PlayState extends FNFState {
 				getCharacterFromID(who).loadCharacter(toCharacter);
 			case PlaySound(soundName, volume):
 				FlxG.sound.play(AssetHelper.getSound('sounds/${soundName}'), volume);
+			case Scripted(name, script, args):
+			// init hscript here.
 			default:
 				// do nothing
 		}

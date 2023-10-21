@@ -1,6 +1,5 @@
 package funkin.states.menus;
 
-import funkin.components.ui.HealthIcon;
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
@@ -10,6 +9,7 @@ import forever.ui.ForeverText;
 import funkin.components.DifficultyHelper;
 import funkin.components.Highscore;
 import funkin.components.ui.Alphabet;
+import funkin.components.ui.HealthIcon;
 import funkin.states.base.BaseMenuState;
 
 class FreeplayMenu extends BaseMenuState {
@@ -73,7 +73,7 @@ class FreeplayMenu extends BaseMenuState {
 			scoreTxt.alignment = RIGHT;
 			backPB.alpha = 0.6;
 
-			add(difficultyTxt = new ForeverText(0, scoreTxt.y + 30, 0, "-", 24));
+			add(difficultyTxt = new ForeverText(0, scoreTxt.y + 30, 0, "-", 20));
 			difficultyTxt.centerToObject(backPB, X);
 
 			for (t in [scoreTxt, difficultyTxt])
@@ -115,7 +115,7 @@ class FreeplayMenu extends BaseMenuState {
 			};
 		}
 		else {
-			var errorText:Alphabet = new Alphabet(0, 0, "No songs were found, please check your song list file.", BOLD, CENTER);
+			final errorText:Alphabet = new Alphabet(0, 0, "No songs were found,\nplease check your song list file.", BOLD, CENTER, 0.8);
 			errorText.screenCenter();
 			add(errorText);
 		}

@@ -1,6 +1,7 @@
 package funkin.states.menus;
 
 import flixel.FlxBasic;
+import flixel.FlxObject;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import forever.data.ForeverOption;
 import forever.display.ForeverSprite;
@@ -134,7 +135,7 @@ class OptionsMenu extends BaseMenuState {
 			let.targetY = i - curSel;
 			let.alpha = let.targetY == 0 ? 1.0 : 0.6;
 			if (iconGroup.members[i] != null)
-				iconGroup.members[i].alpha = let.alpha;
+				cast(iconGroup.members[i], FlxSprite).alpha = let.alpha;
 		}
 	}
 
@@ -147,7 +148,7 @@ class OptionsMenu extends BaseMenuState {
 		}
 
 		while (iconGroup.members.length != 0) {
-			var i:FlxBasic = cast(iconGroup.members.last(), FlxBasic);
+			var i:FlxSprite = cast(iconGroup.members.last(), FlxSprite);
 			if (i != null)
 				i.destroy();
 			iconGroup.remove(i, true);
@@ -182,12 +183,12 @@ class OptionsMenu extends BaseMenuState {
 					isSelector = true;
 				case NUMBER(min, max, decimals, clamp):
 					isSelector = true;
-
 				default:
+					iconGroup.add(new FlxSprite()); // prevent issues
 			}
 
 			if (isSelector) {
-				var selectorName:ChildAlphabet = new ChildAlphabet('${cataOptions[i].value}', BOLD, RIGHT);
+				final selectorName:ChildAlphabet = new ChildAlphabet('${cataOptions[i].value}', BOLD, RIGHT);
 				selectorName.parent = optionLabel;
 				iconGroup.add(selectorName);
 			}

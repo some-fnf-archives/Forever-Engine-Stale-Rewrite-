@@ -71,6 +71,9 @@ class Utils {
 	**/
 	public static function listFolders(path:String):Array<String> {
 		var assetsLibrary:Array<String> = [];
+		#if sys
+		assetsLibrary = sys.FileSystem.readDirectory(path);
+		#else
 		for (folder in OpenFLAssets.list().filter(list -> list.contains('${path}'))) {
 			var daFolder:String = folder.replace('${path}/', '');
 			if (daFolder.contains('/'))
@@ -86,6 +89,7 @@ class Utils {
 
 			return (a < b ? -1 : a > b ? 1 : 0);
 		});
+		#end
 
 		trace(assetsLibrary);
 		return assetsLibrary;
@@ -150,10 +154,6 @@ class Utils {
 
 	public static inline function fpsLerp(from:Float, to:Float, weight:Float) {
 		return FlxMath.lerp(from, to, FlxG.elapsed * 60.0 * weight);
-	}
-
-	public static inline function framerateAdjust(input:Float) {
-		return input * (60 / FlxG.drawFramerate);
 	}
 
 	/**

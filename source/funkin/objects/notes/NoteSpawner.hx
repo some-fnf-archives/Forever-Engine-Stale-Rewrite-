@@ -33,7 +33,7 @@ class NoteSpawner extends FlxTypedSpriteGroup<Note> {
 
 		while (curNote < noteList.length && !_preventSpawning) {
 			var timeDifference:Float = curNoteData.time - Conductor.time;
-			if (curNoteData == null || timeDifference > 1.5)
+			if (curNoteData == null || timeDifference > 1.8) // 1800
 				break;
 
 			var epicNote:Note = this.recycle(Note).appendData(curNoteData);
