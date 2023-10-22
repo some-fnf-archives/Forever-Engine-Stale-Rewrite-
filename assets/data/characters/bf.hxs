@@ -6,8 +6,13 @@ function generate() {
     char.dancingSteps = ["idle"];
     char.singingSteps = ["singLEFT", "singDOWN", "singUP", "singRIGHT"];
 
-    char.positionDisplace.y = isPlayer ? 0.0 : -1000.0;
-    char.cameraDisplace.y = isPlayer ? -150.0 : 0.0;
+    char.cameraDisplace.y = -110.0;
+
+    if (!isPlayer) {
+        char.positionDisplace.y = 350.0;
+        char.singingSteps[0] = "singRIGHT";
+        char.singingSteps[3] = "singLEFT";
+    }
 
     char.addAtlasAnim("idle", "BF idle dance", 24, false);
     char.addAtlasAnim("scared", "BF idle shaking", 24, false);
