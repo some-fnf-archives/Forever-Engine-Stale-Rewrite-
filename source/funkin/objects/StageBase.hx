@@ -17,7 +17,7 @@ class StageBase extends FlxSpriteGroup {
 	public var hudZoom:Float = 1.0;
 
 	/** The default player position **/
-	public var playerPosition:FlxPoint = FlxPoint.get(770, 450);
+	public var playerPosition:FlxPoint = FlxPoint.get(770, 430);
 
 	/** The default enemy position **/
 	public var enemyPosition:FlxPoint = FlxPoint.get(100, 100);

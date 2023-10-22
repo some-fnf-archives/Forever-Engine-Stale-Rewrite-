@@ -47,7 +47,7 @@ class NoteConfig {
 
 		var file:Null<NoteConfigFile> = null;
 
-		if (OpenFLAssets.exists(AssetHelper.getPath('data/notes/${skin}', JSON))) {
+		if (Utils.fileExists(AssetHelper.getPath('data/notes/${skin}', TEXT))) {
 			try {
 				file = AssetHelper.getAsset('data/notes/${skin}', JSON);
 				if (file != null) {

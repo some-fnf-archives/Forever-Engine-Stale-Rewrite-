@@ -1,8 +1,10 @@
 package funkin.objects;
 
+#if SCRIPTING
+import forever.data.ForeverScript;
+#end
 import flixel.math.FlxPoint;
 import forever.display.ForeverSprite;
-import openfl.utils.Assets as OpenFLAssets;
 
 enum abstract CharAnimationState(Int) to Int {
 	var IDLE = 0;
@@ -44,6 +46,8 @@ class Character extends ForeverSprite {
 	/** Which animation state the character is currently at. **/
 	public var animationState:Int = IDLE;
 
+	public var characterScript:ForeverScript = null;
+
 	@:dox(hide) public var holdTmr:Float = 0.0;
 
 	@:dox(hide) private var _curDanceStep:Int = 0;
@@ -58,6 +62,9 @@ class Character extends ForeverSprite {
 	}
 
 	public override function destroy():Void {
+		if (characterScript != null)
+			characterScript.call("destroy", []);
+
 		positionDisplace.put();
 		cameraDisplace.put();
 		super.destroy();
@@ -69,7 +76,7 @@ class Character extends ForeverSprite {
 		var implementation:String = FOREVER;
 		var file:Dynamic = null;
 
-		if (OpenFLAssets.exists(AssetHelper.getPath('data/characters/${name}', JSON))) {
+		if (Utils.fileExists(AssetHelper.getPath('data/characters/${name}.json'))) {
 			file = AssetHelper.getAsset('data/characters/${name}', JSON);
 			var crowChar:Bool = Reflect.hasField(file, "singList");
 			implementation = crowChar ? CROW : PSYCH;
@@ -86,12 +93,17 @@ class Character extends ForeverSprite {
 		if (_isPlayer)
 			flipX = !flipX;
 
+		x += positionDisplace.x;
+		y += positionDisplace.y;
+
 		dance();
 
 		return this;
 	}
 
 	public override function update(elapsed:Float):Void {
+		if (characterScript != null)
+			characterScript.set("update", [elapsed]);
 		updateAnimation(elapsed);
 		if (animation.curAnim != null) {
 			if (animationState == SING)
@@ -107,6 +119,8 @@ class Character extends ForeverSprite {
 				holdTmr = 0.0;
 			}
 		}
+		if (characterScript != null)
+			characterScript.call("updatePost", [elapsed]);
 	}
 
 	public function dance(forced:Bool = false):Void {
@@ -130,62 +144,10 @@ class Character extends ForeverSprite {
 	private function parseFromImpl(file:Dynamic, impl:String):Void {
 		switch (impl) {
 			case FOREVER:
-				var animationsFile:Array<String> = Utils.listFromFile(AssetHelper.getAsset('data/characters/${name}/animList', TEXT));
-				var hasOffsetFile:Bool = OpenFLAssets.exists(AssetHelper.getPath('data/characters/${name}/offsetList', TEXT));
-
-				for (data in animationsFile) {
-					if (data.contains(":")) {
-						// -- CHARACTER DATA -- //
-						var conf:String = Utils.removeSpaces(data);
-
-						if (conf.startsWith("spritesheet:"))
-							frames = AssetHelper.getAsset('images/${conf.replace("spritesheet:", "")}', ATLAS);
-						if (conf.startsWith("flipX:"))
-							flipX = conf.replace("flipX:", "") == "true";
-						if (conf.startsWith("flipY:"))
-							flipY = conf.replace("flipY:", "") == "true";
-
-						if (data.trim().startsWith("position:")) {
-							var chrPos:Array<String> = conf.replace("position:", "").split(",");
-							positionDisplace = FlxPoint.get(Std.parseFloat(chrPos[0]), Std.parseFloat(chrPos[1]));
-						}
-
-						if (data.trim().startsWith("cameraPosition:")) {
-							var chrPos:Array<String> = conf.replace("cameraPosition:", "").split(",");
-							cameraDisplace = FlxPoint.get(Std.parseFloat(chrPos[0]), Std.parseFloat(chrPos[1]));
-						}
-
-						if (data.trim().startsWith("dancingSteps:")) {
-							var danceSteps:Array<String> = conf.replace("dancingSteps:", "").split(",");
-							dancingSteps = danceSteps;
-						}
-
-						if (data.trim().startsWith("singingSteps:")) {
-							var singSteps:Array<String> = conf.replace("singingSteps:", "").split(",");
-							singingSteps = singSteps;
-						}
-					}
-					else {
-						// -- CHARACTER ANIMATIONS -- //
-
-						var animData:Array<String> = data.split(" | ");
-						addAtlasAnim(animData[0], animData[1], Std.parseInt(animData[2]), animData[3] == "true");
-
-						if (!hasOffsetFile && animData.length > 3) {
-							var offsets:Array<String> = Utils.removeSpaces(animData[4]).split(",");
-							setOffset(animData[0], Std.parseFloat(offsets[0]), Std.parseFloat(offsets[1]));
-						}
-					}
-				}
-
-				if (hasOffsetFile) {
-					var offsetsFile:Array<String> = Utils.listFromFile(AssetHelper.getAsset('data/characters/${name}/offsetList', TEXT));
-					for (i in offsetsFile) {
-						var split:Array<String> = Utils.removeSpaces(i).split("|");
-						var offset:Array<String> = Utils.removeSpaces(split[1]).split(",");
-						setOffset(split[0], Std.parseFloat(offset[0]), Std.parseFloat(offset[1]));
-					}
-				}
+				var script:ForeverScript = new ForeverScript(AssetHelper.getAsset('data/characters/${name}', HSCRIPT));
+				script.set('char', this);
+				@:privateAccess script.set('isPlayer', this._isPlayer);
+				script.call('generate', []);
 
 			case PSYCH:
 				var charImage:String = file?.image ?? 'characters/${name}';

@@ -53,7 +53,7 @@ class AssetHelper {
 		#if MODS
 		if (searchLevel != null && searchLevel != "") {
 			final modPath:String = type.getExtension('${Mods.MODS_FOLDER}/${searchLevel}/${asset}');
-			if (sys.FileSystem.exists(modPath))
+			if (Utils.fileExists(modPath))
 				gottenPath = modPath;
 		}
 		#end
@@ -78,7 +78,7 @@ class AssetHelper {
 		return switch (type) {
 			case IMAGE: getGraphic(gottenAsset);
 			case JSON:
-				var json:String = #if sys sys.io.File.getContent #else OpenFLAssets.getText #end (gottenAsset).trim();
+				var json:String = Utils.getText(gottenAsset).trim();
 				while (!json.endsWith("}")) // ensure its not broken.
 					json = json.substr(0, json.length - 1);
 				// return
@@ -89,10 +89,7 @@ class AssetHelper {
 				return path;
 			case ATLAS:
 				var txtPath:String = getPath(asset + ".txt");
-				#if sys if (sys.FileSystem.exists(txtPath)) #else if (OpenFLAssets.exists(txtPath, TEXT)) #end
-				return getAsset(asset, ATLAS_PACKER);
-				else
-					return getAsset(asset, ATLAS_SPARROW);
+				if (Utils.fileExists(txtPath, TEXT)) return getAsset(asset, ATLAS_PACKER); else return getAsset(asset, ATLAS_SPARROW);
 			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset + ".xml"));
 			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getPath(asset + ".txt"));
 			default: gottenAsset;
@@ -252,14 +249,14 @@ enum abstract ForeverAsset(String) to String {
 		if (extensionLoader != null) {
 			if (extensionLoader.length > 1) {
 				for (i in extensionLoader) {
-					#if sys if (sys.FileSystem.exists('${path}${i}')) #else if (OpenFLAssets.exists('${path}${i}', toOpenFL())) #end
-					path = '${path}${i}';
+					if (Utils.fileExists('${path}${i}', toOpenFL()))
+						path = '${path}${i}';
 				}
 			}
 			else {
 				var thing:String = '${path}${extensionLoader[0]}';
-				#if sys if (sys.FileSystem.exists(thing)) #else if (OpenFLAssets.exists(thing, toOpenFL())) #end
-				path = thing;
+				if (Utils.fileExists(thing, toOpenFL()))
+					path = thing;
 			}
 		}
 

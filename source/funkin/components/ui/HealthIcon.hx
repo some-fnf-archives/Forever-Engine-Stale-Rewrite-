@@ -25,7 +25,7 @@ class HealthIcon extends ChildSprite {
 
 	function set_character(newChar:String):String {
 		var char:String = newChar;
-		if (!OpenFLAssets.exists(AssetHelper.getPath('images/icons/${char}', IMAGE)))
+		if (!Utils.fileExists(AssetHelper.getPath('images/icons/${char}', IMAGE)))
 			char = "face";
 
 		if (character != char) {

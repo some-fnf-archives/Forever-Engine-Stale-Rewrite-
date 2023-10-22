@@ -351,7 +351,7 @@ class PlayState extends FNFState {
 	function getCountdownSprite(tick:Int):ForeverSprite {
 		final sprites:Array<String> = ["prepare", "ready", "set", "go"];
 
-		var thingExists:Bool = openfl.utils.Assets.exists(AssetHelper.getPath('images/ui/normal/${sprites[tick]}', IMAGE));
+		var thingExists:Bool = Utils.fileExists(AssetHelper.getPath('images/ui/normal/${sprites[tick]}', IMAGE));
 		if (sprites[tick] != null && thingExists)
 			return new ForeverSprite(0, 0, 'ui/normal/${sprites[tick]}', {"scale.x": 0.9, "scale.y": 0.9});
 		return null;

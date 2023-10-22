@@ -5,9 +5,9 @@
 	<!-- _______________________________ -->
 
 	<define name="DISCORD" if="cpp" />
-	<define name="TRANSLATIONS" if="TEST_COMP" />
-	<define name="CRASH_HANDLER" />
 	<define name="MODS" if="desktop" unless="hl || neko" />
+	<define name="CRASH_HANDLER" />
+	<define name="SCRIPTING" />
 
 	<icon path="art/icon16.png" size='16' />
 	<icon path="art/icon32.png" size='32' />
@@ -78,6 +78,11 @@
 	<haxelib name="hxcpp-debug-server" if="debug" />
 
 	<haxelib name="hxdiscord_rpc" if="DISCORD" />
+	<section if="SCRIPTING">
+		<haxelib name="hscript" />
+		<haxelib name="hscript-iris" />
+		<haxedef name="hscriptPos" />
+	</section>
 	<haxelib name="tjson" />
 
 	<!-- _______________ -->

@@ -17,11 +17,18 @@ class Utils {
 	public static final NOTE_COLORS:Array<String> = ["purple", "blue", "green", "red"];
 	private static var curMenuMusic:String = "";
 
+	public static inline function fileExists(file:String, ?type:openfl.utils.AssetType = BINARY):Bool {
+		return #if sys sys.FileSystem.exists(file) #else OpenFLAssets.exists(file, type) #end;
+	}
+
+	public static inline function getText(str:String):String {
+		return #if sys sys.io.File.getContent(str) #else OpenFLAssets.getText(str) #end;
+	}
+
 	/** Creates a list from a filepath, it is recommended to use this with plaintext files. **/
 	public static function listFromFile(path:String):Array<String> {
-		final existsCall = #if sys sys.io.File.getContent #else OpenFLAssets.getText #end;
 		return [
-			for (t in existsCall(path).split("\n"))
+			for (t in Utils.getText(path).split("\n"))
 				if (t != "" && !StringTools.startsWith(t, "#")) t
 		];
 	}
