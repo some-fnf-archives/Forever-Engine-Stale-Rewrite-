@@ -63,10 +63,11 @@ class ConfigHelper {
 							arr.push(macro {
 								flixel.FlxG.save.data.$name = $i{name};
 								flixel.FlxG.save.flush();
-								Settings.update();
+
+								forever.config.Settings.masterVolume = Std.int(flixel.FlxG.sound.volume * 100.0);
+								forever.config.Settings.update();
 							});
 						}
-						arr.push((macro forever.config.Settings.masterVolume = Std.int(flixel.FlxG.sound.volume * 100.0)));
 						fun.expr = macro $b{arr};
 					}
 
