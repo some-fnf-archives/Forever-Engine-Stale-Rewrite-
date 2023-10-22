@@ -7,7 +7,7 @@ class ForeverScript extends Iris {
 	var localPath:String = null;
 
 	public function new(file:String, ?localPath:String = null):Void {
-		super(file, {autoRun: true, preset: true});
+		super(Utils.getText(file), {name: file.substr(0, file.lastIndexOf(".")), autoRun: true, preset: true});
 		this.localPath = localPath;
 	}
 
