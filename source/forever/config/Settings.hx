@@ -79,6 +79,6 @@ class Settings {
 		FlxG.autoPause = Settings.autoPause;
 		if (FlxG.drawFramerate != Settings.framerateCap)
 			Main.setFPSCap(Settings.framerateCap);
-		FlxG.sound.volume = Settings.masterVolume * 0.01;
+		FlxG.sound.volume = Settings.masterVolume / 100.0;
 	}
 }

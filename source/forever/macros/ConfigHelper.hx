@@ -66,7 +66,7 @@ class ConfigHelper {
 								Settings.update();
 							});
 						}
-						arr.push((macro forever.config.Settings.masterVolume = Std.int(flixel.FlxG.sound.volume / 100.0)));
+						arr.push((macro forever.config.Settings.masterVolume = Std.int(flixel.FlxG.sound.volume * 100.0)));
 						fun.expr = macro $b{arr};
 					}
 
