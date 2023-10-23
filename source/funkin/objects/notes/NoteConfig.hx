@@ -45,27 +45,27 @@ class NoteConfig {
 
 		var file:Null<NoteConfigFile> = null;
 
-		if (Utils.fileExists(AssetHelper.getPath('data/notes/${skin}', TEXT))) {
+		if (Tools.fileExists(AssetHelper.getPath('data/notes/${skin}', TEXT))) {
 			try {
 				file = AssetHelper.getAsset('data/notes/${skin}', JSON);
 				if (file != null) {
 					#if macro
 					// IMAGES
-					Utils.safeSet(config.notes.image, file.notes.image);
-					Utils.safeSet(config.splashes.image, file.splashes.image);
-					Utils.safeSet(config.strums.image, file.strums.image);
+					Tools.safeSet(config.notes.image, file.notes.image);
+					Tools.safeSet(config.splashes.image, file.splashes.image);
+					Tools.safeSet(config.strums.image, file.strums.image);
 					// STRUM PARAMETERS
-					Utils.safeSet(config.strums.size, file.strums.size);
-					Utils.safeSet(config.strums.spacing, file.strums.spacing);
+					Tools.safeSet(config.strums.size, file.strums.size);
+					Tools.safeSet(config.strums.spacing, file.strums.spacing);
 					// NOTE PARAMETERS
-					Utils.safeSet(config.notes.size, file.notes.size);
-					Utils.safeSet(config.splashes.size, file.splashes.size);
-					Utils.safeSet(config.splashes.alpha, file.splashes.alpha);
-					Utils.safeSet(config.strums.size, file.strums.size);
+					Tools.safeSet(config.notes.size, file.notes.size);
+					Tools.safeSet(config.splashes.size, file.splashes.size);
+					Tools.safeSet(config.splashes.alpha, file.splashes.alpha);
+					Tools.safeSet(config.strums.size, file.strums.size);
 					// ANIMATIONS
-					Utils.safeSet(config.notes.anims, file.notes.anims);
-					Utils.safeSet(config.splashes.anims, file.splashes.anims);
-					Utils.safeSet(config.strums.anims, file.strums.anims);
+					Tools.safeSet(config.notes.anims, file.notes.anims);
+					Tools.safeSet(config.splashes.anims, file.splashes.anims);
+					Tools.safeSet(config.strums.anims, file.strums.anims);
 					#end
 				}
 			}

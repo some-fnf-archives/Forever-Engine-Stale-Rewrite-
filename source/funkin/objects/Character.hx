@@ -76,7 +76,7 @@ class Character extends ForeverSprite {
 		var implementation:String = FOREVER;
 		var file:Dynamic = null;
 
-		if (Utils.fileExists(AssetHelper.getPath('data/characters/${name}.json'))) {
+		if (Tools.fileExists(AssetHelper.getPath('data/characters/${name}.json'))) {
 			file = AssetHelper.getAsset('data/characters/${name}', JSON);
 			var crowChar:Bool = Reflect.hasField(file, "singList");
 			implementation = crowChar ? CROW : PSYCH;
@@ -193,6 +193,6 @@ class Character extends ForeverSprite {
 				updateHitbox();
 		}
 
-		trace('parsed "${name}" character, origin: "${impl}"');
+		// trace('parsed "${name}" character, origin: "${impl}"');
 	}
 }

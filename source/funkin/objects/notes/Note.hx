@@ -142,8 +142,8 @@ class Note extends ForeverSprite {
 				frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.notes.image}', ATLAS_SPARROW);
 				if (NoteConfig.config.notes.anims.length > 0) {
 					for (i in NoteConfig.config.notes.anims) {
-						var dir:String = Utils.NOTE_DIRECTIONS[direction ?? 0];
-						var color:String = Utils.NOTE_COLORS[direction ?? 0];
+						var dir:String = Tools.NOTE_DIRECTIONS[direction ?? 0];
+						var color:String = Tools.NOTE_COLORS[direction ?? 0];
 						addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
 						if (i.type != null)
 							animations.set(i.type, i.name);

@@ -31,8 +31,8 @@ class Strum extends ForeverSprite {
 
 		if (NoteConfig.config.strums.anims.length > 0) {
 			for (i in NoteConfig.config.strums.anims) {
-				var dir:String = Utils.NOTE_DIRECTIONS[id];
-				var color:String = Utils.NOTE_COLORS[id];
+				var dir:String = Tools.NOTE_DIRECTIONS[id];
+				var color:String = Tools.NOTE_COLORS[id];
 
 				addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
 				if (i.type != null)
@@ -62,8 +62,8 @@ class Strum extends ForeverSprite {
 			splash.frames = Paths.getSparrowAtlas('notes/${NoteConfig.config.splashes.image}');
 
 			for (i in NoteConfig.config.splashes.anims) {
-				var dir:String = Utils.NOTE_DIRECTIONS[ID];
-				var color:String = Utils.NOTE_COLORS[ID];
+				var dir:String = Tools.NOTE_DIRECTIONS[ID];
+				var color:String = Tools.NOTE_COLORS[ID];
 
 				splash.addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
 				/*
@@ -170,7 +170,7 @@ class NoteField extends FlxTypedGroup<Strum> {
 
 		var currentStrum:Strum = members[key];
 
-		var notesHittable:Array<Note> = playField.noteSpawner.members.filter(function(n:Note) {
+		var notesHittable:Array<Note> = playField.noteGroup.members.filter(function(n:Note) {
 			return n.parent == this && n.alive && n.data.direction == key && !n.isLate && !n.wasHit && n.canBeHit;
 		});
 		notesHittable.sort(sortHitNotes);
@@ -247,7 +247,7 @@ class NoteField extends FlxTypedGroup<Strum> {
 	public function invalidateNote(badNote:Note):Void {
 		badNote.visible = badNote.active = false;
 		badNote.kill();
-		playField.noteSpawner.remove(badNote, true);
+		playField.noteGroup.remove(badNote, true);
 		// badNote.destroy();
 	}
 

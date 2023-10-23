@@ -8,7 +8,7 @@ import forever.display.ForeverSprite;
 import forever.ui.ForeverText;
 import funkin.components.ui.Alphabet;
 import funkin.states.base.BaseMenuState;
-import funkin.states.subStates.NoteConfigurator;
+import funkin.subStates.NoteConfigurator;
 import haxe.ds.StringMap;
 
 class OptionsMenu extends BaseMenuState {
@@ -189,7 +189,7 @@ class OptionsMenu extends BaseMenuState {
 
 			switch (cataOptions[i].type) { // create an attachment
 				case CHECKMARK:
-					var newCheckmark:ChildSprite = Utils.generateCheckmark();
+					var newCheckmark:ChildSprite = Tools.generateCheckmark();
 					newCheckmark.parent = optionLabel;
 					newCheckmark.align = LEFT;
 

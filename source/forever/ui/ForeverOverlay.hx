@@ -83,10 +83,8 @@ class ForeverOverlay extends Sprite {
 		if (monitors.length == 0 || monitors == null)
 			return;
 
-		for (i in 0...monitors.length) {
+		for (i in 0...monitors.length)
 			addChild(monitors[i]);
-			trace('adding new overlay monitor ${Type.getClassName(Type.getClass(monitors[i]))}.');
-		}
 	}
 
 	private function _repositionMonitors():Void {

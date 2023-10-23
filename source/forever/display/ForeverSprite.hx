@@ -38,14 +38,14 @@ class ForeverSprite extends FlxSprite {
 		loadGraphic(AssetHelper.getAsset('images/$graphic', IMAGE));
 
 		if (properties != null) {
-			Utils.safeReflection(this.alpha, properties, "alpha");
-			Utils.safeReflection(this.color, properties, "color");
-			Utils.safeReflection(this.color, properties, "colour"); // british
-			Utils.safeReflection(this.scale.x, properties, "scale.x");
-			Utils.safeReflection(this.scale.y, properties, "scale.y");
+			Tools.safeReflection(this.alpha, properties, "alpha");
+			Tools.safeReflection(this.color, properties, "color");
+			Tools.safeReflection(this.color, properties, "colour"); // british
+			Tools.safeReflection(this.scale.x, properties, "scale.x");
+			Tools.safeReflection(this.scale.y, properties, "scale.y");
 
-			Utils.safeReflection(this.scrollFactor.x, properties, "scroll.x");
-			Utils.safeReflection(this.scrollFactor.y, properties, "scroll.y");
+			Tools.safeReflection(this.scrollFactor.x, properties, "scroll.x");
+			Tools.safeReflection(this.scrollFactor.y, properties, "scroll.y");
 		}
 
 		return this;
@@ -151,7 +151,7 @@ class ChildSprite extends ForeverSprite {
 				case LEFT:
 					setPosition(parent.x - 80, parent.y - 30);
 				case CENTER:
-					Utils.centerToObject(this, parent, X);
+					Tools.centerToObject(this, parent, X);
 					this.y = parent.y - 30;
 				default:
 					setPosition(parent.x + parent.width + 10, parent.y - 30);

@@ -12,7 +12,7 @@ import openfl.Assets as OpenFLAssets;
 using StringTools;
 
 /** Global Utilities. **/
-class Utils {
+class Tools {
 	public static final NOTE_DIRECTIONS:Array<String> = ["left", "down", "up", "right"];
 	public static final NOTE_COLORS:Array<String> = ["purple", "blue", "green", "red"];
 	private static var curMenuMusic:String = "";
@@ -28,7 +28,7 @@ class Utils {
 	/** Creates a list from a filepath, it is recommended to use this with plaintext files. **/
 	public static function listFromFile(path:String):Array<String> {
 		return [
-			for (t in Utils.getText(path).split("\n"))
+			for (t in Tools.getText(path).split("\n"))
 				if (t != "" && !StringTools.startsWith(t, "#")) t
 		];
 	}
@@ -188,7 +188,7 @@ class Utils {
 	}
 
 	/**
-	 * Same as `Utils.safeSet`, but uses reflection, be careful as this may be slower
+	 * Same as `Tools.safeSet`, but uses reflection, be careful as this may be slower
 	 * if used outside of the create function.
 	**/
 	public static macro function safeReflection(variable:Null<haxe.macro.Expr>, value:Null<haxe.macro.Expr>,

@@ -7,7 +7,7 @@ class ForeverScript extends Iris {
 	var localPath:String = null;
 
 	public function new(file:String, ?localPath:String = null):Void {
-		super(Utils.getText(file), {name: file.substr(0, file.lastIndexOf(".")), autoRun: true, preset: true});
+		super(Tools.getText(file), {name: file.substr(0, file.lastIndexOf(".")), autoRun: true, preset: true});
 		this.localPath = localPath;
 	}
 
@@ -18,7 +18,7 @@ class ForeverScript extends Iris {
 		set("FlxSprite", flixel.FlxSprite);
 		set("Conductor", funkin.components.Conductor);
 		set("AssetHelper", forever.AssetHelper);
-		set("Utils", forever.Utils);
+		set("Tools", forever.Tools);
 
 		if (localPath != null)
 			set("Paths", new LocalPaths(localPath));

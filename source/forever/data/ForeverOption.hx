@@ -69,13 +69,13 @@ class ForeverOption {
 				if (clamp == null)
 					clamp = false;
 
-				final wrapMethod = clamp ? FlxMath.bound : Utils.wrapf;
+				final wrapMethod = clamp ? FlxMath.bound : Tools.wrapf;
 				if (Std.isOfType(value, Int)) {
 					final wrapMethod = clamp ? FlxMath.bound : FlxMath.wrap;
 					value = wrapMethod(value + Math.floor(steps) * increment, Math.floor(min), Math.floor(max));
 				}
 				else {
-					final wrapMethod = clamp ? FlxMath.bound : Utils.wrapf;
+					final wrapMethod = clamp ? FlxMath.bound : Tools.wrapf;
 					value = wrapMethod(value + steps * increment, min, max);
 				}
 

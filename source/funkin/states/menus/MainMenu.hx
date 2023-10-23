@@ -12,7 +12,7 @@ import funkin.states.base.BaseMenuState;
 using flixel.effects.FlxFlicker;
 
 #if MODS
-import funkin.states.subStates.ModsMenu;
+import funkin.subStates.ModsMenu;
 #end
 
 typedef MainMenuOption = {
@@ -37,7 +37,7 @@ class MainMenu extends BaseMenuState {
 		super.create();
 
 		DiscordRPC.updatePresence("In the Menus", "MAIN MENU");
-		Utils.checkMenuMusic("foreverMenu", false, 102.0);
+		Tools.checkMenuMusic("foreverMenu", false, 102.0);
 
 		camLead = new FlxObject(0, 0, 1, 1);
 		camLead.moves = false;

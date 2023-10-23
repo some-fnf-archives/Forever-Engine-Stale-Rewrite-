@@ -16,7 +16,7 @@ import funkin.stages.DadStage;
 import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
-import funkin.states.subStates.PauseMenu;
+import funkin.subStates.PauseMenu;
 
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
@@ -418,7 +418,7 @@ class PlayState extends FNFState {
 
 	function getCountdownSprite(tick:Int):ForeverSprite {
 		final sprites:Array<String> = ["prepare", "ready", "set", "go"];
-		if (sprites[tick] != null && Utils.fileExists(AssetHelper.getPath('images/ui/normal/${sprites[tick]}', IMAGE)))
+		if (sprites[tick] != null && Tools.fileExists(AssetHelper.getPath('images/ui/normal/${sprites[tick]}', IMAGE)))
 			return new ForeverSprite(0, 0, 'ui/normal/${sprites[tick]}', {"scale.x": 0.9, "scale.y": 0.9});
 		return null;
 	}

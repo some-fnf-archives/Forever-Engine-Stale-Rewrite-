@@ -54,7 +54,7 @@ class AssetHelper {
 		#if MODS
 		if (searchLevel != null && searchLevel != "") {
 			final modPath:String = type.getExtension('${Mods.MODS_FOLDER}/${searchLevel}/${asset}');
-			if (Utils.fileExists(modPath))
+			if (Tools.fileExists(modPath))
 				gottenPath = modPath;
 		}
 		#end
@@ -80,13 +80,13 @@ class AssetHelper {
 			case IMAGE: getGraphic(gottenAsset);
 			case FONT: return getPath('fonts/${asset}', FONT);
 			case JSON:
-				var json:String = Utils.getText(gottenAsset).trim();
+				var json:String = Tools.getText(gottenAsset).trim();
 				while (!json.endsWith("}")) // ensure its not broken.
 					json = json.substr(0, json.length - 1);
 				tjson.TJSON.parse(json);
 			case ATLAS:
 				var txtPath:String = getPath('${asset}.txt', TEXT);
-				if (Utils.fileExists(txtPath, TEXT)) return getAsset(asset, ATLAS_PACKER); else return getAsset(asset, ATLAS_SPARROW);
+				if (Tools.fileExists(txtPath, TEXT)) return getAsset(asset, ATLAS_PACKER); else return getAsset(asset, ATLAS_SPARROW);
 			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset + ".xml"));
 			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getPath(asset + ".txt"));
 			default: gottenAsset;
@@ -173,7 +173,7 @@ class AssetHelper {
 			}
 		}
 
-		trace('cleared ${graphicCounter} graphics from cache.');
+		// trace('cleared ${graphicCounter} graphics from cache.');
 	}
 
 	@:dox(hide) static function clearCachedSounds(force:Bool = false):Void {
@@ -195,7 +195,7 @@ class AssetHelper {
 			}
 		}
 
-		trace('cleared ${soundCounter} sounds from cache.');
+		// trace('cleared ${soundCounter} sounds from cache.');
 	}
 
 	private static function _clearCacheMajor():Void {
@@ -243,13 +243,13 @@ enum abstract ForeverAsset(String) to String {
 		if (extensionLoader != null && Path.extension(path) == "") {
 			if (extensionLoader.length > 1) {
 				for (i in extensionLoader) {
-					if (Utils.fileExists('${path}${i}', toOpenFL()))
+					if (Tools.fileExists('${path}${i}', toOpenFL()))
 						path = '${path}${i}';
 				}
 			}
 			else {
 				var thing:String = '${path}${extensionLoader[0]}';
-				if (Utils.fileExists(thing, toOpenFL()))
+				if (Tools.fileExists(thing, toOpenFL()))
 					path = thing;
 			}
 		}

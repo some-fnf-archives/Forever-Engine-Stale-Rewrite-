@@ -53,8 +53,8 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	override function update(elapsed:Float) {
 		if (isMenuItem) {
 			final scaledY:Float = targetY * 1.3;
-			x = forceLerp.x != -1 ? forceLerp.x : Utils.fpsLerp(x, (targetY * menuSpacing.x) + 90, 0.16);
-			y = forceLerp.y != -1 ? forceLerp.y : Utils.fpsLerp(y, (scaledY * menuSpacing.y) + (FlxG.height * 0.48), 0.16);
+			x = forceLerp.x != -1 ? forceLerp.x : Tools.fpsLerp(x, (targetY * menuSpacing.x) + 90, 0.16);
+			y = forceLerp.y != -1 ? forceLerp.y : Tools.fpsLerp(y, (scaledY * menuSpacing.y) + (FlxG.height * 0.48), 0.16);
 		}
 		super.update(elapsed);
 	}

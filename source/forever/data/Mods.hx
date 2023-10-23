@@ -52,7 +52,7 @@ class Mods {
 	public static function refreshMods():Void {
 		mods = [];
 
-		var rawModsList:Array<String> = Utils.listFolders('${MODS_FOLDER}');
+		var rawModsList:Array<String> = Tools.listFolders('${MODS_FOLDER}');
 
 		for (folder in rawModsList) {
 			if (!sys.FileSystem.exists('${MODS_FOLDER}/${folder}/mod.json')) {

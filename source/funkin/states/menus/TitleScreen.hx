@@ -58,7 +58,7 @@ class TitleScreen extends FNFState {
 		mainGroup.add(enterTxt);
 
 		new flixel.util.FlxTimer().start(0.05, function(tmr) {
-			Utils.checkMenuMusic("foreverMenu", true, 102.0);
+			Tools.checkMenuMusic("foreverMenu", true, 102.0);
 		});
 
 		if (seenIntro)
@@ -70,8 +70,8 @@ class TitleScreen extends FNFState {
 
 		if (seenIntro) {
 			if (logo != null) {
-				logo.scale.x = Utils.fpsLerp(logo.scale.x, 1.0, 0.05);
-				logo.scale.y = Utils.fpsLerp(logo.scale.y, 1.0, 0.05);
+				logo.scale.x = Tools.fpsLerp(logo.scale.x, 1.0, 0.05);
+				logo.scale.y = Tools.fpsLerp(logo.scale.y, 1.0, 0.05);
 			}
 
 			if (Controls.ACCEPT && !transitioning) {
@@ -160,7 +160,7 @@ class TitleScreen extends FNFState {
 	}
 
 	function getRandomText():Array<Array<String>> {
-		var textFile:Array<String> = Utils.listFromFile(AssetHelper.getAsset("data/introText", TEXT));
+		var textFile:Array<String> = Tools.listFromFile(AssetHelper.getAsset("data/introText", TEXT));
 		var textBoxes:Array<Array<String>> = [];
 
 		for (i in textFile) // remind me to make this automatic per txt length later -Crow

@@ -24,8 +24,7 @@ Forever is, and will always be, a Community-Driven Project as a love letter to i
     - [x] FULL Discord Rich Presence Support.
     - [x] Scripting Support with HScript.
 
-    - [x] In-game Mods:
-        - [x] Scripting.
+    - [x] Modding:
         - [ ] Being able to load Multiple Mods at once.
 
     - [x] Softcoded (allows you to add something of your own without modifying the source code):

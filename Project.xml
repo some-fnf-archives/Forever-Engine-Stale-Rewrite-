@@ -73,8 +73,8 @@
 	<!-- [ Libraries ] -->
 	<!-- _____________ -->
 
-	<haxelib name="flixel-nova" version="git" url="https://github.com/swordcube/flixel" />
-	<haxelib name="flixel-addons-nova" version="git" url="https://github.com/swordcube/flixel-addons" />
+	<haxelib name="flixel-nova" />
+	<haxelib name="flixel-addons-nova" />
 	<haxelib name="hxcpp-debug-server" if="debug" />
 
 	<haxelib name="hxdiscord_rpc" if="DISCORD" />

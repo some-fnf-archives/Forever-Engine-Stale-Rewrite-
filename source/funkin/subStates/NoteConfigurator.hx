@@ -1,4 +1,4 @@
-package funkin.states.subStates;
+package funkin.subStates;
 
 import flixel.FlxSubState;
 import funkin.objects.notes.Note;

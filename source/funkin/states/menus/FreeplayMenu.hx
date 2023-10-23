@@ -31,11 +31,11 @@ class FreeplayMenu extends BaseMenuState {
 		super.create();
 
 		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
-		Utils.checkMenuMusic("foreverMenu", false, 102.0);
+		Tools.checkMenuMusic("foreverMenu", false, 102.0);
 
 		canChangeAlternative = true;
 
-		var localSongData:Array<String> = Utils.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
+		var localSongData:Array<String> = Tools.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
 
 		for (i in localSongData) {
 			final song:Array<String> = i.trim().split("|");
@@ -51,7 +51,7 @@ class FreeplayMenu extends BaseMenuState {
 			if (song[3] != null)
 				color = FlxColor.fromString(song[3].trim());
 			if (song[4] != null)
-				difficulties = Utils.removeSpaces(song[4]).split(",");
+				difficulties = Tools.removeSpaces(song[4]).split(",");
 
 			songs.push(new FreeplaySong(name, folder, icon, color, difficulties));
 		};
@@ -138,7 +138,7 @@ class FreeplayMenu extends BaseMenuState {
 			if (si.animation.curAnim.curFrame != 0)
 				si.animation.curAnim.curFrame = 0;
 
-		lerpScore = Math.floor(Utils.fpsLerp(lerpScore, intendedScore, 0.1));
+		lerpScore = Math.floor(Tools.fpsLerp(lerpScore, intendedScore, 0.1));
 		scoreTxt.text = 'PERSONAL BEST:${lerpScore}';
 
 		// just copied from base game lol

@@ -15,6 +15,6 @@ import forever.data.DiscordWrapper as DiscordRPC;
 import funkin.components.Conductor;
 
 using StringTools;
-using forever.Utils;
+using forever.Tools;
 using flixel.util.FlxArrayUtil;
 #end
