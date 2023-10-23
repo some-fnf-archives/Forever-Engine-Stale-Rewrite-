@@ -15,6 +15,7 @@ import funkin.stages.DadStage;
 import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
+import funkin.states.subStates.PauseMenu;
 
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
@@ -159,6 +160,8 @@ class PlayState extends FNFState {
 
 		if (FlxG.keys.justPressed.SEVEN)
 			openChartEditor();
+		if (FlxG.keys.justPressed.ENTER)
+			openPauseMenu();
 		if (FlxG.keys.justPressed.ESCAPE)
 			endPlay();
 	}
@@ -283,6 +286,8 @@ class PlayState extends FNFState {
 
 	function openChartEditor():Void {
 		FlxG.sound.music.pause();
+		vocals.pause();
+
 		DiscordRPC.updatePresence('Charting: ${currentSong.display}', '${hud.scoreBar.text}');
 
 		var charter:ChartEditor = new ChartEditor();
@@ -290,6 +295,18 @@ class PlayState extends FNFState {
 		charter.ID = 1;
 
 		openSubState(charter);
+	}
+
+	function openPauseMenu():Void {
+		FlxG.sound.music.pause();
+		vocals.pause();
+
+		DiscordRPC.updatePresence('${currentSong.display} [PAUSED]', '${hud.scoreBar.text}');
+		var pause:PauseMenu = new PauseMenu();
+		pause.camera = altCamera;
+		pause.ID = 1;
+
+		openSubState(pause);
 	}
 
 	function endPlay():Void {
