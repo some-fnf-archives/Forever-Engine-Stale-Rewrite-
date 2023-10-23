@@ -61,7 +61,7 @@ class MainMenu extends BaseMenuState {
 		var bttnScale:Float = 1.0;
 
 		for (i in 0...options.length) {
-			var bttn:FlxSprite = new FlxSprite(0, 120 + (bttnSpacing * i));
+			final bttn:FlxSprite = new FlxSprite(0, 120 + (bttnSpacing * i));
 			bttn.frames = AssetHelper.getAsset('images/menus/main/${options[i].name.toLowerCase()}', ATLAS);
 			bttn.scale.set(bttnScale, bttnScale);
 			bttn.ID = i;
@@ -144,7 +144,7 @@ class MainMenu extends BaseMenuState {
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 
 		for (i in 0...buttons.members.length) {
-			var button:FlxSprite = buttons.members[i];
+			final button:FlxSprite = buttons.members[i];
 			button.animation.play(i == curSel ? "selected" : "idle", true);
 			button.updateHitbox();
 

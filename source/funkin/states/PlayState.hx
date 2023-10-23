@@ -1,5 +1,6 @@
 package funkin.states;
 
+import flixel.FlxSubState;
 import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.math.FlxMath;
@@ -234,11 +235,39 @@ class PlayState extends FNFState {
 		}
 	}
 
-	public override function closeSubState():Void {
-		switch (FlxG.state.subState.ID) {
-			case 1:
-				DiscordRPC.updatePresence('Playing: ${currentSong.display}', '${hud.scoreBar.text}');
+	public override function openSubState(SubState:FlxSubState):Void {
+		if (FlxG.sound.music != null && FlxG.sound.music.playing)
+			FlxG.sound.music.pause();
+		if (vocals != null && vocals.playing)
+			vocals.pause();
+
+		if (FlxG.state.subState != null) {
+			switch (FlxG.state.subState.ID) {
+				case 0: // Pause Substate
+					DiscordRPC.updatePresence('${currentSong.display} [PAUSED]', '${hud.scoreBar.text}');
+				case 1: // Charter Substate
+					DiscordRPC.updatePresence('Charting: ${currentSong.display}');
+			}
 		}
+
+		super.openSubState(SubState);
+	}
+
+	public override function closeSubState():Void {
+		persistentUpdate = true;
+
+		if (FlxG.sound.music != null && FlxG.sound.music.playing)
+			FlxG.sound.music.resume();
+		if (vocals != null && vocals.playing)
+			vocals.resume();
+
+		if (FlxG.state.subState != null) {
+			switch (FlxG.state.subState.ID) {
+				default:
+					DiscordRPC.updatePresence('${currentSong.display} [SED]', '${hud.scoreBar.text}');
+			}
+		}
+		pauseTweens(false);
 
 		super.closeSubState();
 	}
@@ -246,10 +275,12 @@ class PlayState extends FNFState {
 	public function preloadEvent(which:ForeverEvents):Void {
 		switch (which) {
 			case ChangeCharacter(who, toCharacter):
+			/*
 				var newChar:Character = new Character(0, 0);
 				newChar.loadCharacter(toCharacter);
 				newChar.alpha = 0.000001;
-			// characterGroup.add(newChar);
+				characterGroup.add(newChar);
+			 */
 			case Scripted(name, script, args):
 			// init hscript here.
 			default:
@@ -283,41 +314,44 @@ class PlayState extends FNFState {
 	// -- HELPER FUNCTIONS -- //
 
 	function openChartEditor():Void {
-		FlxG.sound.music.pause();
-		vocals.pause();
-
 		DiscordRPC.updatePresence('Charting: ${currentSong.display}', '${hud.scoreBar.text}');
 
-		var charter:ChartEditor = new ChartEditor();
+		final charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
 		charter.ID = 0;
 
+		persistentUpdate = false;
 		openSubState(charter);
 	}
 
 	function openPauseMenu():Void {
-		FlxG.sound.music.pause();
-		vocals.pause();
+		pauseTweens(true);
 
-		DiscordRPC.updatePresence('${currentSong.display} [PAUSED]', '${hud.scoreBar.text}');
-		var pause:PauseMenu = new PauseMenu();
+		final pause:PauseMenu = new PauseMenu();
 		pause.camera = altCamera;
 		pause.ID = 1;
 
+		persistentUpdate = false;
 		openSubState(pause);
+	}
+
+	function pauseTweens(resume:Bool):Void {
+		FlxTween.globalManager.forEach(function(t) t.active = !resume);
+		FlxTimer.globalManager.forEach(function(t) t.active = !resume);
 	}
 
 	function endPlay():Void {
 		FlxG.sound.music.stop();
 		vocals.stop();
 
-		switch (playMode) {
-			default:
-				FlxG.switchState(new FreeplayMenu());
+		var cb:Void->Void = switch (playMode) {
+			default: function() FlxG.switchState(new FreeplayMenu());
 		}
+		cb();
 	}
 
 	var countdownPosition:Int = 0;
+	var countdownTimer:FlxTimer;
 	var countdownTween:FlxTween;
 
 	public function countdownRoutine():Void {
@@ -327,8 +361,8 @@ class PlayState extends FNFState {
 		var sprCount:ForeverSprite = null;
 		final sounds:Array<String> = ['intro3', 'intro2', 'intro1', 'introGo'];
 
-		new FlxTimer().start(60.0 / Conductor.bpm, function(tmr:FlxTimer) {
-			if (tmr.loopsLeft == 0) {
+		countdownTimer = new FlxTimer().start(60.0 / Conductor.bpm, function(tmr:FlxTimer) {
+			if (countdownPosition > sounds.length - 1) {
 				sprCount.destroy();
 				return;
 			}
@@ -367,9 +401,7 @@ class PlayState extends FNFState {
 
 	function getCountdownSprite(tick:Int):ForeverSprite {
 		final sprites:Array<String> = ["prepare", "ready", "set", "go"];
-
-		var thingExists:Bool = Utils.fileExists(AssetHelper.getPath('images/ui/normal/${sprites[tick]}', IMAGE));
-		if (sprites[tick] != null && thingExists)
+		if (sprites[tick] != null && Utils.fileExists(AssetHelper.getPath('images/ui/normal/${sprites[tick]}', IMAGE)))
 			return new ForeverSprite(0, 0, 'ui/normal/${sprites[tick]}', {"scale.x": 0.9, "scale.y": 0.9});
 		return null;
 	}

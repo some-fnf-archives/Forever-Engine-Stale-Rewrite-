@@ -183,10 +183,10 @@ class TitleTextGroup extends FlxTypedSpriteGroup<Alphabet> {
 		}
 
 		for (i in 0...text.length) {
-			var swagShit:Alphabet = new Alphabet(0, 0, text[i], BOLD, CENTER);
+			final swagShit:Alphabet = new Alphabet(0, 0, text[i], BOLD, CENTER);
 			swagShit.y += (i * 65) + 150;
 			swagShit.screenCenter(X);
-			this.add(swagShit);
+			add(swagShit);
 		}
 
 		hasTextDisplayed = true;
@@ -200,10 +200,10 @@ class TitleTextGroup extends FlxTypedSpriteGroup<Alphabet> {
 				hasTextDisplayed = true;
 		}
 
-		var moneyMoney:Alphabet = new Alphabet(0, 0, text, BOLD, CENTER);
+		final moneyMoney:Alphabet = new Alphabet(0, 0, text, BOLD, CENTER);
 		moneyMoney.y += (this.members.length * 65) + 150;
 		moneyMoney.screenCenter(X);
-		this.add(moneyMoney);
+		add(moneyMoney);
 	}
 
 	public function deleteText():Void {

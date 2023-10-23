@@ -40,10 +40,12 @@ class Conductor extends FlxBasic {
 
 		_timeDelta = time - _lastTime;
 
-		time += elapsed;
-		if (FlxG.sound.music != null && FlxG.sound.music.playing) {
-			if (Math.abs(time - FlxG.sound.music.time / 1000.0) >= 0.05) // interpolation.
-				time = FlxG.sound.music.time / 1000.0;
+		if (FlxG.state.active) {
+			time += elapsed;
+			if (FlxG.sound.music != null && FlxG.sound.music.playing) {
+				if (Math.abs(time - FlxG.sound.music.time / 1000.0) >= 0.05) // interpolation.
+					time = FlxG.sound.music.time / 1000.0;
+			}
 		}
 
 		if (time >= 0.0) {

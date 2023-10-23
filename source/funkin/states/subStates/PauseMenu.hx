@@ -26,49 +26,56 @@ class PauseMenu extends FlxSubState {
 		pauseItems = [
 			PauseButton('Resume', resumeSong),
 			PauseButton('Restart Song', function():Void {
+				closing = true;
 				final curMusic = PlayState.current.currentSong;
 				FlxG.switchState(new PlayState(curMusic));
 			}),
 			PauseButton('Options', null),
 			PauseButton('Exit to menu', function():Void {
+				closing = true;
 				FlxG.sound.music.stop();
 				FlxG.switchState(new FreeplayMenu());
 			})
 		];
 
 		bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		bg.alpha = 0;
 		add(bg);
 
-		bg.alpha = 0;
-		FlxTween.tween(bg, {alpha: 0.3}, 0.5, {
+		FlxTween.tween(bg, {alpha: 0.6}, 0.5, {
 			ease: FlxEase.expoIn,
 			onComplete: function(twn:FlxTween) {
 				closing = false;
-				updOptions(0);
+				updateSelection(0);
 			}
 		});
 
 		add(pauseGroup = new FlxTypedGroup<Alphabet>());
 
 		for (i in 0...pauseItems.length) {
-			var option:Alphabet = new Alphabet(0, 100 + (60 * i), pauseItems[i].getParameters()[0]);
+			final option:Alphabet = new Alphabet(0, 100 + (60 * i), pauseItems[i].getParameters()[0]);
 			option.isMenuItem = true;
 			option.alpha = 0;
 			option.targetY = i;
 			FlxTween.tween(option, {alpha: 0.6}, 0.5, {ease: FlxEase.expoIn});
 			pauseGroup.add(option);
 		}
+
+		updateSelection();
 	}
 
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		final callback = pauseItems[curSel].getParameters()[1];
-		if (callback != null && (Controls.ACCEPT || Controls.BACK) && !closing)
-			callback();
+		if (!closing) {
+			final callback = pauseItems[curSel].getParameters()[1];
+			if (callback != null && (Controls.ACCEPT || Controls.BACK))
+				callback();
 
-		if (Controls.UP_P || Controls.DOWN_P)
-			updOptions(Controls.UP_P ? -1 : 1);
+			if (pauseGroup.members.length > 1)
+				if (Controls.UP_P || Controls.DOWN_P)
+					updateSelection(Controls.UP_P ? -1 : 1);
+		}
 	}
 
 	function resumeSong():Void {
@@ -78,21 +85,19 @@ class PauseMenu extends FlxSubState {
 
 		FlxTween.tween(bg, {alpha: 0}, 0.5, {
 			ease: FlxEase.expoIn,
-			onComplete: function(twn:FlxTween) {
-				FlxG.state.closeSubState();
-			}
+			onComplete: function(twn:FlxTween) FlxG.state.closeSubState()
 		});
 	}
 
-	function updOptions(upd:Int = 0):Void {
-		curSel = FlxMath.wrap(curSel + upd, 0, pauseGroup.members.length - 1);
+	function updateSelection(newSel:Int = 0):Void {
+		curSel = FlxMath.wrap(curSel + newSel, 0, pauseGroup.members.length - 1);
 
-		if (upd != 0)
+		if (newSel != 0)
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 
 		for (i in 0...pauseGroup.members.length) {
 			final let:Alphabet = pauseGroup.members[i];
-			let.targetY = let.targetY - upd;
+			let.targetY = i - curSel;
 			let.alpha = let.targetY == 0 ? 1.0 : 0.6;
 		}
 	}

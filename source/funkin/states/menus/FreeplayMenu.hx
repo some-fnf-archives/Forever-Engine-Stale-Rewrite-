@@ -82,7 +82,7 @@ class FreeplayMenu extends BaseMenuState {
 			// -- -- -- //
 
 			for (i in 0...songs.length) {
-				var songTxt:Alphabet = new Alphabet(0, 10 + (60 * i), songs[i].name);
+				final songTxt:Alphabet = new Alphabet(0, 10 + (60 * i), songs[i].name);
 				songTxt.isMenuItem = true;
 				songTxt.alpha = 0.6;
 				songTxt.targetY = i;
@@ -157,8 +157,8 @@ class FreeplayMenu extends BaseMenuState {
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 
 		for (i in 0...songGroup.members.length) {
-			var sn:Alphabet = songGroup.members[i];
-			var si:HealthIcon = iconGroup.members[i];
+			final sn:Alphabet = songGroup.members[i];
+			final si:HealthIcon = iconGroup.members[i];
 
 			sn.targetY = i - curSel;
 			sn.alpha = sn.targetY == 0 ? 1.0 : 0.6;

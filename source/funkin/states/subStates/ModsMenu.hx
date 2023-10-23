@@ -45,7 +45,7 @@ class ModsMenu extends FlxSubState {
 				if (modsAdded.contains(listThing[i]))
 					continue;
 
-				var modLetter:Alphabet = new Alphabet(0, 0, listThing[i], BOLD, LEFT);
+				final modLetter:Alphabet = new Alphabet(0, 0, listThing[i], BOLD, LEFT);
 				modLetter.isMenuItem = true;
 				modLetter.targetY = i;
 				modsGroup.add(modLetter);
@@ -95,7 +95,7 @@ class ModsMenu extends FlxSubState {
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 
 		for (i in 0...modsGroup.members.length) {
-			var sn:Alphabet = modsGroup.members[i];
+			final sn:Alphabet = modsGroup.members[i];
 			sn.targetY = i - curSel;
 			sn.alpha = sn.targetY == 0 ? 1.0 : 0.6;
 		}

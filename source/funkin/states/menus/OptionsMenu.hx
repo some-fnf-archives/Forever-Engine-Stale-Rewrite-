@@ -131,7 +131,7 @@ class OptionsMenu extends BaseMenuState {
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 
 		for (i in 0...optionsGroup.members.length) {
-			var let:Alphabet = optionsGroup.members[i];
+			final let:Alphabet = optionsGroup.members[i];
 			let.targetY = i - curSel;
 			let.alpha = let.targetY == 0 ? 1.0 : 0.6;
 			if (iconGroup.members[i] != null)
@@ -157,7 +157,7 @@ class OptionsMenu extends BaseMenuState {
 		var cataOptions:Array<ForeverOption> = optionsListed.get(curCateg);
 
 		for (i in 0...cataOptions.length) {
-			var optionLabel:Alphabet = new Alphabet(0, 0, cataOptions[i].name, BOLD, LEFT);
+			final optionLabel:Alphabet = new Alphabet(0, 0, cataOptions[i].name, BOLD, LEFT);
 			optionLabel.screenCenter();
 
 			optionLabel.y += (90 * (i - Math.floor(cataOptions.length / 2.0)));
