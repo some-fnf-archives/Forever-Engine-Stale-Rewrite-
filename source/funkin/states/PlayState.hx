@@ -160,10 +160,8 @@ class PlayState extends FNFState {
 
 		if (FlxG.keys.justPressed.SEVEN)
 			openChartEditor();
-		if (FlxG.keys.justPressed.ENTER)
+		if (Controls.PAUSE)
 			openPauseMenu();
-		if (FlxG.keys.justPressed.ESCAPE)
-			endPlay();
 	}
 
 	public override function destroy():Void {
@@ -292,7 +290,7 @@ class PlayState extends FNFState {
 
 		var charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
-		charter.ID = 1;
+		charter.ID = 0;
 
 		openSubState(charter);
 	}
@@ -330,6 +328,11 @@ class PlayState extends FNFState {
 		final sounds:Array<String> = ['intro3', 'intro2', 'intro1', 'introGo'];
 
 		new FlxTimer().start(60.0 / Conductor.bpm, function(tmr:FlxTimer) {
+			if (tmr.loopsLeft == 0) {
+				sprCount.destroy();
+				return;
+			}
+
 			doDancersDance(tmr.loopsLeft);
 
 			sprCount = getCountdownSprite(countdownPosition);
@@ -349,15 +352,12 @@ class PlayState extends FNFState {
 				});
 			}
 
-			if (tmr.loopsLeft == 0)
-				sprCount.destroy();
-
 			FlxG.sound.play(AssetHelper.getAsset('sounds/countdown/normal/${sounds[countdownPosition]}', SOUND), 0.8);
 			countdownPosition += 1;
 		}, 4);
 	}
 
-	function getCharacterFromID(id:Int):Character {
+	inline function getCharacterFromID(id:Int):Character {
 		return switch (id) {
 			default: enemy;
 			case 1: player;
