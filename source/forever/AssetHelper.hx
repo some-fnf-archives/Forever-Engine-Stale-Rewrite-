@@ -1,12 +1,13 @@
 package forever;
 
-import forever.data.Mods;
-import openfl.display.BitmapData;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
-import openfl.utils.Assets as OpenFLAssets;
+import forever.data.Mods;
+import haxe.io.Path;
+import openfl.display.BitmapData;
 import openfl.media.Sound;
 import openfl.utils.AssetType as FLAssetType;
+import openfl.utils.Assets as OpenFLAssets;
 
 /**
  * Helper Enum for Engine Names, used for conversion methods
@@ -246,7 +247,7 @@ enum abstract ForeverAsset(String) to String {
 			default: null;
 		}
 
-		if (extensionLoader != null) {
+		if (extensionLoader != null && Path.extension(path) == "") {
 			if (extensionLoader.length > 1) {
 				for (i in extensionLoader) {
 					if (Utils.fileExists('${path}${i}', toOpenFL()))
