@@ -78,18 +78,14 @@ class AssetHelper {
 
 		return switch (type) {
 			case IMAGE: getGraphic(gottenAsset);
+			case FONT: return getPath('fonts/${asset}', FONT);
 			case JSON:
 				var json:String = Utils.getText(gottenAsset).trim();
 				while (!json.endsWith("}")) // ensure its not broken.
 					json = json.substr(0, json.length - 1);
-				// return
 				tjson.TJSON.parse(json);
-			case FONT:
-				final path:String = getPath('fonts/${asset}', FONT);
-				// todo: make it return the font's actual name when found, this should work for now.
-				return path;
 			case ATLAS:
-				var txtPath:String = getPath(asset + ".txt");
+				var txtPath:String = getPath('${asset}.txt', TEXT);
 				if (Utils.fileExists(txtPath, TEXT)) return getAsset(asset, ATLAS_PACKER); else return getAsset(asset, ATLAS_SPARROW);
 			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset + ".xml"));
 			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getPath(asset + ".txt"));
@@ -105,7 +101,6 @@ class AssetHelper {
 	public static function getGraphic(file:String, ?customKey:String = null):FlxGraphic {
 		try {
 			final keyName:String = customKey != null ? customKey : file;
-
 			// prevent remapping
 			if (loadedGraphics.get(keyName) != null)
 				return loadedGraphics.get(keyName);
@@ -132,15 +127,13 @@ class AssetHelper {
 	**/
 	public static function getSound(file:String, ?customKey:String = null):Sound {
 		try {
-			var keyName:String = customKey != null ? customKey : file;
-
-			// prevent remappin
+			final keyName:String = customKey != null ? customKey : file;
+			// prevent remapping
 			if (loadedSounds.get(keyName) != null)
 				return loadedSounds.get(keyName);
 
-			var snd:String = getAsset(file, SOUND);
-
-			var sound:Sound = #if sys Sound.fromFile(snd) #else OpenFLAssets.getSound(snd) #end;
+			final snd:String = getAsset(file, SOUND);
+			final sound:Sound = #if sys Sound.fromFile(snd) #else OpenFLAssets.getSound(snd) #end;
 			loadedSounds.set(keyName, sound);
 			currentUsedAssets.push(keyName);
 			return sound;
