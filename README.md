@@ -14,6 +14,12 @@ Forever is, and will always be, a Community-Driven Project as a love letter to i
 
 **Not as a means to bring said previous owner back into it.**
 
+# NOTICE:
+
+--- 
+
+You need the LATEST version of haxe to be able to compile Forever, previous versions lack a lot of useful syntax stuff that forever makes use of, [Download Latest Haxe](https://haxe.org/download/), then run `setup.bat` (or `setup.sh` if you are on Linux or Mac)
+
 ---
 
 # FEATURES
