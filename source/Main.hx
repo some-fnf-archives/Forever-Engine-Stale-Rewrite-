@@ -12,7 +12,7 @@ class Main extends Sprite {
 	public static var overlay:ForeverOverlay;
 
 	public static final initialState = funkin.states.menus.TitleScreen;
-	public static final version:String = "1.0.0";
+	public static final version:String = "1.0.0-ALPHA";
 
 	public function new():Void {
 		super();
