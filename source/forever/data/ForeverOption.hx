@@ -14,10 +14,10 @@ enum ForeverOptionType {
 	 * Number Type Option.
 	 * @param min 		The minimum Value the option can go.
 	 * @param max 		The maximum Value the option can go.
-	 * @param decimals 	How many decimals the option has.
+	 * @param steps 	Numbers that the option should be skipping, e.g: skip five, skipe 10, skip 30.
 	 * @param clamp 	If the value should stop updating once the `max` is reached
 	**/
-	NUMBER(min:Float, max:Float, ?decimals:Null<Float>, ?clamp:Bool);
+	NUMBER(min:Float, max:Float, ?steps:Null<Float>, ?clamp:Bool);
 
 	/**
 	 * StringArray Type Option.
@@ -63,17 +63,25 @@ class ForeverOption {
 				if (increment == 0)
 					value = !value;
 
-			case NUMBER(min, max, decimals, clamp):
-				if (decimals == null)
-					decimals = 0.01;
+			case NUMBER(min, max, steps, clamp):
+				if (steps == null)
+					steps = Std.isOfType(value, Int) ? 1 : 0.1;
 				if (clamp == null)
 					clamp = false;
 
-				value = (clamp ? FlxMath.bound : Utils.wrapf)(value + increment * decimals, min, max);
+				final wrapMethod = clamp ? FlxMath.bound : Utils.wrapf;
+				if (Std.isOfType(value, Int)) {
+					final wrapMethod = clamp ? FlxMath.bound : FlxMath.wrap;
+					value = wrapMethod(value + Math.floor(steps) * increment, Math.floor(min), Math.floor(max));
+				}
+				else {
+					final wrapMethod = clamp ? FlxMath.bound : Utils.wrapf;
+					value = wrapMethod(value + steps * increment, min, max);
+				}
 
 			case CHOICE(options):
-				var curValue:Int = options.indexOf(value);
-				var stringFound:String = options[FlxMath.wrap(curValue + increment, 0, options.length - 1)];
+				final curValue:Int = options.indexOf(value);
+				final stringFound:String = options[FlxMath.wrap(curValue + increment, 0, options.length - 1)];
 				value = stringFound;
 
 			default:

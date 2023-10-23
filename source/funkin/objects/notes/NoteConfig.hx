@@ -1,7 +1,5 @@
 package funkin.objects.notes;
 
-import openfl.Assets as OpenFLAssets;
-
 /**
  * Configuration Typedef for Note Skins
 **/

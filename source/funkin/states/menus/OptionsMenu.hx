@@ -29,6 +29,7 @@ class OptionsMenu extends BaseMenuState {
 		"general" => [
 			new ForeverOption("Auto Pause", "Check this if you want the game not to pause when unfocusing the window.", "autoPause", CHECKMARK),
 			new ForeverOption("Anti-aliasing", "Defines if the antialiasing filter affects all graphics.", "globalAntialias", CHECKMARK),
+			new ForeverOption("Framerate Cap", "Defines the limit for your frames per second.", "framerateCap", NUMBER(30, 240, 1)),
 			new ForeverOption("Filter", "Applies a Screen Filter to your game, to view the game as a colorblind person would..", "screenFilter",
 				CHOICE(["none", "deuteranopia", "protanopia", "tritanopia"])),
 		],
@@ -39,7 +40,7 @@ class OptionsMenu extends BaseMenuState {
 		],
 		"visuals" => [
 			new ForeverOption("Note Skin >", CATEGORY),
-			new ForeverOption("Clip Style", "Where should the sustain clip to?", "sustainLayer", CHOICE(["stepmania", "fnf"])),
+			new ForeverOption("Clip Style", "Where should the sustain clip to? either above the note (fnf) or below it (stepmania).", "sustainLayer", CHOICE(["stepmania", "fnf"])),
 			// new ForeverOption("Note Skin", "Style of your scrolling notes.", CHOICE(["default"])),
 			new ForeverOption("UI Skin", "Style of the healthbar, score popups, etc.", "uiStyle", CHOICE(["default"])),
 		],
@@ -67,7 +68,7 @@ class OptionsMenu extends BaseMenuState {
 
 		reloadOptions();
 
-		onAccept = function() {
+		onAccept = function():Void {
 			var option:ForeverOption = optionsListed.get(curCateg)[curSel];
 
 			switch (option.type) {
@@ -106,7 +107,7 @@ class OptionsMenu extends BaseMenuState {
 			}
 		}
 
-		onBack = function() {
+		onBack = function():Void {
 			FlxG.sound.play(AssetHelper.getAsset('music/sfx/cancelMenu', SOUND));
 
 			if (categoriesAccessed.length == 0) {
@@ -120,6 +121,22 @@ class OptionsMenu extends BaseMenuState {
 				}
 				else
 					reloadCategory(categoriesAccessed.last());
+			}
+		}
+	}
+
+	override function update(elapsed:Float):Void {
+		super.update(elapsed);
+
+		if (Std.isOfType(iconGroup.members[curSel], Alphabet)) {
+			final left:Bool = Controls.LEFT_P;
+			final right:Bool = Controls.RIGHT_P;
+			final option:ForeverOption = optionsListed.get(curCateg)[curSel];
+
+			if (left || right) {
+				option.changeValue(left ? -1 : 1);
+				cast(iconGroup.members[curSel], Alphabet).text = '${option.value}';
+				FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
 			}
 		}
 	}
@@ -188,7 +205,7 @@ class OptionsMenu extends BaseMenuState {
 			}
 
 			if (isSelector) {
-				final selectorName:ChildAlphabet = new ChildAlphabet('${cataOptions[i].value}', BOLD, RIGHT);
+				final selectorName:ChildAlphabet = new ChildAlphabet(Std.string(cataOptions[i].value), BOLD, RIGHT);
 				selectorName.parent = optionLabel;
 				iconGroup.add(selectorName);
 			}

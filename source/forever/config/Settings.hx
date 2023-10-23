@@ -36,7 +36,7 @@ class Settings {
 	/** Check this if you want to be able to mash keys while there's no notes to hit. **/
 	public static var ghostTapping:Bool = true;
 
-	/** Define your framerate limit. **/
+	/** Defines the limit for your frames per second **/
 	public static var framerateCap:Int = 60;
 
 	// -- VISUALS -- //
@@ -52,10 +52,10 @@ class Settings {
 	public static var noteSkin:String = "default";
 
 	/** Applies a Screen Filter to your game, to view the game as a colorblind person would. **/
-	public static var screenFilter:String = "none"; // ['none', 'Deuteranopia', 'Protanopia', 'Tritanopia'];
+	public static var screenFilter:String = "none";
 
-	/** Where should the sustain clip to? **/
-	public static var sustainLayer:String = "above note"; // ["above note", "below note"]
+	/** Where should the sustain clip to? either above the note (fnf) or below it (stepmania) **/
+	public static var sustainLayer:String = "stepmania";
 
 	/** Defines if the antialiasing filter affects all graphics. **/
 	public static var globalAntialias:Bool = true;

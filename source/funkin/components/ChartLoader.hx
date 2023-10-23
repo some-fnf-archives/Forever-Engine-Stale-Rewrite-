@@ -43,7 +43,7 @@ class ChartLoader {
 
 						chart.events.push({
 							event: FocusCamera(bar.mustHitSection ? 1 : 0, false),
-							step: barTime * bar.lengthInSteps * curBar,
+							time: barTime * bar.lengthInSteps * curBar,
 							delay: 0.0
 						});
 
@@ -51,7 +51,7 @@ class ChartLoader {
 							curBPM = bar.bpm;
 							chart.events.push({
 								event: BPMChange(bar.bpm),
-								step: barTime * bar.lengthInSteps * curBar,
+								time: barTime * bar.lengthInSteps * curBar,
 								delay: 0.0
 							});
 						}
@@ -87,7 +87,7 @@ class ChartLoader {
 			}
 
 			chart.notes.sort(function(a:NoteData, b:NoteData):Int return Std.int(a.time - b.time));
-			chart.events.sort(function(a:ForeverEvent, b:ForeverEvent):Int return Std.int(a.step - b.step));
+			chart.events.sort(function(a:ForeverEvent, b:ForeverEvent):Int return Std.int(a.time - b.time));
 		}
 		catch (e:haxe.Exception)
 			trace('Failed to parse chart, type was ${dataType}, Error:\n${e.details()}');
@@ -159,7 +159,7 @@ typedef ChartExtraData = {
 
 typedef ChartEvent<T> = {
 	var event:T;
-	var step:Float;
+	var time:Float;
 	var delay:Float;
 }
 

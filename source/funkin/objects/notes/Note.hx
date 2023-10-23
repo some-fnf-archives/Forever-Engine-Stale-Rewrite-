@@ -1,6 +1,5 @@
 package funkin.objects.notes;
 
-import funkin.states.PlayState;
 import forever.display.ForeverSprite;
 import funkin.components.ChartLoader.NoteData;
 import funkin.components.Timings;

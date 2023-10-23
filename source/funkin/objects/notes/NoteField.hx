@@ -130,13 +130,26 @@ class NoteField extends FlxTypedGroup<Strum> {
 		super.destroy();
 	}
 
-	public function regenStrums(x:Float = 0, y:Float = 0):Void {
+	public function regenStrums(x:Float = 0, y:Float = 0, skipStrumTween:Bool = false):Void {
+		forEach(function(s:Strum) {
+			if (s != null)
+				s.destroy();
+		});
+
 		for (i in 0...4) {
-			var strum:Strum = new Strum(x, y, skin, i);
+			final strum:Strum = new Strum(x, y, skin, i);
 			strum.x += i * fieldWidth;
 			strum.scale.set(size, size);
+			if (!skipStrumTween)
+				strum.alpha = 0.0;
 			strum.updateHitbox();
 			add(strum);
+
+			final crochet:Float = 60.0 / Conductor.bpm;
+			FlxTween.tween(strum, {alpha: 1.0}, (crochet) * 4.0, {
+				ease: FlxEase.circOut,
+				startDelay: crochet * i
+			});
 		}
 	}
 

@@ -28,9 +28,9 @@ class MainMenu extends BaseMenuState {
 	public var camLead:FlxObject;
 
 	var options:Array<MainMenuOption> = [
-		{name: "story", callback: function() FlxG.switchState(new FreeplayMenu())},
-		{name: "freeplay", callback: function() FlxG.switchState(new FreeplayMenu())},
-		{name: "options", callback: function() FlxG.switchState(new OptionsMenu())}
+		{name: "story", callback: function():Void FlxG.switchState(new FreeplayMenu())},
+		{name: "freeplay", callback: function():Void FlxG.switchState(new FreeplayMenu())},
+		{name: "options", callback: function():Void FlxG.switchState(new OptionsMenu())}
 	];
 
 	public override function create():Void {
@@ -90,7 +90,7 @@ class MainMenu extends BaseMenuState {
 
 		maxSelections = options.length - 1;
 
-		onAccept = function() {
+		onAccept = function():Void {
 			canChangeSelection = false;
 			canBackOut = false;
 			canAccept = false;
@@ -119,7 +119,7 @@ class MainMenu extends BaseMenuState {
 			}
 		}
 
-		onBack = function() FlxG.switchState(new TitleScreen());
+		onBack = function():Void FlxG.switchState(new TitleScreen());
 
 		updateSelection();
 	}

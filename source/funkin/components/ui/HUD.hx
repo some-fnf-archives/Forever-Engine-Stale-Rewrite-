@@ -1,12 +1,12 @@
 package funkin.components.ui;
 
 import flixel.FlxG;
-import flixel.group.FlxGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import forever.ui.ForeverText;
 import funkin.states.PlayState;
 
-class HUD extends FlxGroup {
+class HUD extends FlxSpriteGroup {
 	public var scoreBar:ForeverText;
 	public var centerMark:ForeverText;
 
@@ -46,14 +46,14 @@ class HUD extends FlxGroup {
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		healthBar.bar.percent = PlayState.current.playStats.health * 50;
+		healthBar.bar.percent = PlayState.current.timings.health * 50;
 
 		final iconOffset:Int = 25;
 		iconP1.x = healthBar.x + (healthBar.bar.width * (1 - healthBar.bar.percent / 100)) - iconOffset;
 		iconP2.x = healthBar.x + (healthBar.bar.width * (1 - healthBar.bar.percent / 100)) - (iconP2.width - iconOffset);
 
 		for (icon in [iconP1, iconP2]) {
-			var weight:Float = 1.0 - 1.0 / Math.exp(5.0 * elapsed);
+			final weight:Float = 1.0 - 1.0 / Math.exp(5.0 * elapsed);
 			icon.scale.set(FlxMath.lerp(icon.scale.x, 1.0, weight), FlxMath.lerp(icon.scale.y, 1.0, weight));
 			// icon.updateHitbox();
 		}
@@ -64,13 +64,13 @@ class HUD extends FlxGroup {
 	public function updateScore():Void {
 		final game:PlayState = PlayState.current;
 
-		var tempScore:String = 'Score: ${game.playStats.score}' //
+		var tempScore:String = 'Score: ${game.timings.score}' //
 			+ divider
-			+ 'Accuracy: ${FlxMath.roundDecimal(game.playStats.accuracy, 2)}%' //
+			+ 'Accuracy: ${FlxMath.roundDecimal(game.timings.accuracy, 2)}%' //
 			+ divider
-			+ 'Combo Breaks: ${game.playStats.comboBreaks}' //
+			+ 'Combo Breaks: ${game.timings.comboBreaks}' //
 			+ divider
-			+ 'Rank: ${game.playStats.rank}';
+			+ 'Rank: ${game.timings.rank}';
 
 		scoreBar.text = '< ${tempScore} >\n';
 
@@ -80,8 +80,8 @@ class HUD extends FlxGroup {
 	}
 
 	public function onBeat(beat:Int):Void {
-		var icon:HealthIcon = (beat % 2 == 0) ? iconP2 : iconP1;
-		icon.scale.set(1.15, 1.15);
+		for (icon in [iconP1, iconP2])
+			icon.scale.set(1.15, 1.15);
 		// icon.updateHitbox();
 	}
 }

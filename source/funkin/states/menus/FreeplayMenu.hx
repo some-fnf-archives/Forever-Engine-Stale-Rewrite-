@@ -95,7 +95,7 @@ class FreeplayMenu extends BaseMenuState {
 
 			maxSelections = songs.length - 1;
 
-			onAccept = function() {
+			onAccept = function():Void {
 				// ensuring.
 				canChangeSelection = false;
 				canChangeAlternative = false;
@@ -120,7 +120,7 @@ class FreeplayMenu extends BaseMenuState {
 			add(errorText);
 		}
 
-		onBack = function() {
+		onBack = function():Void {
 			canChangeSelection = false;
 			canChangeAlternative = false;
 			canBackOut = false;

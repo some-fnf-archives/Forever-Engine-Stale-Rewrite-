@@ -44,7 +44,7 @@ class PlayState extends FNFState {
 
 	public var bg:ForeverSprite;
 	public var playField:PlayField;
-	public var playStats:Timings;
+	public var timings:Timings;
 	public var hud:HUD;
 
 	public var camLead:FlxObject;
@@ -83,7 +83,11 @@ class PlayState extends FNFState {
 		inst = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${currentSong.folder}/audio/Inst.ogg'));
 		vocals = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${currentSong.folder}/audio/Voices.ogg'));
 		FlxG.sound.list.add(vocals);
+		inst.onComplete = endPlay.bind();
 		FlxG.sound.music = inst;
+
+		FlxG.sound.music.looped = false;
+		vocals.looped = false;
 
 		Conductor.time = -(60.0 / Conductor.bpm) * 16.0;
 		FlxG.mouse.visible = false;
@@ -100,11 +104,12 @@ class PlayState extends FNFState {
 		// -- PREPARE BACKGROUNDS AND USER INTERFACE -- //
 		ChartLoader.load(currentSong.folder, currentSong.difficulty);
 		Conductor.bpm = Chart.current.data.initialBPM;
-		playStats = new Timings();
+		timings = new Timings();
 
 		add(stage = new DadStage());
 		add(playField = new PlayField());
 		add(hud = new HUD());
+		hud.alpha = 0;
 
 		// -- SETUP CAMERA AFTER STAGE IS DONE -- //
 		add(camLead = new FlxObject(0, 0, 1, 1));
@@ -152,7 +157,7 @@ class PlayState extends FNFState {
 
 		while (eventIndex < Chart.current.events.length) {
 			var curEvent = Chart.current.events[eventIndex];
-			if ((curEvent.step - Conductor.time) > 0.0)
+			if ((curEvent.time - Conductor.time) > 0.0)
 				break;
 
 			processEvent(curEvent.event);
@@ -183,22 +188,22 @@ class PlayState extends FNFState {
 		if (!note.parent.cpuControl) {
 			var millisecondTiming:Float = Math.abs((note.data.time - Conductor.time) * 1000.0);
 			var judgement:Judgement = Timings.judgeNote(millisecondTiming);
-			playStats.totalMs += millisecondTiming;
+			timings.totalMs += millisecondTiming;
 
-			playStats.score += judgement.getParameters()[1];
-			playStats.health += 0.035;
-			if (playStats.combo < 0)
-				playStats.combo = 0;
-			playStats.combo += 1;
+			timings.score += judgement.getParameters()[1];
+			timings.health += 0.035;
+			if (timings.combo < 0)
+				timings.combo = 0;
+			timings.combo += 1;
 
-			playStats.totalNotesHit += 1;
-			playStats.accuracyWindow += Math.max(0, judgement.getParameters()[2]);
-			playStats.increaseJudgeHits(judgement.getParameters()[0]);
+			timings.totalNotesHit += 1;
+			timings.accuracyWindow += Math.max(0, judgement.getParameters()[2]);
+			timings.increaseJudgeHits(judgement.getParameters()[0]);
 
 			if (judgement.getParameters()[3] || note.splash)
 				note.parent.members[note.direction].doNoteSplash(note);
 
-			playStats.updateRank();
+			timings.updateRank();
 			hud.updateScore();
 		}
 
@@ -210,8 +215,8 @@ class PlayState extends FNFState {
 		if (note != null)
 			note.parent.invalidateNote(note);
 
-		playStats.misses += 1;
-		playStats.updateRank();
+		timings.misses += 1;
+		timings.updateRank();
 		hud.updateScore();
 	}
 
@@ -344,24 +349,36 @@ class PlayState extends FNFState {
 		FlxG.sound.music.stop();
 		vocals.stop();
 
-		var cb:Void->Void = switch (playMode) {
-			default: function() FlxG.switchState(new FreeplayMenu());
+		var cb:Void->Void = switch playMode {
+			case STORY: function():Void FlxG.switchState(new MainMenu());
+			case CHARTER: function():Void {
+					Conductor.time = 0;
+					@:privateAccess {
+						conductor._lastTime = -1.0;
+						conductor._lastStep = -1;
+						conductor._lastBeat = -1;
+						conductor._lastBar = -1;
+					}
+					openChartEditor();
+				}
+			case _: function():Void FlxG.switchState(new FreeplayMenu());
 		}
 		cb();
 	}
 
 	var countdownPosition:Int = 0;
-	var countdownTimer:FlxTimer;
 	var countdownTween:FlxTween;
 
 	public function countdownRoutine():Void {
-		if (songState != PLAYING)
+		if (songState != PLAYING) {
 			Conductor.time = -(60.0 / Conductor.bpm) * 4.0;
+			FlxTween.tween(hud, {alpha: 1.0}, (60.0 / Conductor.bpm) * 2.0, {ease: FlxEase.sineIn});
+		}
 
 		var sprCount:ForeverSprite = null;
 		final sounds:Array<String> = ['intro3', 'intro2', 'intro1', 'introGo'];
 
-		countdownTimer = new FlxTimer().start(60.0 / Conductor.bpm, function(tmr:FlxTimer) {
+		var countdownTimer:FlxTimer = new FlxTimer().start(60.0 / Conductor.bpm, function(tmr:FlxTimer) {
 			if (countdownPosition > sounds.length - 1) {
 				sprCount.destroy();
 				return;

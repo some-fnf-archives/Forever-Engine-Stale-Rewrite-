@@ -21,7 +21,7 @@ class DiscordWrapper {
 		Discord.Initialize(Std.string(clientID), cpp.RawPointer.addressOf(evHandler), 1, null);
 
 		// Daemon Thread
-		sys.thread.Thread.create(function() {
+		sys.thread.Thread.create(function():Void {
 			while (true) {
 				#if DISCORD_DISABLE_IO_THREAD
 				Discord.UpdateConnection();

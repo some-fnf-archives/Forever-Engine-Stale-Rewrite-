@@ -39,10 +39,10 @@ class BaseMenuState extends FNFState {
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		var pressUp:Bool = Controls.UP_P;
-		var pressDown:Bool = Controls.DOWN_P;
-		var pressLeft:Bool = Controls.LEFT_P;
-		var pressRight:Bool = Controls.RIGHT_P;
+		final pressUp:Bool = Controls.UP_P;
+		final pressDown:Bool = Controls.DOWN_P;
+		final pressLeft:Bool = Controls.LEFT_P;
+		final pressRight:Bool = Controls.RIGHT_P;
 
 		if (pressUp || pressDown)
 			updateSelection(pressUp ? -1 : 1);
