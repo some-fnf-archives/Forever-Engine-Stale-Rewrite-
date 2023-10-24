@@ -1,4 +1,4 @@
-package forever;
+package forever.tools;
 
 #if !macro
 import flixel.FlxG;
@@ -174,6 +174,10 @@ class Tools {
 	 */
 	public static function wrapf(value:Int, min:Float, max:Float):Float {
 		return (value < min) ? max : (value > max) ? min : 0;
+	}
+
+	public static inline function quantize(Value:Float, Quant:Float) {
+		return Math.fround(Value * Quant) / Quant;
 	}
 	#end
 

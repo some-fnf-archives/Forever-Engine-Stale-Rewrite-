@@ -1,4 +1,4 @@
-package forever.data;
+package forever.core;
 
 #if MODS
 typedef ForeverMod = {

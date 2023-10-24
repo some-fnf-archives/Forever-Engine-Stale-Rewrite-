@@ -1,9 +1,9 @@
-package forever.data;
+package forever.tools;
 
 import flixel.math.FlxMath;
 
 /** Helper Enumerator for Option Types. **/
-enum ForeverOptionType {
+enum OptionType {
 	/** Boolean Type Option. **/
 	CHECKMARK();
 
@@ -38,7 +38,7 @@ class ForeverOption {
 	public var variable:String = null;
 
 	/** Type of the Option. **/
-	public var type:ForeverOptionType = CHECKMARK;
+	public var type:OptionType = CHECKMARK;
 
 	/** the Value of the Variable. **/
 	public var value(get, set):Dynamic;
@@ -46,7 +46,7 @@ class ForeverOption {
 	/**
 	 * Creates a new option reference struct.
 	**/
-	public function new(name:String, ?description:String = "", ?variable:String = "", type:ForeverOptionType = CHECKMARK):Void {
+	public function new(name:String, ?description:String = "", ?variable:String = "", type:OptionType = CHECKMARK):Void {
 		this.name = name;
 		this.description = description;
 		this.variable = variable;

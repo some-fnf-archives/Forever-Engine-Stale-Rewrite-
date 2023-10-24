@@ -3,7 +3,8 @@ package funkin.components.ui;
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
-import forever.ui.ForeverText;
+import forever.ui.text.ForeverText;
+import funkin.components.Timings;
 import funkin.states.PlayState;
 
 class HUD extends FlxSpriteGroup {
@@ -46,7 +47,7 @@ class HUD extends FlxSpriteGroup {
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		healthBar.bar.percent = PlayState.current.timings.health * 50;
+		healthBar.bar.percent = Timings.health * 50;
 
 		final iconOffset:Int = 25;
 		iconP1.x = healthBar.x + (healthBar.bar.width * (1 - healthBar.bar.percent / 100)) - iconOffset;
@@ -64,13 +65,13 @@ class HUD extends FlxSpriteGroup {
 	public function updateScore():Void {
 		final game:PlayState = PlayState.current;
 
-		var tempScore:String = 'Score: ${game.timings.score}' //
+		var tempScore:String = 'Score: ${Timings.score}' //
 			+ divider
-			+ 'Accuracy: ${FlxMath.roundDecimal(game.timings.accuracy, 2)}%' //
+			+ 'Accuracy: ${FlxMath.roundDecimal(Timings.accuracy, 2)}%' //
 			+ divider
-			+ 'Combo Breaks: ${game.timings.comboBreaks}' //
+			+ 'Combo Breaks: ${Timings.comboBreaks}' //
 			+ divider
-			+ 'Rank: ${game.timings.rank}';
+			+ 'Rank: ${Timings.rank}';
 
 		scoreBar.text = '< ${tempScore} >\n';
 

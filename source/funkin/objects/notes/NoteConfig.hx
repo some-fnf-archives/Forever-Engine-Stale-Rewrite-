@@ -47,7 +47,7 @@ class NoteConfig {
 
 		if (Tools.fileExists(AssetHelper.getPath('data/notes/${skin}', TEXT))) {
 			try {
-				file = AssetHelper.getAsset('data/notes/${skin}', JSON);
+				file = AssetHelper.parseAsset('data/notes/${skin}', JSON);
 				if (file != null) {
 					#if macro
 					// IMAGES

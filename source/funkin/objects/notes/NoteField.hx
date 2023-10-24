@@ -176,9 +176,9 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 		var notesHittable:Array<Note> = playField.noteGroup.members.filter(function(n:Note) {
 			return n.parent == this && n.alive && n.data.direction == key && !n.isLate && !n.wasHit && n.canBeHit;
 		});
-		notesHittable.sort(sortHitNotes);
 
 		if (notesHittable.length > 0) {
+			notesHittable.sort(sortHitNotes);
 			var frontNote:Note = notesHittable[0];
 
 			if (notesHittable.length > 1) {
@@ -194,7 +194,7 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 			}
 
 			onNoteHit.dispatch(frontNote);
-			currentStrum?.playStrum(HIT, true);
+			currentStrum.playStrum(HIT, true);
 		}
 		else {
 			if (!Settings.ghostTapping)
@@ -266,6 +266,6 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 		return NoteConfig.getDummyConfig().strums.size;
 	}
 
-	@:dox(hide) @:noCompletion function get_fieldWidth():Float
+	@:dox(hide) @:noCompletion inline function get_fieldWidth():Float
 		return spacing * size;
 }

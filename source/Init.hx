@@ -8,7 +8,7 @@ import flixel.addons.transition.TransitionData;
 import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import forever.config.Controls;
+import forever.Controls;
 
 /**
  * This is the initialization class, it simply modifies and initializes a few important variables
@@ -23,16 +23,16 @@ class Init extends FlxState {
 		FlxG.game.focusLostFramerate = 10;
 		FlxG.mouse.visible = false;
 
-		forever.config.Settings.load();
+		forever.Settings.load();
 
 		FlxGraphic.defaultPersist = true;
-		flixel.FlxSprite.defaultAntialiasing = forever.config.Settings.globalAntialias;
+		flixel.FlxSprite.defaultAntialiasing = forever.Settings.globalAntialias;
 
 		setupTransition();
 
 		Controls.current = new BaseControls();
-		#if DISCORD forever.data.DiscordWrapper.initialize("1157951594667708416"); #end
-		#if MODS forever.data.Mods.initialize(); #end
+		#if DISCORD forever.core.DiscordWrapper.initialize("1157951594667708416"); #end
+		#if MODS forever.core.Mods.initialize(); #end
 
 		// make sure there is a note configuration set
 		funkin.objects.notes.NoteConfig.reloadConfig();

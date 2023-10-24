@@ -1,10 +1,12 @@
 package funkin.objects;
 
 #if SCRIPTING
-import forever.data.ForeverScript;
+import forever.core.HScript;
 #end
 import flixel.math.FlxPoint;
 import forever.display.ForeverSprite;
+import forever.tools.CodenameTools;
+import haxe.xml.Access;
 
 enum abstract CharAnimationState(Int) to Int {
 	var IDLE = 0;
@@ -18,6 +20,19 @@ enum abstract CharAnimationState(Int) to Int {
 class Character extends ForeverSprite {
 	/** Used to track the character's name **/
 	public var name:String = "bf";
+
+	/** Small data structure for the game over screen. **/
+	public var gameOverInfo:Dynamic = {
+		character: "bf-dead",
+		/** Plays during the game over screen. **/
+		loopMusic: "gameOver",
+		/** Plays after hitting the confirm key on the game over screen. **/
+		confirmSound: "gameOverEnd",
+		/** Plays when entering the game over screen**/
+		startSfx: "fnf_loss_sfx",
+		/** deathLifter the sfx, and slightly delays the music, Used in week7 **/
+		deathLines: "tank/jeffGameover-{1...25}"
+	};
 
 	/** Dance Steps, used to track which animations to play when calling `dance()` on a character. **/
 	public var dancingSteps:Array<String> = ["idle"];
@@ -46,7 +61,7 @@ class Character extends ForeverSprite {
 	/** Which animation state the character is currently at. **/
 	public var animationState:Int = IDLE;
 
-	public var characterScript:ForeverScript = null;
+	public var characterScript:HScript = null;
 
 	@:dox(hide) public var holdTmr:Float = 0.0;
 
@@ -65,8 +80,8 @@ class Character extends ForeverSprite {
 		if (characterScript != null)
 			characterScript.call("destroy", []);
 
-		positionDisplace.put();
-		cameraDisplace.put();
+		cameraDisplace?.put();
+		positionDisplace?.put();
 		super.destroy();
 	}
 
@@ -77,7 +92,7 @@ class Character extends ForeverSprite {
 		var file:Dynamic = null;
 
 		if (Tools.fileExists(AssetHelper.getPath('data/characters/${name}.json'))) {
-			file = AssetHelper.getAsset('data/characters/${name}', JSON);
+			file = AssetHelper.parseAsset('data/characters/${name}', JSON);
 			var crowChar:Bool = Reflect.hasField(file, "singList");
 			implementation = crowChar ? CROW : PSYCH;
 		}
@@ -89,6 +104,16 @@ class Character extends ForeverSprite {
 				catch (e:haxe.Exception)
 					trace('[Character:loadCharacter]: Failed to parse "${implementation}" type character\n\nError: ${e.details()}');
 		}
+
+		#if SCRIPTING
+		if (Tools.fileExists(AssetHelper.getAsset('data/characters/${name}', HSCRIPT)))
+		{
+			characterScript = new HScript(AssetHelper.getAsset('data/characters/${name}', HSCRIPT));
+			characterScript.set('char', this);
+			@:privateAccess characterScript.set('isPlayer', this._isPlayer);
+			characterScript.call('generate', []);
+		}
+		#end
 
 		if (_isPlayer)
 			flipX = !flipX;
@@ -125,7 +150,7 @@ class Character extends ForeverSprite {
 
 	public function dance(forced:Bool = false):Void {
 		playAnim(dancingSteps[_curDanceStep], forced);
-		if (animationState != IDLE)
+		if (animationState != IDLE) // same here
 			animationState = IDLE;
 
 		_curDanceStep += 1;
@@ -136,7 +161,7 @@ class Character extends ForeverSprite {
 	public override function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
 		super.playAnim(name, forced, reversed, frame);
 
-		if (singingSteps.contains(name) && animationState != SING)
+		if (singingSteps.contains(name) && animationState != SING) //  && animationState != SING isnt needed 
 			animationState = SING;
 	}
 
@@ -144,10 +169,36 @@ class Character extends ForeverSprite {
 	private function parseFromImpl(file:Dynamic, impl:String):Void {
 		switch (impl) {
 			case FOREVER:
-				var script:ForeverScript = new ForeverScript(AssetHelper.getAsset('data/characters/${name}', HSCRIPT));
-				script.set('char', this);
-				@:privateAccess script.set('isPlayer', this._isPlayer);
-				script.call('generate', []);
+				var data = AssetHelper.parseAsset('data/characters/${name}', YAML);
+
+				if (data == null)
+					return trace('[Character:parseFromImpl()]: Character ${name} could not be parsed due to a inexistent file, Please provide a file called "${name}.yaml" in the "data/characters directory.');
+
+				// automatically searches for packer and sparrow
+				frames = AssetHelper.getAsset('images/${data.spritesheet}', ATLAS);
+
+				var animations:Array<Dynamic> = data.animations ?? [];
+				if (animations.length > 0) {
+					for (i in animations) {
+						addAtlasAnim(i.name, i.prefix, i.fps ?? 24, i.loop ?? false, cast (i.indices ?? []));
+						if (i.x != null)
+							setOffset(i.x, i.y);
+					}
+				}
+				else
+					addAtlasAnim("idle", "BF idle dance", 24, false, []);
+
+				flipX = data.flip?.x ?? false;
+				flipY = data.flip?.y ?? false;
+
+				dancingSteps = data.dancingSteps ?? dancingSteps;
+				singingSteps = data.singingSteps ?? singingSteps;
+
+				singDuration = data.singDuration ?? 4.0;
+				danceInterval = data.danceInterval ?? 2;
+
+				positionDisplace.set(data.positionDisplace?.x ?? 0.0, data.positionDisplace?.y ?? 0.0);
+				cameraDisplace.set(data.cameraDisplace?.x ?? 0.0, data.cameraDisplace?.y ?? 0.0);
 
 			case PSYCH:
 				var charImage:String = file?.image ?? 'characters/${name}';
@@ -159,20 +210,64 @@ class Character extends ForeverSprite {
 					setOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
 				}
 
+				// shouldnt this be array<float>?
 				var globalOffset:Array<Dynamic> = file.position ?? [0, 0];
 				var globalCamOffset:Array<Dynamic> = file.camera_position ?? [0, 0];
 
-				positionDisplace = FlxPoint.get(Std.parseFloat(globalOffset[0]), Std.parseFloat(globalOffset[1]));
-				cameraDisplace = FlxPoint.get(Std.parseFloat(globalCamOffset[0]), Std.parseFloat(globalCamOffset[1]));
+				positionDisplace.set(Std.parseFloat(globalOffset[0]), Std.parseFloat(globalOffset[1]));
+				cameraDisplace.set(Std.parseFloat(globalCamOffset[0]), Std.parseFloat(globalCamOffset[1]));
 
 				flipX = file.flip_x ?? false;
 				scale.set(file.scale ?? 1.0, file.scale ?? 1.0);
 				updateHitbox();
+				singDuration = file.sing_duration ?? 4;
 
 				if (animation.exists("danceLeft") && animation.exists("danceRight")) {
 					dancingSteps = ["danceLeft", "danceRight"];
 					danceInterval = 1;
 				}
+
+			/*
+			case CODENAME:
+				// * written by: @Ne_Eo * //
+
+				var plainXML = AssetHelper.getAsset('data/characters/${name}', XML);
+				var charXML = Xml.parse(plainXML).firstElement();
+				if (charXML == null) throw new haxe.Exception("Missing \"character\" node in XML.");
+				var xml = new Access(charXML);
+
+				// no flxanimate support sadly
+
+				var charImage = name;
+
+				//if (xml.x.exists("isPlayer")) playerOffsets = (xml.x.get("isPlayer") == "true");
+				//if (xml.x.exists("isGF")) isGF = (xml.x.get("isGF") == "true");
+				if (xml.x.exists("x")) positionDisplace.x = Std.parseFloat(xml.x.get("x"));
+				if (xml.x.exists("y")) positionDisplace.y = Std.parseFloat(xml.x.get("y"));
+				if (xml.x.exists("gameOverChar")) gameOverCharacter = xml.x.get("gameOverChar");
+				if (xml.x.exists("camx")) cameraDisplace.x = Std.parseFloat(xml.x.get("camx"));
+				if (xml.x.exists("camy")) cameraDisplace.y = Std.parseFloat(xml.x.get("camy"));
+				if (xml.x.exists("holdTime")) singDuration = Std.parseFloat(xml.x.get("holdTime")) ?? 4;
+				if (xml.x.exists("flipX")) flipX = (xml.x.get("flipX") == "true");
+				//if (xml.x.exists("icon")) icon = xml.x.get("icon");
+				//if (xml.x.exists("color")) iconColor = FlxColor.fromString(xml.x.get("color"));
+				if (xml.x.exists("scale")) {
+					var scale = CodenameTools.getDefault(Std.parseFloat(xml.x.get("scale")), 1);
+					this.scale.set(scale, scale);
+					updateHitbox();
+				}
+				if (xml.x.exists("antialiasing")) antialiasing = (xml.x.get("antialiasing") == "true");
+				if (xml.x.exists("sprite")) charImage = xml.x.get("sprite");
+
+				frames = AssetHelper.getAsset('images/characters/${charImage}', ATLAS);
+
+				animation.destroyAnimations();
+				animDatas.clear();
+				for (anim in xml.nodes.anim)
+				{
+					CodenameTools.addXMLAnimation(this, anim);
+				}
+			*/
 
 			case CROW:
 				frames = AssetHelper.getAsset('images/characters/${name}/${name}', ATLAS);

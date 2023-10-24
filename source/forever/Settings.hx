@@ -1,4 +1,4 @@
-package forever.config;
+package forever;
 
 /**
  * Contains Default Values for Settings

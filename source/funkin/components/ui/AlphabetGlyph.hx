@@ -68,7 +68,7 @@ class AlphabetGlyph extends ForeverSprite {
 		playAnim("idle", true);
 		updateHitbox();
 
-		offset.put();
+		offset?.put();
 	}
 
 	@:noCompletion
@@ -99,7 +99,7 @@ class AlphabetGlyph extends ForeverSprite {
 		playAnim("idle", true);
 		updateHitbox();
 
-		offset.put();
+		offset?.put();
 	}
 
 	@:noCompletion
@@ -141,7 +141,7 @@ class AlphabetGlyph extends ForeverSprite {
 	}
 
 	override function destroy():Void {
-		spawnPos.put();
+		spawnPos?.put();
 		super.destroy();
 	}
 }

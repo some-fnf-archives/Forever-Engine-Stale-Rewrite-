@@ -1,0 +1,25 @@
+spritesheet: "characters/bf/normal"
+flip: {x: true, y: false}
+
+dancingSteps: ["idle"]
+singingSteps: ["singLEFT", "singDOWN", "singUP", "singRIGHT"]
+
+positionDisplace: {x: 0.0, y: 0.0}
+cameraDisplace: {x: 0.0, y: -110.0}
+danceInterval: 2
+singDuration: 4.0
+
+animations:
+  - {name: "idle", prefix: "BF idle dance", fps: 24, loop: false, x: 0, y: 0}
+  - {name: "scared", prefix: "BF idle shaking", fps: 24, loop: false, x: 0, y: 0}
+  - {name: "hey", prefix: "BF HEY!!!", fps: 24, loop: false, x: 0, y: 0}
+
+  - {name: "singLEFT", prefix: "BF NOTE LEFT0", fps: 24, loop: false, x: 0, y: 0}
+  - {name: "singDOWN", prefix: "BF NOTE DOWN0", fps: 24, loop: false, x: 0, y: 0}
+  - {name: "singUP", prefix: "BF NOTE UP0", fps: 24, loop: false, x: 0, y: 0}
+  - {name: "singRIGHT", prefix: "BF NOTE RIGHT0", fps: 24, loop: false, x: 0, y: 0}
+
+  - {name: "singLEFTmiss", prefix: "BF NOTE LEFT MISS", fps: 24, loop: false, x: 0, y: 0}
+  - {name: "singDOWNmiss", prefix: "BF NOTE DOWN MISS", fps: 24, loop: false, x: 0, y: 0}
+  - {name: "singUPmiss", prefix: "BF NOTE UP MISS", fps: 24, loop: false, x: 0, y: 0}
+  - {name: "singRIGHTmiss", prefix: "BF NOTE RIGHT MISS", fps: 24, loop: false, x: 0, y: 0}

@@ -1,30 +1,8 @@
+// SCRIPT USED FOR FLIPPING OPPONENT
 function generate() {
-	char.frames = Paths.getSparrowAtlas("characters/bf/normal");
-
-	char.flipX = true;
-
-	char.dancingSteps = ["idle"];
-	char.singingSteps = ["singLEFT", "singDOWN", "singUP", "singRIGHT"];
-
-	char.cameraDisplace.y = -110.0;
-
 	if (!isPlayer) {
 		char.positionDisplace.y = 350.0;
 		char.singingSteps[0] = "singRIGHT";
 		char.singingSteps[3] = "singLEFT";
 	}
-
-	char.addAtlasAnim("idle", "BF idle dance", 24, false);
-	char.addAtlasAnim("scared", "BF idle shaking", 24, false);
-	char.addAtlasAnim("hey", "BF HEY!!", 24, false);
-
-	char.addAtlasAnim("singLEFT", "BF NOTE LEFT0", 24, false);
-	char.addAtlasAnim("singDOWN", "BF NOTE DOWN0", 24, false);
-	char.addAtlasAnim("singUP", "BF NOTE UP0", 24, false);
-	char.addAtlasAnim("singRIGHT", "BF NOTE RIGHT0", 24, false);
-
-	char.addAtlasAnim("singLEFTmiss", "BF NOTE LEFT MISS", 24, false);
-	char.addAtlasAnim("singDOWNmiss", "BF NOTE DOWN MISS", 24, false);
-	char.addAtlasAnim("singUPmiss", "BF NOTE UP MISS", 24, false);
-	char.addAtlasAnim("singRIGHTmiss", "BF NOTE RIGHT MISS", 24, false);
 }

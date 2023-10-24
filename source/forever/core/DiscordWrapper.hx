@@ -1,4 +1,4 @@
-package forever.data;
+package forever.core;
 
 #if DISCORD
 import hxdiscord_rpc.Discord;
@@ -65,7 +65,13 @@ class DiscordWrapper {
 	@:dox(hide) @:noCompletion
 	static function _onReady(req:cpp.RawConstPointer<DiscordUser>):Void {
 		final pointer:cpp.Star<DiscordUser> = cpp.ConstPointer.fromRaw(req).ptr;
-		trace('[DiscordWrapper:_onReady] Connection Established, Welcome ${cast (pointer.username)}.');
+
+		var username = if (cast(pointer.discriminator, String) != "0")
+			'${pointer.username}#${pointer.discriminator}';
+		else
+			'${pointer.username}';
+
+		trace('[DiscordWrapper:_onReady] Connection Established, Welcome ${username}.');
 	}
 
 	@:dox(hide) @:noCompletion

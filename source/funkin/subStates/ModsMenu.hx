@@ -3,7 +3,7 @@ package funkin.subStates;
 import flixel.FlxSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
-import forever.data.Mods;
+import forever.core.Mods;
 import funkin.components.ui.Alphabet;
 
 class ModsMenu extends FlxSubState {

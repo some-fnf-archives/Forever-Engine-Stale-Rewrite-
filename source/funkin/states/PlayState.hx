@@ -44,7 +44,6 @@ class PlayState extends FNFState {
 
 	public var bg:ForeverSprite;
 	public var playField:PlayField;
-	public var timings:Timings;
 	public var hud:HUD;
 
 	public var camLead:FlxObject;
@@ -72,12 +71,18 @@ class PlayState extends FNFState {
 	}
 
 	public override function create():Void {
-		current = this;
-
 		super.create();
+
+		current = this;
 
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
+
+		scriptPack = initAllScriptsAt([
+			AssetHelper.getPath("data/scripts/global"),
+			AssetHelper.getPath('songs/${currentSong.folder}/scripts')
+		]);
+		callFunPack("create", []);
 
 		// -- PREPARE AUDIO -- //
 		inst = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${currentSong.folder}/audio/Inst.ogg'));
@@ -88,6 +93,8 @@ class PlayState extends FNFState {
 
 		FlxG.sound.music.looped = false;
 		vocals.looped = false;
+
+		Timings.reset();
 
 		Conductor.time = -(60.0 / Conductor.bpm) * 16.0;
 		FlxG.mouse.visible = false;
@@ -102,9 +109,7 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(altCamera, false);
 
 		// -- PREPARE BACKGROUNDS AND USER INTERFACE -- //
-		ChartLoader.load(currentSong.folder, currentSong.difficulty);
 		Conductor.bpm = Chart.current.data.initialBPM;
-		timings = new Timings();
 
 		add(stage = new DadStage());
 		add(playField = new PlayField());
@@ -139,6 +144,8 @@ class PlayState extends FNFState {
 
 		DiscordRPC.updatePresence('Playing: ${currentSong.display}', '');
 
+		callFunPack("createPost", []);
+
 		countdownRoutine();
 		if (Chart.current != null && Chart.current.events[0] != null)
 			processEvent(Chart.current.events[0].event);
@@ -171,6 +178,13 @@ class PlayState extends FNFState {
 	}
 
 	public override function destroy():Void {
+		callFunPack("destroy", []);
+		var i:Int = 0;
+		while (i < scriptPack.length - 1) {
+			scriptPack[i].destroy();
+			i++;
+		}
+		scriptPack = [];
 		current = null;
 		super.destroy();
 	}
@@ -188,22 +202,22 @@ class PlayState extends FNFState {
 		if (!note.parent.cpuControl) {
 			var millisecondTiming:Float = Math.abs((note.data.time - Conductor.time) * 1000.0);
 			var judgement:Judgement = Timings.judgeNote(millisecondTiming);
-			timings.totalMs += millisecondTiming;
+			Timings.totalMs += millisecondTiming;
 
-			timings.score += judgement.getParameters()[1];
-			timings.health += 0.035;
-			if (timings.combo < 0)
-				timings.combo = 0;
-			timings.combo += 1;
+			Timings.score += judgement.getParameters()[1];
+			Timings.health += 0.035;
+			if (Timings.combo < 0)
+				Timings.combo = 0;
+			Timings.combo += 1;
 
-			timings.totalNotesHit += 1;
-			timings.accuracyWindow += Math.max(0, judgement.getParameters()[2]);
-			timings.increaseJudgeHits(judgement.getParameters()[0]);
+			Timings.totalNotesHit += 1;
+			Timings.accuracyWindow += Math.max(0, judgement.getParameters()[2]);
+			Timings.increaseJudgeHits(judgement.getParameters()[0]);
 
 			if (judgement.getParameters()[3] || note.splash)
 				note.parent.members[note.direction].doNoteSplash(note);
 
-			timings.updateRank();
+			Timings.updateRank();
 			hud.updateScore();
 		}
 
@@ -215,8 +229,8 @@ class PlayState extends FNFState {
 		if (note != null)
 			note.parent.invalidateNote(note);
 
-		timings.misses += 1;
-		timings.updateRank();
+		Timings.misses += 1;
+		Timings.updateRank();
 		hud.updateScore();
 	}
 
@@ -246,15 +260,6 @@ class PlayState extends FNFState {
 		if (vocals != null && vocals.playing)
 			vocals.pause();
 
-		if (FlxG.state.subState != null) {
-			switch (FlxG.state.subState.ID) {
-				case 0: // Pause Substate
-					DiscordRPC.updatePresence('${currentSong.display} [PAUSED]', '${hud.scoreBar.text}');
-				case 1: // Charter Substate
-					DiscordRPC.updatePresence('Charting: ${currentSong.display}');
-			}
-		}
-
 		super.openSubState(SubState);
 	}
 
@@ -266,12 +271,7 @@ class PlayState extends FNFState {
 		if (vocals != null && vocals.playing)
 			vocals.resume();
 
-		if (FlxG.state.subState != null) {
-			switch (FlxG.state.subState.ID) {
-				default:
-					DiscordRPC.updatePresence('${currentSong.display} [SED]', '${hud.scoreBar.text}');
-			}
-		}
+		DiscordRPC.updatePresence('${currentSong.display}', '${hud.scoreBar.text}');
 		pauseTweens(false);
 
 		super.closeSubState();
@@ -319,23 +319,18 @@ class PlayState extends FNFState {
 	// -- HELPER FUNCTIONS -- //
 
 	function openChartEditor():Void {
-		DiscordRPC.updatePresence('Charting: ${currentSong.display}', '${hud.scoreBar.text}');
-
+		DiscordRPC.updatePresence('Charting: ${currentSong.display}');
 		final charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
-		charter.ID = 0;
-
 		persistentUpdate = false;
 		openSubState(charter);
 	}
 
 	function openPauseMenu():Void {
 		pauseTweens(true);
-
+		DiscordRPC.updatePresence('${currentSong.display} [PAUSED]', '${hud.scoreBar.text}');
 		final pause:PauseMenu = new PauseMenu();
 		pause.camera = altCamera;
-		pause.ID = 1;
-
 		persistentUpdate = false;
 		openSubState(pause);
 	}
@@ -352,13 +347,7 @@ class PlayState extends FNFState {
 		var cb:Void->Void = switch playMode {
 			case STORY: function():Void FlxG.switchState(new MainMenu());
 			case CHARTER: function():Void {
-					Conductor.time = 0;
-					@:privateAccess {
-						conductor._lastTime = -1.0;
-						conductor._lastStep = -1;
-						conductor._lastBeat = -1;
-						conductor._lastBar = -1;
-					}
+					Conductor.init();
 					openChartEditor();
 				}
 			case _: function():Void FlxG.switchState(new FreeplayMenu());

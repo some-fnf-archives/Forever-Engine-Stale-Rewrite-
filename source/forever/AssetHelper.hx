@@ -2,7 +2,7 @@ package forever;
 
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
-import forever.data.Mods;
+import forever.core.Mods;
 import haxe.io.Path;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
@@ -29,6 +29,16 @@ enum abstract EngineImpl(String) to String {
 	/** Crow Engine Implementation Style. **/
 	var CROW = "crow"; // the engine, not the user. -CrowPlexus
 
+	public function toString():String {
+		return switch this {
+			case CROW: "Crow Engine";
+			case FOREVER: "Forever Engine";
+			case CODENAME: "Codename Engine";
+			case VANILLA_V1: "Base Game (0.2.8)";
+			case PSYCH: "Psych Engine";
+			default: "???"; // https://www.youtube.com/watch?v=4kEO7VjKRB8
+		}
+	}
 }
 
 /** Asset Helper Class, handles asset loading and caching. **/
@@ -75,20 +85,32 @@ class AssetHelper {
 	**/
 	public static function getAsset(asset:String, ?type:ForeverAsset):Dynamic {
 		var gottenAsset:String = getPath(asset, type);
-
-		return switch (type) {
+		return switch type {
 			case IMAGE: getGraphic(gottenAsset);
 			case FONT: return getPath('fonts/${asset}', FONT);
-			case JSON:
-				var json:String = Tools.getText(gottenAsset).trim();
-				while (!json.endsWith("}")) // ensure its not broken.
-					json = json.substr(0, json.length - 1);
-				tjson.TJSON.parse(json);
 			case ATLAS:
-				var txtPath:String = getPath('${asset}.txt', TEXT);
+				var txtPath:String = getPath('${gottenAsset}.txt', TEXT);
 				if (Tools.fileExists(txtPath, TEXT)) return getAsset(asset, ATLAS_PACKER); else return getAsset(asset, ATLAS_SPARROW);
 			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset + ".xml"));
 			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getPath(asset + ".txt"));
+			default: gottenAsset;
+		}
+	}
+
+	/**
+	 * Uses `getAsset` in order to parse a specific data structure to something readable
+	 * @param asset 			Asset name you want to grab.
+	 * @param type 				Type of asset, to append extensions and get the asset you want.
+	 * @return Dynamic
+	**/
+	public static function parseAsset(asset:String, ?type:ForeverAsset):Dynamic {
+		var gottenAsset:String = getAsset(asset, type);
+		return switch type {
+			case JSON:
+				var json:String = Tools.getText(gottenAsset).trim();
+				json = json.substr(0, json.lastIndexOf("}") + 1);
+				tjson.TJSON.parse(json);
+			case YAML: yaml.Yaml.parse(Tools.getText(gottenAsset).trim(), yaml.Parser.options().useObjects());
 			default: gottenAsset;
 		}
 	}
@@ -235,6 +257,7 @@ enum abstract ForeverAsset(String) to String {
 			case XML: [".xml"];
 			case JSON: [".json"];
 			case TEXT: [".txt", ".ini", ".cfg"];
+			case YAML: [".yaml", ".yml"];
 			case FONT: [".ttf", ".otf"];
 			case HSCRIPT: [".hx", ".hxs", ".hxc", ".hsc", ".hscript", ".hxclass"];
 			default: null;

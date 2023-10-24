@@ -1,9 +1,9 @@
-package forever.data;
+package forever.core;
 
 import crowplexus.iris.Iris;
-import forever.Paths.LocalPaths;
+import forever.tools.Paths.LocalPaths;
 
-class ForeverScript extends Iris {
+class HScript extends Iris {
 	var localPath:String = null;
 
 	public function new(file:String, ?localPath:String = null):Void {
@@ -18,7 +18,7 @@ class ForeverScript extends Iris {
 		set("FlxSprite", flixel.FlxSprite);
 		set("Conductor", funkin.components.Conductor);
 		set("AssetHelper", forever.AssetHelper);
-		set("Tools", forever.Tools);
+		set("Tools", forever.tools.Tools);
 
 		if (localPath != null)
 			set("Paths", new LocalPaths(localPath));

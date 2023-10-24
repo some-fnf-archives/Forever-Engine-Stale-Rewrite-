@@ -162,10 +162,8 @@ class TitleScreen extends FNFState {
 	function getRandomText():Array<Array<String>> {
 		var textFile:Array<String> = Tools.listFromFile(AssetHelper.getAsset("data/introText", TEXT));
 		var textBoxes:Array<Array<String>> = [];
-
 		for (i in textFile) // remind me to make this automatic per txt length later -Crow
 			textBoxes.push(i.split("--"));
-
 		return textBoxes;
 	}
 }

@@ -1,5 +1,6 @@
 package funkin.objects;
 
+import forever.core.HScript;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
 
@@ -34,10 +35,9 @@ class StageBase extends FlxSpriteGroup {
 	}
 
 	public override function destroy():Void {
-		playerPosition.put();
-		enemyPosition.put();
-		crowdPosition.put();
-
+		playerPosition?.put();
+		enemyPosition?.put();
+		crowdPosition?.put();
 		super.destroy();
 	}
 }

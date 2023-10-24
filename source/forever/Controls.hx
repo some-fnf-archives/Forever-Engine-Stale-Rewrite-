@@ -1,4 +1,4 @@
-package forever.config;
+package forever;
 
 import flixel.FlxG;
 import flixel.input.FlxInput;
@@ -21,49 +21,49 @@ class Controls {
 	 * to access your shortcut, use the expression `Controls.YOURCONTROL`
 	**/
 	// -- COMMON ACTIONS -- //
-	function ACCEPT(jp_accept:Bool) {}
+	@:justPressed(accept) function ACCEPT() {}
 
-	function BACK(jp_back:Bool) {}
+	@:justPressed(back) function BACK() {}
 
-	function PAUSE(jp_pause:Bool) {}
+	@:justPressed(pause) function PAUSE() {}
 
-	function RESET(jp_reset:Bool) {}
+	@:justPressed(reset) function RESET() {}
 
 	// -- SINGLE PRESS -- //
 
-	function LEFT_P(jp_left:Bool) {}
+	@:justPressed(left) function LEFT_P() {}
 
-	function DOWN_P(jp_down:Bool) {}
+	@:justPressed(down) function DOWN_P() {}
 
-	function UP_P(jp_up:Bool) {}
+	@:justPressed(up) function UP_P() {}
 
-	function RIGHT_P(jp_right:Bool) {}
+	@:justPressed(right) function RIGHT_P() {}
 
-	function UI_LEFT_P(jp_ui_left:Bool) {}
+	@:justPressed(ui_left) function UI_LEFT_P() {}
 
-	function UI_DOWN_P(jp_ui_down:Bool) {}
+	@:justPressed(ui_down) function UI_DOWN_P() {}
 
-	function UI_UP_P(jp_ui_up:Bool) {}
+	@:justPressed(ui_up) function UI_UP_P() {}
 
-	function UI_RIGHT_P(jp_ui_right:Bool) {}
+	@:justPressed(ui_right) function UI_RIGHT_P() {}
 
 	// -- HOLDING -- //
 
-	function LEFT(p_left:Bool) {}
+	@:pressed(left) function LEFT() {}
 
-	function DOWN(p_down:Bool) {}
+	@:pressed(down) function DOWN() {}
 
-	function UP(p_up:Bool) {}
+	@:pressed(up) function UP() {}
 
-	function RIGHT(p_right:Bool) {}
+	@:pressed(right) function RIGHT() {}
 
-	function UI_LEFT(p_ui_left:Bool) {}
+	@:pressed(ui_left) function UI_LEFT() {}
 
-	function UI_DOWN(p_ui_down:Bool) {}
+	@:pressed(ui_down) function UI_DOWN() {}
 
-	function UI_UP(p_ui_up:Bool) {}
+	@:pressed(ui_up) function UI_UP() {}
 
-	function UI_RIGHT(p_ui_right:Bool) {}
+	@:pressed(ui_right) function UI_RIGHT() {}
 }
 
 /**

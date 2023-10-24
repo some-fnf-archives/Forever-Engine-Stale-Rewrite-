@@ -9,7 +9,7 @@ import haxe.macro.Expr;
  * 
  * ```haxe
  * // empty function, the macro automatically handles the contents of this function by
- * function MY_CUSTOM_KEY(jp_my_custom_key):Void {}
+ * @:justPressed(my_custom_key) function MY_CUSTOM_KEY():Void {}
  * ```
  * 
  * @author Ne_Eo
@@ -24,22 +24,38 @@ class ControlsMacro {
 		for (field in fields.copy()) {
 			switch (field.kind) {
 				case FFun(fun):
-					var _ = fun.args[0].name.split("_");
 					var cID = field.name;
-					var type = _.shift();
-					var id = _.join("_");
+					var id = "unknown";
+
+					var type = "unknown";
+					for(meta in field.meta) {
+						if([":justPressed", ":pressed", ":justReleased", ":released"].contains(meta.name)) {
+							type = meta.name;
+							switch(meta.params[0].expr) {
+								case EConst(CIdent(_i)):
+									id = _i;
+								default:
+							}
+						}
+					}
+
+					if(id == "unknown" || type == "unknown") {
+						trace("Controls: Unknown Meta");
+						fields.remove(field);
+						continue;
+					}
 
 					var expr = switch (type) {
-						case "jp": macro {
+						case ":justPressed": macro {
 								return Controls.current.justPressed($v{id});
 							}
-						case "p": macro {
+						case ":pressed": macro {
 								return Controls.current.pressed($v{id});
 							}
-						case "jr": macro {
+						case ":justReleased": macro {
 								return Controls.current.justReleased($v{id});
 							}
-						case "r": macro {
+						case ":released": macro {
 								return Controls.current.released($v{id});
 							}
 						default: macro {

@@ -1,43 +1,48 @@
 package funkin.components;
 
-import flixel.FlxBasic;
 import flixel.util.FlxSignal;
 
-class Conductor extends FlxBasic {
-	var _timeDelta:Float = 0.0;
-	var _lastTime:Float = -1.0;
-	var _lastStep:Int = -1;
-	var _lastBeat:Int = -1;
-	var _lastBar:Int = -1;
+class Conductor {
+	static var _timeDelta:Float = 0.0;
+	static var _lastTime:Float = -1.0;
+	static var _lastStep:Int = -1;
+	static var _lastBeat:Int = -1;
+	static var _lastBar:Int = -1;
 
-	/* -- GLOBAL VARIABLES -- */
 	public static var bpm:Float = 100.0;
 	public static var time:Float = 0.0;
+
+	/** How many beats there are in a step. **/
+	public static var stepsPerBeat:Int = 4;
+	/** How many beats there are in a measure/bar. **/
+	public static var beatsPerBar:Int = 4;
 
 	public static var step(get, never):Int;
 	public static var beat(get, never):Int;
 	public static var bar(get, never):Int;
 
-	/* -- INSTANCE VARIABLES -- */
-	public var beatDelta(get, never):Float;
-	public var stepDelta(get, never):Float;
+	public static var beatDelta(get, never):Float;
+	public static var stepDelta(get, never):Float;
 
-	public var stepTime:Float = 0.0;
-	public var beatTime:Float = 0.0;
+	public static var stepTime:Float = 0.0;
+	public static var beatTime:Float = 0.0;
 
-	public var onStep:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
-	public var onBeat:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
-	public var onBar:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	public static var onStep:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	public static var onBeat:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	public static var onBar:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
 
-	public function new():Void {
-		super();
-
+	public static function init():Void {
 		time = 0.0;
+
+		_lastTime = -1.0;
+		_lastStep = _lastBar = _lastBeat = -1;
+
+		onStep.removeAll();
+		onBeat.removeAll();
+		onBar.removeAll();
 	}
 
-	public override function update(elapsed:Float):Void {
-		super.update(elapsed);
-
+	public static function update(elapsed:Float):Void {
 		_timeDelta = time - _lastTime;
 
 		if (FlxG.state.active) {
@@ -99,19 +104,19 @@ class Conductor extends FlxBasic {
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
-	@:noCompletion function get_beatDelta():Float {
+	@:noCompletion inline static function get_beatDelta():Float {
 		return (bpm / 60.0) * _timeDelta;
 	}
 
-	@:noCompletion function get_stepDelta():Float
+	@:noCompletion inline static function get_stepDelta():Float
 		return beatDelta * 4.0;
 
-	@:noCompletion static function get_step():Int
+	@:noCompletion inline static function get_step():Int
 		return Math.floor(timeToStep(time, bpm));
 
-	@:noCompletion static function get_beat():Int
+	@:noCompletion inline static function get_beat():Int
 		return Math.floor(step * 0.25);
 
-	@:noCompletion static function get_bar():Int
+	@:noCompletion inline static function get_bar():Int
 		return Math.floor(beat * 0.25);
 }

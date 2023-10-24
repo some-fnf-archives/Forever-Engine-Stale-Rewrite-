@@ -7,4 +7,5 @@ haxelib install hscript
 haxelib git flixel-nova https://github.com/swordcube/flixel
 haxelib git flixel-addons-nova https://github.com/swordcube/flixel-addons
 haxelib git hscript-iris https://github.com/crowplexus/hscript-iris
+haxelib git yaml https://github.com/crowplexus/hx-yaml
 echo done.

@@ -78,12 +78,14 @@
 	<haxelib name="hxcpp-debug-server" if="debug" />
 
 	<haxelib name="hxdiscord_rpc" if="DISCORD" />
+
 	<section if="SCRIPTING">
-		<haxelib name="hscript" />
 		<haxelib name="hscript-iris" />
 		<haxedef name="hscriptPos" />
 	</section>
+
 	<haxelib name="tjson" />
+	<haxelib name="yaml" />
 
 	<!-- _______________ -->
 	<!-- [ Haxedefines ] -->
@@ -98,7 +100,7 @@
 	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" unless="ENABLE_FOCUS_LOST_SCREEN" />
 
 	<!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
-	<haxedef name="FLX_NO_DEBUG" unless="debug USE_FLIXEL_DEBUGGER" />
+	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />

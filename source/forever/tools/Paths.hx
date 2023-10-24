@@ -1,4 +1,4 @@
-package forever;
+package forever.tools;
 
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;

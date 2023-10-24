@@ -7,6 +7,20 @@ import funkin.objects.notes.NoteField;
 import haxe.ds.IntMap;
 
 /**
+ * Note Types
+ * Custom one aren't listed here, they are instead
+ * handled by the abstract automatically
+**/
+enum abstract NoteType(String) from String to String {
+	var NORMAL:String = null;
+	var MINE:String = "mine";
+
+	function getDefList():Array<String> {
+		return [NORMAL, MINE];
+	}
+}
+
+/**
  * Base Note Object, may appear differently visually depending on its type
  * it can be a spinning mine, a arrow, and less commonly a bar or circle
 **/
@@ -122,20 +136,21 @@ class Note extends ForeverSprite {
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 	// do gay ass sustain nae nae shit here later
 	// because I think tiled sprites will need it
-	@:noCompletion function set_speed(v:Float):Float
-		return speed = flixel.math.FlxMath.roundDecimal(v, 3);
+	@:noCompletion inline function set_speed(v:Float):Float
+		return speed = Tools.quantize(v, 1000); // roundDecimal(v, 3)
 
-	@:noCompletion function get_isSustain():Bool
+	@:noCompletion inline function get_isSustain():Bool
 		return false;
 
-	@:noCompletion function get_direction():Int
+	@:noCompletion inline function get_direction():Int
 		return data?.direction ?? 0;
 
-	@:noCompletion function get_type():String
+	@:noCompletion inline function get_type():String
 		return data?.type ?? "default";
 
 	@:noCompletion function set_type(v:String):String {
 		switch (v) {
+			// case "your-note-type": // in case you wanna hardcode instead
 			default:
 				frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.notes.image}', ATLAS_SPARROW);
 				if (NoteConfig.config.notes.anims.length > 0) {
@@ -152,6 +167,6 @@ class Note extends ForeverSprite {
 		return v;
 	}
 
-	static function get_scrollDifference():Int
+	static inline function get_scrollDifference():Int
 		return Settings.downScroll ? 1 : -1;
 }

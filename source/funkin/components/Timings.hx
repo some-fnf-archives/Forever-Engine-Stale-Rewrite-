@@ -43,30 +43,35 @@ class Timings {
 		"etterna" => [45.0, 90.0, 135.0, 180.0],
 	];
 
-	public var score:Int = 0;
-	public var health(default, set):Float = 1.0;
-	public var maxHealth:Float = 2.0;
+	public static var score:Int = 0;
+	public static var health(default, set):Float = 1.0;
+	public static var maxHealth:Float = 2.0;
 
-	public var totalNotesHit:Int = 0;
-	public var accuracyWindow:Float = 0.0;
+	public static var totalNotesHit:Int = 0;
+	public static var accuracyWindow:Float = 0.0;
 
-	public var averageMs(get, never):Float;
-	public var totalMs:Float = 0.0;
-	public var accuracy(get, never):Float;
+	public static var averageMs(get, never):Float;
+	public static var accuracy(get, never):Float;
+	public static var totalMs:Float = 0.0;
 
-	public var misses(get, set):Int; // real misses.
-	public var comboBreaks(get, never):Int;
-	public var combo:Int = 0;
+	public static var misses(get, set):Int; // real misses.
+	public static var comboBreaks(get, never):Int;
+	public static var combo:Int = 0;
 
-	public var rank:String = "N/A";
+	public static var rank:String = "N/A";
 
-	public var judgementsHit:StringMap<Int> = new StringMap<Int>();
+	public static var judgementsHit:StringMap<Int> = new StringMap<Int>();
 
-	public function new():Void {
+	public static function reset():Void {
 		judgementsHit.clear();
 		for (judgement in judgements)
 			judgementsHit.set(judgement.getParameters()[0], 0);
 		judgementsHit.set("miss", 0);
+
+		score = combo = totalNotesHit = 0;
+		accuracyWindow = totalMs = 0.0;
+		health = 1.0;
+		rank = "N/A";
 	}
 
 	public static function judgeNote(timeStamp:Float):Judgement {
@@ -85,7 +90,7 @@ class Timings {
 		return judgement;
 	}
 
-	public function updateRank():Void {
+	public static function updateRank():Void {
 		for (i in 0...rankings.length) {
 			var eRank:Array<Dynamic> = rankings[i].getParameters();
 			if (eRank[1] <= accuracy) {
@@ -95,7 +100,7 @@ class Timings {
 		}
 	}
 
-	public function increaseJudgeHits(name:String, increment:Int = 1):Void {
+	public static function increaseJudgeHits(name:String, increment:Int = 1):Void {
 		if (judgementsHit.exists(name))
 			judgementsHit.set(name, judgementsHit.get(name) + increment);
 		else
@@ -104,27 +109,26 @@ class Timings {
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
-	@:dox(hide) @:noCompletion function get_misses():Int
+	@:dox(hide) @:noCompletion static inline function get_misses():Int
 		return judgementsHit.exists("miss") ? judgementsHit.get("miss") : 0;
 
-	@:dox(hide) @:noCompletion function set_misses(v:Int):Int {
-		if (judgementsHit.exists("miss"))
-			judgementsHit.set("miss", v);
-		return judgementsHit.exists("miss") ? judgementsHit.get("miss") : 0;
+	@:dox(hide) @:noCompletion static inline function set_misses(v:Int):Int {
+		judgementsHit.set("miss", v);
+		return v;
 	}
 
-	@:dox(hide) function get_accuracy():Float
+	@:dox(hide) static inline function get_accuracy():Float
 		return accuracyWindow == 0.0 ? 0.00 : Math.abs(accuracyWindow / (totalNotesHit + misses));
 
-	@:dox(hide) function get_averageMs():Float
+	@:dox(hide) static inline function get_averageMs():Float
 		return totalMs / totalNotesHit;
 
-	@:dox(hide) function get_comboBreaks():Int {
+	@:dox(hide) static inline function get_comboBreaks():Int {
 		final worst = judgements.last().getParameters()[0];
 		var shits:Int = judgementsHit.exists(worst) ? judgementsHit.get(worst) : 0;
 		return misses + shits;
 	}
 
-	@:dox(hide) function set_health(v:Float):Float
+	@:dox(hide) static inline function set_health(v:Float):Float
 		return health = FlxMath.bound(v, 0.0, maxHealth);
 }

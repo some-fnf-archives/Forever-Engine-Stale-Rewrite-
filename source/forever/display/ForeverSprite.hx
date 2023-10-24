@@ -2,7 +2,7 @@ package forever.display;
 
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
-import forever.config.Settings;
+import forever.Settings;
 import openfl.text.TextFormatAlign;
 
 /**
@@ -59,7 +59,7 @@ class ForeverSprite extends FlxSprite {
 	 * @param looped                Whether the animation loops.
 	 * @param indices               Array with animation indices, if unspecified, the animation gets added as a prefix animation only.
 	**/
-	public function addAtlasAnim(name:String, prefix:String, frameRate:Int = 24, looped:Bool = false, ?indices:Array<Int>):Void {
+	public function addAtlasAnim(name:String, prefix:String, frameRate:Float = 24.0, looped:Bool = false, ?indices:Array<Int>):Void {
 		if (indices != null && indices.length > 0)
 			animation.addByIndices(name, prefix, indices, "", frameRate, looped);
 		else
@@ -75,7 +75,7 @@ class ForeverSprite extends FlxSprite {
 	**/
 	public function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
 		animation.play(name, forced, reversed, frame);
-		var offsets:Array<Float> = animOffsets.get(name) ?? [0.0, 0.0];
+		var offsets:Array<Float> = animOffsets.exists(name) ? animOffsets.get(name) : [0.0, 0.0];
 		frameOffset.set(offsets[0], offsets[1]);
 	}
 

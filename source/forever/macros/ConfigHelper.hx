@@ -50,7 +50,7 @@ class ConfigHelper {
 							arr.push(macro {
 								if (flixel.FlxG.save.data.$name != null)
 									$i{name} = flixel.FlxG.save.data.$name;
-								forever.config.Settings.update();
+								forever.Settings.update();
 							});
 						}
 						fun.expr = macro $b{arr};
@@ -64,8 +64,8 @@ class ConfigHelper {
 								flixel.FlxG.save.data.$name = $i{name};
 								flixel.FlxG.save.flush();
 
-								forever.config.Settings.masterVolume = Std.int(flixel.FlxG.sound.volume * 100.0);
-								forever.config.Settings.update();
+								forever.Settings.masterVolume = Std.int(flixel.FlxG.sound.volume * 100.0);
+								forever.Settings.update();
 							});
 						}
 						fun.expr = macro $b{arr};

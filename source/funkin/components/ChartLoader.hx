@@ -1,129 +1,65 @@
 package funkin.components;
 
 import flixel.util.FlxSort;
+import funkin.components.parsers.*;
 
 class ChartLoader {
 	public static function load(folder:String, file:String):Chart {
 		var chart:Chart = new Chart();
 
-		var json = cast AssetHelper.getAsset('songs/${folder}/${file}', JSON);
+		var json = cast AssetHelper.parseAsset('songs/${folder}/${file}', JSON);
 		var dataType:String = VANILLA_V1;
 
-		if (Reflect.hasField(json, "player2"))
+		if (Reflect.hasField(json, "song") && Reflect.hasField(json.song, "player2"))
 			dataType = VANILLA_V1;
 		if (Reflect.hasField(json, "codenameChart"))
 			dataType = CODENAME;
-		if (Reflect.hasField(json, "extraData"))
+		if (Reflect.hasField(json, "mustHitSections"))
 			dataType = CROW;
 
 		try {
 			switch (dataType) {
-				case VANILLA_V1:
-					var curBPM:Float = json.song.bpm;
-					var keys:Int = 4;
-
-					chart.data = {
-						initialBPM: curBPM,
-						initialSpeed: json.song.speed,
-						keyAmount: keys,
-						playerChar: json.song.player1 ?? "bf",
-						enemyChar: json.song.player2 ?? "dad",
-						crowdChar: json.song.player3 ?? json.song.gfVersion ?? "gf",
-						stageBG: json.song.stage ?? getVanillaStage(json.song.song),
-					}
-
-					var bars:Array<Dynamic> = cast(json.song.notes, Array<Dynamic>);
-					for (i in 0...bars.length) {
-						var bar = bars[i];
-						if (bar == null)
-							continue;
-
-						var curBar:Int = bars.indexOf(bar);
-						var barTime:Float = (60.0 / curBPM) / 4.0;
-
-						chart.events.push({
-							event: FocusCamera(bar.mustHitSection ? 1 : 0, false),
-							time: barTime * bar.lengthInSteps * curBar,
-							delay: 0.0
-						});
-
-						if (bar.changeBPM == true && bar.bpm != curBPM) {
-							curBPM = bar.bpm;
-							chart.events.push({
-								event: BPMChange(bar.bpm),
-								time: barTime * bar.lengthInSteps * curBar,
-								delay: 0.0
-							});
-						}
-
-						var barNotes:Array<Array<Dynamic>> = cast(bar.sectionNotes);
-						if (barNotes == null)
-							barNotes = [];
-
-						for (j in barNotes) {
-							// old psych events
-							if (Std.int(j[1]) >= 0) {
-								var noteAnim:String = "";
-								if (Std.isOfType(j[3], Bool) && j[3] == true || bar.altAnim)
-									noteAnim = "-alt";
-
-								chart.notes.push({
-									time: j[0] / 1000.0,
-									direction: Std.int(j[1]) % keys,
-									length: j[2] > 0.0 ? j[2] / 1000.0 : 0.0,
-									notefield: Std.int(j[1]) >= keys != bar.mustHitSection ? 1 : 0,
-									type: j[3] != null && Std.isOfType(j[3], String) ? j[3] : "default",
-									animation: "",
-								});
-							}
-						}
-					}
-				case CROW:
-					trace('Crow Engine Charts are not implemented *yet*');
+				// MISSING CROW
+				case VANILLA_V1 | PSYCH:
+					var ver:Int = dataType == PSYCH ? -1 : 1;
+					// v-1 -> Psych | v1 -> 0.2.8 | v2 -> 0.3
+					chart = VanillaParser.parseChart(json.song, ver);
+				// its unfinished rn so yeah.
+				// case CODENAME: chart = CodenameParser.parseChart(json, file);
 				case FOREVER:
-					trace("Forever Engine Charts are not implemented *yet*"); // lol ironic i guess.
-				case CODENAME:
-					trace('Codename Engine Charts are not implemented *yet*');
+					// welcome to my tutorial on how to parse charts, first off. -Crow
+					chart.notes = json.notes;
+					chart.events = json.events;
+					var meta:Dynamic = cast json.data;
+					if (Tools.fileExists(AssetHelper.getPath('songs/${folder}/meta', JSON)))
+						meta = cast AssetHelper.parseAsset('songs/${folder}/meta', JSON);
+					chart.data = meta;
+				default:
+					trace('${dataType.toString()} Chart Type is not implemented *yet*');
 			}
 
 			chart.notes.sort(function(a:NoteData, b:NoteData):Int return Std.int(a.time - b.time));
 			chart.events.sort(function(a:ForeverEvent, b:ForeverEvent):Int return Std.int(a.time - b.time));
 		}
 		catch (e:haxe.Exception)
-			trace('Failed to parse chart, type was ${dataType}, Error:\n${e.details()}');
-		return chart;
-	}
+			trace('Failed to parse chart, type was ${dataType}, Error:\n${e.details()} ' + haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
 
-	public static inline function getVanillaStage(song:String):String {
-		return switch (song.toLowerCase().replace(" ", "-")) {
-			case "ugh", "guns", "stress": "militaryZone";
-			case "thorns": "schoolGlitch";
-			case "senpai", "roses": "school";
-			case "winter-horrorland": "redMall";
-			case "cocoa", "eggnog": "mall";
-			case "satin-panties", "high", "milf": "highway";
-			case "pico", "philly", "philly-nice", "blammed": "phillyCity";
-			case "spookeez", "south", "monster": "spookyHouse";
-			default: "stage";
-		}
+		return chart;
 	}
 }
 
 class Chart {
 	public var notes:Array<NoteData> = [];
 	public var events:Array<ForeverEvent> = [];
-	public var data:ChartExtraData = {initialBPM: 100.0, initialSpeed: 1.0, keyAmount: 4};
+	public var data:ChartMetadata = {initialBPM: 100.0, initialSpeed: 1.0, keyAmount: 4};
 
 	public static var current:Chart;
 
 	public function new():Void {
-		current = this;
+		// hey so haxe needs this don't delete this DUDE DO NOT TOUCH THIS -Crow & Ne_Eo
 	}
 }
 
-/**
- * Note Data Config
-**/
 typedef NoteData = {
 	var time:Float;
 	var direction:Int;
@@ -134,7 +70,12 @@ typedef NoteData = {
 	@:optional var length:Float;
 }
 
-typedef ChartExtraData = {
+typedef NoteFieldData = {
+	var notes:Array<NoteData>;
+	var chars:Array<String>;
+}
+
+typedef ChartMetadata = {
 	/** Chart's Amount of Keys. **/
 	var keyAmount:Int;
 
@@ -174,7 +115,7 @@ enum ForeverEvents {
 
 	/**
 	 * HScript Event
-	 * 
+	 *
 	 * @param name 		Name (in the chart editor).
 	 * @param script	Script to run for the event.
 	 * @param args 		Arguments for the event.

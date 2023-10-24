@@ -5,7 +5,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import forever.display.ForeverSprite;
-import forever.ui.ForeverText;
+import forever.ui.text.ForeverText;
+import funkin.components.ChartLoader;
 import funkin.components.DifficultyHelper;
 import funkin.components.Highscore;
 import funkin.components.ui.Alphabet;
@@ -108,9 +109,7 @@ class FreeplayMenu extends BaseMenuState {
 					difficulty: DifficultyHelper.currentList[curSelAlt]
 				};
 
-				if (FlxG.sound.music != null)
-					FlxG.sound.music.stop();
-
+				Chart.current = ChartLoader.load(song.folder, song.difficulty);
 				FlxG.switchState(new funkin.states.PlayState(song));
 			};
 		}

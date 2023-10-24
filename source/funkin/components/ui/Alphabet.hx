@@ -104,7 +104,7 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 		}
 		if (members.indexOf(line) == -1)
 			add(line);
-		glyphPos.put();
+		glyphPos?.put();
 	}
 
 	@:noCompletion
@@ -172,8 +172,8 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 	}
 
 	override function destroy() {
-		menuSpacing.put();
-		forceLerp.put();
+		menuSpacing?.put();
+		forceLerp?.put();
 		super.destroy();
 	}
 }
@@ -204,7 +204,7 @@ class ChildAlphabet extends Alphabet {
 	}
 
 	public override function destroy():Void {
-		increment.put();
+		increment?.put();
 		super.destroy();
 	}
 }
