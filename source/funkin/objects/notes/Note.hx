@@ -88,11 +88,9 @@ class Note extends ForeverSprite {
 		var strum:Strum = parent.members[direction];
 
 		if (strum != null) {
-			if (!visible)
-				visible = true;
-
 			speed = strum.speed;
-			scale = strum.scale;
+			scale = scale.set(NoteConfig.config.notes.size, NoteConfig.config.notes.size);
+			visible = parent.visible;
 
 			final distance:Float = 0.45 * (Conductor.time - data.time) * (1000.0 * Math.abs(speed)) / scale.y;
 

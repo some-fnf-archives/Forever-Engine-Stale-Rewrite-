@@ -28,6 +28,14 @@ class PlayField extends FlxGroup {
 
 		add(enemyField = new NoteField(this, 98, strumY, "default", true));
 		add(playerField = new NoteField(this, FlxG.width - 542, strumY, "default", false));
+
+		if(Settings.centerNotefield){
+			for (i in 0...playerField.members.length){
+				enemyField.visible = false;
+				playerField.members[i].x = 420 + 112*i;
+			}
+		}
+
 		add(noteGroup = new FlxTypedSpriteGroup<Note>());
 
 		noteList = new Vector<NoteData>(Chart.current.notes.length);
@@ -61,6 +69,7 @@ class PlayField extends FlxGroup {
 
 			var epicNote:Note = noteGroup.recycle(Note).appendData(noteList[curNote]);
 			epicNote.parent = target;
+			epicNote.visible = target.visible;
 			add(epicNote);
 
 			curNote += 1;
