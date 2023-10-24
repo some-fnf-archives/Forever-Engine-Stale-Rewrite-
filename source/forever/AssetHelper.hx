@@ -50,7 +50,7 @@ class AssetHelper {
 	 * @return String
 	**/
 	public static function getPath(?asset:String, ?type:ForeverAsset):String {
-		var gottenPath:String = type.getExtension('assets/${asset}');
+		var gottenPath:String = type.getExtension('assets/funkin/${asset}');
 		#if MODS
 		if (searchLevel != null && searchLevel != "") {
 			final modPath:String = type.getExtension('${Mods.MODS_FOLDER}/${searchLevel}/${asset}');
@@ -67,7 +67,7 @@ class AssetHelper {
 	 * Example:
 	 * ```haxe
 	 * var myGraphic = AssetHelper.getAsset('images/myImage', IMAGE); // flixel.graphics.FlxGraphic
-	 * var mySound = AssetHelper.getAsset('sounds/mySound', SOUND); // openfl.media.Sound
+	 * var mySound = AssetHelper.getAsset('audio/sfx/mySound', SOUND); // openfl.media.Sound
 	 * ```
 	 * @param asset 			Asset name you want to grab.
 	 * @param type 				Type of asset, to append extensions and get the asset you want.

@@ -94,7 +94,7 @@ class PauseMenu extends FlxSubState {
 		curSel = FlxMath.wrap(curSel + newSel, 0, pauseGroup.members.length - 1);
 
 		if (newSel != 0)
-			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
+			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
 		for (i in 0...pauseGroup.members.length) {
 			final let:Alphabet = pauseGroup.members[i];

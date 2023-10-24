@@ -62,7 +62,7 @@ class MainMenu extends BaseMenuState {
 
 		for (i in 0...options.length) {
 			final bttn:FlxSprite = new FlxSprite(0, 120 + (bttnSpacing * i));
-			bttn.frames = AssetHelper.getAsset('images/menus/main/${options[i].name.toLowerCase()}', ATLAS);
+			bttn.frames = AssetHelper.getAsset('menus/main/${options[i].name.toLowerCase()}', ATLAS);
 			bttn.scale.set(bttnScale, bttnScale);
 			bttn.ID = i;
 
@@ -96,7 +96,7 @@ class MainMenu extends BaseMenuState {
 			canAccept = false;
 
 			magenta.flicker(1.1, 0.15);
-			FlxG.sound.play(AssetHelper.getAsset('music/sfx/confirmMenu', SOUND));
+			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/confirmMenu', SOUND));
 
 			for (button in buttons.members) {
 				if (button == null)
@@ -141,7 +141,7 @@ class MainMenu extends BaseMenuState {
 		super.updateSelection(newSel);
 
 		if (newSel != 0)
-			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
+			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
 		for (i in 0...buttons.members.length) {
 			final button:FlxSprite = buttons.members[i];

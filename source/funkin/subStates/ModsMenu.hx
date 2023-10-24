@@ -23,7 +23,7 @@ class ModsMenu extends FlxSubState {
 		var bg2:FlxSprite;
 
 		add(bg1 = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK));
-		add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("images/menus/bgBlack", IMAGE)));
+		add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("menus/bgBlack", IMAGE)));
 
 		bg2.blend = DIFFERENCE;
 		bg1.alpha = 0.7;
@@ -37,20 +37,11 @@ class ModsMenu extends FlxSubState {
 		add(modsGroup = new FlxTypedGroup<Alphabet>());
 
 		if (Mods.mods.length > 0) {
-			var listThing:Array<String> = Mods.mods.map(function(mod) return mod.title);
-			listThing.insert(0, "Friday Night Funkin'");
-			var modsAdded:Array<String> = []; // stupid fix for duplicated mods
-
-			for (i in 0...listThing.length) {
-				if (modsAdded.contains(listThing[i]))
-					continue;
-
-				final modLetter:Alphabet = new Alphabet(0, 0, listThing[i], BOLD, LEFT);
+			for (i in 0...Mods.mods.length) {
+				final modLetter:Alphabet = new Alphabet(0, 0, Mods.mods[i].title, BOLD, LEFT);
 				modLetter.isMenuItem = true;
 				modLetter.targetY = i;
 				modsGroup.add(modLetter);
-
-				modsAdded.push(listThing[i]);
 			}
 
 			if (curSel < 0 || curSel > Mods.mods.length - 1)
@@ -92,7 +83,7 @@ class ModsMenu extends FlxSubState {
 
 		curSel = FlxMath.wrap(curSel + newSel, 0, modsGroup.members.length - 1);
 		if (newSel != 0)
-			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
+			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
 		for (i in 0...modsGroup.members.length) {
 			final sn:Alphabet = modsGroup.members[i];

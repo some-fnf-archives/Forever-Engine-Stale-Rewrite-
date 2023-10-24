@@ -38,19 +38,19 @@ class TitleScreen extends FNFState {
 		mainGroup.visible = false;
 
 		logo = new FlxSprite(20, 50);
-		logo.loadGraphic(AssetHelper.getAsset('images/menus/title/logo', IMAGE));
+		logo.loadGraphic(AssetHelper.getAsset('menus/title/logo', IMAGE));
 		logo.scale.set(0.9, 0.9);
 		logo.updateHitbox();
 
 		gfDance = new ForeverSprite(FlxG.width * 0.4, FlxG.height * 0.07);
-		gfDance.frames = AssetHelper.getAsset('images/menus/title/gfDanceTitle', ATLAS_SPARROW);
+		gfDance.frames = AssetHelper.getAsset('menus/title/gfDanceTitle', ATLAS_SPARROW);
 		gfDance.addAtlasAnim('danceLeft', 'gfDance', 24, false, [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
 		gfDance.addAtlasAnim('danceRight', 'gfDance', 24, false, [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]);
 		mainGroup.add(gfDance);
 		mainGroup.add(logo);
 
 		enterTxt = new ForeverSprite(100, FlxG.height * 0.8);
-		enterTxt.frames = AssetHelper.getAsset('images/menus/title/titleEnter', ATLAS_SPARROW);
+		enterTxt.frames = AssetHelper.getAsset('menus/title/titleEnter', ATLAS_SPARROW);
 		enterTxt.addAtlasAnim('idle', "Press Enter to Begin", 24);
 		enterTxt.addAtlasAnim('press', "ENTER PRESSED", 24, true);
 		enterTxt.playAnim('idle', true);
@@ -76,7 +76,7 @@ class TitleScreen extends FNFState {
 
 			if (Controls.ACCEPT && !transitioning) {
 				FlxG.camera.flash(0xFFFFFFFF, 0.6);
-				FlxG.sound.play(AssetHelper.getAsset("music/sfx/confirmMenu", SOUND));
+				FlxG.sound.play(AssetHelper.getAsset("audio/sfx/confirmMenu", SOUND));
 				enterTxt.playAnim('press');
 				transitioning = true;
 

@@ -28,10 +28,10 @@ class Paths {
 		return AssetHelper.getAsset('${font}', FONT);
 
 	public static inline function sound(sound:String):Sound
-		return AssetHelper.getAsset('sounds/${sound}', SOUND);
+		return AssetHelper.getAsset('audio/sfx/${sound}', SOUND);
 
 	public static inline function music(music:String):Sound
-		return AssetHelper.getAsset('music/${music}', SOUND);
+		return AssetHelper.getAsset('audio/bgm/${music}', SOUND);
 }
 
 class LocalPaths {
@@ -63,8 +63,8 @@ class LocalPaths {
 		return AssetHelper.getPath('${directory}/fonts/${font}', FONT);
 
 	public function sound(sound:String):Sound
-		return AssetHelper.getAsset('${directory}/sounds/${sound}', SOUND);
+		return AssetHelper.getAsset('${directory}/audio/sfx/${sound}', SOUND);
 
 	public function music(music:String):Sound
-		return AssetHelper.getAsset('${directory}/music/${music}', SOUND);
+		return AssetHelper.getAsset('${directory}/audio/bgm/${music}', SOUND);
 }

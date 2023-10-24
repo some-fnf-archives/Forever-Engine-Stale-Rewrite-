@@ -308,7 +308,7 @@ class PlayState extends FNFState {
 			case ChangeCharacter(who, toCharacter):
 				getCharacterFromID(who).loadCharacter(toCharacter);
 			case PlaySound(soundName, volume):
-				FlxG.sound.play(AssetHelper.getSound('sounds/${soundName}'), volume);
+				FlxG.sound.play(AssetHelper.getSound('audio/sfx/${soundName}'), volume);
 			case Scripted(name, script, args):
 			// init hscript here.
 			default:
@@ -403,7 +403,7 @@ class PlayState extends FNFState {
 				});
 			}
 
-			FlxG.sound.play(AssetHelper.getAsset('sounds/countdown/normal/${sounds[countdownPosition]}', SOUND), 0.8);
+			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/countdown/normal/${sounds[countdownPosition]}', SOUND), 0.8);
 			countdownPosition += 1;
 		}, 4);
 	}
@@ -419,7 +419,7 @@ class PlayState extends FNFState {
 	function getCountdownSprite(tick:Int):ForeverSprite {
 		final sprites:Array<String> = ["prepare", "ready", "set", "go"];
 		if (sprites[tick] != null && Tools.fileExists(AssetHelper.getPath('images/ui/normal/${sprites[tick]}', IMAGE)))
-			return new ForeverSprite(0, 0, 'ui/normal/${sprites[tick]}', {"scale.x": 0.9, "scale.y": 0.9});
+			return new ForeverSprite(0, 0, 'images/ui/normal/${sprites[tick]}', {"scale.x": 0.9, "scale.y": 0.9});
 		return null;
 	}
 }

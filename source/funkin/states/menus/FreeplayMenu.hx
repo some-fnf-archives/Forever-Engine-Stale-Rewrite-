@@ -154,7 +154,7 @@ class FreeplayMenu extends BaseMenuState {
 		super.updateSelection(newSel);
 
 		if (newSel != 0)
-			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
+			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
 		for (i in 0...songGroup.members.length) {
 			final sn:Alphabet = songGroup.members[i];
@@ -186,7 +186,7 @@ class FreeplayMenu extends BaseMenuState {
 		super.updateSelectionAlt(newSelAlt);
 
 		if (newSelAlt != 0)
-			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
+			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
 		if (DifficultyHelper.currentList.length == 1)
 			difficultyTxt.text = '${DifficultyHelper.toString(curSelAlt).toUpperCase()}';

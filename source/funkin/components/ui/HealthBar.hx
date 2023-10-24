@@ -17,7 +17,7 @@ class HealthBar extends FlxSpriteGroup {
 		super(x, y);
 
 		// doing custom stuff later, this should work for now.
-		add(bg = new ForeverSprite(0, 0, "ui/normal/healthBar"));
+		add(bg = new ForeverSprite(0, 0, "images/ui/normal/healthBar"));
 		add(bar = new FlxBar(5, 5, fillDirection, Std.int(bg.width - 10), Std.int(bg.height - 9)));
 
 		bar.createFilledBar(0xFFFF0000, 0xFF66FF33);

@@ -1,9 +1,6 @@
 package forever.data;
 
 #if MODS
-import sys.FileSystem;
-import sys.io.File;
-
 typedef ForeverMod = {
 	var title:String;
 	var description:String;
@@ -28,7 +25,7 @@ enum ModCredit {
 **/
 class Mods {
 	/** Default Mods Folder. **/
-	public static final MODS_FOLDER:String = "mods";
+	public static final MODS_FOLDER:String = "assets";
 
 	/** Mod API Version **/
 	public static final API_VERSION:String = "1.0.0-PRE";
@@ -60,7 +57,7 @@ class Mods {
 				continue;
 			}
 
-			var modJson:ForeverMod = cast sys.io.File.getContent('./${MODS_FOLDER}/${folder}/mod.json');
+			var modJson:ForeverMod = cast sys.io.File.getContent(tjson.TJSON.parse('${MODS_FOLDER}/${folder}/mod.json'));
 
 			// did you know: you can make functions inside functions -Crow
 			inline function makeModCredits():Array<ModCredit> {
@@ -83,6 +80,7 @@ class Mods {
 				apiVersion: modJson.apiVersion ?? API_VERSION,
 				license: modJson.license ?? "No license"
 			};
+			trace(mod);
 
 			if (mods.contains(mod))
 				continue;

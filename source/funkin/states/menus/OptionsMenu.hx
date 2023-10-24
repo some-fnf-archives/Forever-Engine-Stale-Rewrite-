@@ -78,7 +78,7 @@ class OptionsMenu extends BaseMenuState {
 							persistentUpdate = false;
 							openSubState(new NoteConfigurator());
 						case "exit":
-							FlxG.sound.play(AssetHelper.getAsset('music/sfx/cancelMenu', SOUND));
+							FlxG.sound.play(AssetHelper.getAsset('audio/sfx/cancelMenu', SOUND));
 							canChangeSelection = false;
 							canBackOut = false;
 							canAccept = false;
@@ -86,7 +86,7 @@ class OptionsMenu extends BaseMenuState {
 						default: reloadCategory(option.name);
 					}
 				default:
-					FlxG.sound.play(AssetHelper.getAsset('music/sfx/confirmMenu', SOUND));
+					FlxG.sound.play(AssetHelper.getAsset('audio/sfx/confirmMenu', SOUND));
 
 					option.changeValue();
 					var isSelector:Bool = false;
@@ -108,7 +108,7 @@ class OptionsMenu extends BaseMenuState {
 		}
 
 		onBack = function():Void {
-			FlxG.sound.play(AssetHelper.getAsset('music/sfx/cancelMenu', SOUND));
+			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/cancelMenu', SOUND));
 
 			if (categoriesAccessed.length == 0) {
 				exitMenu();
@@ -136,7 +136,7 @@ class OptionsMenu extends BaseMenuState {
 			if (left || right) {
 				option.changeValue(left ? -1 : 1);
 				cast(iconGroup.members[curSel], Alphabet).text = '${option.value}';
-				FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
+				FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 			}
 		}
 	}
@@ -145,7 +145,7 @@ class OptionsMenu extends BaseMenuState {
 		super.updateSelection(newSel);
 
 		if (newSel != 0)
-			FlxG.sound.play(AssetHelper.getAsset('music/sfx/scrollMenu', SOUND));
+			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
 		for (i in 0...optionsGroup.members.length) {
 			final let:Alphabet = optionsGroup.members[i];

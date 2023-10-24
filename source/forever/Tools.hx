@@ -105,7 +105,7 @@ class Tools {
 	#if !macro // prevent flixel classes from printing errors to the console (in haxe 4.3+)
 	public static function generateCheckmark():ChildSprite {
 		var newCheckmark:ChildSprite = new ChildSprite();
-		newCheckmark.frames = Paths.getSparrowAtlas("menus/options/checkboxThingie");
+		newCheckmark.frames = AssetHelper.getAsset("menus/options/checkboxThingie", ATLAS_SPARROW);
 
 		newCheckmark.animation.addByPrefix('false finished', 'uncheckFinished');
 		newCheckmark.animation.addByPrefix('false', 'uncheck', 12, false);
@@ -136,7 +136,7 @@ class Tools {
 	**/
 	public static function checkMenuMusic(music:String, doFadeIn:Bool = false, bpm:Float = 102.0):Void {
 		if (FlxG.sound.music == null || (FlxG.sound.music != null && !FlxG.sound.music.playing) || curMenuMusic != music) {
-			FlxG.sound.playMusic(AssetHelper.getAsset("music/" + music, SOUND), doFadeIn ? 0.0 : 0.7);
+			FlxG.sound.playMusic(AssetHelper.getAsset("audio/bgm/" + music, SOUND), doFadeIn ? 0.0 : 0.7);
 			if (doFadeIn)
 				FlxG.sound.music.fadeIn(4, 0, 0.7);
 

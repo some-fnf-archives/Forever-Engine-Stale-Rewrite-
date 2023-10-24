@@ -35,7 +35,7 @@ class ForeverSprite extends FlxSprite {
 	 * @param properties	The properties to modify for this graphic, options: alpha, color, "scale.x", "scale.y".
 	**/
 	public function addGraphic(graphic:String, ?properties:Dynamic):ForeverSprite {
-		loadGraphic(AssetHelper.getAsset('images/$graphic', IMAGE));
+		loadGraphic(AssetHelper.getAsset('${graphic}', IMAGE));
 
 		if (properties != null) {
 			Tools.safeReflection(this.alpha, properties, "alpha");

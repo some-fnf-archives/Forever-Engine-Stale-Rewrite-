@@ -36,7 +36,7 @@ class ChartEditor extends FlxSubState {
 		var bg2:FlxSprite;
 
 		backgroundLayer.add(bg1 = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK));
-		backgroundLayer.add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("images/menus/bgBlack", IMAGE)));
+		backgroundLayer.add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("menus/bgBlack", IMAGE)));
 
 		bg2.blend = DIFFERENCE;
 		bg1.alpha = 0.7;
