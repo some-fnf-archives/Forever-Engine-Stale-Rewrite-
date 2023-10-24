@@ -57,7 +57,7 @@ class Mods {
 				continue;
 			}
 
-			var modJson:ForeverMod = cast sys.io.File.getContent(tjson.TJSON.parse('${MODS_FOLDER}/${folder}/mod.json'));
+			final modJson:ForeverMod = cast tjson.TJSON.parse(sys.io.File.getContent('${MODS_FOLDER}/${folder}/mod.json'));
 
 			// did you know: you can make functions inside functions -Crow
 			inline function makeModCredits():Array<ModCredit> {
@@ -70,7 +70,7 @@ class Mods {
 				return credits.length == 0 ? null : credits;
 			};
 
-			var mod:ForeverMod = {
+			final mod:ForeverMod = {
 				title: modJson.title ?? folder,
 				folder: folder,
 				description: modJson.description != null ? modJson.description : "(No Description Given.)",
@@ -80,7 +80,6 @@ class Mods {
 				apiVersion: modJson.apiVersion ?? API_VERSION,
 				license: modJson.license ?? "No license"
 			};
-			trace(mod);
 
 			if (mods.contains(mod))
 				continue;
