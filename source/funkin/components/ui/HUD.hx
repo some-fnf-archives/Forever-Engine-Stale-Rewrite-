@@ -27,7 +27,7 @@ class HUD extends FlxSpriteGroup {
 		add(iconP1 = new HealthIcon("bf", true));
 		add(iconP2 = new HealthIcon("bf", false));
 		for (i in [iconP1, iconP2])
-			i.y = healthBar.y - (i.height / 2.0);
+			i.y = healthBar.y - (i.height * 0.5);
 
 		centerMark = new ForeverText(0, (Settings.downScroll ? FlxG.height - 40 : 15), 0, '- NO SONG [NO DIFFICULTY] -', 20);
 		centerMark.alignment = CENTER;

@@ -153,9 +153,9 @@ class Tools {
 	public static function centerToObject(object:FlxObject, target:FlxObject, axes:FlxAxes = XY):FlxObject {
 		// literally just FlxObject.screenCenter but it uses `base` instead of `FlxG.width` and `FlxG.height`
 		if (axes.x)
-			object.x = target.x + (target.width / 2.0) - (object.width / 2.0);
+			object.x = target.x + (target.width * 0.5) - (object.width * 0.5);
 		if (axes.y)
-			object.y = target.y + (target.height / 2.0) - (object.height / 2.0);
+			object.y = target.y + (target.height * 0.5) - (object.height * 0.5);
 		return object;
 	}
 

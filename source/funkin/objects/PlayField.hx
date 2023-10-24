@@ -24,23 +24,22 @@ class PlayField extends FlxGroup {
 	public function new():Void {
 		super();
 
-		var strumY:Float = Settings.downScroll ? FlxG.height - 150 : 50;
+		final strumY:Float = Settings.downScroll ? FlxG.height - 150 : 50;
 
-		add(enemyField = new NoteField(this, 98, strumY, "default", true));
-		add(playerField = new NoteField(this, FlxG.width - 542, strumY, "default", false));
+		add(enemyField = new NoteField(this, 100, strumY, "default", true));
+		add(playerField = new NoteField(this, FlxG.width - 550, strumY, "default", false));
 
-		if(Settings.centerNotefield){
-			for (i in 0...playerField.members.length){
-				enemyField.visible = false;
-				playerField.members[i].x = 420 + 112*i;
-			}
+		if (Settings.centerNotefield) {
+			enemyField.visible = false;
+			playerField.x = (FlxG.width - playerField.width) * 0.5;
 		}
 
 		add(noteGroup = new FlxTypedSpriteGroup<Note>());
 
 		noteList = new Vector<NoteData>(Chart.current.notes.length);
 		// allocate notes before beginning
-		noteGroup.add(new Note());
+		for (i in 0...32)
+			noteGroup.add(new Note());
 
 		// I know this is dumb as shit and I should just make a group but I don't wanna lol
 		forEachOfType(NoteField, function(n:NoteField) noteFields.push(n));
@@ -69,7 +68,6 @@ class PlayField extends FlxGroup {
 
 			var epicNote:Note = noteGroup.recycle(Note).appendData(noteList[curNote]);
 			epicNote.parent = target;
-			epicNote.visible = target.visible;
 			add(epicNote);
 
 			curNote += 1;

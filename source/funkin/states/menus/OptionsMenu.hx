@@ -177,7 +177,7 @@ class OptionsMenu extends BaseMenuState {
 			final optionLabel:Alphabet = new Alphabet(0, 0, cataOptions[i].name, BOLD, LEFT);
 			optionLabel.screenCenter();
 
-			optionLabel.y += (90 * (i - Math.floor(cataOptions.length / 2.0)));
+			optionLabel.y += (90 * (i - Math.floor(cataOptions.length * 0.5)));
 			optionLabel.isMenuItem = curCateg.toLowerCase() != "main"; // HARD CODED LOL
 			optionLabel.menuSpacing.y = 80;
 

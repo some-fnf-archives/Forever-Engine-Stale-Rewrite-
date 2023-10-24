@@ -1,6 +1,6 @@
 package funkin.objects.notes;
 
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSignal.FlxTypedSignal;
 import flixel.util.FlxSort;
@@ -91,7 +91,7 @@ class Strum extends ForeverSprite {
 	}
 }
 
-class NoteField extends FlxTypedGroup<Strum> {
+class NoteField extends FlxTypedSpriteGroup<Strum> {
 	public var skin:String;
 	public var playField:PlayField;
 	public var cpuControl:Bool;
@@ -131,13 +131,16 @@ class NoteField extends FlxTypedGroup<Strum> {
 	}
 
 	public function regenStrums(x:Float = 0, y:Float = 0, skipStrumTween:Bool = false):Void {
+		this.x = x;
+		this.y = y;
+
 		forEach(function(s:Strum) {
 			if (s != null)
 				s.destroy();
 		});
 
 		for (i in 0...4) {
-			final strum:Strum = new Strum(x, y, skin, i);
+			final strum:Strum = new Strum(0, 0, skin, i);
 			strum.x += i * fieldWidth;
 			strum.scale.set(size, size);
 			if (!skipStrumTween)
