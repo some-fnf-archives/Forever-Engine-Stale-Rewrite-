@@ -30,25 +30,23 @@ class FNFState extends FlxTransitionableState {
 
 	public function initAllScriptsAt(directories:Array<String>):Array<HScript> {
 		final pack:Array<HScript> = [];
-		function loopThrough(dir:String):Void {
-			for (script in dir) {
-				if (!Tools.fileExists(AssetHelper.getPath('${dir}/${script}', HSCRIPT)))
-					continue;
-				pack.push(new HScript(AssetHelper.getAsset('${dir}/${script}', HSCRIPT)));
+		for (directory in directories) {
+			if (!Tools.fileExists(directory))
+				continue;
+			for (file in Tools.listFolders(directory)) {
+				for (e in ForeverAsset.grabExtensions(HSCRIPT)) {
+					if (!file.endsWith(e))
+						continue;
+					pack.push(new HScript('${directory}/${file}'));
+				}
 			}
 		}
-		if (directories.length == 1)
-			loopThrough(directories[0]);
-		else
-			for (directory in directories)
-				loopThrough(directory);
 		return pack;
 	}
 
 	public function initScriptPack():Void {
 		if (scriptPack.length == 0)
 			return;
-
 		for (script in scriptPack) {
 			if (script == null)
 				continue;
@@ -63,10 +61,9 @@ class FNFState extends FlxTransitionableState {
 		newScript.call("onInit");
 	}
 
-	public function setVarPack(name:String, obj:Dynamic):Void {
+	public function setPackVar(name:String, obj:Dynamic):Void {
 		if (scriptPack.length == 0)
 			return;
-
 		for (script in scriptPack)
 			script.set(name, obj);
 	}
@@ -74,10 +71,8 @@ class FNFState extends FlxTransitionableState {
 	public function callFunPack(method:String, ?args:Array<Dynamic>):Void {
 		if (scriptPack.length == 0)
 			return;
-
 		if (args == null)
 			args = [];
-
 		for (script in scriptPack)
 			script.call(method, args);
 	}

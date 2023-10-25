@@ -23,8 +23,8 @@ class HUD extends FlxSpriteGroup {
 		add(healthBar = new HealthBar(0, hbY));
 		healthBar.screenCenter(X);
 
-		add(iconP1 = new HealthIcon("bf", true));
-		add(iconP2 = new HealthIcon("bf", false));
+		add(iconP1 = new HealthIcon(PlayState.current?.player?.icon ?? "face", true));
+		add(iconP2 = new HealthIcon(PlayState.current?.enemy?.icon ?? "face", false));
 		for (i in [iconP1, iconP2])
 			i.y = healthBar.y - (i.height * 0.5);
 

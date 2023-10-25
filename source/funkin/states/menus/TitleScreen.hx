@@ -26,6 +26,8 @@ class TitleScreen extends FNFState {
 	public override function create():Void {
 		super.create();
 
+		forever.core.Mods.loadInitScript();
+
 		DiscordRPC.updatePresence("In the Menus", "TITLE SCREEN");
 		randomBlurb = FlxG.random.getObject(getRandomText());
 
@@ -58,7 +60,7 @@ class TitleScreen extends FNFState {
 		mainGroup.add(enterTxt);
 
 		new flixel.util.FlxTimer().start(0.05, function(tmr) {
-			Tools.checkMenuMusic("foreverMenu", true, 102.0);
+			Tools.checkMenuMusic(null, true, 102.0);
 		});
 
 		if (seenIntro)

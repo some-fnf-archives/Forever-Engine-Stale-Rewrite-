@@ -68,14 +68,12 @@ class Note extends ForeverSprite {
 	// NOTESKIN CONFIG STUFF //
 	var animations:IntMap<String> = new IntMap<String>();
 
-	public function new():Void {
-		super(-5000, -5000); // make sure its offscreen initially
-		visible = false;
-	}
-
 	public function appendData(data:NoteData):Note {
+		setPosition(-5000, -5000);
+
 		this.data = data;
 		this.type = data.type;
+		wasHit = isLate = canBeHit = false;
 		playAnim(animations.get(0), true);
 		return this;
 	}

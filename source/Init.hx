@@ -25,7 +25,7 @@ class Init extends FlxState {
 
 		forever.Settings.load();
 
-		FlxGraphic.defaultPersist = true;
+		// FlxGraphic.defaultPersist = true;
 		flixel.FlxSprite.defaultAntialiasing = forever.Settings.globalAntialias;
 
 		setupTransition();

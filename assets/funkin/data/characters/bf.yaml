@@ -1,5 +1,6 @@
 spritesheet: "characters/bf/normal"
 flip: {x: true, y: false}
+icon: "bf"
 
 dancingSteps: ["idle"]
 singingSteps: ["singLEFT", "singDOWN", "singUP", "singRIGHT"]

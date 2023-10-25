@@ -8,10 +8,13 @@ import forever.display.ForeverSprite;
 import forever.tools.CodenameTools;
 import haxe.xml.Access;
 
-enum abstract CharAnimationState(Int) to Int {
+enum abstract CharacterAnimContext(Int) to Int {
 	var IDLE = 0;
 	var SING = 1;
 	var MISS = 2;
+
+	/** Special Animations prevent the Character from dancing until their current animation is over. **/
+	var SPECIAL = 3;
 }
 
 /**
@@ -20,6 +23,9 @@ enum abstract CharAnimationState(Int) to Int {
 class Character extends ForeverSprite {
 	/** Used to track the character's name **/
 	public var name:String = "bf";
+
+	/** Used to declare the character's health icon. **/
+	public var icon:String = "bf";
 
 	/** Small data structure for the game over screen. **/
 	public var gameOverInfo:Dynamic = {
@@ -59,7 +65,7 @@ class Character extends ForeverSprite {
 	public var danceInterval:Int = 2;
 
 	/** Which animation state the character is currently at. **/
-	public var animationState:Int = IDLE;
+	public var animationContext:Int = IDLE;
 
 	public var characterScript:HScript = null;
 
@@ -71,7 +77,6 @@ class Character extends ForeverSprite {
 	public function new(?x:Float = 0, ?y:Float = 0, ?character:String = null, player:Bool = false):Void {
 		super(x, y);
 		this._isPlayer = player;
-
 		if (character != null)
 			loadCharacter(character);
 	}
@@ -79,7 +84,6 @@ class Character extends ForeverSprite {
 	public override function destroy():Void {
 		if (characterScript != null)
 			characterScript.call("destroy", []);
-
 		cameraDisplace?.put();
 		positionDisplace?.put();
 		super.destroy();
@@ -102,7 +106,7 @@ class Character extends ForeverSprite {
 				try
 					parseFromImpl(file, implementation)
 				catch (e:haxe.Exception)
-					trace('[Character:loadCharacter]: Failed to parse "${implementation}" type character\n\nError: ${e.details()}');
+					trace('[Character:loadCharacter]: Failed to parse "${implementation}" type character of name "${name}"\n\nError: ${e.details()}');
 		}
 
 		#if SCRIPTING
@@ -130,12 +134,12 @@ class Character extends ForeverSprite {
 			characterScript.set("update", [elapsed]);
 		updateAnimation(elapsed);
 		if (animation.curAnim != null) {
-			if (animationState == SING)
+			if (animationContext == SING)
 				holdTmr += elapsed;
 			else if (_isPlayer)
 				holdTmr = 0.0;
-			var stepDt:Float = ((60.0 / Conductor.bpm) * 4.0);
-			if (holdTmr >= ((stepDt * 1000.0) * Conductor.rate) * singDuration * 0.0001) {
+			final stepDt:Float = (60.0 / Conductor.bpm) * 4.0;
+			if (holdTmr >= ((stepDt * 1000.0) * Conductor.rate) * singDuration * 0.001) {
 				dance();
 				holdTmr = 0.0;
 			}
@@ -145,10 +149,11 @@ class Character extends ForeverSprite {
 	}
 
 	public function dance(forced:Bool = false):Void {
+		if (animationContext == SPECIAL)
+			return;
 		playAnim(dancingSteps[_curDanceStep], forced);
-		if (animationState != IDLE) // same here
-			animationState = IDLE;
-
+		if (animationContext != IDLE) // same here
+			animationContext = IDLE;
 		_curDanceStep += 1;
 		if (_curDanceStep > dancingSteps.length - 1)
 			_curDanceStep = 0;
@@ -156,17 +161,15 @@ class Character extends ForeverSprite {
 
 	public override function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
 		super.playAnim(name, forced, reversed, frame);
-
-		if (singingSteps.contains(name) && animationState != SING) //  && animationState != SING isnt needed
-			animationState = SING;
+		if (singingSteps.contains(name) && animationContext != SING) //  && animationContext != SING isnt needed
+			animationContext = SING;
 	}
 
 	@:noPrivateAccess
 	private function parseFromImpl(file:Dynamic, impl:String):Void {
 		switch (impl) {
 			case FOREVER:
-				var data = AssetHelper.parseAsset('data/characters/${name}', YAML);
-
+				var data = AssetHelper.parseAsset('data/characters/${name}.yaml', YAML);
 				if (data == null)
 					return
 						trace('[Character:parseFromImpl()]: Character ${name} could not be parsed due to a inexistent file, Please provide a file called "${name}.yaml" in the "data/characters directory.');
@@ -187,6 +190,7 @@ class Character extends ForeverSprite {
 
 				flipX = data.flip?.x ?? false;
 				flipY = data.flip?.y ?? false;
+				icon = data.icon;
 
 				dancingSteps = data.dancingSteps ?? dancingSteps;
 				singingSteps = data.singingSteps ?? singingSteps;
@@ -214,6 +218,7 @@ class Character extends ForeverSprite {
 				positionDisplace.set(Std.parseFloat(globalOffset[0]), Std.parseFloat(globalOffset[1]));
 				cameraDisplace.set(Std.parseFloat(globalCamOffset[0]), Std.parseFloat(globalCamOffset[1]));
 
+				icon = file.healthicon;
 				flipX = file.flip_x ?? false;
 				scale.set(file.scale ?? 1.0, file.scale ?? 1.0);
 				updateHitbox();
@@ -277,6 +282,8 @@ class Character extends ForeverSprite {
 
 				flipX = file.flip?.x ?? false;
 				flipY = file.flip?.y ?? false;
+
+				icon = name;
 
 				dancingSteps = file.idleList ?? dancingSteps;
 				singingSteps = file.singList ?? singingSteps;

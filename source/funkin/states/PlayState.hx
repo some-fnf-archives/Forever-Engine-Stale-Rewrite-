@@ -83,13 +83,15 @@ class PlayState extends FNFState {
 
 		scriptPack = initAllScriptsAt([
 			AssetHelper.getPath("data/scripts/global"),
-			AssetHelper.getPath('songs/${currentSong.folder}/scripts')
+			AssetHelper.getPath('songs/${currentSong.folder}/scripts'),
 		]);
+		trace(scriptPack.length);
 		callFunPack("create", []);
+		setPackVar('game', this);
 
 		// -- PREPARE AUDIO -- //
-		inst = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${currentSong.folder}/audio/Inst.ogg'));
-		vocals = new FlxSound().loadEmbedded(AssetHelper.getSound('songs/${currentSong.folder}/audio/Voices.ogg'));
+		inst = new FlxSound().loadEmbedded(AssetHelper.getAsset('songs/${currentSong.folder}/audio/Inst', SOUND));
+		vocals = new FlxSound().loadEmbedded(AssetHelper.getAsset('songs/${currentSong.folder}/audio/Voices', SOUND));
 		FlxG.sound.list.add(vocals);
 		inst.onComplete = endPlay.bind();
 		FlxG.sound.music = inst;
@@ -168,6 +170,8 @@ class PlayState extends FNFState {
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
+		callFunPack("update", [elapsed]);
+
 		FlxG.camera.followLerp = FlxMath.bound(elapsed * 2.4 * stage.cameraSpeed * (FlxG.updateFramerate / 60.0), 0.0, 1.0);
 
 		if (Conductor.time >= 0 && !FlxG.sound.music.playing) {
@@ -189,6 +193,8 @@ class PlayState extends FNFState {
 			openChartEditor();
 		if (Controls.PAUSE)
 			openPauseMenu();
+
+		callFunPack("postUpdate", [elapsed]);
 	}
 
 	public override function destroy():Void {
@@ -207,11 +213,15 @@ class PlayState extends FNFState {
 		if (note.wasHit)
 			return;
 
-		final character:Character = (note.parent == playField.enemyField) ? enemy : player;
+		callFunPack("hitBehavior", [note]);
 
+		final isEnemy:Bool = (note.parent == playField.enemyField);
+		var character:Character = isEnemy ? enemy : player;
 		// TODO: a better system -Crow
-		character.playAnim(character.singingSteps[note.data.direction], true);
-		character.holdTmr = 0.0;
+		if (character.animationContext != 3) {
+			character.playAnim(character.singingSteps[note.data.direction], true);
+			character.holdTmr = 0.0;
+		}
 
 		if (!note.parent.cpuControl) {
 			var millisecondTiming:Float = Math.abs((note.data.time - Conductor.time) * 1000.0);
@@ -240,10 +250,13 @@ class PlayState extends FNFState {
 		}
 
 		note.parent.invalidateNote(note);
-		// note.wasHit = true;
+		note.wasHit = true;
+
+		callFunPack("postHitBehavior", []);
 	}
 
 	public function missBehavior(dir:Int, note:Note = null):Void {
+		callFunPack("missBehavior", [dir, note]);
 		if (note != null)
 			note.parent.invalidateNote(note);
 
@@ -258,6 +271,8 @@ class PlayState extends FNFState {
 
 		Timings.updateRank();
 		hud.updateScore();
+
+		callFunPack("postMissBehavior", [dir]);
 	}
 
 	public function displayJudgement(name:String, type:ComboPopType = NORMAL):Void {
@@ -331,10 +346,19 @@ class PlayState extends FNFState {
 	}
 
 	public override function onBeat(beat:Int):Void {
+		callFunPack("onBeat", [beat]);
 		hud.onBeat(beat);
-		FlxG.sound.play(Paths.sound("metronome"));
 		// let 'em do their thing!
 		doDancersDance(beat);
+	}
+
+	public override function onStep(step:Int):Void {
+		callFunPack("onStep", [step]);
+	}
+
+	public override function onBar(bar:Int):Void {
+		for (contextNames in ["onBar", "onSection", "onMeasure"])
+			callFunPack(contextNames, [bar]);
 	}
 
 	function doDancersDance(beat:Int):Void {
@@ -343,7 +367,7 @@ class PlayState extends FNFState {
 			if (character == null)
 				continue;
 			// 0 = IDLE | 1 = SING | 2 = MISS
-			if (character.animationState == 0 && beat % character.danceInterval == 0)
+			if (character.animationContext == 0 && beat % character.danceInterval == 0)
 				character.dance();
 		}
 	}
@@ -398,7 +422,7 @@ class PlayState extends FNFState {
 			case ChangeCharacter(who, toCharacter):
 				getCharacterFromID(who).loadCharacter(toCharacter);
 			case PlaySound(soundName, volume):
-				FlxG.sound.play(AssetHelper.getSound('audio/sfx/${soundName}'), volume);
+				FlxG.sound.play(AssetHelper.getAsset('audio/sfx/${soundName}'), volume);
 			case Scripted(name, script, args):
 			// init hscript here.
 			default:

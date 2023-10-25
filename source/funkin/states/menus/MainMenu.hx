@@ -37,7 +37,7 @@ class MainMenu extends BaseMenuState {
 		super.create();
 
 		DiscordRPC.updatePresence("In the Menus", "MAIN MENU");
-		Tools.checkMenuMusic("foreverMenu", false, 102.0);
+		Tools.checkMenuMusic(null, false, 102.0);
 
 		camLead = new FlxObject(0, 0, 1, 1);
 		camLead.moves = false;

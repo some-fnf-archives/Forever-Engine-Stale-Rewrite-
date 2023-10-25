@@ -1,5 +1,6 @@
 spritesheet: "characters/dearests/DADDY_DEAREST"
 flip: {x: false, y: false}
+icon: "dad"
 
 dancingSteps: ["idle"]
 singingSteps: ["singLEFT", "singDOWN", "singUP", "singRIGHT"]

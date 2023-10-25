@@ -6,12 +6,11 @@ typedef ForeverMod = {
 	var description:String;
 	var authors:Array<ModCredit>;
 	var definingColor:Null<FlxColor>;
-
 	var modVersion:String;
-	var apiVersion:String;
 
-	var license:String;
-
+	@:optional var apiVersion:String;
+	@:optional var license:String;
+	@:optional var resetGame:Bool;
 	@:optional var folder:String;
 }
 
@@ -52,17 +51,17 @@ class Mods {
 		var rawModsList:Array<String> = Tools.listFolders('${MODS_FOLDER}');
 
 		for (folder in rawModsList) {
-			if (!sys.FileSystem.exists('${MODS_FOLDER}/${folder}/mod.json')) {
-				trace('[${MODS_FOLDER}/${folder}]: "mod.json" file does not exist.');
+			if (!sys.FileSystem.exists('${MODS_FOLDER}/${folder}/mod.yaml')) {
+				trace('[${MODS_FOLDER}/${folder}]: "mod.yaml" file does not exist.');
 				continue;
 			}
 
-			final modJson:ForeverMod = cast tjson.TJSON.parse(sys.io.File.getContent('${MODS_FOLDER}/${folder}/mod.json'));
+			final modData:ForeverMod = cast yaml.Yaml.parse(sys.io.File.getContent('${MODS_FOLDER}/${folder}/mod.yaml'), yaml.Parser.options().useObjects());
 
 			// did you know: you can make functions inside functions -Crow
 			inline function makeModCredits():Array<ModCredit> {
 				var credits:Array<ModCredit> = [];
-				for (i in cast(modJson.authors, Array<Dynamic>)) {
+				for (i in cast(modData.authors, Array<Dynamic>)) {
 					if (i == null)
 						continue;
 					credits.push(ModCredit(i.name ?? "???", i.icon ?? "face", i.role ?? "(No Role Given).", i.description ?? "(No Description Given)."));
@@ -71,14 +70,15 @@ class Mods {
 			};
 
 			final mod:ForeverMod = {
-				title: modJson.title ?? folder,
+				title: modData.title ?? folder,
 				folder: folder,
-				description: modJson.description != null ? modJson.description : "(No Description Given.)",
+				description: modData.description != null ? modData.description : "(No Description Given.)",
 				authors: makeModCredits() ?? [ModCredit("???", "face", "(No Role Given.)", "(No Description Given.)")],
-				definingColor: modJson.definingColor ?? FlxColor.GRAY,
-				modVersion: modJson.modVersion ?? "0.0.1",
-				apiVersion: modJson.apiVersion ?? API_VERSION,
-				license: modJson.license ?? "No license"
+				definingColor: modData.definingColor ?? FlxColor.GRAY,
+				modVersion: modData.modVersion ?? "0.0.1",
+				apiVersion: modData.apiVersion ?? API_VERSION,
+				resetGame: modData.resetGame ?? false,
+				license: modData.license ?? "No license"
 			};
 
 			if (mods.contains(mod))
@@ -96,6 +96,7 @@ class Mods {
 		}
 
 		var modStrings:Array<String> = mods.map(function(coolMod:ForeverMod):String return coolMod.title);
+		var willReset:Bool = false;
 
 		if (modStrings.contains(mod)) {
 			var folder:String = "";
@@ -108,6 +109,28 @@ class Mods {
 			});
 			AssetHelper.searchLevel = folder;
 		}
+	}
+
+	public static function resetGame():Void {
+		funkin.states.menus.TitleScreen.seenIntro = false;
+
+		if (FlxG.sound.music != null && FlxG.sound.music.playing)
+			FlxG.sound.music.fadeOut(0.5, 0.0);
+
+		for (camera in FlxG.cameras.list)
+			camera.fade(0xFF000000, 0.55, FlxG.resetGame);
+	}
+
+	public static function loadInitScript():Void {
+		#if SCRIPTING
+		if (sys.FileSystem.exists(AssetHelper.getPath('init', HSCRIPT))) {
+			var initScript:HScript = new HScript(AssetHelper.getAsset('init', HSCRIPT));
+			initScript.call("init", []);
+			initScript.destroy();
+		}
+		else
+			Tools.defaultMenuMusic = "foreverMenu";
+		#end
 	}
 }
 #end

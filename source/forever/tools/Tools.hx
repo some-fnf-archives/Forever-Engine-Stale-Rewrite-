@@ -15,7 +15,8 @@ using StringTools;
 class Tools {
 	public static final NOTE_DIRECTIONS:Array<String> = ["left", "down", "up", "right"];
 	public static final NOTE_COLORS:Array<String> = ["purple", "blue", "green", "red"];
-	private static var curMenuMusic:String = "";
+
+	public static var defaultMenuMusic:String = "foreverMenu";
 
 	public static inline function fileExists(file:String, ?type:openfl.utils.AssetType = BINARY):Bool {
 		return #if sys sys.FileSystem.exists(file) #else OpenFLAssets.exists(file, type) #end;
@@ -76,7 +77,7 @@ class Tools {
 	 * @param path 				the path to get folders from
 	 * @return Array<String>
 	**/
-	public static function listFolders(path:String):Array<String> {
+	public static inline function listFolders(path:String):Array<String> {
 		var assetsLibrary:Array<String> = [];
 		#if sys
 		assetsLibrary = sys.FileSystem.readDirectory(path);
@@ -85,11 +86,9 @@ class Tools {
 			var daFolder:String = folder.replace('${path}/', '');
 			if (daFolder.contains('/'))
 				daFolder = daFolder.replace(daFolder.substring(daFolder.indexOf('/'), daFolder.length), ''); // fancy
-
 			if (!daFolder.startsWith('.') && !assetsLibrary.contains(daFolder))
 				assetsLibrary.push(daFolder);
 		}
-
 		assetsLibrary.sort(function(a:String, b:String):Int {
 			a = a.toUpperCase();
 			b = b.toUpperCase();
@@ -97,8 +96,6 @@ class Tools {
 			return (a < b ? -1 : a > b ? 1 : 0);
 		});
 		#end
-
-		trace(assetsLibrary);
 		return assetsLibrary;
 	}
 
@@ -134,15 +131,17 @@ class Tools {
 	 * @param doFadeIn 		Quite self explanatory right?
 	 * @param bpm 			The BPM of the music (needed for beat events and such).
 	**/
-	public static function checkMenuMusic(music:String, doFadeIn:Bool = false, bpm:Float = 102.0):Void {
-		if (FlxG.sound.music == null || (FlxG.sound.music != null && !FlxG.sound.music.playing) || curMenuMusic != music) {
-			FlxG.sound.playMusic(AssetHelper.getAsset("audio/bgm/" + music, SOUND), doFadeIn ? 0.0 : 0.7);
-			if (doFadeIn)
-				FlxG.sound.music.fadeIn(4, 0, 0.7);
+	public static function checkMenuMusic(music:String = null, ?doFadeIn:Bool = false, bpm:Float = 102.0):Void {
+		if (FlxG.sound.music != null && FlxG.sound.music.playing)
+			return;
 
-			Conductor.bpm = bpm;
-			curMenuMusic = music;
-		}
+		if (music == null)
+			music = defaultMenuMusic;
+
+		FlxG.sound.playMusic(AssetHelper.getAsset('audio/bgm/${music}', SOUND), doFadeIn ? 0.0 : 0.7);
+		if (doFadeIn)
+			FlxG.sound.music.fadeIn(4, 0, 0.7);
+		Conductor.bpm = bpm;
 	}
 
 	/**

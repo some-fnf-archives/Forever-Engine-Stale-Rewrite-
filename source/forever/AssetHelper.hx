@@ -61,15 +61,10 @@ class AssetHelper {
 	 * @return String
 	**/
 	public static function getPath(?asset:String, ?type:ForeverAsset):String {
-		var gottenPath:String = type.getExtension('assets/funkin/${asset}');
-		#if MODS
-		if (searchLevel != null && searchLevel != "") {
-			final modPath:String = type.getExtension('${Mods.MODS_FOLDER}/${searchLevel}/${asset}');
-			if (Tools.fileExists(modPath))
-				gottenPath = modPath;
-		}
-		#end
-		return gottenPath;
+		final gottenPath:String = type.getExtension('assets/funkin/${asset}');
+		final modPath:String = type.getExtension('${Mods.MODS_FOLDER}/${searchLevel}/${asset}');
+		return #if MODS Tools.fileExists(modPath) ? modPath : #end
+		gottenPath;
 	}
 
 	/**
@@ -88,12 +83,25 @@ class AssetHelper {
 		var gottenAsset:String = getPath(asset, type);
 		return switch type {
 			case IMAGE: getGraphic(gottenAsset);
-			case FONT: return getPath('fonts/${asset}', FONT);
+			case FONT: getPath('fonts/${asset}', FONT);
+			case SOUND: getSound(gottenAsset);
 			case ATLAS:
 				var txtPath:String = getPath('${gottenAsset}.txt', TEXT);
 				if (Tools.fileExists(txtPath, TEXT)) return getAsset(asset, ATLAS_PACKER); else return getAsset(asset, ATLAS_SPARROW);
-			case ATLAS_SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getPath(asset + ".xml"));
-			case ATLAS_PACKER: FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getPath(asset + ".txt"));
+			case ATLAS_SPARROW:
+				final atlas = FlxAtlasFrames.fromSparrow(getGraphic(getPath(asset, IMAGE)), parseAsset(asset, XML));
+				if (atlas.parent != null) {
+					atlas.parent.persist = true;
+					atlas.parent.destroyOnNoUse = false;
+				}
+				return atlas;
+			case ATLAS_PACKER:
+				final atlas = FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), parseAsset('${asset}.txt', TEXT));
+				if (atlas.parent != null) {
+					atlas.parent.persist = true;
+					atlas.parent.destroyOnNoUse = false;
+				}
+				return atlas;
 			default: gottenAsset;
 		}
 	}
@@ -111,6 +119,7 @@ class AssetHelper {
 				var json:String = Tools.getText(gottenAsset).trim();
 				json = json.substr(0, json.lastIndexOf("}") + 1);
 				tjson.TJSON.parse(json);
+			case XML, TEXT: Tools.getText(gottenAsset).trim();
 			case YAML: yaml.Yaml.parse(Tools.getText(gottenAsset).trim(), yaml.Parser.options().useObjects());
 			default: gottenAsset;
 		}
@@ -131,6 +140,8 @@ class AssetHelper {
 			var bd:BitmapData = #if sys OptimizedBitmapData.fromFile(file, vram) #else OpenFLAssets.getBitmapData(file) #end;
 			if (bd != null) {
 				final graphic:FlxGraphic = FlxGraphic.fromBitmapData(bd, false, file);
+				graphic.persist = true;
+				graphic.destroyOnNoUse = false;
 				loadedGraphics.set(keyName, graphic);
 				currentUsedAssets.push(keyName);
 				return graphic;
@@ -153,9 +164,7 @@ class AssetHelper {
 			// prevent remapping
 			if (loadedSounds.get(keyName) != null)
 				return loadedSounds.get(keyName);
-
-			final snd:String = getAsset(file, SOUND);
-			final sound:Sound = #if sys Sound.fromFile(snd) #else OpenFLAssets.getSound(snd) #end;
+			final sound:Sound = #if sys Sound.fromAudioBuffer(lime.media.AudioBuffer.fromFile(file)) #else OpenFLAssets.getSound(file) #end;
 			loadedSounds.set(keyName, sound);
 			currentUsedAssets.push(keyName);
 			return sound;
@@ -174,14 +183,15 @@ class AssetHelper {
 	}
 
 	@:dox(hide) static function clearCachedGraphics(force:Bool = false):Void {
-		var graphicCounter:Int = 0;
-
 		for (keyGraphic in loadedGraphics.keys()) {
 			if (excludedGraphics.get(keyGraphic) != null)
 				continue;
 
 			if (!currentUsedAssets.contains(keyGraphic) || force) {
 				var actualGraphic:FlxGraphic = loadedGraphics.get(keyGraphic);
+				actualGraphic.persist = false;
+				actualGraphic.destroyOnNoUse = true;
+				actualGraphic.dump();
 
 				if (FlxG.bitmap.checkCache(keyGraphic))
 					FlxG.bitmap.remove(actualGraphic);
@@ -191,16 +201,16 @@ class AssetHelper {
 
 				actualGraphic.destroy();
 				loadedGraphics.remove(keyGraphic);
-				graphicCounter++;
 			}
 		}
+
+		FlxG.bitmap.dumpCache();
+		FlxG.bitmap.clearCache();
 
 		// trace('cleared ${graphicCounter} graphics from cache.');
 	}
 
 	@:dox(hide) static function clearCachedSounds(force:Bool = false):Void {
-		var soundCounter:Int = 0;
-
 		for (keySound in loadedSounds.keys()) {
 			if (excludedSounds.get(keySound) != null)
 				continue;
@@ -213,11 +223,16 @@ class AssetHelper {
 					OpenFLAssets.cache.removeSound(keySound);
 
 				loadedSounds.remove(keySound);
-				soundCounter++;
 			}
 		}
 
-		// trace('cleared ${soundCounter} sounds from cache.');
+		FlxG.sound.list.forEachAlive((sound:flixel.sound.FlxSound) -> {
+			FlxG.sound.list.remove(sound, true);
+			sound.stop();
+			sound.kill();
+			sound.destroy();
+		});
+		FlxG.sound.list.clear();
 	}
 
 	private static function _clearCacheMajor():Void {
@@ -249,19 +264,8 @@ enum abstract ForeverAsset(String) to String {
 	var ATLAS_SPARROW = "atlas-sparrow";
 	var ATLAS_PACKER = "atlas-packer";
 
-	public function getExtension(path:String):String {
-		var extensionLoader:Array<String> = switch (this) {
-			case IMAGE: [".png", ".jpg"];
-			case SOUND: [".ogg", ".wav"];
-			case VIDEO: [".mp4"];
-			case XML: [".xml"];
-			case JSON: [".json"];
-			case TEXT: [".txt", ".ini", ".cfg"];
-			case YAML: [".yaml", ".yml"];
-			case FONT: [".ttf", ".otf"];
-			case HSCRIPT: [".hx", ".hxs", ".hxc", ".hsc", ".hscript", ".hxclass"];
-			default: null;
-		}
+	public inline function getExtension(path:String):String {
+		var extensionLoader:Array<String> = grabExtensions(this);
 
 		if (extensionLoader != null && Path.extension(path) == "") {
 			if (extensionLoader.length > 1) {
@@ -278,6 +282,21 @@ enum abstract ForeverAsset(String) to String {
 		}
 
 		return path;
+	}
+
+	public static inline function grabExtensions(type:String):Array<String> {
+		return switch type {
+			case IMAGE: [".png", ".jpg"];
+			case SOUND: [".ogg", ".wav"];
+			case VIDEO: [".mp4"];
+			case XML: [".xml"];
+			case JSON: [".json"];
+			case TEXT: [".txt", ".ini", ".cfg"];
+			case YAML: [".yaml", ".yml"];
+			case FONT: [".ttf", ".otf"];
+			case HSCRIPT: [".hx", ".hxs", ".hxc", ".hsc", ".hscript", ".hxclass"];
+			default: null;
+		}
 	}
 
 	public function toOpenFL():Dynamic {
