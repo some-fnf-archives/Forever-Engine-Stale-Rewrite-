@@ -3,6 +3,11 @@ package forever.macros;
 #if macro
 import haxe.macro.*;
 import haxe.macro.Expr;
+import haxe.macro.Context;
+
+using haxe.macro.MacroStringTools;
+
+import Sys;
 #end
 
 using StringTools;
@@ -29,14 +34,35 @@ class ConfigHelper {
 	public static function buildSaveMacro():Array<Field> {
 		var fields = Context.getBuildFields();
 		var savedFields = [];
+		var map:Array<Expr> = [];
 
 		for (field in fields) {
 			switch (field.kind) {
 				case FVar(type, expr): // this doesnt find functions btw
-					if (!field.name.startsWith("_")) // prevents saving internal or final variables
-						savedFields.push(field.name);
+					var name = field.name;
+					if (!name.startsWith("_")) { // prevents saving internal or final variables
+						if (!savedFields.contains(name)) {
+							savedFields.push(name);
+							var doc = field.doc ?? "";
+							var arr = doc.trim().replace("\r\n", "\n").split("\n");
+							for (i => text in arr) {
+								text = text.trim();
+								if (text.startsWith("*"))
+									text = text.substr(1);
+								arr[i] = text.trim();
+							}
+
+							map.push(macro $v{name} => $v{arr.join("\n")});
+						}
+					}
 				default:
 					continue;
+			}
+
+			for (meta in field.meta) {
+				if (meta.name == ":unused") {
+					Sys.println('[WARNING] Setting "${field.name}" is unused in the code');
+				}
 			}
 		}
 
@@ -50,11 +76,20 @@ class ConfigHelper {
 							arr.push(macro {
 								if (flixel.FlxG.save.data.$name != null)
 									$i{name} = flixel.FlxG.save.data.$name;
-								forever.Settings.update();
 							});
 						}
+						arr.push(macro {
+							forever.Settings.update();
+						});
 						fun.expr = macro $b{arr};
 					}
+
+					// i think it generates a function so it'd make sense why you need a body for it
+					// i have no clue why i cant do  (macro forever.Settings.update(); )
+					// i hate haxe, i might ask, or worst case i just generate it as a field
+					// no wait imma do that im stupid
+					// okay!
+					// not doing shit rn because I'm busy solving some stuff at home but i'll be back soon -crow lol
 
 					if (field.name == "flush") {
 						var arr = [(macro flixel.FlxG.save.bind("Settings", forever.macros.ConfigHelper.savePath))];
@@ -62,12 +97,14 @@ class ConfigHelper {
 						for (name in savedFields) {
 							arr.push(macro {
 								flixel.FlxG.save.data.$name = $i{name};
-								flixel.FlxG.save.flush();
-
-								forever.Settings.masterVolume = Std.int(flixel.FlxG.sound.volume * 100.0);
-								forever.Settings.update();
 							});
 						}
+						arr.push(macro {
+							flixel.FlxG.save.flush();
+
+							forever.Settings.masterVolume = Std.int(flixel.FlxG.sound.volume * 100.0);
+							forever.Settings.update();
+						});
 						fun.expr = macro $b{arr};
 					}
 
@@ -75,6 +112,15 @@ class ConfigHelper {
 					continue;
 			}
 		}
+
+		fields.push({
+			pos: Context.currentPos(),
+			name: "descriptions",
+			meta: null,
+			kind: FieldType.FVar(macro :Map<String, String>, macro $a{map}),
+			doc: null,
+			access: [Access.APublic, Access.AStatic]
+		});
 
 		return fields;
 	}

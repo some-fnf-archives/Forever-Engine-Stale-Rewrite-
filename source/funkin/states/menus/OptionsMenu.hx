@@ -27,27 +27,28 @@ class OptionsMenu extends BaseMenuState {
 			new ForeverOption("Exit", CATEGORY),
 		],
 		"general" => [
-			new ForeverOption("Auto Pause", "Check this if you want the game not to pause when unfocusing the window.", "autoPause", CHECKMARK),
-			new ForeverOption("Anti-aliasing", "Defines if the antialiasing filter affects all graphics.", "globalAntialias", CHECKMARK),
-			new ForeverOption("Framerate Cap", "Defines the limit for your frames per second.", "framerateCap", NUMBER(30, 240, 1)),
-			new ForeverOption("Filter", "Applies a Screen Filter to your game, to view the game as a colorblind person would..", "screenFilter",
-				CHOICE(["none", "deuteranopia", "protanopia", "tritanopia"])),
+			new ForeverOption("Auto Pause", "autoPause", CHECKMARK),
+			new ForeverOption("Anti-aliasing", "globalAntialias", CHECKMARK),
+			new ForeverOption("VRAM Sprites", "vramSprites", CHECKMARK),
+			new ForeverOption("Framerate Cap", "framerateCap", NUMBER(30, 240, 1)),
+			new ForeverOption("Filter", "screenFilter", CHOICE(["none", "deuteranopia", "protanopia", "tritanopia"])),
 		],
 		"gameplay" => [
-			new ForeverOption("Downscroll", "Check this if you want your notes to come from top to bottom.", "downScroll", CHECKMARK),
-			new ForeverOption("Centered Notefield", "Check this to center your notes to the screen, and hide the Enemy's notes.", "centerNotefield", CHECKMARK),
-			new ForeverOption("Ghost Tapping", "Check this if you want to be able to mash keys while there's no notes to hit.", "ghostTapping", CHECKMARK),
+			new ForeverOption("Downscroll", "downScroll", CHECKMARK),
+			new ForeverOption("Centered Notefield", "centerNotefield", CHECKMARK),
+			new ForeverOption("Ghost Tapping", "ghostTapping", CHECKMARK),
 		],
 		"visuals" => [
 			new ForeverOption("Note Skin >", CATEGORY),
-			new ForeverOption("Clip Style", "Where should the sustain clip to? either above the note (fnf) or below it (stepmania).", "sustainLayer", CHOICE(["stepmania", "fnf"])),
-			// new ForeverOption("Note Skin", "Style of your scrolling notes.", CHOICE(["default"])),
-			new ForeverOption("UI Skin", "Style of the healthbar, score popups, etc.", "uiStyle", CHOICE(["default"])),
+			new ForeverOption("Clip Style", "sustainLayer", CHOICE(["stepmania", "fnf"])),
+			// new ForeverOption("Note Skin", "noteSkin", CHOICE(["default"])),
+			new ForeverOption("UI Skin", "uiStyle", CHOICE(["default"])),
 		],
 	];
 
 	var curCateg:String = "main";
 	var categoriesAccessed:Array<String> = [];
+	var infoText:ForeverText;
 
 	override function create():Void {
 		super.create();
@@ -58,6 +59,12 @@ class OptionsMenu extends BaseMenuState {
 
 		add(optionsGroup = new FlxTypedGroup<Alphabet>());
 		add(iconGroup = new FlxTypedGroup<Dynamic>());
+
+		add(infoText = new ForeverText(0, 0, FlxG.width * 0.15, "...", 18));
+		infoText.textField.background = true;
+		infoText.textField.backgroundColor = 0xFF000000;
+		infoText.y = (FlxG.height - infoText.height) - 25;
+		infoText.alignment = CENTER;
 
 		var topBar:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 50, 0xFF000000);
 		topBar.alpha = 0.6;
@@ -154,6 +161,8 @@ class OptionsMenu extends BaseMenuState {
 			if (iconGroup.members[i] != null)
 				cast(iconGroup.members[i], FlxSprite).alpha = let.alpha;
 		}
+
+		infoText.text = optionsListed.get(curCateg)[curSel].description;
 	}
 
 	function reloadOptions():Void {
@@ -232,7 +241,7 @@ class OptionsMenu extends BaseMenuState {
 			reloadOptions();
 		}
 		else
-			trace('[OptionsMenu]: category of name "${name}" does not exist.');
+			trace('[OptionsMenu.reloadCategory()]: category of name "${name}" does not exist.');
 	}
 
 	function exitMenu():Void {

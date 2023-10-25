@@ -149,7 +149,7 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 			add(strum);
 
 			final crochet:Float = 60.0 / Conductor.bpm;
-			FlxTween.tween(strum, {alpha: 1.0}, (crochet) * 4.0, {
+			strum.tween({alpha: 1.0}, (crochet) * 4.0, {
 				ease: FlxEase.circOut,
 				startDelay: crochet * i
 			});

@@ -15,7 +15,7 @@ enum abstract NoteType(String) from String to String {
 	var NORMAL:String = null;
 	var MINE:String = "mine";
 
-	function getDefList():Array<String> {
+	inline function getDefList():Array<String> {
 		return [NORMAL, MINE];
 	}
 }

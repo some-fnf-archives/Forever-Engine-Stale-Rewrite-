@@ -1,5 +1,6 @@
 package forever;
 
+import external.OptimizedBitmapData;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import forever.core.Mods;
@@ -120,15 +121,14 @@ class AssetHelper {
 	 * @param file 				File to extract the graphic from
 	 * @param customKey 		What to save this file in the cache as
 	**/
-	public static function getGraphic(file:String, ?customKey:String = null):FlxGraphic {
+	public static function getGraphic(file:String, ?customKey:String = null, ?vram:Bool = true):FlxGraphic {
 		try {
 			final keyName:String = customKey != null ? customKey : file;
 			// prevent remapping
 			if (loadedGraphics.get(keyName) != null)
 				return loadedGraphics.get(keyName);
 
-			final bd:BitmapData = #if sys BitmapData.fromFile(file) #else OpenFLAssets.getBitmapData(file) #end;
-
+			var bd:BitmapData = #if sys OptimizedBitmapData.fromFile(file, vram) #else OpenFLAssets.getBitmapData(file) #end;
 			if (bd != null) {
 				final graphic:FlxGraphic = FlxGraphic.fromBitmapData(bd, false, file);
 				loadedGraphics.set(keyName, graphic);

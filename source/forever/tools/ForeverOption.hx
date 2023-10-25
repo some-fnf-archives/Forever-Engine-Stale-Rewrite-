@@ -46,8 +46,12 @@ class ForeverOption {
 	/**
 	 * Creates a new option reference struct.
 	**/
-	public function new(name:String, ?description:String = "", ?variable:String = "", type:OptionType = CHECKMARK):Void {
+	public function new(name:String, ?variable:String = "", ?description:String = null, type:OptionType = CHECKMARK):Void {
 		this.name = name;
+
+		if (description == null && Settings.descriptions.exists(variable))
+			description = Settings.descriptions.get(variable);
+
 		this.description = description;
 		this.variable = variable;
 		this.type = type;

@@ -10,6 +10,7 @@ import forever.display.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.components.Timings;
 import funkin.components.ui.HUD;
+import funkin.components.ui.ComboSprite;
 import funkin.objects.*;
 import funkin.objects.notes.Note;
 import funkin.stages.DadStage;
@@ -61,6 +62,8 @@ class PlayState extends FNFState {
 	public var inst:FlxSound;
 	public var vocals:FlxSound;
 
+	public var comboGroup:ComboGroup;
+
 	/**
 	 * Constructs the Gameplay State
 	 * @param songInfo 			Assigns a new song to the PlayState.
@@ -108,23 +111,32 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(hudCamera, false);
 		FlxG.cameras.add(altCamera, false);
 
-		// -- PREPARE BACKGROUNDS AND USER INTERFACE -- //
-		Conductor.bpm = Chart.current.data.initialBPM;
-
+		// -- PREPARE BACKGROUND -- //
 		add(stage = new DadStage());
+
+		// -- SETUP CAMERA -- //
+		add(camLead = new FlxObject(0, 0, 1, 1));
+		gameCamera.follow(camLead, LOCKON);
+
+		// -- PREPARE CHARACTERS -- //
+		add(player = new Character(stage.playerPosition.x, stage.playerPosition.y, Chart.current.data.playerChar, true));
+		add(enemy = new Character(stage.enemyPosition.x, stage.enemyPosition.y, Chart.current.data.enemyChar, false));
+		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, Chart.current.data.crowdChar, false));
+
+		// -- PREPARE USER INTERFACE -- //
+		add(comboGroup = new ComboGroup());
 		add(playField = new PlayField());
 		add(hud = new HUD());
 		hud.alpha = 0;
-
-		// -- SETUP CAMERA AFTER STAGE IS DONE -- //
-		add(camLead = new FlxObject(0, 0, 1, 1));
-		gameCamera.follow(camLead, LOCKON);
 
 		// update song display so it shows song name and difficulty (like intended)
 		hud.centerMark.text = '- ${currentSong.display} [${currentSong.difficulty.toUpperCase()}] -';
 		hud.centerMark.screenCenter(X);
 
 		playField.camera = hud.camera = hudCamera;
+
+		// -- PREPARE CHART AND NOTEFIELDS -- //
+		Conductor.bpm = Chart.current.data.initialBPM;
 
 		for (lane in playField.noteFields) {
 			lane.changeStrumSpeed(Chart.current.data.initialSpeed);
@@ -137,12 +149,14 @@ class PlayState extends FNFState {
 			strum.doNoteSplash(null, true);
 		}
 
-		// -- PREPARE CHARACTERS -- //
-		add(player = new Character(stage.playerPosition.x, stage.playerPosition.y, "bf", true));
-		add(enemy = new Character(stage.enemyPosition.x, stage.enemyPosition.y, "bf", false));
-		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, "bf", false));
-
 		DiscordRPC.updatePresence('Playing: ${currentSong.display}', '');
+
+		// cache combo and stuff
+		var comboCache:ComboSprite = new ComboSprite();
+		comboCache.loadSprite("sick-perfect");
+		comboCache.alpha = 0.0000001;
+		comboGroup.add(comboCache);
+		new FlxTimer().start(0.3, function(tmr:FlxTimer):Void comboCache.kill());
 
 		callFunPack("createPost", []);
 
@@ -217,6 +231,10 @@ class PlayState extends FNFState {
 			if (judgement.getParameters()[3] || note.splash)
 				note.parent.members[note.direction].doNoteSplash(note);
 
+			final chosenType:ComboPopType = FlxMath.roundDecimal(Timings.accuracy, 2) >= 100 ? PERFECT : NORMAL;
+			displayJudgement(judgement.getParameters()[0], chosenType);
+			displayCombo(Timings.combo, chosenType);
+
 			Timings.updateRank();
 			hud.updateScore();
 		}
@@ -229,27 +247,103 @@ class PlayState extends FNFState {
 		if (note != null)
 			note.parent.invalidateNote(note);
 
+		if (Timings.combo > 0)
+			Timings.combo = 0;
+		else
+			Timings.combo--;
 		Timings.misses += 1;
+
+		displayJudgement("miss", MISS);
+		displayCombo(Timings.combo, MISS);
+
 		Timings.updateRank();
 		hud.updateScore();
 	}
 
+	public function displayJudgement(name:String, type:ComboPopType = NORMAL):Void {
+		if (type == PERFECT && name == "sick")
+			name = "sick-perfect";
+
+		final placement:Float = FlxG.width * 0.35;
+
+		var judgement:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
+		judgement.loadSprite('${name}0');
+		judgement.screenCenter(Y);
+		judgement.x = placement - 40;
+		judgement.y += 60;
+
+		judgement.scale.set(0.7, 0.7);
+		judgement.updateHitbox();
+
+		judgement.acceleration.y = 550 * Conductor.rate * Conductor.rate;
+		judgement.velocity.y = -FlxG.random.int(140, 175) * Conductor.rate;
+		judgement.velocity.x = -FlxG.random.int(0, 10) * Conductor.rate;
+
+		final crochet:Float = (60.0 / Conductor.bpm);
+
+		judgement.tween({alpha: 0}, 0.4 / Conductor.rate, {
+			onComplete: function(twn:FlxTween):Void {
+				judgement.kill();
+				comboGroup.remove(judgement, true);
+			},
+			startDelay: crochet + (crochet * 4.0) * 0.05
+		});
+	}
+
+	public function displayCombo(combo:Int, type:ComboPopType = NORMAL):Void {
+		final prefix:String = type == PERFECT ? "gold" : "normal";
+		final placement:Float = FlxG.width * 0.35;
+		final comboArr:Array<String> = Std.string(combo).split("");
+		final xOff:Float = comboArr.length - 3;
+
+		for (i in 0...comboArr.length) {
+			var comboName:String = '${prefix}${comboArr[i]}0';
+			if (comboArr[i] == "-" && type == MISS)
+				comboName = '${prefix}minus';
+
+			var comboNumber:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
+			comboNumber.loadSprite(comboName);
+			comboNumber.screenCenter(Y);
+
+			if (type == MISS)
+				comboNumber.color = FlxColor.fromRGB(204, 66, 66);
+
+			comboNumber.x = placement + (43 * (i - xOff)) + 25;
+			comboNumber.y += 150;
+
+			comboNumber.scale.set(0.5, 0.5);
+			comboNumber.updateHitbox();
+
+			comboNumber.acceleration.y = FlxG.random.int(200, 300) * Conductor.rate * Conductor.rate;
+			comboNumber.velocity.y = -FlxG.random.int(140, 160) * Conductor.rate;
+			comboNumber.velocity.x = FlxG.random.int(-5, 5) * Conductor.rate;
+
+			final crochet:Float = (60.0 / Conductor.bpm);
+
+			comboNumber.tween({alpha: 0}, 0.5 / Conductor.rate, {
+				onComplete: function(twn:FlxTween):Void {
+					comboNumber.kill();
+					comboGroup.remove(comboNumber, true);
+				},
+				startDelay: (crochet * 4.0) * 0.02
+			});
+		}
+	}
+
 	public override function onBeat(beat:Int):Void {
-		// let 'em do their thing!
 		hud.onBeat(beat);
 		FlxG.sound.play(Paths.sound("metronome"));
+		// let 'em do their thing!
 		doDancersDance(beat);
 	}
 
 	function doDancersDance(beat:Int):Void {
 		var chars:Array<Character> = [player, enemy, crowd];
-
 		for (character in chars) {
 			if (character == null)
 				continue;
-
 			// 0 = IDLE | 1 = SING | 2 = MISS
-			if (character.animationState != 1 && beat % character.danceInterval == 0)
+			if (character.animationState == 0 && beat % character.danceInterval == 0)
 				character.dance();
 		}
 	}
@@ -259,21 +353,17 @@ class PlayState extends FNFState {
 			FlxG.sound.music.pause();
 		if (vocals != null && vocals.playing)
 			vocals.pause();
-
 		super.openSubState(SubState);
 	}
 
 	public override function closeSubState():Void {
 		persistentUpdate = true;
-
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.resume();
 		if (vocals != null && vocals.playing)
 			vocals.resume();
-
 		DiscordRPC.updatePresence('${currentSong.display}', '${hud.scoreBar.text}');
 		pauseTweens(false);
-
 		super.closeSubState();
 	}
 

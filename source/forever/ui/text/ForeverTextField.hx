@@ -58,7 +58,6 @@ class ForeverTextField extends FlxObject {
 	var _textF:TextField;
 	var _behindRenders:Array<TextField>;
 	var _textFormatStyle:TextFormat;
-	var _rendererSprite:FlxSprite;
 	var _canRender(get, never):Bool;
 
 	/**
@@ -86,12 +85,6 @@ class ForeverTextField extends FlxObject {
 		this.y = y;
 
 		_refreshWidth(true);
-
-		/*
-			_rendererSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.TRANSPARENT);
-			_rendererSprite.moves = false;
-		 */
-
 		_addTextToCam();
 	}
 
@@ -103,12 +96,6 @@ class ForeverTextField extends FlxObject {
 		this.alignment = align;
 		this.borderType = borderType;
 		this.borderColor = borderColor;
-	}
-
-	public override function update(elapsed:Float):Void {
-		super.update(elapsed);
-		if (_rendererSprite != null)
-			_rendererSprite.update(elapsed);
 	}
 
 	public override function destroy():Void {
@@ -307,26 +294,6 @@ class ForeverTextField extends FlxObject {
 			}
 		}
 	}
-
-	/*
-		@:dox(hide) @:noCompletion
-		function _queueDraw():Void {
-			if (_rendererSprite != null && _rendererSprite.graphic != null && _rendererSprite.visible) {
-				_rendererSprite.draw();
-
-				if (_canRender) {
-					@:privateAccess
-					_rendererSprite.graphic.bitmap.fillRect(_rendererSprite._flashRect, FlxColor.TRANSPARENT);
-
-					if (_behindRenders.length != 0)
-						for (i in _behindRenders)
-							_rendererSprite.graphic.bitmap.draw(i);
-					_rendererSprite.graphic.bitmap.draw(_textF);
-				}
-			}
-		}
-	 */
-	//
 
 	@:dox(hide) @:noCompletion
 	function _makeField():TextField {

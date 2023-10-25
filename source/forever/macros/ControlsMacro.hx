@@ -28,10 +28,10 @@ class ControlsMacro {
 					var id = "unknown";
 
 					var type = "unknown";
-					for(meta in field.meta) {
-						if([":justPressed", ":pressed", ":justReleased", ":released"].contains(meta.name)) {
+					for (meta in field.meta) {
+						if ([":justPressed", ":pressed", ":justReleased", ":released"].contains(meta.name)) {
 							type = meta.name;
-							switch(meta.params[0].expr) {
+							switch (meta.params[0].expr) {
 								case EConst(CIdent(_i)):
 									id = _i;
 								default:
@@ -39,7 +39,7 @@ class ControlsMacro {
 						}
 					}
 
-					if(id == "unknown" || type == "unknown") {
+					if (id == "unknown" || type == "unknown") {
 						trace("Controls: Unknown Meta");
 						fields.remove(field);
 						continue;

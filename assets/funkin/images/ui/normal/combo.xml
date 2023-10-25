@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created with Funkin Packer v0.1.2 https://neeeoo.github.io/funkin-packer/-->
+<TextureAtlas imagePath="combo.png" width="783" height="731">
+<!-- JUDGEMENTS -->
+	<SubTexture name="sick-perfect0" x="3" y="3" width="346" height="139" frameX="-11" frameY="-7" frameWidth="403" frameHeight="152"/>
+	<SubTexture name="sick0" x="3" y="145" width="346" height="139" frameX="-11" frameY="-7" frameWidth="403" frameHeight="152"/>
+	<SubTexture name="good0" x="3" y="287" width="260" height="108" frameX="-25" frameY="-8" frameWidth="317" frameHeight="126"/>
+	<SubTexture name="miss0" x="352" y="3" width="146" height="243" rotated="true" frameX="-17" frameY="-12" frameWidth="285" frameHeight="163"/>
+	<SubTexture name="shit0" x="3" y="398" width="240" height="142" frameX="-13" frameY="-10" frameWidth="285" frameHeight="163"/>
+	<SubTexture name="bad0" x="246" y="398" width="187" height="123" frameX="-24" frameY="-5" frameWidth="261" frameHeight="131"/>
+	<!-- TIMINGS -->
+	<SubTexture name="good-early0" x="380" y="249" width="53" height="107" rotated="true" frameX="-2" frameY="-86" frameWidth="166" frameHeight="141"/>
+	<SubTexture name="good-late0" x="685" y="459" width="47" height="103" rotated="true" frameX="-62" frameY="-92" frameWidth="166" frameHeight="141"/>
+	<SubTexture name="bad-early0" x="436" y="249" width="61" height="119" rotated="true" frameX="-0" frameY="-78" frameWidth="166" frameHeight="141"/>
+	<SubTexture name="bad-late0" x="436" y="371" width="59" height="112" rotated="true" frameX="-54" frameY="-82" frameWidth="166" frameHeight="141"/>
+	<SubTexture name="shit-early0" x="666" y="573" width="107" height="63" frameX="-2" frameY="-78" frameWidth="166" frameHeight="141"/>
+	<SubTexture name="shit-late0" x="552" y="667" width="104" height="56" frameX="-61" frameY="-84" frameWidth="166" frameHeight="141"/>
+	<!-- NORMAL COMBO -->
+	<SubTexture name="normalminus0" x="689" y="3" width="91" height="111" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal00" x="595" y="117" width="91" height="111" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal10" x="595" y="231" width="91" height="111" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal20" x="594" y="345" width="91" height="111" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal30" x="591" y="459" width="91" height="111" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal40" x="3" y="637" width="111" height="91" rotated="true" frameX="-4" frameY="-12" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal50" x="117" y="637" width="111" height="91" rotated="true" frameX="-5" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal60" x="231" y="637" width="111" height="91" rotated="true" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal70" x="345" y="618" width="111" height="91" rotated="true" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal80" x="459" y="573" width="90" height="111" frameX="-5" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="normal90" x="552" y="573" width="111" height="91" rotated="true" frameX="-5" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<!-- PERFECT COMBO -->
+	<SubTexture name="goldminus0" x="595" y="3" width="91" height="111" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold00" x="266" y="287" width="111" height="91" rotated="true" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold10" x="501" y="3" width="91" height="111" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold20" x="501" y="117" width="91" height="111" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold30" x="501" y="231" width="91" height="111" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold40" x="500" y="345" width="91" height="111" frameX="-4" frameY="-12" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold50" x="3" y="543" width="111" height="91" rotated="true" frameX="-5" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold60" x="117" y="543" width="111" height="91" rotated="true" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold70" x="231" y="543" width="111" height="91" rotated="true" frameX="-4" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold80" x="498" y="459" width="90" height="111" frameX="-5" frameY="-13" frameWidth="100" frameHeight="140"/>
+	<SubTexture name="gold90" x="345" y="524" width="111" height="91" rotated="true" frameX="-5" frameY="-13" frameWidth="100" frameHeight="140"/>
+</TextureAtlas>

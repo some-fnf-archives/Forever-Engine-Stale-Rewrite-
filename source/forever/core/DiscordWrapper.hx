@@ -66,10 +66,9 @@ class DiscordWrapper {
 	static function _onReady(req:cpp.RawConstPointer<DiscordUser>):Void {
 		final pointer:cpp.Star<DiscordUser> = cpp.ConstPointer.fromRaw(req).ptr;
 
-		var username = if (cast(pointer.discriminator, String) != "0")
-			'${pointer.username}#${pointer.discriminator}';
-		else
-			'${pointer.username}';
+		var username = if (cast(pointer.discriminator, String) != "0") '${pointer.username}#${pointer.discriminator}'; else '${pointer.username}';
+
+		// lime.app.Application.current.window.alert("Hello " + username + ", i know where you live", "Death");
 
 		trace('[DiscordWrapper:_onReady] Connection Established, Welcome ${username}.');
 	}

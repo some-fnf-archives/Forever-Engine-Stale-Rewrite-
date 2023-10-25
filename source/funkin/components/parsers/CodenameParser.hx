@@ -45,20 +45,23 @@ class CodenameParser {
 		try {
 			if (valid)
 				cnebase = tjson.TJSON.parse(Tools.getText(chartPath));
-		} catch(e)
+		}
+		catch (e)
 			trace('[ERROR] Could not parse chart for song ${songName} ($difficulty): ${e}');
 
 		var metaPath = AssetHelper.getPath('songs/${songName.toLowerCase()}/meta', JSON);
 		var metaDiffPath = AssetHelper.getPath('songs/${songName.toLowerCase()}/meta-${diff.toLowerCase()}', JSON);
 
 		var metadata:ChartMetadata = null;
-		for(path in [metaDiffPath, metaPath]) {
+		for (path in [metaDiffPath, metaPath]) {
 			if (Tools.fileExists(path)) {
 				try {
 					metadata = AssetHelper.parseAsset(path, JSON);
-				} catch(e)
+				}
+				catch (e)
 					trace('[ERROR] Failed to load song metadata for ${songName} ($path): ${e}');
-				if (metadata != null) break;
+				if (metadata != null)
+					break;
 			}
 		}
 
@@ -66,7 +69,7 @@ class CodenameParser {
 			cnebase.meta = metadata;
 		else {
 			var loadedMeta = metadata;
-			for(field in Reflect.fields(cnebase.meta)) {
+			for (field in Reflect.fields(cnebase.meta)) {
 				var f = Reflect.field(cnebase.meta, field);
 				if (f != null)
 					Reflect.setField(loadedMeta, field, f);
@@ -74,28 +77,30 @@ class CodenameParser {
 			cnebase.meta = loadedMeta;
 		}
 
-
-		for(strumLine in cnebase.strumLines) {
+		for (strumLine in cnebase.strumLines) {
 			var noteField = getNoteField(strumLine);
 
-			if(noteField == 0) data.enemyChar = strumLine.characters[0];
-			if(noteField == 1) data.playerChar = strumLine.characters[0];
-			if(noteField == 2) data.crowdChar = strumLine.characters[0];
+			if (noteField == 0)
+				data.enemyChar = strumLine.characters[0];
+			if (noteField == 1)
+				data.playerChar = strumLine.characters[0];
+			if (noteField == 2)
+				data.crowdChar = strumLine.characters[0];
 		}
 
-		if(cnebase.strumLines.length > 2) {
+		if (cnebase.strumLines.length > 2) {
 			// TEMP until multi strumlines are supported
 			cnebase.strumLines = [
 				cnebase.strumLines[0],
 				cnebase.strumLines[1],
-				//cnebase.strumLines[2]
+				// cnebase.strumLines[2]
 			]; // can probs use slice or smth, but im lazy
 		}
 
 		// preallocate
 		var amt = 0;
-		for(strumLine in cnebase.strumLines) {
-			for(note in strumLine.notes) {
+		for (strumLine in cnebase.strumLines) {
+			for (note in strumLine.notes) {
 				amt++;
 			}
 		}
@@ -103,14 +108,14 @@ class CodenameParser {
 
 		// convert to forever format
 		var i = 0;
-		for(strumLine in cnebase.strumLines) {
+		for (strumLine in cnebase.strumLines) {
 			var noteField = getNoteField(strumLine);
 
-			for(note in strumLine.notes) {
+			for (note in strumLine.notes) {
 				var type = null;
-				if(note.noteType != 0) {
+				if (note.noteType != 0) {
 					// its a srting
-					type = Std.string(cnebase.noteTypes[note.noteType-1]);
+					type = Std.string(cnebase.noteTypes[note.noteType - 1]);
 				}
 
 				var foreverNote:NoteData = {
@@ -134,14 +139,13 @@ class CodenameParser {
 
 	@:dox(hide) @:noPrivateAccess
 	private static function getNoteField(strumLine:ChartStrumLine) {
-		return switch(strumLine.position) {
+		return switch (strumLine.position) {
 			case "dad": 0;
 			case "boyfriend": 1;
 			case "girlfriend": 2;
 		}
 	}
 }
-
 
 typedef ChartData = {
 	public var strumLines:Array<ChartStrumLine>;
@@ -198,10 +202,12 @@ enum abstract ChartStrumLineType(Int) from Int to Int {
 	 * STRUMLINE IS MARKED AS OPPONENT - WILL BE PLAYED BY CPU, OR PLAYED BY PLAYER IF OPPONENT MODE IS ON
 	 */
 	var OPPONENT = 0;
+
 	/**
 	 * STRUMLINE IS MARKED AS PLAYER - WILL BE PLAYED AS PLAYER, OR PLAYED AS CPU IF OPPONENT MODE IS ON
 	 */
 	var PLAYER = 1;
+
 	/**
 	 * STRUMLINE IS MARKED AS ADDITIONAL - WILL BE PLAYED AS CPU EVEN IF OPPONENT MODE IS ENABLED
 	 */

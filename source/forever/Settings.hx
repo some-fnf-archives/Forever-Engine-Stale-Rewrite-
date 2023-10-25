@@ -13,19 +13,24 @@ package forever;
 **/
 @:build(forever.macros.ConfigHelper.buildSaveMacro())
 class Settings {
-	// -- GAMEPLAY -- //
+	// -- GENERAL -- //
 
 	/** Check this if you want the game not to pause when unfocusing the window. **/
 	public static var autoPause:Bool = false;
 
-	/** Your game's master volume **/
+	/** Check this if you want the game to use the gpu more often to render sprites (experimental). **/
+	public static var vramSprites:Bool = false;
+
+	/** Your game's master volume. **/
 	public static var masterVolume:Int = 100;
 
-	/** Your game's music volume **/
-	public static var musicVolume:Int = 100;
+	/** Your game's music volume. **/
+	@:unused public static var musicVolume:Int = 100;
 
-	/** Your game's sfx volume **/
-	public static var soundVolume:Int = 100;
+	/** Your game's sfx volume. **/
+	@:unused public static var soundVolume:Int = 100;
+
+	// -- GAMEPLAY -- //
 
 	/** Check this if you want your notes to come from top to bottom. **/
 	public static var downScroll:Bool = false;
@@ -36,26 +41,26 @@ class Settings {
 	/** Check this if you want to be able to mash keys while there's no notes to hit. **/
 	public static var ghostTapping:Bool = true;
 
-	/** Defines the limit for your frames per second **/
+	/** Defines the limit for your frames per second. **/
 	public static var framerateCap:Int = 60;
 
 	// -- VISUALS -- //
 
 	/** Style of the healthbar, score popups, etc. **/
-	public static var uiStyle:String = "default";
+	@:unused public static var uiStyle:String = "default";
 
 	/**
 	 * Style of your scrolling notes
 	 *
 	 * [NOTE]: only applies to non-special notes, including the Enemy's notes if they have a different style.
 	**/
-	public static var noteSkin:String = "default";
+	@:unused public static var noteSkin:String = "default";
 
 	/** Applies a Screen Filter to your game, to view the game as a colorblind person would. **/
-	public static var screenFilter:String = "none";
+	@:unused public static var screenFilter:String = "none";
 
-	/** Where should the sustain clip to? either above the note (fnf) or below it (stepmania) **/
-	public static var sustainLayer:String = "stepmania";
+	/** Where should the sustain clip to? either above the note (fnf) or below it (stepmania). **/
+	@:unused public static var sustainLayer:String = "stepmania";
 
 	/** Defines if the antialiasing filter affects all graphics. **/
 	public static var globalAntialias:Bool = true;

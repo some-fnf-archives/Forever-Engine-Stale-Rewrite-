@@ -106,8 +106,7 @@ class Character extends ForeverSprite {
 		}
 
 		#if SCRIPTING
-		if (Tools.fileExists(AssetHelper.getAsset('data/characters/${name}', HSCRIPT)))
-		{
+		if (Tools.fileExists(AssetHelper.getAsset('data/characters/${name}', HSCRIPT))) {
 			characterScript = new HScript(AssetHelper.getAsset('data/characters/${name}', HSCRIPT));
 			characterScript.set('char', this);
 			@:privateAccess characterScript.set('isPlayer', this._isPlayer);
@@ -133,13 +132,10 @@ class Character extends ForeverSprite {
 		if (animation.curAnim != null) {
 			if (animationState == SING)
 				holdTmr += elapsed;
-			else {
-				if (_isPlayer)
-					holdTmr = 0.0;
-			}
-
+			else if (_isPlayer)
+				holdTmr = 0.0;
 			var stepDt:Float = ((60.0 / Conductor.bpm) * 4.0);
-			if (holdTmr >= (stepDt * 1000.0) * singDuration * 0.0001) {
+			if (holdTmr >= ((stepDt * 1000.0) * Conductor.rate) * singDuration * 0.0001) {
 				dance();
 				holdTmr = 0.0;
 			}
@@ -161,7 +157,7 @@ class Character extends ForeverSprite {
 	public override function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
 		super.playAnim(name, forced, reversed, frame);
 
-		if (singingSteps.contains(name) && animationState != SING) //  && animationState != SING isnt needed 
+		if (singingSteps.contains(name) && animationState != SING) //  && animationState != SING isnt needed
 			animationState = SING;
 	}
 
@@ -172,7 +168,8 @@ class Character extends ForeverSprite {
 				var data = AssetHelper.parseAsset('data/characters/${name}', YAML);
 
 				if (data == null)
-					return trace('[Character:parseFromImpl()]: Character ${name} could not be parsed due to a inexistent file, Please provide a file called "${name}.yaml" in the "data/characters directory.');
+					return
+						trace('[Character:parseFromImpl()]: Character ${name} could not be parsed due to a inexistent file, Please provide a file called "${name}.yaml" in the "data/characters directory.');
 
 				// automatically searches for packer and sparrow
 				frames = AssetHelper.getAsset('images/${data.spritesheet}', ATLAS);
@@ -180,7 +177,7 @@ class Character extends ForeverSprite {
 				var animations:Array<Dynamic> = data.animations ?? [];
 				if (animations.length > 0) {
 					for (i in animations) {
-						addAtlasAnim(i.name, i.prefix, i.fps ?? 24, i.loop ?? false, cast (i.indices ?? []));
+						addAtlasAnim(i.name, i.prefix, i.fps ?? 24, i.loop ?? false, cast(i.indices ?? []));
 						if (i.x != null)
 							setOffset(i.x, i.y);
 					}
@@ -228,46 +225,46 @@ class Character extends ForeverSprite {
 				}
 
 			/*
-			case CODENAME:
-				// * written by: @Ne_Eo * //
+				case CODENAME:
+					// * written by: @Ne_Eo * //
 
-				var plainXML = AssetHelper.getAsset('data/characters/${name}', XML);
-				var charXML = Xml.parse(plainXML).firstElement();
-				if (charXML == null) throw new haxe.Exception("Missing \"character\" node in XML.");
-				var xml = new Access(charXML);
+					var plainXML = AssetHelper.getAsset('data/characters/${name}', XML);
+					var charXML = Xml.parse(plainXML).firstElement();
+					if (charXML == null) throw new haxe.Exception("Missing \"character\" node in XML.");
+					var xml = new Access(charXML);
 
-				// no flxanimate support sadly
+					// no flxanimate support sadly
 
-				var charImage = name;
+					var charImage = name;
 
-				//if (xml.x.exists("isPlayer")) playerOffsets = (xml.x.get("isPlayer") == "true");
-				//if (xml.x.exists("isGF")) isGF = (xml.x.get("isGF") == "true");
-				if (xml.x.exists("x")) positionDisplace.x = Std.parseFloat(xml.x.get("x"));
-				if (xml.x.exists("y")) positionDisplace.y = Std.parseFloat(xml.x.get("y"));
-				if (xml.x.exists("gameOverChar")) gameOverCharacter = xml.x.get("gameOverChar");
-				if (xml.x.exists("camx")) cameraDisplace.x = Std.parseFloat(xml.x.get("camx"));
-				if (xml.x.exists("camy")) cameraDisplace.y = Std.parseFloat(xml.x.get("camy"));
-				if (xml.x.exists("holdTime")) singDuration = Std.parseFloat(xml.x.get("holdTime")) ?? 4;
-				if (xml.x.exists("flipX")) flipX = (xml.x.get("flipX") == "true");
-				//if (xml.x.exists("icon")) icon = xml.x.get("icon");
-				//if (xml.x.exists("color")) iconColor = FlxColor.fromString(xml.x.get("color"));
-				if (xml.x.exists("scale")) {
-					var scale = CodenameTools.getDefault(Std.parseFloat(xml.x.get("scale")), 1);
-					this.scale.set(scale, scale);
-					updateHitbox();
-				}
-				if (xml.x.exists("antialiasing")) antialiasing = (xml.x.get("antialiasing") == "true");
-				if (xml.x.exists("sprite")) charImage = xml.x.get("sprite");
+					//if (xml.x.exists("isPlayer")) playerOffsets = (xml.x.get("isPlayer") == "true");
+					//if (xml.x.exists("isGF")) isGF = (xml.x.get("isGF") == "true");
+					if (xml.x.exists("x")) positionDisplace.x = Std.parseFloat(xml.x.get("x"));
+					if (xml.x.exists("y")) positionDisplace.y = Std.parseFloat(xml.x.get("y"));
+					if (xml.x.exists("gameOverChar")) gameOverCharacter = xml.x.get("gameOverChar");
+					if (xml.x.exists("camx")) cameraDisplace.x = Std.parseFloat(xml.x.get("camx"));
+					if (xml.x.exists("camy")) cameraDisplace.y = Std.parseFloat(xml.x.get("camy"));
+					if (xml.x.exists("holdTime")) singDuration = Std.parseFloat(xml.x.get("holdTime")) ?? 4;
+					if (xml.x.exists("flipX")) flipX = (xml.x.get("flipX") == "true");
+					//if (xml.x.exists("icon")) icon = xml.x.get("icon");
+					//if (xml.x.exists("color")) iconColor = FlxColor.fromString(xml.x.get("color"));
+					if (xml.x.exists("scale")) {
+						var scale = CodenameTools.getDefault(Std.parseFloat(xml.x.get("scale")), 1);
+						this.scale.set(scale, scale);
+						updateHitbox();
+					}
+					if (xml.x.exists("antialiasing")) antialiasing = (xml.x.get("antialiasing") == "true");
+					if (xml.x.exists("sprite")) charImage = xml.x.get("sprite");
 
-				frames = AssetHelper.getAsset('images/characters/${charImage}', ATLAS);
+					frames = AssetHelper.getAsset('images/characters/${charImage}', ATLAS);
 
-				animation.destroyAnimations();
-				animDatas.clear();
-				for (anim in xml.nodes.anim)
-				{
-					CodenameTools.addXMLAnimation(this, anim);
-				}
-			*/
+					animation.destroyAnimations();
+					animDatas.clear();
+					for (anim in xml.nodes.anim)
+					{
+						CodenameTools.addXMLAnimation(this, anim);
+					}
+			 */
 
 			case CROW:
 				frames = AssetHelper.getAsset('images/characters/${name}/${name}', ATLAS);

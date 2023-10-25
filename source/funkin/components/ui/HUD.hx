@@ -18,8 +18,6 @@ class HUD extends FlxSpriteGroup {
 	public function new():Void {
 		super();
 
-		// this.moves = false;
-
 		final hbY:Float = Settings.downScroll ? FlxG.height * 0.1 : FlxG.height * 0.875;
 
 		add(healthBar = new HealthBar(0, hbY));
@@ -63,6 +61,9 @@ class HUD extends FlxSpriteGroup {
 	public var divider:String = " • ";
 
 	public function updateScore():Void {
+		if (scoreBar == null)
+			return;
+
 		final game:PlayState = PlayState.current;
 
 		var tempScore:String = 'Score: ${Timings.score}' //
@@ -74,7 +75,6 @@ class HUD extends FlxSpriteGroup {
 			+ 'Rank: ${Timings.rank}';
 
 		scoreBar.text = '< ${tempScore} >\n';
-
 		scoreBar.screenCenter(X);
 
 		DiscordRPC.updatePresence('Playing: ${game.currentSong.display}', '${scoreBar.text}');

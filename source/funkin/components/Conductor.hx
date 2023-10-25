@@ -11,9 +11,11 @@ class Conductor {
 
 	public static var bpm:Float = 100.0;
 	public static var time:Float = 0.0;
+	public static var rate:Float = 1.0;
 
 	/** How many beats there are in a step. **/
 	public static var stepsPerBeat:Int = 4;
+
 	/** How many beats there are in a measure/bar. **/
 	public static var beatsPerBar:Int = 4;
 
