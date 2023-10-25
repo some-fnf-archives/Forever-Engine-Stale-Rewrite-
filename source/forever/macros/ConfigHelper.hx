@@ -84,13 +84,6 @@ class ConfigHelper {
 						fun.expr = macro $b{arr};
 					}
 
-					// i think it generates a function so it'd make sense why you need a body for it
-					// i have no clue why i cant do  (macro forever.Settings.update(); )
-					// i hate haxe, i might ask, or worst case i just generate it as a field
-					// no wait imma do that im stupid
-					// okay!
-					// not doing shit rn because I'm busy solving some stuff at home but i'll be back soon -crow lol
-
 					if (field.name == "flush") {
 						var arr = [(macro flixel.FlxG.save.bind("Settings", forever.macros.ConfigHelper.savePath))];
 						// i have 0 clue if this even works, it did work first try
