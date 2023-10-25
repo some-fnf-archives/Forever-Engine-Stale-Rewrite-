@@ -1,9 +1,7 @@
 package funkin.objects;
 
-#if SCRIPTING
-import forever.core.HScript;
-#end
 import flixel.math.FlxPoint;
+import forever.core.HScript;
 import forever.display.ForeverSprite;
 import forever.tools.CodenameTools;
 import haxe.xml.Access;
@@ -109,14 +107,12 @@ class Character extends ForeverSprite {
 					trace('[Character:loadCharacter]: Failed to parse "${implementation}" type character of name "${name}"\n\nError: ${e.details()}');
 		}
 
-		#if SCRIPTING
 		if (Tools.fileExists(AssetHelper.getAsset('data/characters/${name}', HSCRIPT))) {
 			characterScript = new HScript(AssetHelper.getAsset('data/characters/${name}', HSCRIPT));
 			characterScript.set('char', this);
 			@:privateAccess characterScript.set('isPlayer', this._isPlayer);
 			characterScript.call('generate', []);
 		}
-		#end
 
 		if (_isPlayer)
 			flipX = !flipX;
@@ -138,8 +134,8 @@ class Character extends ForeverSprite {
 				holdTmr += elapsed;
 			else if (_isPlayer)
 				holdTmr = 0.0;
-			final stepDt:Float = (60.0 / Conductor.bpm) * 4.0;
-			if (holdTmr >= ((stepDt * 1000.0) * Conductor.rate) * singDuration * 0.001) {
+			final stepDt:Float =  ((60.0 / Conductor.bpm) * 4.0);
+			if (holdTmr >= ((stepDt * 1000.0) * Conductor.rate) * singDuration * 0.0001) {
 				dance();
 				holdTmr = 0.0;
 			}
@@ -160,9 +156,16 @@ class Character extends ForeverSprite {
 	}
 
 	public override function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
-		super.playAnim(name, forced, reversed, frame);
+		if (characterScript != null)
+			characterScript.call("playAnim", [name, forced, reversed, frame]);
+
 		if (singingSteps.contains(name) && animationContext != SING) //  && animationContext != SING isnt needed
 			animationContext = SING;
+
+		super.playAnim(name, forced, reversed, frame);
+
+		if (characterScript != null)
+			characterScript.call("postPlayAnim", [name, forced, reversed, frame]);
 	}
 
 	@:noPrivateAccess

@@ -113,6 +113,7 @@ class Mods {
 
 	public static function resetGame():Void {
 		funkin.states.menus.TitleScreen.seenIntro = false;
+		forever.Settings.flush();
 
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.fadeOut(0.5, 0.0);
@@ -122,7 +123,6 @@ class Mods {
 	}
 
 	public static function loadInitScript():Void {
-		#if SCRIPTING
 		if (sys.FileSystem.exists(AssetHelper.getPath('init', HSCRIPT))) {
 			var initScript:HScript = new HScript(AssetHelper.getAsset('init', HSCRIPT));
 			initScript.call("init", []);
@@ -130,7 +130,6 @@ class Mods {
 		}
 		else
 			Tools.defaultMenuMusic = "foreverMenu";
-		#end
 	}
 }
 #end

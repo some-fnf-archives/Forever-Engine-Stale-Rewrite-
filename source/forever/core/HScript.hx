@@ -3,6 +3,7 @@ package forever.core;
 import crowplexus.iris.Iris;
 import forever.tools.Paths.LocalPaths;
 
+#if SCRIPTING
 class HScript extends Iris {
 	var localPath:String = null;
 
@@ -30,3 +31,24 @@ class HScript extends Iris {
 			set("Paths", Paths);
 	}
 }
+#else
+class HScript { // stub
+	var localPath:String = null;
+
+	public function new(file:String, ?localPath:String = null):Void {}
+
+	public function preset():Void {}
+
+	public function get(field:String):Dynamic {}
+
+	public function set(name:String, value:Dynamic, allowOverride:Bool = false):Void {}
+
+	public function call(fun:String, ?args:Array<Dynamic>):Void {}
+
+	public function exists(field:String):Bool {}
+
+	public function destroy():Void {}
+
+	public static function destroyAll():Void {}
+}
+#end

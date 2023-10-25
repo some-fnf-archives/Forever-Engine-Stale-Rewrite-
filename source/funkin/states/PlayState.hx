@@ -1,19 +1,20 @@
 package funkin.states;
 
-import flixel.FlxSubState;
 import flixel.FlxCamera;
 import flixel.FlxObject;
+import flixel.FlxSubState;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import flixel.util.FlxTimer;
 import forever.display.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.components.Timings;
-import funkin.components.ui.HUD;
 import funkin.components.ui.ComboSprite;
+import funkin.components.ui.HUD;
 import funkin.objects.*;
 import funkin.objects.notes.Note;
-import funkin.stages.DadStage;
+import funkin.objects.StageBase;
+import funkin.objects.stages.*;
 import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
@@ -85,7 +86,6 @@ class PlayState extends FNFState {
 			AssetHelper.getPath("data/scripts/global"),
 			AssetHelper.getPath('songs/${currentSong.folder}/scripts'),
 		]);
-		trace(scriptPack.length);
 		callFunPack("create", []);
 		setPackVar('game', this);
 
@@ -114,7 +114,7 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(altCamera, false);
 
 		// -- PREPARE BACKGROUND -- //
-		add(stage = new DadStage());
+		add(stage = new StageBase(Chart.current.data.stageBG));
 
 		// -- SETUP CAMERA -- //
 		add(camLead = new FlxObject(0, 0, 1, 1));
