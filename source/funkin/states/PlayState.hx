@@ -357,7 +357,7 @@ class PlayState extends FNFState {
 	}
 
 	public override function closeSubState():Void {
-		persistentUpdate = true;
+		playField.paused = false;
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.resume();
 		if (vocals != null && vocals.playing)
@@ -412,7 +412,7 @@ class PlayState extends FNFState {
 		DiscordRPC.updatePresence('Charting: ${currentSong.display}');
 		final charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
-		persistentUpdate = false;
+		playField.paused = true;
 		openSubState(charter);
 	}
 
@@ -421,7 +421,7 @@ class PlayState extends FNFState {
 		DiscordRPC.updatePresence('${currentSong.display} [PAUSED]', '${hud.scoreBar.text}');
 		final pause:PauseMenu = new PauseMenu();
 		pause.camera = altCamera;
-		persistentUpdate = false;
+		playField.paused = true;
 		openSubState(pause);
 	}
 

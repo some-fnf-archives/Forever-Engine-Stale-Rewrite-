@@ -18,6 +18,7 @@ class PlayField extends FlxGroup {
 
 	public var noteGroup:FlxTypedSpriteGroup<Note>;
 
+	public var paused:Bool = false;
 	public var noteList:Vector<NoteData>;
 	public var curNote:Int = 0;
 
@@ -59,7 +60,7 @@ class PlayField extends FlxGroup {
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		while (noteGroup != null && noteList.length != 0 && curNote < noteList.length) {
+		while (!paused && noteGroup != null && noteList.length != 0 && curNote < noteList.length) {
 			final target:NoteField = noteFields[noteList[curNote].notefield];
 			final timeDifference:Float = noteList[curNote].time - Conductor.time;
 

@@ -168,7 +168,7 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 
 	public function inputKeyPress(event:KeyboardEvent):Void {
 		var key:Int = getKeyFromEvent(event.keyCode);
-		if (playField == null || key < 0 || cpuControl)
+		if (playField == null || (playField != null && playField.paused) || key < 0 || cpuControl)
 			return;
 
 		var currentStrum:Strum = members[key];
@@ -207,9 +207,8 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 
 	public function inputKeyRelease(event:KeyboardEvent):Void {
 		var key:Int = getKeyFromEvent(event.keyCode);
-		if (playField == null || key < 0 || cpuControl)
+		if (playField == null || (playField != null && playField.paused) || key < 0 || cpuControl)
 			return;
-
 		members[key]?.playStrum(STATIC, true);
 	}
 

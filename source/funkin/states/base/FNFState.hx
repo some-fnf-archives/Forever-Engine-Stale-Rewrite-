@@ -18,8 +18,8 @@ class FNFState extends FlxTransitionableState {
 	}
 
 	public override function update(elapsed:Float):Void {
-		Conductor.update(elapsed);
 		super.update(elapsed);
+		Conductor.update(elapsed);
 	}
 
 	public function onStep(step:Int):Void {}

@@ -111,10 +111,8 @@ class Note extends ForeverSprite {
 			x = strum.x - 10;
 			y = strum.y + distance * scrollDifference;
 
-			if (parent.cpuControl) {
-				if (data.time <= Conductor.time)
-					parent.onNoteHit.dispatch(this);
-			}
+			if (parent.cpuControl && data.time <= Conductor.time)
+				parent.onNoteHit.dispatch(this);
 
 			// kill notes that are far from the screen view.
 			var positionDifference:Float = parent.cpuControl ? (y - strum.y + 10.0) : 100.0;
