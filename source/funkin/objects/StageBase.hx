@@ -70,6 +70,7 @@ class StageBase extends FlxSpriteGroup {
 
 				newSprite.alpha = obj.alpha ?? 1.0;
 				newSprite.color = obj.color ?? 0xFFFFFFFF;
+				newSprite.antialiasing = obj.antialiasing ?? true;
 
 				if (obj.scroll != null) {
 					newSprite.scrollFactor.set(obj.scroll?.x ?? 1.0, obj.scroll?.y ?? 1.0);
