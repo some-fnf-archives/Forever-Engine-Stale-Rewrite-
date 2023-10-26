@@ -30,6 +30,7 @@ enum abstract GameplayMode(Int) to Int {
 enum abstract MusicState(Int) to Int {
 	var STOPPED = 0;
 	var PLAYING = 1;
+	var PAUSED = 2;
 }
 
 typedef PlaySong = {
@@ -173,11 +174,12 @@ class PlayState extends FNFState {
 
 		var updateEvt:CancellableEvent = new CancellableEvent();
 		callFunPack("update", [elapsed, updateEvt]);
-		if (updateEvt.cancelled)
-			return;
+		//if (updateEvt.cancelled)
+		//	return;
 
-		if (countdownPosition > 3)
+		if (Conductor.time >= 0 && songState != PAUSED) {
 			startPlay();
+		}
 
 		FlxG.camera.followLerp = FlxMath.bound(elapsed * 2.4 * stage.cameraSpeed * (FlxG.updateFramerate / 60.0), 0.0, 1.0);
 
@@ -209,6 +211,7 @@ class PlayState extends FNFState {
 		var i:Int = 0;
 		while (i < scriptPack.length - 1) {
 			scriptPack[i].destroy();
+			scriptPack.remove(scriptPack[i]);
 			i++;
 		}
 		scriptPack = [];
@@ -399,12 +402,11 @@ class PlayState extends FNFState {
 
 	public override function closeSubState():Void {
 		playField.paused = false;
-		songState = PLAYING;
-
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.resume();
 		if (vocals != null && vocals.playing)
 			vocals.resume();
+		songState = PLAYING;
 		DiscordRPC.updatePresence('${currentSong.display}', '${hud.scoreBar.text}');
 		pauseTweens(false);
 		super.closeSubState();
@@ -456,7 +458,7 @@ class PlayState extends FNFState {
 		final charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
 		playField.paused = true;
-		songState = STOPPED;
+		songState = PAUSED;
 		openSubState(charter);
 	}
 
@@ -466,7 +468,7 @@ class PlayState extends FNFState {
 		final pause:PauseMenu = new PauseMenu();
 		pause.camera = altCamera;
 		playField.paused = true;
-		songState = STOPPED;
+		songState = PAUSED;
 		openSubState(pause);
 	}
 
@@ -476,11 +478,17 @@ class PlayState extends FNFState {
 	}
 
 	function startPlay():Void {
-		if (songState == PLAYING)
+		if (FlxG.sound.music.playing && songState != PAUSED)
+			return;
+
+		var startPlayEvt:CancellableEvent = new CancellableEvent();
+		callFunPack("startPlay", [startPlayEvt]);
+		if (startPlayEvt.cancelled)
 			return;
 
 		FlxG.sound.music.play();
 		vocals.play();
+
 		songState = PLAYING;
 	}
 

@@ -33,15 +33,16 @@ class Conductor {
 	public static var onBeat:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
 	public static var onBar:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
 
-	public static function init():Void {
+	public static function init(resetSignals:Bool = true):Void {
 		time = 0.0;
-
 		_lastTime = -1.0;
 		_lastStep = _lastBar = _lastBeat = -1;
 
-		onStep.removeAll();
-		onBeat.removeAll();
-		onBar.removeAll();
+		if (resetSignals) {
+			onStep.removeAll();
+			onBeat.removeAll();
+			onBar.removeAll();
+		}
 	}
 
 	public static function update(elapsed:Float):Void {
