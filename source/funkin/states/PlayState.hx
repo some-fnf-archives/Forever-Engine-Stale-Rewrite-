@@ -174,8 +174,8 @@ class PlayState extends FNFState {
 
 		var updateEvt:CancellableEvent = new CancellableEvent();
 		callFunPack("update", [elapsed, updateEvt]);
-		//if (updateEvt.cancelled)
-		//	return;
+		if (updateEvt.cancelled)
+			return;
 
 		if (Conductor.time >= 0 && songState != PAUSED) {
 			startPlay();
