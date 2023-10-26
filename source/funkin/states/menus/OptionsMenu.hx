@@ -60,10 +60,10 @@ class OptionsMenu extends BaseMenuState {
 		add(optionsGroup = new FlxTypedGroup<Alphabet>());
 		add(iconGroup = new FlxTypedGroup<Dynamic>());
 
-		add(infoText = new ForeverText(0, 0, FlxG.width * 0.15, "...", 18));
+		add(infoText = new ForeverText(0, 0, 0, "...", 18));
 		infoText.textField.background = true;
 		infoText.textField.backgroundColor = 0xFF000000;
-		infoText.y = (FlxG.height - infoText.height) - 25;
+		infoText.screenCenter(XY);
 		infoText.alignment = CENTER;
 
 		var topBar:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 50, 0xFF000000);
@@ -163,6 +163,8 @@ class OptionsMenu extends BaseMenuState {
 		}
 
 		infoText.text = optionsListed.get(curCateg)[curSel].description;
+		infoText.x = Math.floor(FlxG.width - infoText.width) * 0.5;
+		infoText.y = Math.floor(FlxG.height - infoText.height) - 5;
 	}
 
 	function reloadOptions():Void {
