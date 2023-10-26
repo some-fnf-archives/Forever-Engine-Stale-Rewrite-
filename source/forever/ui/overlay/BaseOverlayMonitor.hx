@@ -16,7 +16,7 @@ class BaseOverlayMonitor extends TextField {
 	public function new(align:TextFormatAlign = LEFT):Void {
 		super();
 
-		defaultTextFormat = new TextFormat(AssetHelper.getAsset("vcr", FONT), 20, 0xFFFFFFFF);
+		defaultTextFormat = new TextFormat(AssetHelper.getAsset("vcr", FONT), 18, 0xFFFFFFFF);
 		autoSize = LEFT;
 		mouseEnabled = false;
 		this.align = align;

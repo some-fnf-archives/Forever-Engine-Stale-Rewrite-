@@ -1,4 +1,4 @@
-package forever.ui.text;
+package forever.display;
 
 import flixel.FlxObject;
 import openfl.text.TextField;

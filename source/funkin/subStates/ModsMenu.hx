@@ -4,7 +4,7 @@ import flixel.FlxSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import forever.core.Mods;
-import funkin.components.ui.Alphabet;
+import funkin.ui.Alphabet;
 
 class ModsMenu extends FlxSubState {
 	static var curSel:Int = 0;

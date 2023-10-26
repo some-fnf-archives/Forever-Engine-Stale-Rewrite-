@@ -1,7 +1,7 @@
-package forever.ui.text;
+package forever.display;
 
 import flixel.text.FlxText;
-import forever.ui.text.ForeverTextField;
+import forever.display.ForeverTextField;
 
 class ForeverText extends FlxText {
 	/**

@@ -5,7 +5,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import forever.display.ForeverSprite;
-import funkin.components.ui.Alphabet;
+import funkin.ui.Alphabet;
 import funkin.states.base.FNFState;
 
 class TitleScreen extends FNFState {

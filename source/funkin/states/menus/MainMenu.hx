@@ -6,7 +6,7 @@ import flixel.group.FlxGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import forever.display.ForeverSprite;
-import forever.ui.text.ForeverText;
+import forever.display.ForeverText;
 import funkin.states.base.BaseMenuState;
 
 using flixel.effects.FlxFlicker;

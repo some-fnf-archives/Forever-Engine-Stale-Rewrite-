@@ -17,10 +17,12 @@ class HScript extends Iris {
 
 		set("FlxG", flixel.FlxG);
 		set("FlxSprite", flixel.FlxSprite);
+		set("FlxText", flixel.text.FlxText);
 		set("FlxTimer", flixel.util.FlxTimer);
 		set("FlxTween", flixel.tweens.FlxTween);
 		set("FlxEase", flixel.tweens.FlxEase);
 		set("ForeverSprite", forever.display.ForeverSprite);
+		set("ForeverText", forever.display.ForeverText);
 		set("Conductor", funkin.components.Conductor);
 		set("AssetHelper", forever.AssetHelper);
 		set("Tools", forever.tools.Tools);

@@ -1,4 +1,4 @@
-package funkin.components.ui;
+package funkin.ui;
 
 import flixel.math.FlxPoint;
 import forever.display.ForeverSprite;

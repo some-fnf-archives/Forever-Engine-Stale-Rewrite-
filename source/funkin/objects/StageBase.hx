@@ -88,11 +88,14 @@ class StageBase extends FlxSpriteGroup {
 
 		// scripts lol
 		if (Tools.fileExists(AssetHelper.getAsset('data/stages/${stageName}', HSCRIPT))) {
+			final curState = cast(FlxG.state, funkin.states.base.FNFState);
+
 			scriptModule = new HScript(AssetHelper.getAsset('data/stages/${stageName}', HSCRIPT));
-			scriptModule.set('stage', this);
-			scriptModule.call('createStage', []);
 			// so I don't need to call functions here
-			cast(FlxG.state, funkin.states.base.FNFState).appendToScriptPack(scriptModule);
+			curState.appendToScriptPack(scriptModule);
+			scriptModule.set('stage', this);
+			scriptModule.set('game', curState);
+			scriptModule.call('create', []);
 		}
 	}
 

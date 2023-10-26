@@ -6,19 +6,20 @@ import flixel.FlxSubState;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import flixel.util.FlxTimer;
+import forever.core.events.*;
 import forever.display.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.components.Timings;
-import funkin.components.ui.ComboSprite;
-import funkin.components.ui.HUD;
 import funkin.objects.*;
-import funkin.objects.notes.Note;
 import funkin.objects.StageBase;
+import funkin.objects.notes.Note;
 import funkin.objects.stages.*;
 import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
 import funkin.subStates.PauseMenu;
+import funkin.ui.ComboSprite;
+import funkin.ui.HUD;
 
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
@@ -170,15 +171,15 @@ class PlayState extends FNFState {
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		callFunPack("update", [elapsed]);
+		var updateEvt:CancellableEvent = new CancellableEvent();
+		callFunPack("update", [elapsed, updateEvt]);
+		if (updateEvt.cancelled)
+			return;
+
+		if (countdownPosition > 3)
+			startPlay();
 
 		FlxG.camera.followLerp = FlxMath.bound(elapsed * 2.4 * stage.cameraSpeed * (FlxG.updateFramerate / 60.0), 0.0, 1.0);
-
-		if (Conductor.time >= 0 && !FlxG.sound.music.playing) {
-			songState = PLAYING;
-			FlxG.sound.music.play();
-			vocals.play();
-		}
 
 		while (eventIndex < Chart.current.events.length) {
 			var curEvent = Chart.current.events[eventIndex];
@@ -197,6 +198,12 @@ class PlayState extends FNFState {
 		callFunPack("postUpdate", [elapsed]);
 	}
 
+	public override function draw():Void {
+		callFunPack("preDraw", []);
+		super.draw();
+		callFunPack("draw", []);
+	}
+
 	public override function destroy():Void {
 		callFunPack("destroy", []);
 		var i:Int = 0;
@@ -213,7 +220,10 @@ class PlayState extends FNFState {
 		if (note.wasHit)
 			return;
 
-		callFunPack("hitBehavior", [note]);
+		var hitEvent:CancellableEvent = new CancellableEvent();
+		callFunPack("hitBehavior", [note, hitEvent]);
+		if (hitEvent.cancelled)
+			return;
 
 		final isEnemy:Bool = (note.parent == playField.enemyField);
 		var character:Character = isEnemy ? enemy : player;
@@ -256,7 +266,11 @@ class PlayState extends FNFState {
 	}
 
 	public function missBehavior(dir:Int, note:Note = null):Void {
-		callFunPack("missBehavior", [dir, note]);
+		var missEvent:CancellableEvent = new CancellableEvent();
+		callFunPack("missBehavior", [dir, note, missEvent]);
+		if (missEvent.cancelled)
+			return;
+
 		if (note != null)
 			note.parent.invalidateNote(note);
 
@@ -353,6 +367,9 @@ class PlayState extends FNFState {
 	}
 
 	public override function onStep(step:Int):Void {
+		var soundTime:Float = vocals.time / 1000.0;
+		if (Math.abs(Conductor.time - soundTime) > 20.0)
+			vocals.time = FlxG.sound.music.time;
 		callFunPack("onStep", [step]);
 	}
 
@@ -382,6 +399,8 @@ class PlayState extends FNFState {
 
 	public override function closeSubState():Void {
 		playField.paused = false;
+		songState = PLAYING;
+
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.resume();
 		if (vocals != null && vocals.playing)
@@ -437,6 +456,7 @@ class PlayState extends FNFState {
 		final charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
 		playField.paused = true;
+		songState = STOPPED;
 		openSubState(charter);
 	}
 
@@ -446,6 +466,7 @@ class PlayState extends FNFState {
 		final pause:PauseMenu = new PauseMenu();
 		pause.camera = altCamera;
 		playField.paused = true;
+		songState = STOPPED;
 		openSubState(pause);
 	}
 
@@ -454,7 +475,21 @@ class PlayState extends FNFState {
 		FlxTimer.globalManager.forEach(function(t) t.active = !resume);
 	}
 
+	function startPlay():Void {
+		if (songState == PLAYING)
+			return;
+
+		FlxG.sound.music.play();
+		vocals.play();
+		songState = PLAYING;
+	}
+
 	function endPlay():Void {
+		var endPlayEvt:CancellableEvent = new CancellableEvent();
+		callFunPack("endPlay", [endPlayEvt]);
+		if (endPlayEvt.cancelled)
+			return;
+
 		FlxG.sound.music.stop();
 		vocals.stop();
 
@@ -473,6 +508,11 @@ class PlayState extends FNFState {
 	var countdownTween:FlxTween;
 
 	public function countdownRoutine():Void {
+		var countdownEvt:CancellableEvent = new CancellableEvent();
+		callFunPack("countdownRoutine", [countdownPosition, songState, countdownEvt]);
+		if (countdownEvt.cancelled)
+			return;
+
 		if (songState != PLAYING) {
 			Conductor.time = -(60.0 / Conductor.bpm) * 4.0;
 			FlxTween.tween(hud, {alpha: 1.0}, (60.0 / Conductor.bpm) * 2.0, {ease: FlxEase.sineIn});
@@ -508,6 +548,7 @@ class PlayState extends FNFState {
 
 			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/countdown/normal/${sounds[countdownPosition]}', SOUND), 0.8);
 			countdownPosition += 1;
+			callFunPack("countdownProgress", [countdownPosition, songState]);
 		}, 4);
 	}
 

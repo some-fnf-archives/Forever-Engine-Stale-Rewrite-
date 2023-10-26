@@ -1,7 +1,7 @@
 package funkin.states.editors.objects;
 
 import flixel.group.FlxSpriteGroup;
-import forever.ui.text.ForeverText;
+import forever.display.ForeverText;
 
 class CharterStatusBar extends FlxSpriteGroup {
 	public var bar:FlxSprite;

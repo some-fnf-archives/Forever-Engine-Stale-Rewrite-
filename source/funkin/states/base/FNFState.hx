@@ -1,7 +1,7 @@
 package funkin.states.base;
 
-import forever.core.HScript;
 import flixel.addons.transition.FlxTransitionableState;
+import forever.core.HScript;
 
 class FNFState extends FlxTransitionableState {
 	public var scriptPack:Array<HScript> = [];

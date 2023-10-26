@@ -1,8 +1,8 @@
-package funkin.components.ui;
+package funkin.ui;
 
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
-import funkin.components.ui.AlphabetGlyph;
+import funkin.ui.AlphabetGlyph;
 import openfl.text.TextFormatAlign;
 
 using StringTools;

@@ -134,7 +134,7 @@ class Character extends ForeverSprite {
 				holdTmr += elapsed;
 			else if (_isPlayer)
 				holdTmr = 0.0;
-			final stepDt:Float =  ((60.0 / Conductor.bpm) * 4.0);
+			final stepDt:Float = ((60.0 / Conductor.bpm) * 4.0);
 			if (holdTmr >= ((stepDt * 1000.0) * Conductor.rate) * singDuration * 0.0001) {
 				dance();
 				holdTmr = 0.0;

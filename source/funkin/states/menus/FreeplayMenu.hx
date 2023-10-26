@@ -5,12 +5,12 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import forever.display.ForeverSprite;
-import forever.ui.text.ForeverText;
+import forever.display.ForeverText;
 import funkin.components.ChartLoader;
 import funkin.components.DifficultyHelper;
 import funkin.components.Highscore;
-import funkin.components.ui.Alphabet;
-import funkin.components.ui.HealthIcon;
+import funkin.ui.Alphabet;
+import funkin.ui.HealthIcon;
 import funkin.states.base.BaseMenuState;
 
 class FreeplayMenu extends BaseMenuState {

@@ -1,4 +1,4 @@
-package funkin.components.ui;
+package funkin.ui;
 
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;

@@ -4,7 +4,7 @@ import flixel.FlxSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
-import funkin.components.ui.Alphabet;
+import funkin.ui.Alphabet;
 import funkin.states.PlayState;
 import funkin.states.menus.*;
 

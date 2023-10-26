@@ -66,7 +66,7 @@ class ForeverOverlay extends Sprite {
 		if (monitors.length > 0) {
 			graphics.clear();
 			graphics.beginFill(0, 0.6);
-			graphics.drawRect(0, 0, flixel.FlxG.stage.application.window.width, 25);
+			graphics.drawRect(0, 0, flixel.FlxG.stage.application.window.width, 20);
 			graphics.endFill();
 
 			deltaTimeout += deltaTime;

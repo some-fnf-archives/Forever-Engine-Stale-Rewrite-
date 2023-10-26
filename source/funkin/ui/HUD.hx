@@ -1,9 +1,9 @@
-package funkin.components.ui;
+package funkin.ui;
 
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
-import forever.ui.text.ForeverText;
+import forever.display.ForeverText;
 import funkin.components.Timings;
 import funkin.states.PlayState;
 
