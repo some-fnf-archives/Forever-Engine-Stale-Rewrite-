@@ -9,6 +9,6 @@ enum Week {
 
 class StoryMenu extends BaseMenuState {
     public final weeks:Array<Week> = [
-        Week("Daddy's Home", [new FreeplaySong("BBG", "bbg", "sans-bgg")], "week0")
+        //
     ];
 }
