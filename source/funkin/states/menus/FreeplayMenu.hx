@@ -94,8 +94,6 @@ class FreeplayMenu extends BaseMenuState {
 				iconGroup.add(icon);
 			}
 
-			maxSelections = songs.length - 1;
-
 			onAccept = function():Void {
 				// ensuring.
 				canChangeSelection = false;
@@ -112,6 +110,8 @@ class FreeplayMenu extends BaseMenuState {
 				Chart.current = ChartLoader.load(song.folder, song.difficulty);
 				FlxG.switchState(new funkin.states.PlayState(song));
 			};
+
+			maxSelections = songs.length - 1;
 		}
 		else {
 			final errorText:Alphabet = new Alphabet(0, 0, "No songs were found,\nplease check your song list file.", BOLD, CENTER, 0.8);

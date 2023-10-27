@@ -66,7 +66,7 @@ class BaseMenuState extends FNFState {
 	 * @param newSel        By how much should the current selection be increment/decremented?
 	**/
 	public function updateSelection(newSel:Int = 0):Void {
-		if (!canChangeSelection || maxSelections < 2)
+		if (!canChangeSelection)
 			return;
 
 		curSel = FlxMath.wrap(curSel + newSel, 0, maxSelections);
@@ -77,7 +77,7 @@ class BaseMenuState extends FNFState {
 	 * @param newSelAlt     By how much should the alternative selection be increment/decremented?
 	**/
 	public function updateSelectionAlt(newSelAlt:Int = 0):Void {
-		if (!canChangeAlternative || maxSelectionsAlt < 2)
+		if (!canChangeAlternative)
 			return;
 
 		curSelAlt = FlxMath.wrap(curSelAlt + newSelAlt, 0, maxSelectionsAlt);
