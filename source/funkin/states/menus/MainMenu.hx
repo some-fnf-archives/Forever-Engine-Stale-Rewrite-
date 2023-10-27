@@ -11,10 +11,6 @@ import funkin.states.base.BaseMenuState;
 
 using flixel.effects.FlxFlicker;
 
-#if MODS
-import funkin.subStates.ModsMenu;
-#end
-
 typedef MainMenuOption = {
 	var name:String;
 	var callback:Void->Void;
@@ -38,6 +34,8 @@ class MainMenu extends BaseMenuState {
 
 		DiscordRPC.updatePresence("In the Menus", "MAIN MENU");
 		Tools.checkMenuMusic(null, false, 102.0);
+
+		canChangeMods = true;
 
 		add(camLead = new FlxObject(0, 0, 1, 1));
 		add(bg = new ForeverSprite(0, 0, "menus/menuBG"));
@@ -122,19 +120,6 @@ class MainMenu extends BaseMenuState {
 		updateSelection();
 	}
 
-	public override function update(elapsed:Float):Void {
-		super.update(elapsed);
-
-		buttons.forEach(function(button:FlxSprite) button.screenCenter(X));
-
-		#if MODS
-		if (canChangeSelection && Controls.current.justPressed("switch mods")) {
-			FlxG.state.persistentUpdate = false;
-			openSubState(new ModsMenu());
-		}
-		#end
-	}
-
 	public override function updateSelection(newSel:Int = 0):Void {
 		super.updateSelection(newSel);
 
@@ -144,7 +129,8 @@ class MainMenu extends BaseMenuState {
 		for (i in 0...buttons.members.length) {
 			final button:FlxSprite = buttons.members[i];
 			button.animation.play(i == curSel ? "selected" : "idle", true);
-			button.updateHitbox();
+			if (i == curSel)
+				button.screenCenter(X);
 
 			camLead.setPosition(button.getGraphicMidpoint().x, button.getGraphicMidpoint().y);
 		}

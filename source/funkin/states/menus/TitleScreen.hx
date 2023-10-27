@@ -47,7 +47,13 @@ class TitleScreen extends FNFState {
 				for (i in dataArray) {
 					if (i.exec == null)
 						continue;
-					introSections.push({beat: i.beat, step: i.step, text: i.text, exec: i.exec, force: i.force});
+					introSections.push({
+						beat: i.beat,
+						step: i.step,
+						text: i.text,
+						exec: i.exec,
+						force: i.force
+					});
 				}
 			}
 		}
@@ -117,6 +123,11 @@ class TitleScreen extends FNFState {
 				FlxG.sound.music.time = 9400.0;
 			}
 		}
+
+		#if MODS
+		if (Controls.current.justPressed("switch mods"))
+			forever.core.Mods.openModsMenu();
+		#end
 	}
 
 	var gfBopped:Bool = false;
@@ -173,7 +184,7 @@ class TitleScreen extends FNFState {
 		var textToDisplay:String = "";
 		if (sectionInfo.text != null)
 			textToDisplay = sectionInfo.text.trim().replace("${random[0]}", randomBlurb[0]).replace("${random[1]}", randomBlurb[1]);
-	
+
 		switch sectionInfo.exec {
 			case "create":
 				textGroup.createText(textToDisplay.split(","), sectionInfo.force);

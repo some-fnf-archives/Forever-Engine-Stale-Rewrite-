@@ -24,6 +24,9 @@ class BaseMenuState extends FNFState {
 	/** If pressing the "cancel" button actually does something. **/
 	public var canBackOut:Bool = true;
 
+	/** If pressing the "switch mods" button should open the mods menu. **/
+	public var canChangeMods:Bool = false;
+
 	/** How many selectors there are **/
 	public var maxSelections:Int = 0;
 
@@ -59,6 +62,11 @@ class BaseMenuState extends FNFState {
 			if (onBack != null)
 				onBack();
 		}
+
+		#if MODS
+		if (canChangeSelection && canChangeMods && Controls.current.justPressed("switch mods"))
+			forever.core.Mods.openModsMenu();
+		#end
 	}
 
 	/**

@@ -34,6 +34,7 @@ class FreeplayMenu extends BaseMenuState {
 		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
 		Tools.checkMenuMusic(null, false, 102.0);
 
+		canChangeMods = true;
 		canChangeAlternative = true;
 
 		var localSongData:Array<String> = Tools.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));

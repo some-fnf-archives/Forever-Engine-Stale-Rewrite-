@@ -145,7 +145,9 @@ class Tools {
 		Conductor.bpm = bpm;
 
 		// reset stuff
-		FlxG.sound.music.onComplete = function () { Conductor.init(false); }
+		FlxG.sound.music.onComplete = function() {
+			Conductor.init(false);
+		}
 	}
 
 	/**

@@ -133,5 +133,13 @@ class Mods {
 		else
 			Tools.defaultMenuMusic = "foreverMenu";
 	}
+
+	public static function openModsMenu():Void {
+		if (FlxG.state == null)
+			return;
+
+		FlxG.state.persistentUpdate = false;
+		FlxG.state.openSubState(new funkin.subStates.ModsMenu());
+	}
 }
 #end
