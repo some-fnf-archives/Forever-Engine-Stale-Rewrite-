@@ -40,9 +40,9 @@ class StageBase extends FlxSpriteGroup {
 
 		if (Tools.fileExists(AssetHelper.getAsset('data/stages/${stageName}', YAML))) {
 			var data = AssetHelper.parseAsset('data/stages/${stageName}', YAML);
-			cameraZoom = data.cameraZoom ?? 1.05;
-			cameraSpeed = data.cameraSpeed ?? 1.0;
-			hudZoom = data.hudZoom ?? 1.0;
+			this.cameraZoom = data.cameraZoom ?? 1.05;
+			this.cameraSpeed = data.cameraSpeed ?? 1.0;
+			this.hudZoom = data.hudZoom ?? 1.0;
 
 			playerPosition.x = data.playerPos?.x ?? 770;
 			playerPosition.y = data.playerPos?.y ?? 430;
