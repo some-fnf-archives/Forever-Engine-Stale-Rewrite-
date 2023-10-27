@@ -47,12 +47,10 @@ class TitleScreen extends FNFState {
 				for (i in dataArray) {
 					if (i.exec == null)
 						continue;
-					trace(i);
 					introSections.push({beat: i.beat, step: i.step, text: i.text, exec: i.exec, force: i.force});
 				}
 			}
 		}
-		trace(introSections);
 
 		DiscordRPC.updatePresence("In the Menus", "TITLE SCREEN");
 		randomBlurb = FlxG.random.getObject(getRandomText());
