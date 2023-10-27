@@ -120,6 +120,8 @@ class PlayState extends FNFState {
 
 		// -- PREPARE BACKGROUND -- //
 		add(stage = new StageBase(Chart.current.data.stageBG));
+		gameCamera.zoom = stage.cameraZoom;
+		hudCamera.zoom = stage.hudZoom;
 
 		// -- SETUP CAMERA -- //
 		add(camLead = new FlxObject(0, 0, 1, 1));
