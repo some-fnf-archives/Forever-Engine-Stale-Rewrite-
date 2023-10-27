@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.math.FlxMath;
 import flixel.util.FlxAxes;
+import flixel.input.keyboard.FlxKey;
 import forever.display.ForeverSprite;
 #end
 import openfl.Assets as OpenFLAssets;
@@ -183,6 +184,10 @@ class Tools {
 
 	public static inline function quantize(Value:Float, Quant:Float) {
 		return Math.fround(Value * Quant) / Quant;
+	}
+
+	public static inline function keyCodeFromString(str:String):FlxKey {
+		return FlxKey.fromString(str.toUpperCase());
 	}
 	#end
 

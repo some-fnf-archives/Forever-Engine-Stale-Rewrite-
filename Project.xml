@@ -25,8 +25,8 @@
 	<!-- [ Application Settings ] -->
 	<!-- ________________________ -->
 
-	<app title="Friday Night Funkin': Forever Engine" file="Forever-Engine" company="CrowPlexus" />
-	<app main="Main" package="com.crowplexus.foreverengine" packageName="com.crowplexus.foreverengine" />
+	<app title="Friday Night Funkin' (Forever)" file="Funkin-Forever" company="CrowPlexus" />
+	<app main="Main" package="com.crowplexus.funkinforever" packageName="com.crowplexus.funkinforever" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
