@@ -138,9 +138,10 @@ class Tools {
 		if (music == null)
 			music = defaultMenuMusic;
 
-		FlxG.sound.playMusic(AssetHelper.getAsset('audio/bgm/${music}', SOUND), doFadeIn ? 0.0 : 0.7, true);
+		FlxG.sound.playMusic(AssetHelper.getAsset('audio/bgm/${music}', SOUND), doFadeIn ? 0.0 : 0.7);
 		if (doFadeIn)
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
+		FlxG.sound.music.looped = true;
 		Conductor.bpm = bpm;
 
 		// reset stuff
