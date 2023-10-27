@@ -1,4 +1,4 @@
-package forever.core;
+package forever.core.scripting;
 
 import crowplexus.iris.Iris;
 import forever.tools.Paths.LocalPaths;

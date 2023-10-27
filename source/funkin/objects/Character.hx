@@ -1,7 +1,7 @@
 package funkin.objects;
 
 import flixel.math.FlxPoint;
-import forever.core.HScript;
+import forever.core.scripting.HScript;
 import forever.display.ForeverSprite;
 import forever.tools.CodenameTools;
 import haxe.xml.Access;

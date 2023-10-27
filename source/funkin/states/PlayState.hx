@@ -6,7 +6,7 @@ import flixel.FlxSubState;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import flixel.util.FlxTimer;
-import forever.core.events.*;
+import forever.core.scripting.*;
 import forever.display.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.components.Timings;

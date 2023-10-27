@@ -2,7 +2,7 @@ package funkin.objects;
 
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
-import forever.core.HScript;
+import forever.core.scripting.HScript;
 import forever.display.ForeverSprite;
 import haxe.ds.StringMap;
 

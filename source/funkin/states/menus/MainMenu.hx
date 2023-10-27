@@ -39,12 +39,10 @@ class MainMenu extends BaseMenuState {
 		DiscordRPC.updatePresence("In the Menus", "MAIN MENU");
 		Tools.checkMenuMusic(null, false, 102.0);
 
-		camLead = new FlxObject(0, 0, 1, 1);
-		camLead.moves = false;
-		add(camLead);
-
+		add(camLead = new FlxObject(0, 0, 1, 1));
 		add(bg = new ForeverSprite(0, 0, "menus/menuBG"));
 		add(magenta = new ForeverSprite(0, 0, "menus/menuDesat"));
+
 		magenta.visible = false;
 		magenta.color = 0xFFFD719B;
 

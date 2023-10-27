@@ -1,5 +1,7 @@
 package forever.core;
 
+import forever.core.scripting.HScript;
+
 #if MODS
 typedef ForeverMod = {
 	var title:String;

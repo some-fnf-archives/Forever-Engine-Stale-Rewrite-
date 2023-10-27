@@ -2,11 +2,20 @@ package funkin.states.menus;
 
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxSpriteGroup;
-import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import forever.display.ForeverSprite;
-import funkin.ui.Alphabet;
 import funkin.states.base.FNFState;
+import funkin.ui.Alphabet;
+
+typedef IntroTextSection = {
+	var exec:String;
+
+	@:optional var beat:Int;
+	@:optional var text:String;
+	@:optional var force:Bool;
+	@:optional var step:Int;
+}
 
 class TitleScreen extends FNFState {
 	public var bg:FlxSprite;
@@ -18,6 +27,8 @@ class TitleScreen extends FNFState {
 	public var mainGroup:FlxSpriteGroup;
 	public var randomBlurb:Array<String> = ["blahblah", "coolswag"];
 
+	public var introSections:Array<IntroTextSection> = [];
+
 	// -- BEHAVIOR FIELDS -- //
 	public static var seenIntro:Bool = false;
 
@@ -27,6 +38,21 @@ class TitleScreen extends FNFState {
 		super.create();
 
 		forever.core.Mods.loadInitScript();
+
+		if (Tools.fileExists(AssetHelper.getPath("data/titleScreen", YAML))) {
+			final introData = AssetHelper.parseAsset("data/titleScreen", YAML);
+			if (introData.introSections != null) {
+				introSections = [];
+				final dataArray:Array<Dynamic> = introData.introSections;
+				for (i in dataArray) {
+					if (i.exec == null)
+						continue;
+					trace(i);
+					introSections.push({beat: i.beat, step: i.step, text: i.text, exec: i.exec, force: i.force});
+				}
+			}
+		}
+		trace(introSections);
 
 		DiscordRPC.updatePresence("In the Menus", "TITLE SCREEN");
 		randomBlurb = FlxG.random.getObject(getRandomText());
@@ -63,7 +89,7 @@ class TitleScreen extends FNFState {
 			Tools.checkMenuMusic(null, true, 102.0);
 		});
 
-		if (seenIntro)
+		if (seenIntro || introSections.length < 1)
 			skipIntro();
 	}
 
@@ -118,34 +144,18 @@ class TitleScreen extends FNFState {
 		if (seenIntro)
 			return;
 
-		switch (beat) { // hardcoding for now lmfao
-			case 1:
-				textGroup.createText(["crowplexus", "ne_eo", "itsaizakku", "nxtvithor", "sayofthelor"]);
-			case 3:
-				textGroup.addText("PRESENT");
-			case 4:
-				textGroup.deleteText();
-			case 5:
-				textGroup.createText(["*Not* associated", "with"]);
-			case 7:
-				textGroup.addText("Newgrounds");
-			case 8:
-				textGroup.deleteText();
-			case 9:
-				textGroup.createText([randomBlurb[0]]);
-			case 11:
-				textGroup.addText(randomBlurb[1]);
-			case 12:
-				textGroup.deleteText();
-			case 13:
-				textGroup.addText("Funkin'", true);
-			case 14:
-				textGroup.addText('Forever');
-			case 15:
-				textGroup.addText('Engine');
-			case 16:
-				skipIntro();
-		}
+		for (i in 0...introSections.length)
+			if (introSections[i].beat == beat)
+				parseIntroEvent(introSections[i]);
+	}
+
+	public override function onStep(step:Int):Void {
+		if (seenIntro)
+			return;
+
+		for (i in 0...introSections.length)
+			if (introSections[i].step == step)
+				parseIntroEvent(introSections[i]);
 	}
 
 	public function skipIntro():Void {
@@ -159,6 +169,23 @@ class TitleScreen extends FNFState {
 		}
 
 		mainGroup.visible = true;
+	}
+
+	function parseIntroEvent(sectionInfo:IntroTextSection):Void {
+		var textToDisplay:String = "";
+		if (sectionInfo.text != null)
+			textToDisplay = sectionInfo.text.trim().replace("${random[0]}", randomBlurb[0]).replace("${random[1]}", randomBlurb[1]);
+	
+		switch sectionInfo.exec {
+			case "create":
+				textGroup.createText(textToDisplay.split(","), sectionInfo.force);
+			case "add":
+				textGroup.addText(textToDisplay, sectionInfo.force);
+			case "delete":
+				textGroup.deleteText();
+			case "finish" | "skip-intro" | "skipIntro":
+				skipIntro();
+		}
 	}
 
 	function getRandomText():Array<Array<String>> {

@@ -1,4 +1,4 @@
-package forever.core.events;
+package forever.core.scripting;
 
 class CancellableEvent {
 	public var cancelled:Bool = false;
