@@ -9,6 +9,5 @@ authors:
   - {name: "CrowPlexus", "icon": "crow", description: "Ported the Game to Forever.", role: "Porter"}
 
 modVersion: 0.2.8
+license: Apache v2.0
 resetGame: true
-apiVersion: 1.0.0-PRE
-license: MIT.
