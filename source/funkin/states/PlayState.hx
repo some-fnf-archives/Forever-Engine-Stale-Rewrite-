@@ -84,6 +84,9 @@ class PlayState extends FNFState {
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
+		if (Conductor.active != true) // false or null
+			Conductor.active = true;
+
 		scriptPack = initAllScriptsAt([
 			AssetHelper.getPath("data/scripts/global"),
 			AssetHelper.getPath('songs/${currentSong.folder}/scripts'),
