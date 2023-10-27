@@ -2,16 +2,15 @@ package funkin.states.menus;
 
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import forever.display.ForeverSprite;
 import forever.display.ForeverText;
 import funkin.components.ChartLoader;
 import funkin.components.DifficultyHelper;
 import funkin.components.Highscore;
+import funkin.states.base.BaseMenuState;
 import funkin.ui.Alphabet;
 import funkin.ui.HealthIcon;
-import funkin.states.base.BaseMenuState;
 
 class FreeplayMenu extends BaseMenuState {
 	public var bg:ForeverSprite;
