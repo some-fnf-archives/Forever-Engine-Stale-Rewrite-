@@ -122,8 +122,7 @@ class MainMenu extends BaseMenuState {
 
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
-		for (i in 0...buttons.members.length)
-			buttons.members[i].screenCenter(X);
+		buttons.forEach(function(button:FlxSprite) button.screenCenter(X));
 	}
 
 	public override function updateSelection(newSel:Int = 0):Void {
@@ -135,6 +134,8 @@ class MainMenu extends BaseMenuState {
 		for (i in 0...buttons.members.length) {
 			final button:FlxSprite = buttons.members[i];
 			button.animation.play(i == curSel ? "selected" : "idle", true);
+			button.updateHitbox();
+
 			camLead.setPosition(button.getGraphicMidpoint().x, button.getGraphicMidpoint().y);
 		}
 	}

@@ -31,7 +31,7 @@ class PauseMenu extends FlxSubState {
 				final curMusic = PlayState.current.currentSong;
 				FlxG.switchState(new PlayState(curMusic));
 			}),
-			PauseButton('Options', null),
+			PauseButton('Change Options', null),
 			PauseButton('Exit to menu', function():Void {
 				closing = true;
 				FlxG.sound.music.stop();
