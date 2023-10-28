@@ -120,6 +120,12 @@ class MainMenu extends BaseMenuState {
 		updateSelection();
 	}
 
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
+		for (i in 0...buttons.members.length)
+			buttons.members[i].screenCenter(X);
+	}
+
 	public override function updateSelection(newSel:Int = 0):Void {
 		super.updateSelection(newSel);
 
@@ -129,9 +135,6 @@ class MainMenu extends BaseMenuState {
 		for (i in 0...buttons.members.length) {
 			final button:FlxSprite = buttons.members[i];
 			button.animation.play(i == curSel ? "selected" : "idle", true);
-			if (i == curSel)
-				button.screenCenter(X);
-
 			camLead.setPosition(button.getGraphicMidpoint().x, button.getGraphicMidpoint().y);
 		}
 	}
