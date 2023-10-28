@@ -24,9 +24,6 @@ enum abstract Difficulty(String) from String to String {
 
 	public inline function toString():String {
 		return switch this {
-			case EASY: "Easy";
-			case NORMAL: "Normal";
-			case HARD: "Hard";
 			case _: this.firstUpperCase();
 		}
 	}
