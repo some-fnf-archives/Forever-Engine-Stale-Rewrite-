@@ -1,10 +1,14 @@
 package forever.core.scripting;
 
+#if SCRIPTING
 import crowplexus.iris.Iris;
 import forever.tools.Paths.LocalPaths;
+#end
 
-#if SCRIPTING
-class HScript extends Iris {
+#if !SCRIPTING
+@:build(forever.macros.StubMacro.build())
+#end
+class HScript #if SCRIPTING extends Iris #end {
 	var localPath:String = null;
 
 	public function new(file:String, ?localPath:String = null):Void {
@@ -32,25 +36,23 @@ class HScript extends Iris {
 		else
 			set("Paths", Paths);
 	}
-}
-#else
-class HScript { // stub
-	var localPath:String = null;
 
-	public function new(file:String, ?localPath:String = null):Void {}
+	#if !SCRIPTING
+	@:stubDefault(null) public override function get(field:String):Dynamic
+		return super.get(field);
 
-	public function preset():Void {}
+	public override function set(name:String, value:Dynamic, allowOverride:Bool = false):Void
+		super.set(name, value, allowOverride);
 
-	public function get(field:String):Dynamic {}
+	@:stubDefault(null) public override function call(fun:String, ?args:Array<Dynamic>):Dynamic
+		return super.call(fun, args);
 
-	public function set(name:String, value:Dynamic, allowOverride:Bool = false):Void {}
+	@:stubDefault(false) public override function exists(field:String):Bool
+		return super.exists(field);
 
-	public function call(fun:String, ?args:Array<Dynamic>):Void {}
-
-	public function exists(field:String):Bool {}
-
-	public function destroy():Void {}
+	public override function destroy():Void
+		super.destroy();
 
 	public static function destroyAll():Void {}
+	#end
 }
-#end

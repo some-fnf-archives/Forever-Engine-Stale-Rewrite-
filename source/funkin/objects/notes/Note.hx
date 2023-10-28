@@ -1,8 +1,8 @@
 package funkin.objects.notes;
 
 import forever.display.ForeverSprite;
-import funkin.components.ChartLoader.NoteData;
 import funkin.components.Timings;
+import funkin.components.parsers.ForeverChartData.NoteData;
 import funkin.objects.notes.NoteField;
 import haxe.ds.IntMap;
 
@@ -104,7 +104,8 @@ class Note extends ForeverSprite {
 			scale = scale.set(NoteConfig.config.notes.size, NoteConfig.config.notes.size);
 			visible = parent.visible;
 
-			final distance:Float = 0.45 * (Conductor.time - data.time) * (1000.0 * Math.abs(speed)) / scale.y;
+			final time:Float = Conductor.time - data.time;
+			final distance:Float = time * (400.0 * Math.abs(speed)) / scale.y;
 
 			x = strum.x - 10;
 			y = strum.y + distance * scrollDifference;
@@ -136,7 +137,7 @@ class Note extends ForeverSprite {
 		return false;
 
 	@:noCompletion inline function get_direction():Int
-		return data?.direction ?? 0;
+		return data?.dir ?? 0;
 
 	@:noCompletion inline function get_type():String
 		return data?.type ?? "default";

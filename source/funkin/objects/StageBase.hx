@@ -34,15 +34,11 @@ class StageBase extends FlxSpriteGroup {
 	public function new(stageName:String = "", cameraZoom:Float = 1.05, hudZoom:Float = 1.0):Void {
 		super();
 
-		this.stageName = stageName;
-		this.cameraZoom = cameraZoom;
-		this.hudZoom = hudZoom;
-
 		if (Tools.fileExists(AssetHelper.getAsset('data/stages/${stageName}', YAML))) {
 			var data = AssetHelper.parseAsset('data/stages/${stageName}', YAML);
-			this.cameraZoom = data.cameraZoom ?? 1.05;
-			this.cameraSpeed = data.cameraSpeed ?? 1.0;
-			this.hudZoom = data.hudZoom ?? 1.0;
+			cameraZoom = data.cameraZoom ?? 1.05;
+			cameraSpeed = data.cameraSpeed ?? 1.0;
+			hudZoom = data.hudZoom ?? 1.0;
 
 			playerPosition.x = data.playerPos?.x ?? 770;
 			playerPosition.y = data.playerPos?.y ?? 430;
@@ -86,6 +82,10 @@ class StageBase extends FlxSpriteGroup {
 					stageObjects.set(obj.name, newSprite);
 			}
 		}
+
+		this.stageName = stageName;
+		this.cameraZoom = cameraZoom;
+		this.hudZoom = hudZoom;
 
 		// scripts lol
 		if (Tools.fileExists(AssetHelper.getAsset('data/stages/${stageName}', HSCRIPT))) {

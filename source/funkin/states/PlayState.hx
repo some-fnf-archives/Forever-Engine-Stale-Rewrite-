@@ -10,10 +10,10 @@ import forever.core.scripting.*;
 import forever.display.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.components.Timings;
+import funkin.components.parsers.ForeverChartData.ForeverEvents as ChartEventOptions;
 import funkin.objects.*;
 import funkin.objects.StageBase;
 import funkin.objects.notes.Note;
-import funkin.objects.stages.*;
 import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
@@ -119,7 +119,7 @@ class PlayState extends FNFState {
 		FlxG.cameras.add(altCamera, false);
 
 		// -- PREPARE BACKGROUND -- //
-		add(stage = new StageBase(Chart.current.data.stageBG));
+		add(stage = new StageBase(Chart.current.gameInfo.stageBG));
 		gameCamera.zoom = stage.cameraZoom;
 		hudCamera.zoom = stage.hudZoom;
 
@@ -128,9 +128,9 @@ class PlayState extends FNFState {
 		gameCamera.follow(camLead, LOCKON);
 
 		// -- PREPARE CHARACTERS -- //
-		add(player = new Character(stage.playerPosition.x, stage.playerPosition.y, Chart.current.data.playerChar, true));
-		add(enemy = new Character(stage.enemyPosition.x, stage.enemyPosition.y, Chart.current.data.enemyChar, false));
-		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, Chart.current.data.crowdChar, false));
+		add(player = new Character(stage.playerPosition.x, stage.playerPosition.y, Chart.current.gameInfo.player, true));
+		add(enemy = new Character(stage.enemyPosition.x, stage.enemyPosition.y, Chart.current.gameInfo.enemy, false));
+		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, Chart.current.gameInfo.crowd, false));
 
 		// -- PREPARE USER INTERFACE -- //
 		add(comboGroup = new ComboGroup());
@@ -145,10 +145,10 @@ class PlayState extends FNFState {
 		playField.camera = hud.camera = hudCamera;
 
 		// -- PREPARE CHART AND NOTEFIELDS -- //
-		Conductor.bpm = Chart.current.data.initialBPM;
+		Conductor.bpm = Chart.current.songInfo.beatsPerMinute;
 
 		for (lane in playField.noteFields) {
-			lane.changeStrumSpeed(Chart.current.data.initialSpeed);
+			lane.changeStrumSpeed(Chart.current.gameInfo.noteSpeed);
 			lane.onNoteHit.add(hitBehavior);
 			lane.onNoteMiss.add(missBehavior);
 		}
@@ -237,7 +237,7 @@ class PlayState extends FNFState {
 		var character:Character = isEnemy ? enemy : player;
 		// TODO: a better system -Crow
 		if (character.animationContext != 3) {
-			character.playAnim(character.singingSteps[note.data.direction], true);
+			character.playAnim(character.singingSteps[note.data.dir], true);
 			character.holdTmr = 0.0;
 		}
 
@@ -417,7 +417,7 @@ class PlayState extends FNFState {
 		super.closeSubState();
 	}
 
-	public function preloadEvent(which:ForeverEvents):Void {
+	public function preloadEvent(which:ChartEventOptions):Void {
 		switch (which) {
 			case ChangeCharacter(who, toCharacter):
 			/*
@@ -435,7 +435,7 @@ class PlayState extends FNFState {
 
 	var eventIndex:Int = 0;
 
-	public function processEvent(which:ForeverEvents):Void {
+	public function processEvent(which:ChartEventOptions):Void {
 		switch (which) {
 			case FocusCamera(who, noEasing):
 				var character:Character = getCharacterFromID(who);

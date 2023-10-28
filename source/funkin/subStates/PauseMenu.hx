@@ -39,7 +39,7 @@ class PauseMenu extends FlxSubState {
 			})
 		];
 
-		bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		bg = new FlxSprite().makeSolid(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0;
 		add(bg);
 

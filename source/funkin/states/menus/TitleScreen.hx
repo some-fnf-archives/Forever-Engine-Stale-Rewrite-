@@ -64,7 +64,7 @@ class TitleScreen extends FNFState {
 		FlxTransitionableState.skipNextTransIn = false;
 		FlxTransitionableState.skipNextTransOut = false;
 
-		add(bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000));
+		add(bg = new FlxSprite().makeSolid(FlxG.width, FlxG.height, 0xFF000000));
 		add(textGroup = new TitleTextGroup());
 		add(mainGroup = new FlxSpriteGroup());
 		mainGroup.visible = false;

@@ -44,7 +44,7 @@ class CodenameParser {
 		}
 		try {
 			if (valid)
-				cnebase = tjson.TJSON.parse(Tools.getText(chartPath));
+				cnebase = haxe.Json.parse(Tools.getText(chartPath));
 		}
 		catch (e)
 			trace('[ERROR] Could not parse chart for song ${songName} ($difficulty): ${e}');

@@ -84,7 +84,7 @@
 		<haxedef name="hscriptPos" />
 	</section>
 
-	<haxelib name="tjson" />
+	<!-- <haxelib name="tjson" /> -->
 	<haxelib name="yaml" />
 
 	<!-- _______________ -->

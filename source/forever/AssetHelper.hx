@@ -118,7 +118,7 @@ class AssetHelper {
 			case JSON:
 				var json:String = Tools.getText(gottenAsset).trim();
 				json = json.substr(0, json.lastIndexOf("}") + 1);
-				tjson.TJSON.parse(json);
+				haxe.Json.parse(json);
 			case XML, TEXT: Tools.getText(gottenAsset).trim();
 			case YAML: yaml.Yaml.parse(Tools.getText(gottenAsset).trim(), yaml.Parser.options().useObjects());
 			default: gottenAsset;

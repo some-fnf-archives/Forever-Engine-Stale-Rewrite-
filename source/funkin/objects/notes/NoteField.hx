@@ -174,7 +174,7 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 		var currentStrum:Strum = members[key];
 
 		var notesHittable:Array<Note> = playField.noteGroup.members.filter(function(n:Note) {
-			return n.parent == this && n.alive && n.data.direction == key && !n.isLate && !n.wasHit && n.canBeHit;
+			return n.parent == this && n.alive && n.data.dir == key && !n.isLate && !n.wasHit && n.canBeHit;
 		});
 
 		if (notesHittable.length > 0) {

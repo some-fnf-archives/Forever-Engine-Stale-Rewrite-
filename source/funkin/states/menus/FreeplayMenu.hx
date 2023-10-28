@@ -6,7 +6,7 @@ import flixel.util.FlxColor;
 import forever.display.ForeverSprite;
 import forever.display.ForeverText;
 import funkin.components.ChartLoader;
-import funkin.components.DifficultyHelper;
+import funkin.components.Difficulty;
 import funkin.components.Highscore;
 import funkin.states.base.BaseMenuState;
 import funkin.ui.Alphabet;
@@ -27,6 +27,8 @@ class FreeplayMenu extends BaseMenuState {
 	var lerpScore:Int = 0;
 	var intendedScore:Int = 0;
 
+	@:dox(hide) var _loaded = true;
+
 	public override function create():Void {
 		super.create();
 
@@ -40,21 +42,13 @@ class FreeplayMenu extends BaseMenuState {
 
 		for (i in localSongData) {
 			final song:Array<String> = i.trim().split("|");
-
-			// gotta do manual trimming here
-			var name:String = song[0].trim();
-			var folder:String = song[1].trim();
-			var icon:String = song[2].trim();
-
-			var color:Null<FlxColor> = 0xFF606060;
-
-			var difficulties:Array<String> = null;
-			if (song[3] != null)
-				color = FlxColor.fromString(song[3].trim());
-			if (song[4] != null)
-				difficulties = Tools.removeSpaces(song[4]).split(",");
-
-			songs.push(new FreeplaySong(name, folder, icon, color, difficulties));
+			songs.push({
+				name: song[0].trim(),
+				folder: song[1].trim(),
+				character: song[2].trim(),
+				color: FlxColor.fromString(song[3]?.trim()) ?? 0xFF606060, // penis
+				difficulties: song[4] != null ? Tools.removeSpaces(song[4]).split(",") : Difficulty.getDefault()
+			});
 		};
 
 		add(bg = new ForeverSprite(0, 0, "menus/menuDesat", {color: 0xFF606060}));
@@ -68,7 +62,7 @@ class FreeplayMenu extends BaseMenuState {
 			// -- UI -- //
 			final position = FlxG.width * 0.7;
 
-			add(backPB = new FlxSprite(position - 6, 0).makeGraphic(1, 60, 0xFF000000));
+			add(backPB = new FlxSprite(position - 6, 0).makeSolid(1, 60, 0xFF000000));
 			add(scoreTxt = new ForeverText(position, 5, 0, "", 32));
 
 			scoreTxt.alignment = RIGHT;
@@ -104,7 +98,7 @@ class FreeplayMenu extends BaseMenuState {
 				var song:funkin.states.PlayState.PlaySong = {
 					display: songs[curSel].name,
 					folder: songs[curSel].folder,
-					difficulty: DifficultyHelper.currentList[curSelAlt]
+					difficulty: Difficulty.current[curSelAlt]
 				};
 
 				Chart.current = ChartLoader.load(song.folder, song.difficulty);
@@ -117,6 +111,11 @@ class FreeplayMenu extends BaseMenuState {
 			final errorText:Alphabet = new Alphabet(0, 0, "No songs were found,\nplease check your song list file.", BOLD, CENTER, 0.8);
 			errorText.screenCenter();
 			add(errorText);
+
+			canChangeSelection = false;
+			canChangeAlternative = false;
+			canAccept = false;
+			_loaded = false;
 		}
 
 		onBack = function():Void {
@@ -132,6 +131,9 @@ class FreeplayMenu extends BaseMenuState {
 
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
+
+		if (!_loaded)
+			return;
 
 		for (si in iconGroup.members)
 			if (si.animation.curAnim.curFrame != 0)
@@ -169,45 +171,36 @@ class FreeplayMenu extends BaseMenuState {
 			bg.colorTween(songs[curSel].color, 0.8, {ease: flixel.tweens.FlxEase.sineIn});
 		}
 
+		Difficulty.current = null; // ensure its using the default ones.
 		if (songs[curSel].difficulties != null && songs[curSel].difficulties.length > 0)
-			DifficultyHelper.changeList(songs[curSel].difficulties);
-		else // handle error?
-			DifficultyHelper.changeList(DifficultyHelper.defaults);
+			Difficulty.current = songs[curSel].difficulties;
 
-		maxSelectionsAlt = DifficultyHelper.currentList.length - 1;
+		maxSelectionsAlt = Difficulty.current.length - 1;
 		updateSelectionAlt();
 	}
 
 	public override function updateSelectionAlt(newSelAlt:Int = 0):Void {
 		if (maxSelectionsAlt < 2)
-			difficultyTxt.text = DifficultyHelper.currentList[0];
+			difficultyTxt.text = Difficulty.current[0];
 
 		super.updateSelectionAlt(newSelAlt);
 
 		if (newSelAlt != 0)
 			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
-		if (DifficultyHelper.currentList.length == 1)
-			difficultyTxt.text = '${DifficultyHelper.toString(curSelAlt).toUpperCase()}';
+		if (Difficulty.current.length == 1)
+			difficultyTxt.text = '${Difficulty.current[curSelAlt].toString().toUpperCase()}';
 		else
-			difficultyTxt.text = '« ${DifficultyHelper.toString(curSelAlt).toUpperCase()} »';
+			difficultyTxt.text = '« ${Difficulty.current[curSelAlt].toString().toUpperCase()} »';
 
 		intendedScore = Highscore.getSongScore(songs[curSel].folder).score;
 	}
 }
 
-class FreeplaySong {
+@:structInit class FreeplaySong {
 	public var name:String = "Test";
 	public var folder:String = "test";
 	public var character:String = "bf";
 	public var color:Null<FlxColor> = 0xFF606060;
 	public var difficulties:Array<String> = null;
-
-	public function new(name:String, folder:String, character:String = "bf", color:Null<FlxColor> = 0xFF606060, ?difficulties:Array<String>):Void {
-		this.name = name;
-		this.folder = folder;
-		this.character = character;
-		this.difficulties = difficulties;
-		this.color = color;
-	}
 }

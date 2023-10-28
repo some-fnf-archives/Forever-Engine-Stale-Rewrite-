@@ -2,12 +2,14 @@ package funkin.components;
 
 import flixel.util.FlxSort;
 import funkin.components.parsers.*;
+import funkin.components.parsers.ForeverChartData;
+
+typedef ForeverEvent = ChartEvent<ForeverEvents>;
 
 class ChartLoader {
 	public static function load(folder:String, file:String):Chart {
 		var chart:Chart = new Chart();
-
-		var json = cast AssetHelper.parseAsset('songs/${folder}/${file}', JSON);
+		var json = cast(AssetHelper.parseAsset('songs/${folder}/${file}', JSON));
 		var dataType:String = VANILLA_V1;
 
 		if (Reflect.hasField(json, "song") && Reflect.hasField(json.song, "player2"))
@@ -28,12 +30,20 @@ class ChartLoader {
 				// case CODENAME: chart = CodenameParser.parseChart(json, file);
 				case FOREVER:
 					// welcome to my tutorial on how to parse charts, first off. -Crow
+					// first you get the die
+					// and then pour it all over yourself -Swordcube
 					chart.notes = json.notes;
 					chart.events = json.events;
-					var meta:Dynamic = cast json.data;
-					if (Tools.fileExists(AssetHelper.getPath('songs/${folder}/meta', JSON)))
-						meta = cast AssetHelper.parseAsset('songs/${folder}/meta', JSON);
-					chart.data = meta;
+					if (Tools.fileExists(AssetHelper.getPath('songs/${folder}/meta', YAML))) {
+						var sd = cast(AssetHelper.parseAsset('songs/${folder}/meta', YAML));
+						chart.songInfo = {beatsPerMinute: sd?.beatsPerMinute ?? 100.0, stepsPerBeat: sd?.stepsPerBeat, beatsPerBar: sd?.beatsPerMeasure};
+						chart.gameInfo = {
+							noteSpeed: sd?.speed,
+							player: sd?.player,
+							enemy: sd?.enemy,
+							crowd: sd?.crowd
+						};
+					}
 				default:
 					trace('${dataType.toString()} Chart Type is not implemented *yet*');
 			}
@@ -48,77 +58,16 @@ class ChartLoader {
 	}
 }
 
+/**
+ * Structure for Forever Engine Charts.
+**/
 class Chart {
 	public var notes:Array<NoteData> = [];
 	public var events:Array<ForeverEvent> = [];
-	public var data:ChartMetadata = {initialBPM: 100.0, initialSpeed: 1.0, keyAmount: 4};
+	public var songInfo:ForeverSongData = null;
+	public var gameInfo:ForeverGameplayData = null;
 
 	public static var current:Chart;
 
-	public function new():Void {
-		// hey so haxe needs this don't delete this DUDE DO NOT TOUCH THIS -Crow & Ne_Eo
-	}
-}
-
-typedef NoteData = {
-	var time:Float;
-	var direction:Int;
-	var notefield:Int;
-
-	@:optional var type:String;
-	@:optional var animation:String;
-	@:optional var length:Float;
-}
-
-typedef NoteFieldData = {
-	var notes:Array<NoteData>;
-	var chars:Array<String>;
-}
-
-typedef ChartMetadata = {
-	/** Chart's Amount of Keys. **/
-	var keyAmount:Int;
-
-	/** Chart's Initial BPM. **/
-	var initialBPM:Float;
-
-	/** Chart's Initial Speed. **/
-	var initialSpeed:Float;
-
-	/** Player Character. **/
-	@:optional var playerChar:String;
-
-	/** Enemy Character. **/
-	@:optional var enemyChar:String;
-
-	/** Spectator/GF/Crowd Character. **/
-	@:optional var crowdChar:String;
-
-	/** Stage Background Name. **/
-	@:optional var stageBG:String;
-}
-
-typedef ChartEvent<T> = {
-	var event:T;
-	var time:Float;
-	var delay:Float;
-}
-
-typedef ForeverEvent = ChartEvent<ForeverEvents>;
-
-enum ForeverEvents {
-	BPMChange(nextBPM:Float);
-	PlayAnimation(who:Int, animation:String);
-	ChangeCharacter(who:Int, toCharacter:String);
-	FocusCamera(who:Int, noEasing:Bool);
-	PlaySound(soundName:String, volume:Float);
-
-	/**
-	 * HScript Event
-	 *
-	 * @param name 		Name (in the chart editor).
-	 * @param script	Script to run for the event.
-	 * @param args 		Arguments for the event.
-	**/
-	Scripted(name:String, script:String, args:Array<String>);
+	public function new():Void {}
 }

@@ -1,5 +1,6 @@
 package funkin.components.parsers;
 
+import funkin.components.parsers.ForeverChartData;
 import funkin.components.ChartLoader;
 
 class VanillaParser {
@@ -10,22 +11,20 @@ class VanillaParser {
 
 		switch (version) {
 			default:
-				var curBPM:Float = json.bpm;
 				var keys:Int = 4;
 
 				function makePsychEvent():Dynamic {
 					return {};
 				}
 
-				chart.data = {
-					initialBPM: curBPM,
-					initialSpeed: json.speed,
-					keyAmount: keys,
-					playerChar: json.player1 ?? "bf",
-					enemyChar: json.player2 ?? "dad",
-					crowdChar: json.gfVersion ?? json.player3 ?? "gf",
-					stageBG: json.stage ?? getVanillaStage(json.song),
-				}
+				chart.songInfo = {beatsPerMinute: json.bpm, stepsPerBeat: 4, beatsPerBar: 4};
+				chart.gameInfo = {
+					noteSpeed: json.speed ?? 1.0,
+					player: json.player1 ?? "bf",
+					enemy: json.player2 ?? "dad",
+					crowd: json.player3 ?? json.gfVersion ?? "gf",
+					stageBG: json.stage ?? getVanillaStage(json.song)
+				};
 
 				var bars:Array<Dynamic> = cast(json.notes, Array<Dynamic>);
 
@@ -48,25 +47,31 @@ class VanillaParser {
 
 				// Load notes + event
 				var noteId = 0;
+				var _time:Float = 0;
+				var currentBPM:Float = json.bpm;
+				var beatDelta:Float = (60.0 / currentBPM);
+
 				for (i in 0...bars.length) {
 					var bar = bars[i];
-					if (bar == null)
+					if (bar == null) {
+						_time += beatDelta * chart.songInfo.beatsPerBar;
 						continue;
+					}
 
-					var curBar:Int = bars.indexOf(bar);
-					var barTime:Float = (60.0 / curBPM) / 4.0;
+					final curBar:Int = bars.indexOf(bar);
 
 					chart.events.push({
 						event: FocusCamera(bar.mustHitSection ? 1 : 0, false),
-						time: barTime * bar.lengthInSteps * curBar,
+						time: _time,
 						delay: 0.0
 					});
 
-					if (bar.changeBPM == true && bar.bpm != curBPM) {
-						curBPM = bar.bpm;
+					if (bar.changeBPM == true && bar.bpm != currentBPM) {
+						beatDelta = (60.0 / bar.bpm);
+						currentBPM = bar.bpm;
 						chart.events.push({
 							event: BPMChange(bar.bpm),
-							time: barTime * bar.lengthInSteps * curBar,
+							time: beatDelta + _time * curBar,
 							delay: 0.0
 						});
 					}
@@ -81,18 +86,21 @@ class VanillaParser {
 							if (Std.isOfType(j[3], Bool) && j[3] == true || bar.altAnim)
 								noteAnim = "-alt";
 
-							chart.notes[noteId] = {
+							var note:NoteData = {
 								time: j[0] / 1000.0,
-								direction: Std.int(j[1]) % keys,
-								length: Math.max(j[2], 0.0) / 1000.0,
+								dir: Std.int(j[1]) % keys,
+								holdLen: Math.max(j[2], 0.0) / 1000.0,
 								notefield: Std.int(j[1]) >= keys != bar.mustHitSection ? 1 : 0,
 								type: j[3] != null && Std.isOfType(j[3], String) ? j[3] : "default",
 								animation: noteAnim,
 							};
+							chart.notes[noteId] = note;
 
 							noteId++;
 						}
 					}
+
+					_time += beatDelta * chart.songInfo.beatsPerBar;
 				}
 		}
 		return chart;

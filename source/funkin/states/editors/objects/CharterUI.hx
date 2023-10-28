@@ -10,7 +10,7 @@ class CharterStatusBar extends FlxSpriteGroup {
 	public function new(?x:Float = 0, ?y:Float = 0):Void {
 		super(x, y);
 
-		bar = new FlxSprite().makeGraphic(350, 100, 0xFF303030);
+		bar = new FlxSprite().makeSolid(350, 100, 0xFF303030);
 		bar.alpha = 0.8;
 		add(bar);
 

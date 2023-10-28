@@ -74,6 +74,25 @@ class Tools {
 	}
 
 	/**
+	 * Formats each word in a string so the first character of the word is uppercase
+	 *
+	 * ex:
+	 * "hello world-test" -> "Hello World Test"
+	 * @param str The string to be formatted
+	 * @return String
+	 */
+	public static function firstUpperCase(str:String, ?replaceDashes:Bool = true):String {
+		if (replaceDashes)
+			str = str.replace("-", " "); // yeah.
+		var split = str.split(" ");
+
+		// apply for each word
+		for (i in 0...split.length)
+			split[i] = split[i].charAt(0).toUpperCase() + split[i].substr(1).toLowerCase();
+		return split.join(" ");
+	}
+
+	/**
 	 * Lists every folder in the specified path
 	 * @param path 				the path to get folders from
 	 * @return Array<String>

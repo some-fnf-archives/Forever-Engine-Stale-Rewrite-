@@ -66,7 +66,7 @@ class OptionsMenu extends BaseMenuState {
 		infoText.screenCenter(XY);
 		infoText.alignment = CENTER;
 
-		var topBar:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 50, 0xFF000000);
+		var topBar:FlxSprite = new FlxSprite().makeSolid(FlxG.width, 50, 0xFF000000);
 		topBar.alpha = 0.6;
 		add(topBar);
 

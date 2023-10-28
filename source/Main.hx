@@ -6,11 +6,11 @@ import forever.ui.ForeverOverlay;
 import forever.ui.overlay.*;
 import openfl.display.Sprite;
 
+typedef GameClient = #if CRASH_HANDLER external.crash.FNFGame #else flixel.FlxGame #end;
+
 class Main extends Sprite {
 	public static var framerate:Int = 120;
-
 	public static var overlay:ForeverOverlay;
-
 	public static var noGpuBitmaps:Bool = false;
 
 	public static final initialState = funkin.states.menus.TitleScreen;

@@ -3,7 +3,7 @@ package funkin.objects;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import funkin.components.ChartLoader.Chart;
-import funkin.components.ChartLoader.NoteData;
+import funkin.components.parsers.ForeverChartData.NoteData;
 import funkin.objects.notes.*;
 import haxe.ds.Vector;
 

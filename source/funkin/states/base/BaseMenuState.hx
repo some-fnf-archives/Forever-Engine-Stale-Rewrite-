@@ -42,23 +42,28 @@ class BaseMenuState extends FNFState {
 	public override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		final pressUp:Bool = Controls.UP_P;
-		final pressDown:Bool = Controls.DOWN_P;
-		final pressLeft:Bool = Controls.LEFT_P;
-		final pressRight:Bool = Controls.RIGHT_P;
+		if (canChangeSelection) {
+			final pressUp:Bool = Controls.UP_P;
+			final pressDown:Bool = Controls.DOWN_P;
 
-		if (pressUp || pressDown)
-			updateSelection(pressUp ? -1 : 1);
+			if (pressUp || pressDown)
+				updateSelection(pressUp ? -1 : 1);
+		}
 
-		if (pressLeft || pressRight)
-			updateSelectionAlt(pressLeft ? -1 : 1);
+		if (canChangeAlternative) {
+			final pressLeft:Bool = Controls.LEFT_P;
+			final pressRight:Bool = Controls.RIGHT_P;
 
-		if (Controls.ACCEPT && canAccept) {
+			if (pressLeft || pressRight)
+				updateSelectionAlt(pressLeft ? -1 : 1);
+		}
+
+		if (canAccept && Controls.ACCEPT) {
 			if (onAccept != null)
 				onAccept();
 		}
 
-		if (Controls.BACK && canBackOut) {
+		if (canBackOut && Controls.BACK) {
 			if (onBack != null)
 				onBack();
 		}
@@ -74,9 +79,6 @@ class BaseMenuState extends FNFState {
 	 * @param newSel        By how much should the current selection be increment/decremented?
 	**/
 	public function updateSelection(newSel:Int = 0):Void {
-		if (!canChangeSelection)
-			return;
-
 		curSel = FlxMath.wrap(curSel + newSel, 0, maxSelections);
 	}
 
@@ -85,9 +87,6 @@ class BaseMenuState extends FNFState {
 	 * @param newSelAlt     By how much should the alternative selection be increment/decremented?
 	**/
 	public function updateSelectionAlt(newSelAlt:Int = 0):Void {
-		if (!canChangeAlternative)
-			return;
-
 		curSelAlt = FlxMath.wrap(curSelAlt + newSelAlt, 0, maxSelectionsAlt);
 	}
 }

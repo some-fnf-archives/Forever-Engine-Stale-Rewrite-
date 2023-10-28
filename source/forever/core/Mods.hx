@@ -58,7 +58,7 @@ class Mods {
 				continue;
 			}
 
-			final modData:ForeverMod = cast yaml.Yaml.parse(sys.io.File.getContent('${MODS_FOLDER}/${folder}/mod.yaml'), yaml.Parser.options().useObjects());
+			final modData:ForeverMod = cast(yaml.Yaml.parse(sys.io.File.getContent('${MODS_FOLDER}/${folder}/mod.yaml'), yaml.Parser.options().useObjects()));
 
 			// did you know: you can make functions inside functions -Crow
 			inline function makeModCredits():Array<ModCredit> {

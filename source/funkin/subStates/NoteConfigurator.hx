@@ -14,7 +14,7 @@ class NoteConfigurator extends FlxSubState {
 		var bg1:FlxSprite;
 		var bg2:FlxSprite;
 
-		add(bg1 = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK));
+		add(bg1 = new FlxSprite().makeSolid(FlxG.width, FlxG.height, FlxColor.BLACK));
 		add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("menus/bgBlack", IMAGE)));
 
 		bg2.blend = DIFFERENCE;
