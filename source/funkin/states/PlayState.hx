@@ -297,39 +297,41 @@ class PlayState extends FNFState {
 		callFunPack("postMissBehavior", [dir]);
 	}
 
+	private var lastJSpr:ComboSprite = null;
+
 	public function displayJudgement(name:String, type:ComboPopType = NORMAL):Void {
 		if (type == PERFECT && name == "sick")
 			name = "sick-perfect";
 
-		final placement:Float = FlxG.width * 0.35;
+		final placement:Float = FlxG.width * 0.55;
+		final jSpr:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
 
-		var judgement:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
-		judgement.loadSprite('${name}0');
-		judgement.screenCenter(Y);
-		judgement.x = placement - 40;
-		judgement.y += 60;
+		jSpr.loadSprite('${name}0');
+		jSpr.x = FlxMath.bound(placement + 30, FlxG.camera.scroll.x, FlxG.camera.scroll.x + FlxG.camera.width - jSpr.width);
+		jSpr.y = FlxG.camera.scroll.y + FlxG.camera.height * 0.4 - 130;
 
-		judgement.scale.set(0.7, 0.7);
-		judgement.updateHitbox();
+		jSpr.scale.set(0.7, 0.7);
+		jSpr.updateHitbox();
 
-		judgement.acceleration.y = 550 * Conductor.rate * Conductor.rate;
-		judgement.velocity.y = -FlxG.random.int(140, 175) * Conductor.rate;
-		judgement.velocity.x = -FlxG.random.int(0, 10) * Conductor.rate;
+		jSpr.acceleration.y = 550 * Conductor.rate * Conductor.rate;
+		jSpr.velocity.y = -FlxG.random.int(140, 175) * Conductor.rate;
+		jSpr.velocity.x = -FlxG.random.int(0, 10) * Conductor.rate;
 
 		final crochet:Float = (60.0 / Conductor.bpm);
 
-		judgement.tween({alpha: 0}, 0.4 / Conductor.rate, {
+		jSpr.tween({alpha: 0}, 0.4 / Conductor.rate, {
 			onComplete: function(twn:FlxTween):Void {
-				judgement.kill();
-				comboGroup.remove(judgement, true);
+				jSpr.kill();
+				comboGroup.remove(jSpr, true);
 			},
 			startDelay: crochet + (crochet * 4.0) * 0.05
 		});
+
+		lastJSpr = jSpr;
 	}
 
 	public function displayCombo(combo:Int, type:ComboPopType = NORMAL):Void {
 		final prefix:String = type == PERFECT ? "gold" : "normal";
-		final placement:Float = FlxG.width * 0.35;
 		final comboArr:Array<String> = Std.string(combo).split("");
 		final xOff:Float = comboArr.length - 3;
 
@@ -338,31 +340,31 @@ class PlayState extends FNFState {
 			if (comboArr[i] == "-" && type == MISS)
 				comboName = '${prefix}minus';
 
-			var comboNumber:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
-			comboNumber.loadSprite(comboName);
-			comboNumber.screenCenter(Y);
+			final comboX:Float = (lastJSpr.x + lastJSpr.width) + (43 * (i - xOff)) - 200;
+			final cnSpr:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
+			cnSpr.loadSprite(comboName);
+
+			cnSpr.x = comboX;
+			cnSpr.y = lastJSpr.y + 90;
 
 			if (type == MISS)
-				comboNumber.color = FlxColor.fromRGB(204, 66, 66);
+				cnSpr.color = FlxColor.fromRGB(204, 66, 66);
 
-			comboNumber.x = placement + (43 * (i - xOff)) + 25;
-			comboNumber.y += 150;
+			cnSpr.scale.set(0.5, 0.5);
+			cnSpr.updateHitbox();
 
-			comboNumber.scale.set(0.5, 0.5);
-			comboNumber.updateHitbox();
-
-			comboNumber.acceleration.y = FlxG.random.int(200, 300) * Conductor.rate * Conductor.rate;
-			comboNumber.velocity.y = -FlxG.random.int(140, 160) * Conductor.rate;
-			comboNumber.velocity.x = FlxG.random.int(-5, 5) * Conductor.rate;
+			cnSpr.acceleration.y = FlxG.random.int(200, 300) * Conductor.rate * Conductor.rate;
+			cnSpr.velocity.y = -FlxG.random.int(140, 160) * Conductor.rate;
+			cnSpr.velocity.x = FlxG.random.int(-5, 5) * Conductor.rate;
 
 			final crochet:Float = (60.0 / Conductor.bpm);
 
-			comboNumber.tween({alpha: 0}, 0.5 / Conductor.rate, {
+			cnSpr.tween({alpha: 0}, 0.5 / Conductor.rate, {
 				onComplete: function(twn:FlxTween):Void {
-					comboNumber.kill();
-					comboGroup.remove(comboNumber, true);
+					cnSpr.kill();
+					comboGroup.remove(cnSpr, true);
 				},
-				startDelay: (crochet * 4.0) * 0.02
+				startDelay: (crochet * 4.0) * 0.08
 			});
 		}
 	}

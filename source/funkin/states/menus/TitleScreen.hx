@@ -56,6 +56,9 @@ class TitleScreen extends FNFState {
 					});
 				}
 			}
+
+			Tools.defaultMenuMusic = introData.menuMusic ?? "freakyMenu";
+			Tools.defaultMenuBeats = introData.menuBPM ?? 102.0;
 		}
 
 		DiscordRPC.updatePresence("In the Menus", "TITLE SCREEN");

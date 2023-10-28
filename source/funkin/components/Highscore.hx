@@ -31,7 +31,12 @@ class Highscore {
 
 	@:dox(hide)
 	private static inline function _getScr(map:StringMap<HighscoreSave>, id:String):HighscoreSave {
-		final dummy:HighscoreSave = {score: 0, misses: 0, accuracy: 0.00, rank: "N/A"};
+		final dummy:HighscoreSave = {
+			score: 0,
+			misses: 0,
+			accuracy: 0.00,
+			rank: "N/A"
+		};
 		return map.get(id) != null ? map.get(id) : dummy;
 	}
 

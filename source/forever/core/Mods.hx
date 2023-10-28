@@ -130,8 +130,6 @@ class Mods {
 			initScript.call("init", []);
 			initScript.destroy();
 		}
-		else
-			Tools.defaultMenuMusic = "foreverMenu";
 	}
 
 	public static function openModsMenu():Void {

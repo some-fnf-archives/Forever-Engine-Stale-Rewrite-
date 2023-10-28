@@ -1,3 +1,6 @@
+menuMusic: "freakyMenu"
+menuBPM: 102.0
+
 introSections:
   - {beat: 1, text: "crowplexus, ne_eo, itsaizakku, nxtvithor, sayofthelor", exec: "create"}
   - {beat: 3, text: "PRESENT", exec: "add"}

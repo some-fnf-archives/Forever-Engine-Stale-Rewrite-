@@ -17,7 +17,8 @@ class Tools {
 	public static final NOTE_DIRECTIONS:Array<String> = ["left", "down", "up", "right"];
 	public static final NOTE_COLORS:Array<String> = ["purple", "blue", "green", "red"];
 
-	public static var defaultMenuMusic:String = "foreverMenu";
+	public static var defaultMenuMusic:String = "freakyMenu";
+	public static var defaultMenuBeats:Float = 102.0;
 
 	public static inline function fileExists(file:String, ?type:openfl.utils.AssetType = BINARY):Bool {
 		return #if sys sys.FileSystem.exists(file) #else OpenFLAssets.exists(file, type) #end;
@@ -151,12 +152,14 @@ class Tools {
 	 * @param doFadeIn 		Quite self explanatory right?
 	 * @param bpm 			The BPM of the music (needed for beat events and such).
 	**/
-	public static function checkMenuMusic(music:String = null, ?doFadeIn:Bool = false, bpm:Float = 102.0):Void {
+	public static function checkMenuMusic(music:String = null, ?doFadeIn:Bool = false, ?bpm:Null<Float>):Void {
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			return;
 
 		if (music == null)
 			music = defaultMenuMusic;
+		if (bpm == null)
+			bpm = defaultMenuBeats;
 
 		FlxG.sound.playMusic(AssetHelper.getAsset('audio/bgm/${music}', SOUND), doFadeIn ? 0.0 : 0.7);
 		if (doFadeIn)
@@ -165,9 +168,7 @@ class Tools {
 		Conductor.bpm = bpm;
 
 		// reset stuff
-		FlxG.sound.music.onComplete = function() {
-			Conductor.init(false);
-		}
+		FlxG.sound.music.onComplete = function():Void Conductor.init(false);
 	}
 
 	/**
