@@ -92,7 +92,6 @@ enum abstract ScreenFilterType(Int) from Int to Int {}
 
 @:build(forever.macros.EnumHelper.makeEnum(["fnf", "stepmania"]))
 enum abstract SustainLayerType(Int) from Int to Int {}
-
 /*enum abstract JudgementPositionType(Int) from Int to Int {
 	var LEGACY = 0;
 	var NEVER_OFFSCREEN = 1;
@@ -106,8 +105,8 @@ enum abstract SustainLayerType(Int) from Int to Int {}
 			case _: Std.string(this);
 		}
 	}
-}
-enum abstract JudgementPopupType(Int) from Int to Int {
+	}
+	enum abstract JudgementPopupType(Int) from Int to Int {
 	var FUNKIN = 0;
 	var SIMPLY = 1;
 

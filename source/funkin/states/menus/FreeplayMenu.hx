@@ -13,6 +13,9 @@ import funkin.ui.Alphabet;
 import funkin.ui.HealthIcon;
 
 class FreeplayMenu extends BaseMenuState {
+	static var prevSel:Int = 0;
+	static var lastDiff:String = null;
+
 	public var bg:ForeverSprite;
 	public var songs:Array<FreeplaySong> = [];
 
@@ -98,7 +101,7 @@ class FreeplayMenu extends BaseMenuState {
 				var song:funkin.states.PlayState.PlaySong = {
 					display: songs[curSel].name,
 					folder: songs[curSel].folder,
-					difficulty: Difficulty.current[curSelAlt]
+					difficulty: Difficulty.list[curSelAlt]
 				};
 
 				Chart.current = ChartLoader.load(song.folder, song.difficulty);
@@ -106,6 +109,9 @@ class FreeplayMenu extends BaseMenuState {
 			};
 
 			maxSelections = songs.length - 1;
+			if (prevSel < 0 || prevSel > maxSelections)
+				prevSel = 0;
+			curSel = prevSel;
 		}
 		else {
 			final errorText:Alphabet = new Alphabet(0, 0, "No songs were found,\nplease check your song list file.", BOLD, CENTER, 0.8);
@@ -171,29 +177,32 @@ class FreeplayMenu extends BaseMenuState {
 			bg.colorTween(songs[curSel].color, 0.8, {ease: flixel.tweens.FlxEase.sineIn});
 		}
 
-		Difficulty.current = null; // ensure its using the default ones.
+		prevSel = curSel;
+		Difficulty.list = null; // ensure its using the default ones.
 		if (songs[curSel].difficulties != null && songs[curSel].difficulties.length > 0)
-			Difficulty.current = songs[curSel].difficulties;
+			Difficulty.list = songs[curSel].difficulties;
 
-		maxSelectionsAlt = Difficulty.current.length - 1;
+		if (lastDiff != null && Difficulty.list.contains(lastDiff))
+			curSelAlt = Difficulty.list.indexOf(lastDiff);
+
+		maxSelectionsAlt = Difficulty.list.length - 1;
 		updateSelectionAlt();
 	}
 
 	override function updateSelectionAlt(newSelAlt:Int = 0):Void {
-		if (maxSelectionsAlt < 2)
-			difficultyTxt.text = Difficulty.current[0];
+		if (Difficulty.list.length == 1) {
+			difficultyTxt.text = Difficulty.list[0].toUpperCase();
+			return;
+		}
 
 		super.updateSelectionAlt(newSelAlt);
 
 		if (newSelAlt != 0)
 			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
-		if (Difficulty.current.length == 1)
-			difficultyTxt.text = '${Difficulty.current[curSelAlt].toString().toUpperCase()}';
-		else
-			difficultyTxt.text = '« ${Difficulty.current[curSelAlt].toString().toUpperCase()} »';
-
+		difficultyTxt.text = '« ${Difficulty.list[curSelAlt].toUpperCase()} »';
 		intendedScore = Highscore.getSongScore(songs[curSel].folder).score;
+		lastDiff = Difficulty.list[curSelAlt];
 	}
 }
 

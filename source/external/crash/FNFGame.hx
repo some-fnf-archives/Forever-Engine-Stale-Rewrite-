@@ -66,9 +66,8 @@ class FNFGame extends FlxGame {
 	 */
 	override function update():Void {
 		try {
-			if (FlxG.keys.checkStatus(E, JUST_PRESSED))
-				null
-			.draw();
+			if (_viewingCrash)
+				return;
 			super.update();
 		}
 		catch (e:haxe.Exception)

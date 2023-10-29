@@ -16,6 +16,7 @@ class Main extends Sprite {
 	public static var noGpuBitmaps:Bool = false;
 
 	private var gameClient:GameClient;
+
 	public var overlay:ForeverOverlay;
 
 	public function new():Void {

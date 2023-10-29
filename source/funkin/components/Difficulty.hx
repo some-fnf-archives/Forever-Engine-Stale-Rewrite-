@@ -21,11 +21,11 @@ enum abstract Difficulty(String) from String to String {
 	}
 
 	// -- STOP EDITING HERE -- //
-	public static var current(default, set):Array<String> = [];
+	public static var list(default, set):Array<String> = [];
 
-	private static inline function set_current(v:Array<String>):Array<String> {
+	private static inline function set_list(v:Array<String>):Array<String> {
 		if (v == null || v.length == 0)
 			v = getDefault();
-		return current = v;
+		return list = v;
 	}
 }

@@ -9,7 +9,7 @@ class FramerateMonitor extends BaseOverlayMonitor {
 	}
 
 	override function update():Void {
-		if (Main.overlay != null && Main.overlay.currentFPS != 0)
-			text = '${Main.overlay.currentFPS} FPS';
+		if (Main.self.overlay != null && Main.self.overlay.currentFPS != 0)
+			text = '${Main.self.overlay.currentFPS} FPS';
 	}
 }
