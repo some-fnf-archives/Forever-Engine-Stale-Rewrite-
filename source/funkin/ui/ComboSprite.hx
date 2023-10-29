@@ -11,7 +11,15 @@ enum abstract ComboPopType(Int) from Int to Int {
 	var MISS = -1;
 }
 
+@:structInit class ComboPositionInfo {
+	public var x:Float = 0;
+	public var y:Float = 0;
+	public var size:Float = 0.7;
+}
+
 class ComboSprite extends ForeverSprite {
+	public var positionInfo:ComboPositionInfo = {x: 0, y: 0, size: 0.7};
+
 	public function new(X:Float = 0, Y:Float = 0, ?Sprite:String) {
 		super(X, Y);
 

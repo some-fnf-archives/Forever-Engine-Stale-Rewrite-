@@ -59,11 +59,13 @@ class ConfigHelper {
 					continue;
 			}
 
-			for (meta in field.meta) {
-				if (meta.name == ":unused") {
-					Sys.println('[WARNING] Setting "${field.name}" is unused in the code');
+			/*
+				for (meta in field.meta) {
+					if (meta.name == ":unused") {
+						Sys.println('[WARNING] Setting "${field.name}" is unused in the code');
+					}
 				}
-			}
+			 */
 		}
 
 		// find flush and load fields

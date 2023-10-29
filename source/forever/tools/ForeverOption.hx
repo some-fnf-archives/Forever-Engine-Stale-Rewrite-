@@ -4,6 +4,9 @@ import flixel.math.FlxMath;
 
 /** Helper Enumerator for Option Types. **/
 enum OptionType {
+	/** Dummy Placeholder Type Option. **/
+	NONE();
+
 	/** Boolean Type Option. **/
 	CHECKMARK();
 
@@ -23,7 +26,7 @@ enum OptionType {
 	 * StringArray Type Option.
 	 * @param options 		A list with options that this option can be changed to.
 	**/
-	CHOICE(options:Array<String>);
+	CHOICE(?options:Array<String>);
 }
 
 /** Class Structure that handles options. **/
@@ -46,14 +49,14 @@ class ForeverOption {
 	/**
 	 * Creates a new option reference struct.
 	**/
-	public function new(name:String, ?variable:String = "", ?description:String = null, type:OptionType = CHECKMARK):Void {
+	public function new(name:String, ?variable:String = "", type:OptionType = CHECKMARK, ?description:String = null):Void {
 		this.name = name;
+		this.variable = variable;
 
 		if (description == null && Settings.descriptions.exists(variable))
 			description = Settings.descriptions.get(variable);
 
 		this.description = description;
-		this.variable = variable;
 		this.type = type;
 	}
 
@@ -93,12 +96,10 @@ class ForeverOption {
 		}
 	}
 
-	@:dox(hide) @:noCompletion
-	function get_value():Dynamic
+	@:dox(hide) @:noCompletion function get_value():Dynamic
 		return Reflect.field(Settings, variable);
 
-	@:dox(hide) @:noCompletion
-	function set_value(v:Dynamic):Dynamic {
+	@:dox(hide) @:noCompletion function set_value(v:Dynamic):Dynamic {
 		if (Reflect.hasField(Settings, variable))
 			Reflect.setField(Settings, variable, v);
 		return v;

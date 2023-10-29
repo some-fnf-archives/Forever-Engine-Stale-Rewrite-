@@ -39,7 +39,7 @@ class BaseMenuState extends FNFState {
 	/** Your cancel button callback **/
 	public var onBack:Void->Void = null;
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (canChangeSelection) {

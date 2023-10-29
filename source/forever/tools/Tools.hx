@@ -94,6 +94,26 @@ class Tools {
 	}
 
 	/**
+	 * Converts a float value to an integer.
+	 * 
+	 * e.g: 0.5 -> 50, 1.0 -> 100
+	 * @param steps 		Float to transform into a Int
+	**/
+	public static inline function toIntPercent(steps:Float):Int {
+		return Std.int(steps * 100.0);
+	}
+
+	/**
+	 * Converts a int value to a float.
+	 * 
+	 * e.g: 50 -> 0.5, 100 -> 1.0
+	 * @param step 		Int to transform into a Float
+	**/
+	public static inline function toFloatPercent(step:Int):Float {
+		return step * 0.01;
+	}
+
+	/**
 	 * Lists every folder in the specified path
 	 * @param path 				the path to get folders from
 	 * @return Array<String>

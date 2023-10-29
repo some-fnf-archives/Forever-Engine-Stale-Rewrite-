@@ -24,7 +24,7 @@ class OptionsMenu extends BaseMenuState {
 			new ForeverOption("General", CATEGORY),
 			new ForeverOption("Gameplay", CATEGORY),
 			new ForeverOption("Visuals", CATEGORY),
-			new ForeverOption("Exit", CATEGORY),
+			new ForeverOption("Exit", NONE), // this is also a dummy type
 		],
 		"general" => [
 			new ForeverOption("Auto Pause", "autoPause", CHECKMARK),
@@ -41,8 +41,6 @@ class OptionsMenu extends BaseMenuState {
 		"visuals" => [
 			new ForeverOption("Note Skin >", CATEGORY),
 			new ForeverOption("Clip Style", "sustainLayer", CHOICE(["stepmania", "fnf"])),
-			// new ForeverOption("Note Skin", "noteSkin", CHOICE(["default"])),
-			new ForeverOption("UI Skin", "uiStyle", CHOICE(["default"])),
 		],
 	];
 
@@ -77,21 +75,21 @@ class OptionsMenu extends BaseMenuState {
 
 		onAccept = function():Void {
 			var option:ForeverOption = optionsListed.get(curCateg)[curSel];
+			switch (option.name.toLowerCase()) {
+				case "note skin >":
+					persistentUpdate = false;
+					openSubState(new NoteConfigurator());
+				case "exit":
+					FlxG.sound.play(AssetHelper.getAsset('audio/sfx/cancelMenu', SOUND));
+					canChangeSelection = false;
+					canBackOut = false;
+					canAccept = false;
+					exitMenu();
+			}
 
 			switch (option.type) {
 				case CATEGORY:
-					switch (option.name.toLowerCase()) {
-						case "note skin >":
-							persistentUpdate = false;
-							openSubState(new NoteConfigurator());
-						case "exit":
-							FlxG.sound.play(AssetHelper.getAsset('audio/sfx/cancelMenu', SOUND));
-							canChangeSelection = false;
-							canBackOut = false;
-							canAccept = false;
-							exitMenu();
-						default: reloadCategory(option.name);
-					}
+					reloadCategory(option.name);
 				default:
 					FlxG.sound.play(AssetHelper.getAsset('audio/sfx/confirmMenu', SOUND));
 

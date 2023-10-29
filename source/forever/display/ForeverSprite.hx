@@ -9,10 +9,14 @@ import openfl.text.TextFormatAlign;
  * Global Sprite tools
 **/
 class ForeverSprite extends FlxSprite {
-	/**
-	 * Animation Offset Map
-	**/
+	/** Animation Offset Map. **/
 	public var animOffsets:haxe.ds.StringMap<Array<Float>> = new haxe.ds.StringMap();
+
+	public var timeScale:Float = 1.0;
+
+	override function update(elapsed:Float):Void {
+		super.update(elapsed * timeScale);
+	}
 
 	/**
 	 * Creates a new Forever Sprite.
@@ -99,7 +103,7 @@ class ForeverSprite extends FlxSprite {
 	 * @param options		The tween options, such as delay, type, easing, and callbacks.
 	**/
 	public function tween(values:Dynamic, duration:Float, ?options:TweenOptions):Void {
-		FlxTween.tween(this, values, duration, options);
+		FlxTween.tween(this, values, duration / timeScale, options);
 	}
 
 	/**
@@ -111,7 +115,7 @@ class ForeverSprite extends FlxSprite {
 	 * @param options		The tween options, such as delay, type, easing, and callbacks.
 	**/
 	public function colorTween(toColor:FlxColor, duration:Float, ?options:TweenOptions):Void {
-		FlxTween.color(this, duration, this.color, toColor, options);
+		FlxTween.color(this, duration / timeScale, this.color, toColor, options);
 	}
 
 	/**
@@ -123,7 +127,7 @@ class ForeverSprite extends FlxSprite {
 	 * @param options		The tween options, such as delay, type, easing, and callbacks.
 	**/
 	public function angleTween(x:Float = 0, y:Float = 0, duration:Float, ?options:TweenOptions):Void {
-		FlxTween.angle(this, x, y, duration, options);
+		FlxTween.angle(this, x, y, duration / timeScale, options);
 	}
 
 	/**
@@ -143,7 +147,7 @@ class ChildSprite extends ForeverSprite {
 	/** This sprite's alignment. **/
 	public var align:TextFormatAlign = RIGHT;
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (parent != null) {

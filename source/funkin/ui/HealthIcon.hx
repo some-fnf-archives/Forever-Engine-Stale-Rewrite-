@@ -48,7 +48,7 @@ class HealthIcon extends ChildSprite {
 		return char;
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		var hp:HealthBar = PlayState.current != null ? PlayState.current.hud.healthBar : null;

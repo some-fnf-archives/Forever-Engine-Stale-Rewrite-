@@ -1,5 +1,6 @@
 package external.crash;
 
+import flixel.FlxG;
 import flixel.FlxGame;
 import haxe.CallStack;
 import haxe.io.Path;
@@ -14,6 +15,8 @@ import sys.io.File;
  * @author crowplexus
 **/
 class FNFGame extends FlxGame {
+	var _viewingCrash:Bool = false;
+
 	/**
 	 * Used to instantiate the guts of the flixel game object once we have a valid reference to the root.
 	 */
@@ -48,8 +51,11 @@ class FNFGame extends FlxGame {
 	 * Handles the `onEnterFrame` call and figures out how many updates and draw calls to do.
 	 */
 	override function onEnterFrame(_):Void {
-		try
-			super.onEnterFrame(_)
+		try {
+			if (_viewingCrash)
+				return;
+			super.onEnterFrame(_);
+		}
 		catch (e:haxe.Exception)
 			return exceptionCaught(e, 'onEnterFrame');
 	}
@@ -59,8 +65,12 @@ class FNFGame extends FlxGame {
 	 * May be called multiple times per "frame" or draw call.
 	 */
 	override function update():Void {
-		try
-			super.update()
+		try {
+			if (FlxG.keys.checkStatus(E, JUST_PRESSED))
+				null
+			.draw();
+			super.update();
+		}
 		catch (e:haxe.Exception)
 			return exceptionCaught(e, 'update');
 	}
@@ -69,10 +79,20 @@ class FNFGame extends FlxGame {
 	 * Goes through the game state and draws all the game objects and special effects.
 	 */
 	override function draw():Void {
-		try
-			super.draw()
+		try {
+			if (_viewingCrash)
+				return;
+			super.draw();
+		}
 		catch (e:haxe.Exception)
 			return exceptionCaught(e, 'draw');
+	}
+
+	@:allow(flixel.FlxG)
+	override function onResize(_):Void {
+		if (_viewingCrash)
+			return;
+		super.onResize(_);
 	}
 
 	/**
@@ -82,15 +102,19 @@ class FNFGame extends FlxGame {
 	 * very cool person for real they don't get enough credit for their work
 	 */
 	private function exceptionCaught(e:haxe.Exception, func:String = null) {
+		if (_viewingCrash)
+			return;
+
 		var path:String;
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
 		var fileStack:Array<String> = [];
 		var dateNow:String = Date.now().toString();
+		var println = #if sys Sys.println #else trace #end;
 
 		dateNow = StringTools.replace(dateNow, " ", "_");
 		dateNow = StringTools.replace(dateNow, ":", "'");
 
-		path = "crash/" + "PsychEngine_" + dateNow + ".txt";
+		path = 'crash/Forever_${dateNow}.txt';
 
 		for (stackItem in callStack) {
 			switch (stackItem) {
@@ -105,7 +129,7 @@ class FNFGame extends FlxGame {
 				case LocalFunction(name):
 					fileStack.push('Local Function (${name})');
 				default:
-					#if sys Sys.println #else trace #end (stackItem);
+					println(stackItem);
 			}
 		}
 
@@ -117,14 +141,19 @@ class FNFGame extends FlxGame {
 		File.saveContent(path, '${msg}\n');
 		#end
 
-		#if sys Sys.println #else trace #end (msg + '${func != null ? 'Thrown at "${func}" Function' : ""}');
-		#if sys Sys.println #else trace #end ('Crash dump saved in ${Path.normalize(path)}');
+		final funcThrew:String = '${func != null ? ' Thrown at "${func}" Function' : ""}';
 
-		goToExceptionState(e.message, e.details(), true);
-	}
+		println(msg + funcThrew);
+		println('Crash dump saved in ${Path.normalize(path)}');
 
-	private function goToExceptionState(error:String, details:String, shouldGithubReport:Bool) {
-		_requestedState = Type.createInstance(external.crash.CrashHandler, [error, details, shouldGithubReport]);
-		switchState();
+		if (FlxG.sound.music != null)
+			FlxG.sound.music.stop();
+
+		@:privateAccess {
+			// _requestedState = null;
+			FlxG.game.addChild(new CrashHandler(e.message + funcThrew, e.details()));
+		}
+
+		_viewingCrash = true;
 	}
 }

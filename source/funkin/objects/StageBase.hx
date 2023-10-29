@@ -100,7 +100,7 @@ class StageBase extends FlxSpriteGroup {
 		}
 	}
 
-	public override function destroy():Void {
+	override function destroy():Void {
 		playerPosition?.put();
 		enemyPosition?.put();
 		crowdPosition?.put();

@@ -1,6 +1,7 @@
 package funkin.states.editors;
 
 import flixel.FlxSubState;
+import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.display.FlxTiledSprite;
 import flixel.graphics.FlxGraphic;
@@ -29,13 +30,12 @@ class ChartEditor extends FlxSubState {
 	}
 
 	function createBackground():Void {
-		backgroundLayer = new FlxSpriteGroup();
-		add(backgroundLayer);
+		add(backgroundLayer = new FlxSpriteGroup());
 
 		var bg1:FlxSprite;
 		var bg2:FlxSprite;
 
-		backgroundLayer.add(bg1 = new FlxSprite().makeSolid(FlxG.width, FlxG.height, FlxColor.BLACK));
+		backgroundLayer.add(bg1 = new FlxSprite().makeSolid(FlxG.width, FlxG.height, 0xFF000000));
 		backgroundLayer.add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("menus/bgBlack", IMAGE)));
 
 		bg2.blend = DIFFERENCE;
@@ -65,7 +65,7 @@ class ChartEditor extends FlxSubState {
 		updateHUDNodes();
 	}
 
-	public override function create():Void {
+	override function create():Void {
 		super.create();
 
 		// show the mouse cursor
@@ -76,7 +76,7 @@ class ChartEditor extends FlxSubState {
 		createCharterHUD();
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		/*

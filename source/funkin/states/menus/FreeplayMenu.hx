@@ -29,7 +29,7 @@ class FreeplayMenu extends BaseMenuState {
 
 	@:dox(hide) var _loaded = true;
 
-	public override function create():Void {
+	override function create():Void {
 		super.create();
 
 		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
@@ -129,7 +129,7 @@ class FreeplayMenu extends BaseMenuState {
 		updateSelection();
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (!_loaded)
@@ -151,7 +151,7 @@ class FreeplayMenu extends BaseMenuState {
 		difficultyTxt.x -= (difficultyTxt.width / 2);
 	}
 
-	public override function updateSelection(newSel:Int = 0):Void {
+	override function updateSelection(newSel:Int = 0):Void {
 		super.updateSelection(newSel);
 
 		if (newSel != 0)
@@ -179,7 +179,7 @@ class FreeplayMenu extends BaseMenuState {
 		updateSelectionAlt();
 	}
 
-	public override function updateSelectionAlt(newSelAlt:Int = 0):Void {
+	override function updateSelectionAlt(newSelAlt:Int = 0):Void {
 		if (maxSelectionsAlt < 2)
 			difficultyTxt.text = Difficulty.current[0];
 

@@ -14,7 +14,7 @@ class NoteConfigurator extends FlxSubState {
 		var bg1:FlxSprite;
 		var bg2:FlxSprite;
 
-		add(bg1 = new FlxSprite().makeSolid(FlxG.width, FlxG.height, FlxColor.BLACK));
+		add(bg1 = new FlxSprite().makeSolid(FlxG.width, FlxG.height, 0xFF000000));
 		add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("menus/bgBlack", IMAGE)));
 
 		bg2.blend = DIFFERENCE;
@@ -27,7 +27,7 @@ class NoteConfigurator extends FlxSubState {
 		}
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (FlxG.keys.justPressed.ESCAPE) {

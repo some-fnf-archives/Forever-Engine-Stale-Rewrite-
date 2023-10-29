@@ -98,7 +98,7 @@ class ForeverTextField extends FlxObject {
 		this.borderColor = borderColor;
 	}
 
-	public override function destroy():Void {
+	override function destroy():Void {
 		for (border in _behindRenders)
 			border = null;
 		_textF = null;

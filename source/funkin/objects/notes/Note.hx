@@ -78,7 +78,7 @@ class Note extends ForeverSprite {
 		return this;
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		if (parent != null && alive) {
 			if (mustFollowParent)
 				followParent();

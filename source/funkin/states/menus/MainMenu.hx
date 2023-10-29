@@ -29,7 +29,7 @@ class MainMenu extends BaseMenuState {
 		{name: "options", callback: function():Void FlxG.switchState(new OptionsMenu())}
 	];
 
-	public override function create():Void {
+	override function create():Void {
 		super.create();
 
 		DiscordRPC.updatePresence("In the Menus", "MAIN MENU");
@@ -120,12 +120,12 @@ class MainMenu extends BaseMenuState {
 		updateSelection();
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 		buttons.forEach(function(button:FlxSprite) button.screenCenter(X));
 	}
 
-	public override function updateSelection(newSel:Int = 0):Void {
+	override function updateSelection(newSel:Int = 0):Void {
 		super.updateSelection(newSel);
 
 		if (newSel != 0)

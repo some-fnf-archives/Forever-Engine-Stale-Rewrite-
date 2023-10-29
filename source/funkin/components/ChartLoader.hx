@@ -1,6 +1,5 @@
 package funkin.components;
 
-import flixel.util.FlxSort;
 import funkin.components.parsers.*;
 import funkin.components.parsers.ForeverChartData;
 
@@ -10,7 +9,7 @@ class ChartLoader {
 	public static function load(folder:String, file:String):Chart {
 		var chart:Chart = new Chart();
 		var json = cast(AssetHelper.parseAsset('songs/${folder}/${file}', JSON));
-		var dataType:String = VANILLA_V1;
+		var dataType:EngineImpl = VANILLA_V1;
 
 		if (Reflect.hasField(json, "song") && Reflect.hasField(json.song, "player2"))
 			dataType = VANILLA_V1;

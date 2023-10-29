@@ -14,21 +14,21 @@ import openfl.utils.Assets as OpenFLAssets;
  * Helper Enum for Engine Names, used for conversion methods
  * in order to provide greater compatibility with other FNF Engines.
 **/
-enum abstract EngineImpl(String) to String {
+enum abstract EngineImpl(Int) to Int {
 	/** Forever Engine Implementation Style. **/
-	var FOREVER = "forever";
+	var FOREVER = 0;
 
 	/** Base Game (pre-0.3) Implementation Style. **/
-	var VANILLA_V1 = "vanilla_v1";
+	var VANILLA_V1 = 1;
 
 	/** Psych Engine Implementation Style. **/
-	var PSYCH = "psych";
+	var PSYCH = 2;
 
 	/** Codename Engine Implementation Style. **/
-	var CODENAME = "codename";
+	var CODENAME = 3;
 
 	/** Crow Engine Implementation Style. **/
-	var CROW = "crow"; // the engine, not the user. -CrowPlexus
+	var CROW = 4; // the engine, not the user. -CrowPlexus
 
 	public function toString():String {
 		return switch this {
@@ -133,12 +133,15 @@ class AssetHelper {
 	public static function getGraphic(file:String, ?customKey:String = null, ?vram:Bool = true):FlxGraphic {
 		try {
 			final keyName:String = customKey != null ? customKey : file;
+			if (!Tools.fileExists(file, IMAGE))
+				throw '[AssetHelper:getGraphic()]: Error! Attempt to load a Graphic with File "${file}", which does not exist in the Filesystem.';
+
 			// prevent remapping
 			if (loadedGraphics.get(keyName) != null)
 				return loadedGraphics.get(keyName);
 
-			var bd:BitmapData = #if sys OptimizedBitmapData.fromFile(file, vram) #else OpenFLAssets.getBitmapData(file) #end;
-			if (bd != null) {
+			try {
+				final bd:BitmapData = #if sys OptimizedBitmapData.fromFile(file, vram) #else OpenFLAssets.getBitmapData(file) #end;
 				final graphic:FlxGraphic = FlxGraphic.fromBitmapData(bd, false, file);
 				graphic.persist = true;
 				graphic.destroyOnNoUse = false;
@@ -146,6 +149,8 @@ class AssetHelper {
 				currentUsedAssets.push(keyName);
 				return graphic;
 			}
+			catch (e:haxe.Exception)
+				throw '[AssetHelper:getGraphic]: Error! Attempt to load texture for "${file}" which resulted in ${e.message}';
 		}
 		catch (e:haxe.Exception)
 			trace('[AssetHelper:getGraphic]: Error! "${file}" returned "${e.message}"');

@@ -186,7 +186,7 @@ class ChildAlphabet extends Alphabet {
 		super(0, 0, text, type, alignment, size);
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (parent != null) {
@@ -203,7 +203,7 @@ class ChildAlphabet extends Alphabet {
 		}
 	}
 
-	public override function destroy():Void {
+	override function destroy():Void {
 		increment?.put();
 		super.destroy();
 	}

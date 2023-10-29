@@ -1,6 +1,5 @@
 package;
 
-import flixel.FlxGame;
 import flixel.FlxState;
 import forever.ui.ForeverOverlay;
 import forever.ui.overlay.*;
@@ -9,15 +8,20 @@ import openfl.display.Sprite;
 typedef GameClient = #if CRASH_HANDLER external.crash.FNFGame #else flixel.FlxGame #end;
 
 class Main extends Sprite {
-	public static var framerate:Int = 120;
-	public static var overlay:ForeverOverlay;
-	public static var noGpuBitmaps:Bool = false;
-
+	public static final initialFramerate:Int = 120;
 	public static final initialState = funkin.states.menus.TitleScreen;
 	public static final version:String = "1.0.0-ALPHA";
 
+	public static var self:Main;
+	public static var noGpuBitmaps:Bool = false;
+
+	private var gameClient:GameClient;
+	public var overlay:ForeverOverlay;
+
 	public function new():Void {
 		super();
+
+		self = this;
 
 		FlxG.signals.gameResized.add(onResizeGame);
 		FlxG.signals.preStateCreate.add(onStateCreate);
@@ -27,7 +31,7 @@ class Main extends Sprite {
 		openfl.Lib.current.stage.window.setIcon(icon);
 		#end
 
-		addChild(new FlxGame(1280, 720, Init, framerate, framerate, true));
+		addChild(gameClient = new GameClient(1280, 720, Init, initialFramerate, initialFramerate, true));
 		addChild(overlay = new ForeverOverlay([new FramerateMonitor(), new MemoryMonitor(), new VersionMonitor()]));
 	}
 

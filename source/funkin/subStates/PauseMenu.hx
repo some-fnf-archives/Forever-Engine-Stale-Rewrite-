@@ -39,7 +39,7 @@ class PauseMenu extends FlxSubState {
 			})
 		];
 
-		bg = new FlxSprite().makeSolid(FlxG.width, FlxG.height, FlxColor.BLACK);
+		bg = new FlxSprite().makeSolid(FlxG.width, FlxG.height, 0xFF000000);
 		bg.alpha = 0;
 		add(bg);
 
@@ -65,7 +65,7 @@ class PauseMenu extends FlxSubState {
 		updateSelection();
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (!closing) {

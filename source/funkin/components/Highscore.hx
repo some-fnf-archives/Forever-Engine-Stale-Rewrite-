@@ -42,10 +42,9 @@ class Highscore {
 
 	@:dox(hide)
 	private static function _setScr(map:StringMap<HighscoreSave>, id:String, save:HighscoreSave):Void {
-		if (map.exists(id))
-			if (map.get(id).score < save.score)
-				map.set(id, save);
-			else
-				map.set(id, save);
+		if (map.exists(id) && map.get(id).score < save.score)
+			map.set(id, save);
+		else if (!map.exists(id))
+			map.set(id, save);
 	}
 }

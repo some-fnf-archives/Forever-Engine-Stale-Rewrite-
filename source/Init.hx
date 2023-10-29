@@ -15,7 +15,7 @@ import forever.Controls;
  * add anything in here for the game to initialize before beginning
 **/
 class Init extends FlxState {
-	public override function create():Void {
+	override function create():Void {
 		super.create();
 
 		FlxG.fixedTimestep = false;

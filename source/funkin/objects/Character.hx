@@ -79,7 +79,7 @@ class Character extends ForeverSprite {
 			loadCharacter(character);
 	}
 
-	public override function destroy():Void {
+	override function destroy():Void {
 		if (characterScript != null)
 			characterScript.call("destroy", []);
 		cameraDisplace?.put();
@@ -90,7 +90,7 @@ class Character extends ForeverSprite {
 	public function loadCharacter(character:String):Character {
 		this.name = character;
 
-		var implementation:String = FOREVER;
+		var implementation:EngineImpl = FOREVER;
 		var file:Dynamic = null;
 
 		if (Tools.fileExists(AssetHelper.getPath('data/characters/${name}.json'))) {
@@ -125,7 +125,7 @@ class Character extends ForeverSprite {
 		return this;
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		if (characterScript != null)
 			characterScript.set("update", [elapsed]);
 		updateAnimation(elapsed);
@@ -155,7 +155,7 @@ class Character extends ForeverSprite {
 			_curDanceStep = 0;
 	}
 
-	public override function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
+	override function playAnim(name:String, ?forced:Bool = false, ?reversed:Bool = false, ?frame:Int = 0):Void {
 		if (characterScript != null)
 			characterScript.call("playAnim", [name, forced, reversed, frame]);
 
@@ -169,7 +169,7 @@ class Character extends ForeverSprite {
 	}
 
 	@:noPrivateAccess
-	private function parseFromImpl(file:Dynamic, impl:String):Void {
+	private function parseFromImpl(file:Dynamic, impl:EngineImpl):Void {
 		switch (impl) {
 			case FOREVER:
 				var data = AssetHelper.parseAsset('data/characters/${name}.yaml', YAML);
@@ -293,8 +293,9 @@ class Character extends ForeverSprite {
 
 				scale.set(file.scale?.x ?? 1.0, file.scale?.y ?? 1.0);
 				updateHitbox();
-		}
 
-		// trace('parsed "${name}" character, origin: "${impl}"');
+			default:
+				trace('[Character:parseFromImpl()]: Missing character parsing for "${impl.toString()}" on character $name.');
+		}
 	}
 }

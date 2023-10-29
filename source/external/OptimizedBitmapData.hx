@@ -48,7 +48,7 @@ class OptimizedBitmapData extends BitmapData {
 	}
 
 	@SuppressWarnings("checkstyle:Dynamic")
-	@:dox(hide) public override function getSurface():#if lime CairoImageSurface #else Dynamic #end
+	@:dox(hide) override function getSurface():#if lime CairoImageSurface #else Dynamic #end
 	{
 		#if lime
 		if (__surface == null)

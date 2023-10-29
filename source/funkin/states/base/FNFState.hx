@@ -5,7 +5,7 @@ import forever.core.scripting.ScriptableState;
 class FNFState extends ScriptableState {
 	public var controls(get, never):BaseControls;
 
-	public override function create():Void {
+	override function create():Void {
 		super.create();
 
 		Conductor.init();
@@ -15,7 +15,7 @@ class FNFState extends ScriptableState {
 		Conductor.onBar.add(onBar);
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		Conductor.update(elapsed);
 		super.update(elapsed);
 	}

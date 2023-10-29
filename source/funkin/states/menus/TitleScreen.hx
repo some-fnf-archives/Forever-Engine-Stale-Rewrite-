@@ -34,7 +34,7 @@ class TitleScreen extends FNFState {
 
 	var transitioning:Bool = false;
 
-	public override function create():Void {
+	override function create():Void {
 		super.create();
 
 		forever.core.Mods.loadInitScript();
@@ -100,7 +100,7 @@ class TitleScreen extends FNFState {
 			skipIntro();
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (seenIntro) {
@@ -136,7 +136,7 @@ class TitleScreen extends FNFState {
 	var gfBopped:Bool = false;
 	var logoTween:FlxTween;
 
-	public override function onBeat(beat:Int):Void {
+	override function onBeat(beat:Int):Void {
 		if (logo != null) {
 			if (logoTween != null)
 				logoTween.cancel();
@@ -161,7 +161,7 @@ class TitleScreen extends FNFState {
 				parseIntroEvent(introSections[i]);
 	}
 
-	public override function onStep(step:Int):Void {
+	override function onStep(step:Int):Void {
 		if (seenIntro)
 			return;
 

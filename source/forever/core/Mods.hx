@@ -91,7 +91,7 @@ class Mods {
 	}
 
 	public static function loadMod(mod:String):Void {
-		if (mod == "Friday Night Funkin'") {
+		if (mod == null || mod == "Unload Mods" || mod == "Friday Night Funkin'") {
 			AssetHelper.searchLevel = "";
 			currentMod = null;
 			return;

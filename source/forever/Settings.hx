@@ -24,12 +24,6 @@ class Settings {
 	/** Your game's master volume. **/
 	public static var masterVolume:Int = 100;
 
-	/** Your game's music volume. **/
-	@:unused public static var musicVolume:Int = 100;
-
-	/** Your game's sfx volume. **/
-	@:unused public static var soundVolume:Int = 100;
-
 	// -- GAMEPLAY -- //
 
 	/** Check this if you want your notes to come from top to bottom. **/
@@ -46,24 +40,26 @@ class Settings {
 
 	// -- VISUALS -- //
 
-	/** Style of the healthbar, score popups, etc. **/
-	@:unused public static var uiStyle:String = "default";
+	/** How should judgemnt animations be displayed when popping up? **/
+	public static var judgementDisplayType:JudgementPopupType = FUNKIN;
 
 	/**
 	 * Style of your scrolling notes
 	 *
 	 * [NOTE]: only applies to non-special notes, including the Enemy's notes if they have a different style.
 	**/
-	@:unused public static var noteSkin:String = "default";
+	public static var noteSkin:String = "default";
 
 	/** Applies a Screen Filter to your game, to view the game as a colorblind person would. **/
-	@:unused public static var screenFilter:String = "none";
+	public static var screenFilter:String = "none";
 
 	/** Where should the sustain clip to? either above the note (fnf) or below it (stepmania). **/
-	@:unused public static var sustainLayer:String = "stepmania";
+	public static var sustainLayer:String = "stepmania";
 
 	/** Defines if the antialiasing filter affects all graphics. **/
 	public static var globalAntialias:Bool = true;
+
+	// -- FUNCTIONS -- //
 
 	/**
 	 * Saves your set settings, managed by a macro at `forever.macros.ConfigHelper`.
@@ -84,6 +80,42 @@ class Settings {
 		FlxG.autoPause = Settings.autoPause;
 		if (FlxG.drawFramerate != Settings.framerateCap)
 			Main.setFPSCap(Settings.framerateCap);
-		FlxG.sound.volume = Settings.masterVolume / 100.0;
+		FlxG.sound.volume = Tools.toFloatPercent(Settings.masterVolume);
 	}
 }
+
+@:build(forever.macros.EnumHelper.makeEnum(["FUNKIN=>Funkin (Base Game)", "Simply"]))
+enum abstract JudgementPopupType(Int) from Int to Int {}
+
+@:build(forever.macros.EnumHelper.makeEnum(["None", "Deuteranopia", "Protanopia", "Tritanopia"]))
+enum abstract ScreenFilterType(Int) from Int to Int {}
+
+@:build(forever.macros.EnumHelper.makeEnum(["fnf", "stepmania"]))
+enum abstract SustainLayerType(Int) from Int to Int {}
+
+/*enum abstract JudgementPositionType(Int) from Int to Int {
+	var LEGACY = 0;
+	var NEVER_OFFSCREEN = 1;
+	var FOREVER = 2;
+
+	public inline function toString():String {
+		return switch this {
+			case LEGACY: "Legacy";
+			case NEVER_OFFSCREEN: "Never Offscreen";
+			case FOREVER: "Forever";
+			case _: Std.string(this);
+		}
+	}
+}
+enum abstract JudgementPopupType(Int) from Int to Int {
+	var FUNKIN = 0;
+	var SIMPLY = 1;
+
+	public inline function toString():String {
+		return switch this {
+			case FUNKIN: "Funkin (Base Game)";
+			case SIMPLY: "Simply";
+			case _: Std.string(this);
+		}
+	}
+}*/

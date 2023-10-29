@@ -43,7 +43,7 @@ class Strum extends ForeverSprite {
 		playStrum(STATIC, true);
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 		if (splash != null && splash.alive)
 			splash.update(elapsed);
@@ -84,7 +84,7 @@ class Strum extends ForeverSprite {
 		splash.playAnim('${FlxG.random.int(1, 2)}', true);
 	}
 
-	public override function draw():Void {
+	override function draw():Void {
 		super.draw();
 		if (splash != null && splash.alive)
 			splash.draw();
@@ -122,7 +122,7 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 		regenStrums(x, y);
 	}
 
-	public override function destroy():Void {
+	override function destroy():Void {
 		if (!cpuControl) {
 			FlxG.stage.removeEventListener(openfl.events.KeyboardEvent.KEY_DOWN, inputKeyPress);
 			FlxG.stage.removeEventListener(openfl.events.KeyboardEvent.KEY_UP, inputKeyRelease);

@@ -50,14 +50,14 @@ class PlayField extends FlxGroup {
 			noteList[i] = Chart.current.notes[i];
 	}
 
-	public override function destroy():Void {
+	override function destroy():Void {
 		for (noteField in noteFields)
 			noteField.destroy();
 		noteGroup.destroy();
 		super.destroy();
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		while (!paused && noteGroup != null && noteList.length != 0 && curNote < noteList.length) {

@@ -53,13 +53,12 @@ class StubMacro {
 				cl.kind = TDClass(null, interfaces, isInterface, isFinal, isAbstract);
 			default:
 		}*/
-
-		for (field in fields) {
+		/*for (field in fields) {
 			var p = new Printer();
 			var aa = p.printField(field);
 			// if(aa.length < 5024)
 			trace(aa);
-		}
+		}*/
 
 		return fields;
 	}

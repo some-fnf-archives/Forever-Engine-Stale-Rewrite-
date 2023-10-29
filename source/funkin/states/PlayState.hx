@@ -76,7 +76,7 @@ class PlayState extends FNFState {
 		this.currentSong = songInfo;
 	}
 
-	public override function create():Void {
+	override function create():Void {
 		super.create();
 
 		current = this;
@@ -174,7 +174,7 @@ class PlayState extends FNFState {
 			processEvent(Chart.current.events[0].event);
 	}
 
-	public override function update(elapsed:Float):Void {
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		var updateEvt:CancellableEvent = new CancellableEvent();
@@ -197,21 +197,23 @@ class PlayState extends FNFState {
 			eventIndex += 1;
 		}
 
-		if (FlxG.keys.justPressed.SEVEN)
-			openChartEditor();
+		/*
+			if (FlxG.keys.justPressed.SEVEN)
+				openChartEditor();
+		 */
 		if (Controls.PAUSE)
 			openPauseMenu();
 
 		callFunPack("postUpdate", [elapsed]);
 	}
 
-	public override function draw():Void {
+	override function draw():Void {
 		callFunPack("preDraw", []);
 		super.draw();
 		callFunPack("draw", []);
 	}
 
-	public override function destroy():Void {
+	override function destroy():Void {
 		callFunPack("destroy", []);
 		var i:Int = 0;
 		while (i < scriptPack.length - 1) {
@@ -313,13 +315,15 @@ class PlayState extends FNFState {
 		jSpr.scale.set(0.7, 0.7);
 		jSpr.updateHitbox();
 
-		jSpr.acceleration.y = 550 * Conductor.rate * Conductor.rate;
-		jSpr.velocity.y = -FlxG.random.int(140, 175) * Conductor.rate;
-		jSpr.velocity.x = -FlxG.random.int(0, 10) * Conductor.rate;
+		jSpr.timeScale = Conductor.rate;
+
+		jSpr.acceleration.y = 550;
+		jSpr.velocity.y = -FlxG.random.int(140, 175);
+		jSpr.velocity.x = -FlxG.random.int(0, 10);
 
 		final crochet:Float = (60.0 / Conductor.bpm);
 
-		jSpr.tween({alpha: 0}, 0.4 / Conductor.rate, {
+		jSpr.tween({alpha: 0}, 0.4, {
 			onComplete: function(twn:FlxTween):Void {
 				jSpr.kill();
 				comboGroup.remove(jSpr, true);
@@ -353,13 +357,14 @@ class PlayState extends FNFState {
 			cnSpr.scale.set(0.5, 0.5);
 			cnSpr.updateHitbox();
 
-			cnSpr.acceleration.y = FlxG.random.int(200, 300) * Conductor.rate * Conductor.rate;
-			cnSpr.velocity.y = -FlxG.random.int(140, 160) * Conductor.rate;
-			cnSpr.velocity.x = FlxG.random.int(-5, 5) * Conductor.rate;
+			cnSpr.timeScale = Conductor.rate;
+			cnSpr.acceleration.y = FlxG.random.int(200, 300);
+			cnSpr.velocity.y = -FlxG.random.int(140, 160);
+			cnSpr.velocity.x = FlxG.random.int(-5, 5);
 
 			final crochet:Float = (60.0 / Conductor.bpm);
 
-			cnSpr.tween({alpha: 0}, 0.5 / Conductor.rate, {
+			cnSpr.tween({alpha: 0}, 0.5, {
 				onComplete: function(twn:FlxTween):Void {
 					cnSpr.kill();
 					comboGroup.remove(cnSpr, true);
@@ -369,21 +374,21 @@ class PlayState extends FNFState {
 		}
 	}
 
-	public override function onBeat(beat:Int):Void {
+	override function onBeat(beat:Int):Void {
 		callFunPack("onBeat", [beat]);
 		hud.onBeat(beat);
 		// let 'em do their thing!
 		doDancersDance(beat);
 	}
 
-	public override function onStep(step:Int):Void {
+	override function onStep(step:Int):Void {
 		var soundTime:Float = vocals.time / 1000.0;
 		if (Math.abs(Conductor.time - soundTime) > 20.0)
 			vocals.time = FlxG.sound.music.time;
 		callFunPack("onStep", [step]);
 	}
 
-	public override function onBar(bar:Int):Void {
+	override function onBar(bar:Int):Void {
 		for (contextNames in ["onBar", "onSection", "onMeasure"])
 			callFunPack(contextNames, [bar]);
 	}
@@ -399,7 +404,7 @@ class PlayState extends FNFState {
 		}
 	}
 
-	public override function openSubState(SubState:FlxSubState):Void {
+	override function openSubState(SubState:FlxSubState):Void {
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.pause();
 		if (vocals != null && vocals.playing)
@@ -407,7 +412,7 @@ class PlayState extends FNFState {
 		super.openSubState(SubState);
 	}
 
-	public override function closeSubState():Void {
+	override function closeSubState():Void {
 		playField.paused = false;
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.resume();
@@ -520,7 +525,6 @@ class PlayState extends FNFState {
 	}
 
 	var countdownPosition:Int = 0;
-	var countdownTween:FlxTween;
 
 	public function countdownRoutine():Void {
 		var countdownEvt:CancellableEvent = new CancellableEvent();
@@ -547,13 +551,12 @@ class PlayState extends FNFState {
 			sprCount = getCountdownSprite(countdownPosition);
 			if (sprCount != null) {
 				sprCount.screenCenter();
+				sprCount.timeScale = Conductor.rate;
 				sprCount.camera = hudCamera;
 				add(sprCount);
 
-				if (countdownTween != null)
-					countdownTween.cancel();
-
-				countdownTween = FlxTween.tween(sprCount, {alpha: 0}, (60.0 / Conductor.bpm), {
+				sprCount.stopTweens();
+				sprCount.tween({alpha: 0}, (60.0 / Conductor.bpm), {
 					ease: FlxEase.sineOut,
 					onComplete: function(t) {
 						sprCount.kill();
@@ -562,7 +565,7 @@ class PlayState extends FNFState {
 			}
 
 			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/countdown/normal/${sounds[countdownPosition]}', SOUND), 0.8);
-			countdownPosition += 1;
+			countdownPosition++;
 			callFunPack("countdownProgress", [countdownPosition, songState]);
 		}, 4);
 	}
