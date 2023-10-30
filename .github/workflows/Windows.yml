@@ -33,6 +33,9 @@ jobs:
         run: |
           haxelib install lime
           haxelib install openfl
+          haxeliv install flixel
+          haxelib install flixel-addons
+          haxeliv install flixel-tools
           haxelib install hxdiscord_rpc
           haxelib install tjson
           haxelib git flixel-nova https://github.com/swordcube/flixel
@@ -43,7 +46,7 @@ jobs:
       - name: Setup Lime and Flixel
         run: |
           haxelib run lime setup
-          haxelib run flixel-nova setup
+          haxelib run flixel setup
 
       - name: Build
         run: haxelib run lime build windows
