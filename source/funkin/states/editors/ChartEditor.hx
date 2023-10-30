@@ -13,7 +13,6 @@ import openfl.geom.Rectangle;
 
 @:access(funkin.states.PlayState)
 class ChartEditor extends FlxSubState {
-	public var backgroundLayer:FlxSpriteGroup;
 	public var checkerboard:FlxTiledSprite;
 	public var statusBar:CharterStatusBar;
 
@@ -30,22 +29,19 @@ class ChartEditor extends FlxSubState {
 	}
 
 	function createBackground():Void {
-		add(backgroundLayer = new FlxSpriteGroup());
-
 		var bg1:FlxSprite;
 		var bg2:FlxSprite;
 
-		backgroundLayer.add(bg1 = new FlxSprite().makeSolid(FlxG.width, FlxG.height, 0xFF000000));
-		backgroundLayer.add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("menus/bgBlack", IMAGE)));
+		add(bg1 = new FlxSprite().makeSolid(FlxG.width, FlxG.height, 0xFF000000));
+		add(bg2 = new FlxSprite().loadGraphic(AssetHelper.getAsset("menus/bgBlack", IMAGE)));
+		bg1.antialiasing = false;
 
-		bg2.blend = DIFFERENCE;
+		// bg2.blend = DIFFERENCE;
 		bg1.alpha = 0.7;
 		bg2.alpha = 0.07;
 
-		for (i in [bg1, bg2]) {
-			i.scale.set(1.15, 1.15);
-			i.updateHitbox();
-		}
+		for (i in [bg1, bg2]) 
+			i.scrollFactor.set();
 	}
 
 	function createCharterElements():Void {

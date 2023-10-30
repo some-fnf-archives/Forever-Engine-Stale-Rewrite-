@@ -71,6 +71,7 @@ class TitleScreen extends FNFState {
 		add(textGroup = new TitleTextGroup());
 		add(mainGroup = new FlxSpriteGroup());
 		mainGroup.visible = false;
+		bg.antialiasing = false;
 
 		logo = new FlxSprite(20, 50);
 		logo.loadGraphic(AssetHelper.getAsset('menus/title/logo', IMAGE));

@@ -68,6 +68,9 @@ class Note extends ForeverSprite {
 	// NOTESKIN CONFIG STUFF //
 	var animations:IntMap<String> = new IntMap<String>();
 
+	// placeholder.
+	var sustain:FlxSprite;
+
 	public function appendData(data:NoteData):Note {
 		setPosition(-5000, -5000);
 
@@ -76,6 +79,9 @@ class Note extends ForeverSprite {
 		wasHit = isLate = canBeHit = false;
 		lowPriority = false;
 		speedMult = 1.0;
+
+		if (isSustain)
+			sustain = new FlxSprite().makeSolid(10, 1, 0xFF9D9D9D);
 		playAnim(animations.get(0), true);
 		return this;
 	}
@@ -95,6 +101,12 @@ class Note extends ForeverSprite {
 		}
 	}
 
+	override function draw():Void {
+		if (sustain != null && sustain.visible && sustain.exists)
+			sustain.draw();
+		super.draw(); // draw behind the note for now
+	}
+
 	public function followParent():Void {
 		if (parent == null || this.data == null || !alive)
 			return;
@@ -109,6 +121,11 @@ class Note extends ForeverSprite {
 
 		final time:Float = Conductor.time - data.time;
 		final distance:Float = time * (400.0 * Math.abs(speed)) / 0.7; // this needs to be 400.0 since time is second-based
+
+		if (isSustain && sustain != null) {
+			sustain.scale.y = (data.holdLen * 0.5) * Math.abs(speed / 0.7);
+			sustain.centerToObject(this, XY);
+		}
 
 		x = strum.x;
 		y = strum.y + distance * scrollDifference;
@@ -141,7 +158,7 @@ class Note extends ForeverSprite {
 		return speed = Tools.quantize(v, 1000); // roundDecimal(v, 3)
 
 	@:noCompletion inline function get_isSustain():Bool
-		return false;
+		return data?.holdLen != 0.0;
 
 	@:noCompletion inline function get_direction():Int
 		return data?.dir ?? 0;

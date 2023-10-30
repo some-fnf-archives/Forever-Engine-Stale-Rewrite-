@@ -1,7 +1,7 @@
 package funkin.components.parsers;
 
-import funkin.components.parsers.ForeverChartData;
 import funkin.components.ChartLoader;
+import funkin.components.parsers.ForeverChartData;
 
 class VanillaParser {
 	public static function parseChart(json:Dynamic, version:Int = 1):Chart {
@@ -49,7 +49,9 @@ class VanillaParser {
 				var noteId = 0;
 				var _time:Float = 0;
 				var currentBPM:Float = json.bpm;
+
 				var beatDelta:Float = (60.0 / currentBPM);
+				var stepDelta:Float = beatDelta * 0.25;
 
 				for (i in 0...bars.length) {
 					var bar = bars[i];
@@ -68,6 +70,7 @@ class VanillaParser {
 
 					if (bar.changeBPM == true && bar.bpm != currentBPM) {
 						beatDelta = (60.0 / bar.bpm);
+						stepDelta = beatDelta * 0.25;
 						currentBPM = bar.bpm;
 						chart.events.push({
 							event: BPMChange(bar.bpm),
@@ -86,7 +89,7 @@ class VanillaParser {
 							if (Std.isOfType(j[3], Bool) && j[3] == true || bar.altAnim)
 								noteAnim = "-alt";
 
-							var note:NoteData = {
+							final note:NoteData = {
 								time: j[0] / 1000.0,
 								dir: Std.int(j[1]) % keys,
 								holdLen: Math.max(j[2], 0.0) / 1000.0,
@@ -94,8 +97,8 @@ class VanillaParser {
 								type: j[3] != null && Std.isOfType(j[3], String) ? j[3] : "default",
 								animation: noteAnim,
 							};
-							chart.notes[noteId] = note;
 
+							chart.notes[noteId] = note;
 							noteId++;
 						}
 					}

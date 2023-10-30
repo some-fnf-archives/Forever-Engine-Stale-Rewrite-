@@ -68,6 +68,8 @@ class OptionsMenu extends BaseMenuState {
 		topBar.alpha = 0.6;
 		add(topBar);
 
+		topBar.antialiasing = false;
+
 		add(topBarTxt = new ForeverText(topBar.x, topBar.height - 40, topBar.width, "- [SELECT A CATEGORY] -", 32));
 		topBarTxt.alignment = CENTER;
 

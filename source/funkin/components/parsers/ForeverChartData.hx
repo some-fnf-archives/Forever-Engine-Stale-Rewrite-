@@ -1,4 +1,4 @@
-package funkin.components.parsers;
+	package funkin.components.parsers;
 
 /**
  * Structure for the Conductor to use to adjust itself to tailor the song,
@@ -48,7 +48,7 @@ package funkin.components.parsers;
 	public var type:String = null;
 
 	/** The length of the note's hold/sustain. **/
-	public var holdLen:Float = 0.0;
+	public var holdLen:Single = 0.0;
 
 	/** The note's animation, acts as a suffix if it starts with "-" **/
 	public var animation:String = null;

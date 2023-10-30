@@ -70,6 +70,7 @@ class FreeplayMenu extends BaseMenuState {
 
 			scoreTxt.alignment = RIGHT;
 			backPB.alpha = 0.6;
+			backPB.antialiasing = false;
 
 			add(difficultyTxt = new ForeverText(0, scoreTxt.y + 30, 0, "-", 20));
 			difficultyTxt.centerToObject(backPB, X);

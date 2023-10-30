@@ -126,7 +126,7 @@ class AssetHelper {
 				final graphic:FlxGraphic = FlxGraphic.fromBitmapData(bd, false, file);
 				graphic.persist = true;
 				graphic.destroyOnNoUse = false;
-				loadedGraphics.set(keyName, graphic);
+				sendToCache(keyName, graphic, IMAGE);
 				currentUsedAssets.push(keyName);
 				return graphic;
 			}
@@ -151,7 +151,7 @@ class AssetHelper {
 			if (loadedSounds.get(keyName) != null)
 				return loadedSounds.get(keyName);
 			final sound:Sound = #if sys Sound.fromAudioBuffer(lime.media.AudioBuffer.fromFile(file)) #else OpenFLAssets.getSound(file) #end;
-			loadedSounds.set(keyName, sound);
+			sendToCache(keyName, sound, SOUND);
 			currentUsedAssets.push(keyName);
 			return sound;
 		}
@@ -159,6 +159,16 @@ class AssetHelper {
 			trace('[AssetHelper:getSound]: Error! "${file}" returned "${e.message}"');
 
 		return null;
+	}
+
+	public static function sendToCache(key:String, asset:Dynamic, type:ForeverAsset):Void {
+		switch type {
+			case IMAGE:
+				loadedGraphics.set(key, asset);
+			case SOUND:
+				loadedSounds.set(key, cast(asset, Sound));
+			default:
+		}
 	}
 
 	@:dox(hide) static function clearCacheEntirely(major:Bool = false):Void {
