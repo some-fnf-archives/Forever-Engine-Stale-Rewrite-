@@ -136,6 +136,8 @@ class FNFGame extends FlxGame {
 			}
 		}
 
+		fileStack.insert(0, "Exception: " + e.message);
+
 		final msg:String = fileStack.join('\n');
 
 		#if sys
@@ -163,7 +165,7 @@ class FNFGame extends FlxGame {
 		while (FlxG.sound.defaultMusicGroup.sounds.length != 0) FlxG.sound.defaultMusicGroup.sounds.pop().stop().destroy();
 		while (FlxG.sound.defaultSoundGroup.sounds.length != 0) FlxG.sound.defaultSoundGroup.sounds.pop().stop().destroy();
 
-		Main.self.addChild(new CrashHandler(e.message + funcThrew, e.details()));
+		Main.self.addChild(new CrashHandler(e.details()));
 		_viewingCrash = true;
 	}
 }

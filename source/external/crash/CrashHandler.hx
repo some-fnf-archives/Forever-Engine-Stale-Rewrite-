@@ -30,7 +30,7 @@ class CrashHandler extends Sprite {
 	var _stage:Stage;
 	var random = new flixel.math.FlxRandom();
 
-	var imagineBeingFunny:Array<String> = [
+	final imagineBeingFunny:Array<String> = [
 		// crowplexus
 		"Fatal Error!",
 		"!rorrE lataF",
@@ -57,7 +57,7 @@ class CrashHandler extends Sprite {
 		"Thats not very forever engine fnf of you.",
 	];
 
-	public function new(errorMsg:String, details:String):Void {
+	public function new(stack:String):Void {
 		super();
 
 		this._stage = openfl.Lib.application.window.stage;
@@ -87,8 +87,11 @@ class CrashHandler extends Sprite {
 
 		random.shuffleArray(imagineBeingFunny, 3);
 		// imagineBeingFunny = ["IT WAS A MISS INPUT, MISS INPUT CALM DOWN, YOU CALM THE FUCK DOWN"]; // testing long
-		var quote = random.getObject(imagineBeingFunny);
-		errorTitle.text = '${quote}';
+		var quote:String = random.getObject(imagineBeingFunny);
+		errorTitle.text = '${quote}\n';
+
+		for (i in 0...quote.length)
+			errorTitle.appendText('-');
 
 		errorTitle.width = _stage.stageWidth * 0.5;
 		errorTitle.x = centerX(errorTitle.width);
@@ -99,7 +102,7 @@ class CrashHandler extends Sprite {
 
 		// create the error text
 		loggedError.defaultTextFormat = tf;
-		loggedError.text = '\n\n${details}\n'
+		loggedError.text = '\n\n${stack}\n'
 			+ "\nPress R to Unload your mods if needed, Press ESCAPE to Reset"
 			+ "\nIf you feel like this error shouldn't have happened,"
 			+ "\nPlease report it to our GitHub Page by pressing SPACE";
@@ -135,7 +138,7 @@ class CrashHandler extends Sprite {
 		_stage.addEventListener(KeyboardEvent.KEY_DOWN, keyActions);
 		addEventListener(Event.ENTER_FRAME, (e) -> {
 			var time = openfl.Lib.getTimer() / 1000;
-			if (time - lastTime > 1 / 30) {
+			if (time - lastTime > 1 / 5) {
 				if (!setupOrigin) {
 					errorTitle.originX = errorTitle.width * 0.5;
 					errorTitle.originY = errorTitle.height * 0.5;
@@ -169,7 +172,7 @@ class CrashHandler extends Sprite {
 		}
 	}
 
-	function centerX(w:Float):Float {
+	inline function centerX(w:Float):Float {
 		return (0.5 * (_stage.stageWidth - w));
 	}
 }

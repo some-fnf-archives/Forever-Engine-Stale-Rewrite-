@@ -59,7 +59,6 @@ class Timings {
 	public static var combo:Int = 0;
 
 	public static var rank:String = "N/A";
-	public static var rankFC:String = "";
 
 	public static var judgementsHit:StringMap<Int> = new StringMap<Int>();
 
@@ -73,7 +72,7 @@ class Timings {
 		accuracyWindow = totalMs = 0.0;
 		health = 1.0;
 		rank = "N/A";
-		rankFC = "";
+		
 	}
 
 	public static function judgeNote(timeStamp:Float):Judgement {
