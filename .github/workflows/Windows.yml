@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Windows Action Build
 
 # Controls when the workflow will run
 on:
@@ -27,9 +27,9 @@ jobs:
 
       - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.2.5
+          haxe-version: 4.3.2
       # Runs a set of commands using the runners shell
-      - name: Dependancies!!!
+      - name: Installing Dependencies
         run: |
           haxelib install lime
           haxelib install openfl
