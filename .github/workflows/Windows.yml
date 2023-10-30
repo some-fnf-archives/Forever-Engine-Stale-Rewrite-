@@ -31,6 +31,10 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Dependancies!!!
         run: |
+          haxelib install flixel
+          haxelib install flixel-tools
+          haxelib install flixel-ui
+          haxelib install flixel-addons
           haxelib install lime
           haxelib install openfl
           haxelib install hxdiscord_rpc
