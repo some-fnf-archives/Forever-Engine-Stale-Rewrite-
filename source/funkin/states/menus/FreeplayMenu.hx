@@ -192,6 +192,7 @@ class FreeplayMenu extends BaseMenuState {
 	override function updateSelectionAlt(newSelAlt:Int = 0):Void {
 		if (Difficulty.list.length == 1) {
 			difficultyTxt.text = Difficulty.list[0].toUpperCase();
+			curSelAlt = 0;
 			return;
 		}
 

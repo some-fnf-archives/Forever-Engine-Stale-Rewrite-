@@ -82,7 +82,7 @@
 	<section if="SCRIPTING">
 		<haxelib name="hscript-iris" />
 		<haxedef name="hscriptPos" />
-		<!-- <haxeflag name="-dce" value="std" /> -->
+		<haxeflag name="-dce" value="std" />
 	</section>
 
 	<!-- <haxelib name="tjson" /> -->

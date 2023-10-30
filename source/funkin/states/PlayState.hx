@@ -215,13 +215,8 @@ class PlayState extends FNFState {
 
 	override function destroy():Void {
 		callFunPack("destroy", []);
-		var i:Int = 0;
-		while (i < scriptPack.length - 1) {
-			scriptPack[i].destroy();
-			scriptPack.remove(scriptPack[i]);
-			i++;
-		}
-		scriptPack = [];
+		while (scriptPack.length != 0)
+			scriptPack.pop().destroy();
 		current = null;
 		super.destroy();
 	}
@@ -238,7 +233,7 @@ class PlayState extends FNFState {
 		final isEnemy:Bool = (note.parent == playField.enemyField);
 		var character:Character = isEnemy ? enemy : player;
 		// TODO: a better system -Crow
-		if (character.animationContext != 3) {
+		if (character.animationContext != 3) { // 3 means "spe"
 			character.playAnim(character.singingSteps[note.data.dir], true);
 			character.holdTmr = 0.0;
 		}
@@ -248,21 +243,23 @@ class PlayState extends FNFState {
 			var judgement:Judgement = Timings.judgeNote(millisecondTiming);
 			Timings.totalMs += millisecondTiming;
 
-			Timings.score += judgement.getParameters()[1];
+			var params = Tools.getEnumParams(judgement);
+
+			Timings.score += params[1];
 			Timings.health += 0.035;
 			if (Timings.combo < 0)
 				Timings.combo = 0;
 			Timings.combo += 1;
 
 			Timings.totalNotesHit += 1;
-			Timings.accuracyWindow += Math.max(0, judgement.getParameters()[2]);
-			Timings.increaseJudgeHits(judgement.getParameters()[0]);
+			Timings.accuracyWindow += Math.max(0, params[2]);
+			Timings.increaseJudgeHits(params[0]);
 
-			if (judgement.getParameters()[3] || note.splash)
+			if (params[3] || note.splash)
 				note.parent.members[note.direction].doNoteSplash(note);
 
 			final chosenType:ComboPopType = FlxMath.roundDecimal(Timings.accuracy, 2) >= 100 ? PERFECT : NORMAL;
-			displayJudgement(judgement.getParameters()[0], chosenType);
+			displayJudgement(params[0], chosenType);
 			displayCombo(Timings.combo, chosenType);
 
 			Timings.updateRank();

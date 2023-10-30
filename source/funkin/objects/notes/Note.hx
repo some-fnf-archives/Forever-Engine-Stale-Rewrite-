@@ -74,6 +74,8 @@ class Note extends ForeverSprite {
 		this.data = data;
 		this.type = data.type;
 		wasHit = isLate = canBeHit = false;
+		lowPriority = false;
+		speedMult = 1.0;
 		playAnim(animations.get(0), true);
 		return this;
 	}
@@ -97,31 +99,36 @@ class Note extends ForeverSprite {
 		if (parent == null || this.data == null || !alive)
 			return;
 
-		var strum:Strum = parent.members[direction];
+		final strum:Strum = parent.members[direction];
 
-		if (strum != null) {
-			speed = strum.speed;
-			scale = scale.set(NoteConfig.config.notes.size, NoteConfig.config.notes.size);
-			visible = parent.visible;
+		if (strum == null)
+			return;
 
-			final time:Float = Conductor.time - data.time;
-			final distance:Float = time * (400.0 * Math.abs(speed)) / scale.y;
+		speed = strum.speed;
+		visible = parent.visible;
 
-			x = strum.x - 10;
-			y = strum.y + distance * scrollDifference;
+		final time:Float = Conductor.time - data.time;
+		final distance:Float = time * (400.0 * Math.abs(speed)) / 0.7; // this needs to be 400.0 since time is second-based
 
-			// kill notes that are far from the screen view.
-			var positionDifference:Float = parent.cpuControl ? (y - strum.y + 10.0) : 100.0;
-			if (!parent.cpuControl && scrollDifference > 0)
-				positionDifference = -positionDifference;
+		x = strum.x;
+		y = strum.y + distance * scrollDifference;
 
-			if (-distance <= (positionDifference * scrollDifference)) {
-				if (!wasHit) {
-					if (!parent.cpuControl)
+		// kill notes that are far from the screen view.
+		var positionDifference:Float = parent.cpuControl ? y - strum.y : 100.0;
+		if (!parent.cpuControl && scrollDifference > 0)
+			positionDifference = -positionDifference;
+
+		if (-distance <= (positionDifference * scrollDifference)) {
+			if (!wasHit) {
+				if (!parent.cpuControl) {
+					if (!isMine) {
 						parent.onNoteMiss.dispatch(direction, this);
-					else
-						parent.onNoteHit.dispatch(this);
-					isLate = true;
+						isLate = true;
+					}
+				}
+				else {
+					parent.members[data.dir].playStrum(HIT, true);
+					parent.onNoteHit.dispatch(this);
 				}
 			}
 		}
@@ -156,6 +163,8 @@ class Note extends ForeverSprite {
 							animations.set(i.type, i.name);
 					}
 				}
+				scale.set(NoteConfig.config.notes.size, NoteConfig.config.notes.size);
+				updateHitbox();
 		}
 
 		return v;

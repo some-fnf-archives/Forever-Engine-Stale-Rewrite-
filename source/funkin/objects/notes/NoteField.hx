@@ -44,9 +44,9 @@ class Strum extends ForeverSprite {
 	}
 
 	override function update(elapsed:Float):Void {
-		super.update(elapsed);
+		super.update(elapsed * timeScale);
 		if (splash != null && splash.alive)
-			splash.update(elapsed);
+			splash.update(elapsed * timeScale);
 	}
 
 	public function playStrum(type:Int, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
@@ -122,6 +122,15 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 		regenStrums(x, y);
 	}
 
+	override function update(elapsed:Float):Void {
+		if (cpuControl) {
+			for (i in 0...members.length) // this here? this is dumb, dumb as hell -Crow
+				if (members[i].animPlayed == HIT && members[i].animation.finished)
+					members[i].playStrum(STATIC, true);
+		}
+		super.update(elapsed);
+	}
+
 	override function destroy():Void {
 		if (!cpuControl) {
 			FlxG.stage.removeEventListener(openfl.events.KeyboardEvent.KEY_DOWN, inputKeyPress);
@@ -134,25 +143,27 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 		this.x = x;
 		this.y = y;
 
-		forEach(function(s:Strum) {
-			if (s != null)
-				s.destroy();
-		});
+		while (members.length > 0)
+			members.pop().destroy();
+
+		// bro think they psych engine
+		var targetAlpha:Float = (Settings.centerNotefield && cpuControl) ? 0.6 : 0.8; // pair with original FE
 
 		for (i in 0...4) {
 			final strum:Strum = new Strum(0, 0, skin, i);
 			strum.x += i * fieldWidth;
 			strum.scale.set(size, size);
-			if (!skipStrumTween)
-				strum.alpha = 0.0;
 			strum.updateHitbox();
 			add(strum);
 
-			final crochet:Float = 60.0 / Conductor.bpm;
-			strum.tween({alpha: 1.0}, (crochet) * 4.0, {
-				ease: FlxEase.circOut,
-				startDelay: crochet * i
-			});
+			if (!skipStrumTween) {
+				strum.alpha = 0.0;
+				final crochet:Float = 60.0 / Conductor.bpm;
+				strum.tween({alpha: targetAlpha}, (crochet) * 4.0, {
+					ease: FlxEase.circOut,
+					startDelay: crochet * i
+				});
+			}
 		}
 	}
 

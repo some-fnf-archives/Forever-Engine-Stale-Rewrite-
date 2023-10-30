@@ -166,19 +166,10 @@ class OptionsMenu extends BaseMenuState {
 	}
 
 	function reloadOptions():Void {
-		while (optionsGroup.members.length != 0) {
-			var i:Alphabet = optionsGroup.members.last();
-			if (i != null)
-				i.destroy();
-			optionsGroup.remove(i, true);
-		}
-
-		while (iconGroup.members.length != 0) {
-			var i:FlxSprite = cast(iconGroup.members.last(), FlxSprite);
-			if (i != null)
-				i.destroy();
-			iconGroup.remove(i, true);
-		}
+		while (optionsGroup.members.length != 0)
+			optionsGroup.members.pop().destroy();
+		while (iconGroup.members.length != 0)
+			cast(iconGroup.members.pop(), FlxSprite).destroy();
 
 		var cataOptions:Array<ForeverOption> = optionsListed.get(curCateg);
 

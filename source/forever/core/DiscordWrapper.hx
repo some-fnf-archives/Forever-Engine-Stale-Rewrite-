@@ -7,6 +7,8 @@ import hxdiscord_rpc.Types.DiscordRichPresence;
 import hxdiscord_rpc.Types.DiscordUser;
 
 class DiscordWrapper {
+	public static var username:String = null;
+
 	@:allow(Init)
 	/**
 	 * Initializes the Discord Rich Presence Wrapper.
@@ -66,10 +68,7 @@ class DiscordWrapper {
 	static function _onReady(req:cpp.RawConstPointer<DiscordUser>):Void {
 		final pointer:cpp.Star<DiscordUser> = cpp.ConstPointer.fromRaw(req).ptr;
 
-		var username = if (cast(pointer.discriminator, String) != "0") '${pointer.username}#${pointer.discriminator}'; else '${pointer.username}';
-
-		// lime.app.Application.current.window.alert("Hello " + username + ", i know where you live", "Death");
-
+		username = if (cast(pointer.discriminator, String) != "0") '${pointer.username}#${pointer.discriminator}'; else '${pointer.username}';
 		trace('[DiscordWrapper:_onReady] Connection Established, Welcome ${username}.');
 	}
 

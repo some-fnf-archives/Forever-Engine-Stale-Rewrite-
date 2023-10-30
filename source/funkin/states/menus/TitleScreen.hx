@@ -90,6 +90,7 @@ class TitleScreen extends FNFState {
 		enterTxt.addAtlasAnim('press', "ENTER PRESSED", 24, true);
 		enterTxt.playAnim('idle', true);
 		enterTxt.updateHitbox();
+		enterTxt.screenCenter(X);
 		mainGroup.add(enterTxt);
 
 		new flixel.util.FlxTimer().start(0.05, function(tmr) {

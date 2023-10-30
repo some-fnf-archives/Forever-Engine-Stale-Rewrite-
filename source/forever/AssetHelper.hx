@@ -14,33 +14,14 @@ import openfl.utils.Assets as OpenFLAssets;
  * Helper Enum for Engine Names, used for conversion methods
  * in order to provide greater compatibility with other FNF Engines.
 **/
-enum abstract EngineImpl(Int) to Int {
-	/** Forever Engine Implementation Style. **/
-	var FOREVER = 0;
-
-	/** Base Game (pre-0.3) Implementation Style. **/
-	var VANILLA_V1 = 1;
-
-	/** Psych Engine Implementation Style. **/
-	var PSYCH = 2;
-
-	/** Codename Engine Implementation Style. **/
-	var CODENAME = 3;
-
-	/** Crow Engine Implementation Style. **/
-	var CROW = 4; // the engine, not the user. -CrowPlexus
-
-	public function toString():String {
-		return switch this {
-			case CROW: "Crow Engine";
-			case FOREVER: "Forever Engine";
-			case CODENAME: "Codename Engine";
-			case VANILLA_V1: "Base Game (0.2.8)";
-			case PSYCH: "Psych Engine";
-			default: "???"; // https://www.youtube.com/watch?v=4kEO7VjKRB8
-		}
-	}
-}
+@:build(forever.macros.EnumHelper.makeEnum([
+	"FOREVER=>Forever Engine",
+	"VANILLA_V1=>Base Game (0.2.8)",
+	"CODENAME=>Codename Engine",
+	"CROW=>Crow Engine",
+	"PSYCH=>Psych Engine"
+]))
+enum abstract EngineImpl(Int) from Int to Int {}
 
 /** Asset Helper Class, handles asset loading and caching. **/
 class AssetHelper {
@@ -118,7 +99,7 @@ class AssetHelper {
 			case JSON:
 				var json:String = Tools.getText(gottenAsset).trim();
 				json = json.substr(0, json.lastIndexOf("}") + 1);
-				haxe.Json.parse(json);
+				external.Json.parse(json);
 			case XML, TEXT: Tools.getText(gottenAsset).trim();
 			case YAML: yaml.Yaml.parse(Tools.getText(gottenAsset).trim(), yaml.Parser.options().useObjects());
 			default: gottenAsset;
@@ -134,7 +115,7 @@ class AssetHelper {
 		try {
 			final keyName:String = customKey != null ? customKey : file;
 			if (!Tools.fileExists(file, IMAGE))
-				throw '[AssetHelper:getGraphic()]: Error! Attempt to load a Graphic with File "${file}", which does not exist in the Filesystem.';
+				throw '[AssetHelper:getGraphic()]: Error! Attempt to load a Graphic with File "${file}", which does not exist in the FileSystem.';
 
 			// prevent remapping
 			if (loadedGraphics.get(keyName) != null)
@@ -200,7 +181,6 @@ class AssetHelper {
 
 				if (FlxG.bitmap.checkCache(keyGraphic))
 					FlxG.bitmap.remove(actualGraphic);
-
 				if (OpenFLAssets.cache.hasBitmapData(keyGraphic))
 					OpenFLAssets.cache.removeBitmapData(keyGraphic);
 
@@ -223,21 +203,18 @@ class AssetHelper {
 			if (!currentUsedAssets.contains(keySound) || force) {
 				var actualSound:Sound = loadedSounds.get(keySound);
 				actualSound.close();
-
 				if (OpenFLAssets.cache.hasSound(keySound))
 					OpenFLAssets.cache.removeSound(keySound);
-
 				loadedSounds.remove(keySound);
 			}
 		}
 
-		FlxG.sound.list.forEachAlive((sound:flixel.sound.FlxSound) -> {
-			FlxG.sound.list.remove(sound, true);
-			sound.stop();
-			sound.kill();
-			sound.destroy();
-		});
-		FlxG.sound.list.clear();
+		while (FlxG.sound.list.members.length != 0)
+			FlxG.sound.list.members.pop().stop().destroy();
+		while (FlxG.sound.defaultMusicGroup.sounds.length != 0)
+			FlxG.sound.defaultMusicGroup.sounds.pop().stop().destroy();
+		while (FlxG.sound.defaultSoundGroup.sounds.length != 0)
+			FlxG.sound.defaultSoundGroup.sounds.pop().stop().destroy();
 	}
 
 	private static function _clearCacheMajor():Void {

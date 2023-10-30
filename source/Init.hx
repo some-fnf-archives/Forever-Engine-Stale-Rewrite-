@@ -24,10 +24,8 @@ class Init extends FlxState {
 		FlxG.mouse.visible = false;
 
 		forever.Settings.load();
-
 		// FlxGraphic.defaultPersist = true;
 		flixel.FlxSprite.defaultAntialiasing = forever.Settings.globalAntialias;
-
 		setupTransition();
 
 		Controls.current = new BaseControls();

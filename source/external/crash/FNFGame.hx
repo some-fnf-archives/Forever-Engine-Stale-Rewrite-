@@ -51,11 +51,12 @@ class FNFGame extends FlxGame {
 	 * Handles the `onEnterFrame` call and figures out how many updates and draw calls to do.
 	 */
 	override function onEnterFrame(_):Void {
-		try {
+		/*
 			if (_viewingCrash)
 				return;
-			super.onEnterFrame(_);
-		}
+		 */
+		try
+			super.onEnterFrame(_)
 		catch (e:haxe.Exception)
 			return exceptionCaught(e, 'onEnterFrame');
 	}
@@ -65,11 +66,10 @@ class FNFGame extends FlxGame {
 	 * May be called multiple times per "frame" or draw call.
 	 */
 	override function update():Void {
-		try {
-			if (_viewingCrash)
-				return;
-			super.update();
-		}
+		if (_viewingCrash)
+			return;
+		try
+			super.update()
 		catch (e:haxe.Exception)
 			return exceptionCaught(e, 'update');
 	}
@@ -78,11 +78,10 @@ class FNFGame extends FlxGame {
 	 * Goes through the game state and draws all the game objects and special effects.
 	 */
 	override function draw():Void {
-		try {
-			if (_viewingCrash)
-				return;
-			super.draw();
-		}
+		if (_viewingCrash)
+			return;
+		try
+			super.draw()
 		catch (e:haxe.Exception)
 			return exceptionCaught(e, 'draw');
 	}
@@ -121,8 +120,13 @@ class FNFGame extends FlxGame {
 					fileStack.push('Non-Haxe (C) Function');
 				case Module(moduleName):
 					fileStack.push('Module (${moduleName})');
-				case FilePos(s, file, line, column):
-					fileStack.push('${file} (line ${line})');
+				case FilePos(parent, file, line, col):
+					switch (parent) {
+						case Method(cla, func):
+							fileStack.push('${file} ${cla.split(".").last()}.$func() - (line ${line})');
+						case _:
+							fileStack.push('${file} - (line ${line})');
+					}
 				case Method(className, method):
 					fileStack.push('${className} (method ${method})');
 				case LocalFunction(name):
@@ -140,19 +144,26 @@ class FNFGame extends FlxGame {
 		File.saveContent(path, '${msg}\n');
 		#end
 
-		final funcThrew:String = '${func != null ? ' Thrown at "${func}" Function' : ""}';
+		final funcThrew:String = '${func != null ? ' thrown at "${func}" function' : ""}';
 
 		println(msg + funcThrew);
+		println(e.message);
 		println('Crash dump saved in ${Path.normalize(path)}');
 
+		// make sure to not do ANYTHING flixel related as much as possible from this point onwards.
+
+		FlxG.bitmap.dumpCache();
+		FlxG.bitmap.clearCache();
+
+		// this should hopefully cover sounds playing..
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
-		@:privateAccess {
-			// _requestedState = null;
-			FlxG.game.addChild(new CrashHandler(e.message + funcThrew, e.details()));
-		}
+		while (FlxG.sound.list.members.length != 0) FlxG.sound.list.members.pop().stop().destroy();
+		while (FlxG.sound.defaultMusicGroup.sounds.length != 0) FlxG.sound.defaultMusicGroup.sounds.pop().stop().destroy();
+		while (FlxG.sound.defaultSoundGroup.sounds.length != 0) FlxG.sound.defaultSoundGroup.sounds.pop().stop().destroy();
 
+		Main.self.addChild(new CrashHandler(e.message + funcThrew, e.details()));
 		_viewingCrash = true;
 	}
 }

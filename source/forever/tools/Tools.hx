@@ -113,6 +113,32 @@ class Tools {
 		return step * 0.01;
 	}
 
+	public static inline function getPossibleEnumValues(e:EnumValue):Array<Dynamic> {
+		// TODO: Abstracts
+		// return e.getParameters();
+		return [];
+	}
+
+	/**
+	 * Returns every value in a enum constructor as an ordered array
+	 * 
+	 * @param e 			the Enum to obtain the parameters from.
+	 * @return Array<Dynamic>
+	**/
+	public static inline function getEnumParams(e:EnumValue):Array<Dynamic> {
+		return e.getParameters();
+	}
+
+	/**
+	 * Returns a specified enum value from its constructor.
+	 * @param e 			the Enum to look for said value.
+	 * @param value  		the Value ID in the constructor (e.g: 1).
+	 * @return Dynamic
+	**/
+	public static inline function getEnumValue(e:EnumValue, value:Int):Dynamic {
+		return e.getParameters()[value];
+	}
+
 	/**
 	 * Lists every folder in the specified path
 	 * @param path 				the path to get folders from

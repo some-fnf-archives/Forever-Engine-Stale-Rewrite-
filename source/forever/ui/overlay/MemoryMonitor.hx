@@ -39,7 +39,7 @@ class MemoryMonitor extends BaseOverlayMonitor {
 	 */
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
-	function get_staticRAM():Float {
+	inline function get_staticRAM():Float {
 		return openfl.system.System.totalMemory;
 	}
 }
