@@ -27,19 +27,21 @@ class OptionsMenu extends BaseMenuState {
 			new ForeverOption("Exit", NONE), // this is also a dummy type
 		],
 		"general" => [
-			new ForeverOption("Auto Pause", "autoPause", CHECKMARK),
-			new ForeverOption("Anti-aliasing", "globalAntialias", CHECKMARK),
-			new ForeverOption("VRAM Sprites", "vramSprites", CHECKMARK),
+			new ForeverOption("Auto Pause", "autoPause"),
+			new ForeverOption("Anti-aliasing", "globalAntialias"),
+			new ForeverOption("VRAM Sprites", "vramSprites"),
 			new ForeverOption("Framerate Cap", "framerateCap", NUMBER(30, 240, 1)),
 			new ForeverOption("Filter", "screenFilter", CHOICE(["none", "deuteranopia", "protanopia", "tritanopia"])),
 		],
 		"gameplay" => [
-			new ForeverOption("Downscroll", "downScroll", CHECKMARK),
-			new ForeverOption("Centered Notefield", "centerNotefield", CHECKMARK),
-			new ForeverOption("Ghost Tapping", "ghostTapping", CHECKMARK),
+			new ForeverOption("Downscroll", "downScroll"),
+			new ForeverOption("Centered Notefield", "centerNotefield"),
+			new ForeverOption("Ghost Tapping", "ghostTapping"),
 		],
 		"visuals" => [
 			new ForeverOption("Note Skin >", CATEGORY),
+			new ForeverOption("Stage Dim", "stageDim", NUMBER(0, 100, 1)),
+			new ForeverOption("Fixed Judgements", "fixedJudgements"),
 			new ForeverOption("Clip Style", "sustainLayer", CHOICE(["stepmania", "fnf"])),
 		],
 	];

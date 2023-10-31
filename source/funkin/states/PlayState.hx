@@ -114,7 +114,10 @@ class PlayState extends FNFState {
 		hudCamera = new FlxCamera();
 		altCamera = new FlxCamera();
 
-		hudCamera.bgColor = altCamera.bgColor = 0x00000000;
+		hudCamera.bgColor = altCamera.bgColor = 0xFF000000;
+		hudCamera.bgColor.alphaFloat = Tools.toFloatPercent(Settings.stageDim);
+		altCamera.bgColor.alphaFloat = 0.0;
+
 		FlxG.cameras.add(hudCamera, false);
 		FlxG.cameras.add(altCamera, false);
 
@@ -143,6 +146,8 @@ class PlayState extends FNFState {
 		hud.centerMark.screenCenter(X);
 
 		playField.camera = hud.camera = hudCamera;
+		if (Settings.fixedJudgements)
+			comboGroup.camera = hudCamera;
 
 		// -- PREPARE CHART AND NOTEFIELDS -- //
 		Conductor.bpm = Chart.current.songInfo.beatsPerMinute;
@@ -304,13 +309,21 @@ class PlayState extends FNFState {
 
 		final placement:Float = FlxG.width * 0.55;
 		final jSpr:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
+		var size:Float = /* Settings.fixedJudgements ? 0.5 : */ 0.7;
 
 		jSpr.loadSprite('${name}0');
-		jSpr.x = FlxMath.bound(placement + 30, FlxG.camera.scroll.x, FlxG.camera.scroll.x + FlxG.camera.width - jSpr.width);
-		jSpr.y = FlxG.camera.scroll.y + FlxG.camera.height * 0.4 - 130;
-
-		jSpr.scale.set(0.7, 0.7);
+		jSpr.scale.set(size, size);
 		jSpr.updateHitbox();
+
+		if (!Settings.fixedJudgements) {
+			jSpr.screenCenter(Y);
+			jSpr.x = placement - 40;
+			jSpr.y += 60;
+		}
+		else {
+			// todo: better placements
+			jSpr.screenCenter(XY);
+		}
 
 		jSpr.timeScale = Conductor.rate;
 
@@ -343,6 +356,7 @@ class PlayState extends FNFState {
 
 			final comboX:Float = (lastJSpr.x + lastJSpr.width) + (43 * (i - xOff)) - 200;
 			final cnSpr:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
+			final size:Float = /* Settings.fixedJudgements ? 0.3 : */ 0.5;
 			cnSpr.loadSprite(comboName);
 
 			cnSpr.x = comboX;
@@ -351,7 +365,7 @@ class PlayState extends FNFState {
 			if (type == MISS)
 				cnSpr.color = FlxColor.fromRGB(204, 66, 66);
 
-			cnSpr.scale.set(0.5, 0.5);
+			cnSpr.scale.set(size, size);
 			cnSpr.updateHitbox();
 
 			cnSpr.timeScale = Conductor.rate;

@@ -53,6 +53,12 @@ class Settings {
 	/** Applies a Screen Filter to your game, to view the game as a colorblind person would. **/
 	public static var screenFilter:String = "none";
 
+	/** Defines the opacity of the background and characters, useful if you find them distracting from the main gameplay. **/
+	public static var stageDim:Int = 0;
+
+	/** Check this to attach judgements to the center of the screen, making them easier to read. **/
+	public static var fixedJudgements:Bool = false;
+
 	/** Where should the sustain clip to? either above the note (fnf) or below it (stepmania). **/
 	public static var sustainLayer:String = "stepmania";
 
