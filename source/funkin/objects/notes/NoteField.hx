@@ -194,14 +194,13 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 
 			if (notesHittable.length > 1) {
 				var behindNote:Note = notesHittable[1];
-				// calculate jacks in milliseconds -- TODO: find a better calculation that uses seconds instead
-				final msF:Float = frontNote.data.time * 1000.0;
-				final msB:Float = behindNote.data.time * 1000.0;
-
-				if (Math.abs(msB - msF) < 1.0)
+				// if the note behind is 5 seconds apart from the front one, invalidate it
+				if (Math.abs(behindNote.data.time - frontNote.data.time) < 0.005)
 					invalidateNote(behindNote);
-				else if (msB < msF)
+				// just in case, if the note behind is actually in FRONT of the supposedly front note, swap them.
+				else if (behindNote.data.time < frontNote.data.time)
 					frontNote = behindNote;
+				// wow that is a dumb check, which surprisingly works -Crow
 			}
 
 			onNoteHit.dispatch(frontNote);
