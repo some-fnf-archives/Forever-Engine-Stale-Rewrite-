@@ -188,11 +188,13 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 			return n.parent == this && n.alive && n.data.dir == key && !n.isLate && !n.wasHit && n.canBeHit;
 		});
 
-		if (notesHittable.length > 0) {
-			notesHittable.sort(sortHitNotes);
+		if (notesHittable.length != 0) {
 			var frontNote:Note = notesHittable[0];
 
 			if (notesHittable.length > 1) {
+				// sort through the notes
+				notesHittable.sort(sortHitNotes);
+
 				var behindNote:Note = notesHittable[1];
 				// if the note behind is 5 seconds apart from the front one, invalidate it
 				if (Math.abs(behindNote.data.time - frontNote.data.time) < 0.005)
