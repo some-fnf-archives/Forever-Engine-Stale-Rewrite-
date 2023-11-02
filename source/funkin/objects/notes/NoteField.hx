@@ -245,8 +245,10 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 	}
 
 	/**
-	 * Function to sort notes that can
-	 * @author ShadowMario [https://github.com/ShadowMario/FNF-PsychEngine/blob/5d0a66dea226aa4a32ec5c41f113112ebb15e692/source/states/PlayState.hx#L2664]
+	 * Function to sort notes by priority level
+	 * TODO: true priority level sorting, instead of using `lowPriority` bool
+	 * @author ShadowMario
+	 * @see https://github.com/ShadowMario/FNF-PsychEngine/blob/5d0a66dea226aa4a32ec5c41f113112ebb15e692/source/states/PlayState.hx#L2664
 	 * @return Int
 	**/
 	private function sortHitNotes(a:Note, b:Note):Int {
