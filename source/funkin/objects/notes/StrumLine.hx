@@ -91,7 +91,7 @@ class Strum extends ForeverSprite {
 	}
 }
 
-class NoteField extends FlxTypedSpriteGroup<Strum> {
+class StrumLine extends FlxTypedSpriteGroup<Strum> {
 	public var skin:String;
 	public var playField:PlayField;
 	public var cpuControl:Bool;
@@ -147,7 +147,7 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 			members.pop().destroy();
 
 		// bro think they psych engine
-		var targetAlpha:Float = (Settings.centerNotefield && cpuControl) ? 0.6 : 0.8; // pair with original FE
+		var targetAlpha:Float = (Settings.centerStrums && cpuControl) ? 0.6 : 0.8; // pair with original FE
 
 		for (i in 0...4) {
 			final strum:Strum = new Strum(0, 0, skin, i);
@@ -224,9 +224,10 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 		members[key]?.playStrum(STATIC, true);
 	}
 
-	public function getKeyFromEvent(key:FlxKey):Int {
+	public inline function getKeyFromEvent(key:FlxKey):Int {
+		var key:Int = -1;
 		if (key == NONE)
-			return -1;
+			return key;
 
 		final controls:Array<String> = ["left", "down", "up", "right"];
 
@@ -235,29 +236,22 @@ class NoteField extends FlxTypedSpriteGroup<Strum> {
 			var press:Bool = Controls.current.justPressed(controls[i]);
 			var release:Bool = Controls.current.justReleased(controls[i]);
 
-			for (_key in kys) {
-				if (key == _key && (press || release))
-					return i;
-			}
+			for (_key in kys)
+				if (key == _key && (press || release)) {
+					key = i;
+					break;
+				}
 		}
 
-		return -1;
+		return key;
 	}
 
 	/**
-	 * Function to sort notes by priority level
-	 * TODO: true priority level sorting, instead of using `lowPriority` bool
-	 * @author ShadowMario
-	 * @see https://github.com/ShadowMario/FNF-PsychEngine/blob/5d0a66dea226aa4a32ec5c41f113112ebb15e692/source/states/PlayState.hx#L2664
+	 * Function to sort notes based on their time
 	 * @return Int
 	**/
-	private function sortHitNotes(a:Note, b:Note):Int {
-		if (a.lowPriority && !b.lowPriority)
-			return 1;
-		else if (!a.lowPriority && b.lowPriority)
-			return -1;
-
-		return FlxSort.byValues(FlxSort.ASCENDING, a.data.time, b.data.time);
+	inline function sortHitNotes(a:Note, b:Note):Int {
+		return Std.int(a.data.time - b.data.time);
 	}
 
 	public function invalidateNote(badNote:Note):Void {

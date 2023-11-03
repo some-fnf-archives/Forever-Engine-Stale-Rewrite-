@@ -13,18 +13,12 @@ class VanillaParser {
 			default:
 				var keys:Int = 4;
 
-				function makePsychEvent():Dynamic {
-					return {};
-				}
+				var player:String = json.player1 ?? "bf";
+				var enemy:String = json.player2 ?? "dad";
+				var chick:String = json.player3 ?? json.gfVersion ?? "gf";
 
 				chart.songInfo = {beatsPerMinute: json.bpm, stepsPerBeat: 4, beatsPerBar: 4};
-				chart.gameInfo = {
-					noteSpeed: json.speed ?? 1.0,
-					player: json.player1 ?? "bf",
-					enemy: json.player2 ?? "dad",
-					crowd: json.player3 ?? json.gfVersion ?? "gf",
-					stageBG: json.stage ?? getVanillaStage(json.song)
-				};
+				chart.gameInfo = {noteSpeed: json.speed ?? 1.0, chars: [player, enemy, chick], stageBG: json.stage ?? getVanillaStage(json)};
 
 				var bars:Array<Dynamic> = cast(json.notes, Array<Dynamic>);
 
@@ -65,7 +59,6 @@ class VanillaParser {
 					chart.events.push({
 						event: FocusCamera(bar.mustHitSection ? 1 : 0, false),
 						time: _time,
-						delay: 0.0
 					});
 
 					if (bar.changeBPM == true && bar.bpm != currentBPM) {
@@ -75,7 +68,6 @@ class VanillaParser {
 						chart.events.push({
 							event: BPMChange(bar.bpm),
 							time: beatDelta + _time * curBar,
-							delay: 0.0
 						});
 					}
 
@@ -89,14 +81,22 @@ class VanillaParser {
 							if (Std.isOfType(j[3], Bool) && j[3] == true || bar.altAnim)
 								noteAnim = "-alt";
 
-							final note:NoteData = {
-								time: j[0] / 1000.0,
-								dir: Std.int(j[1]) % keys,
-								holdLen: Math.max(j[2], 0.0) / 1000.0,
-								notefield: Std.int(j[1]) >= keys != bar.mustHitSection ? 1 : 0,
-								type: j[3] != null && Std.isOfType(j[3], String) ? j[3] : "default",
-								animation: noteAnim,
-							};
+							final noteHold:Float = Math.max(j[2], 0.0) / 1000.0;
+							final strumLine:Int = Std.int(j[1]) >= keys != bar.mustHitSection ? 1 : 0;
+							final noteType:String = Std.isOfType(j[3], String) ? j[3] : null;
+
+							// only required fields
+							final note:NoteData = {time: j[0] / 1000.0, dir: Std.int(j[1]) % keys};
+
+							// completely optional fields
+							if (noteHold != 0.0)
+								note.holdLen = noteHold;
+							if (strumLine != 0)
+								note.lane = strumLine;
+							if (noteType != null)
+								note.type = noteType;
+							if (noteAnim != null && noteAnim != "")
+								note.animation = noteAnim;
 
 							chart.notes[noteId] = note;
 							noteId++;

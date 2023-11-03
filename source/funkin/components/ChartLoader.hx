@@ -9,7 +9,7 @@ class ChartLoader {
 	public static function load(folder:String, file:String):Chart {
 		var chart:Chart = new Chart();
 		var json = cast(AssetHelper.parseAsset('songs/${folder}/${file}', JSON));
-		var dataType:EngineImpl = VANILLA_V1;
+		var dataType:EngineImpl = FOREVER;
 
 		if (Reflect.hasField(json, "song") && Reflect.hasField(json.song, "player2"))
 			dataType = VANILLA_V1;
@@ -31,29 +31,47 @@ class ChartLoader {
 					// welcome to my tutorial on how to parse charts, first off. -Crow
 					// first you get the die
 					// and then pour it all over yourself -Swordcube
-					chart.notes = json.notes;
-					chart.events = json.events;
-					if (Tools.fileExists(AssetHelper.getPath('songs/${folder}/meta', YAML))) {
-						var sd = cast(AssetHelper.parseAsset('songs/${folder}/meta', YAML));
-						chart.songInfo = {beatsPerMinute: sd?.beatsPerMinute ?? 100.0, stepsPerBeat: sd?.stepsPerBeat, beatsPerBar: sd?.beatsPerMeasure};
-						chart.gameInfo = {
-							noteSpeed: sd?.speed,
-							player: sd?.player,
-							enemy: sd?.enemy,
-							crowd: sd?.crowd
+					if (json.notes != null && json.notes.length > 0)
+						chart.notes = cast(json.notes);
+					if (json.events != null && json.events.length > 0)
+						chart.events = Chart.eventListFromArray(json.events);
+
+					if (json.songInfo != null) {
+						chart.songInfo = {
+							beatsPerMinute: json.songInfo?.beatsPerMinute ?? 100.0,
+							stepsPerBeat: json.songInfo?.stepsPerBeat ?? 4,
+							beatsPerBar: json.songInfo?.beatsPerBar ?? 4
 						};
+					}
+					if (json.gameInfo != null) {
+						var chars:Array<String> = json.gameInfo?.chars ?? ["bf", "dad", "gf"];
+						chart.gameInfo = {noteSpeed: json.gameInfo?.noteSpeed ?? 1.0, chars: chars, stageBG: json.gameInfo?.stageBG ?? null};
 					}
 				default:
 					trace('${dataType.toString()} Chart Type is not implemented *yet*');
 			}
 
-			chart.notes.sort(function(a:NoteData, b:NoteData):Int return Std.int(a.time - b.time));
-			chart.events.sort(function(a:ForeverEvent, b:ForeverEvent):Int return Std.int(a.time - b.time));
+			if (chart.notes.length > 1)
+				chart.notes.sort((a:NoteData, b:NoteData) -> Std.int(a.time - b.time));
+			if (chart.events.length > 1)
+				chart.events.sort((a:ForeverEvent, b:ForeverEvent) -> Std.int(a.time - b.time));
 		}
 		catch (e:haxe.Exception)
-			trace('Failed to parse chart, type was ${dataType}, Error:\n${e.details()} ' + haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
+			trace('Failed to parse chart, type was ${dataType.toString()}, Error:\n${e.details()} '
+				+ haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
 
 		return chart;
+	}
+
+	public static inline function exportChart(chart:Chart):String {
+		final eventArray:Array<Dynamic> = Chart.eventListToArray(chart.events);
+		final exported = haxe.Json.stringify({
+			notes: chart.notes,
+			events: eventArray,
+			songInfo: chart.songInfo,
+			gameInfo: chart.gameInfo,
+		}, '\t');
+		return exported;
 	}
 }
 
@@ -63,10 +81,55 @@ class ChartLoader {
 class Chart {
 	public var notes:Array<NoteData> = [];
 	public var events:Array<ForeverEvent> = [];
-	public var songInfo:ForeverSongData = null;
-	public var gameInfo:ForeverGameplayData = null;
+	public var songInfo:ForeverSongData = {beatsPerMinute: 100.0, stepsPerBeat: 4, beatsPerBar: 4};
+	public var gameInfo:ForeverGameplayData = {noteSpeed: 1.0, chars: ["bf", "dad", "gf"], stageBG: null};
 
 	public static var current:Chart;
 
 	public function new():Void {}
+
+	// "oh but if you were going to convert them to arrays anyways, why not using them in the first place?"
+	// listen, I want events to also be easy to hardcode.
+
+	public static inline function eventFromArray(arr:Array<Dynamic>):ChartEvent<ForeverEvents> {
+		var eTime:Float = Std.parseFloat(arr[1]);
+		var coolEvent:ChartEvent<ForeverEvents> = {event: Scripted(arr[0], arr[2], arr[3]), time: eTime}; // dummy event
+
+		var parameters:Array<Dynamic> = [];
+		for (i in 2...arr.length) // Skip "Name" and "Time" parameters
+			parameters.push(arr[i]);
+
+		var trueEvent:ChartEvent<ForeverEvents> = {
+			event: Type.createEnum(ForeverEvents, arr[0], parameters),
+			time: eTime
+		};
+		return trueEvent.event != null && trueEvent.time != -1 ? trueEvent : coolEvent;
+	}
+
+	public static inline function eventListFromArray(arr:Array<Array<Dynamic>>):Array<ChartEvent<ForeverEvents>> {
+		var coolEvents:Array<ChartEvent<ForeverEvents>> = [];
+		var i:Int = 0;
+		while (i < arr.length - 1) {
+			coolEvents.push(eventFromArray(arr[i]));
+			i++;
+		}
+		return coolEvents;
+	}
+
+	public static inline function eventListToArray(arr:Array<ChartEvent<ForeverEvents>>):Array<Dynamic> {
+		var coolEvents:Array<Dynamic> = [];
+		var i:Int = 0;
+		while (i < arr.length - 1) {
+			coolEvents.push(eventToArray(arr[i]));
+			i++;
+		}
+		return coolEvents;
+	}
+
+	public static inline function eventToArray(evt:ChartEvent<ForeverEvents>):Array<Dynamic> {
+		var newEvent:Array<Dynamic> = evt.event.getParameters();
+		newEvent.insert(0, evt.event.getName());
+		newEvent.insert(1, evt.time);
+		return newEvent;
+	}
 }

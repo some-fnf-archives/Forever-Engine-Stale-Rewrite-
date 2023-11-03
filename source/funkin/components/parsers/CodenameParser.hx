@@ -78,13 +78,13 @@ class CodenameParser {
 		}
 
 		for (strumLine in cnebase.strumLines) {
-			var noteField = getNoteField(strumLine);
+			var strumLine = getStrumLine(strumLine);
 
-			if (noteField == 0)
+			if (strumLine == 0)
 				data.enemyChar = strumLine.characters[0];
-			if (noteField == 1)
+			if (strumLine == 1)
 				data.playerChar = strumLine.characters[0];
-			if (noteField == 2)
+			if (strumLine == 2)
 				data.crowdChar = strumLine.characters[0];
 		}
 
@@ -109,7 +109,7 @@ class CodenameParser {
 		// convert to forever format
 		var i = 0;
 		for (strumLine in cnebase.strumLines) {
-			var noteField = getNoteField(strumLine);
+			var strumLine = getStrumLine(strumLine);
 
 			for (note in strumLine.notes) {
 				var type = null;
@@ -121,7 +121,7 @@ class CodenameParser {
 				var foreverNote:NoteData = {
 					time: note.time / 1000.0,
 					direction: note.direction,
-					notefield: noteField,
+					lane: strumLine,
 					type: type,
 					animation: "",
 					length: Math.max(note.sLen, 0.0) / 1000.0
@@ -138,7 +138,7 @@ class CodenameParser {
 	}
 
 	@:dox(hide) @:noPrivateAccess
-	private static function getNoteField(strumLine:ChartStrumLine) {
+	private static function getStrumLine(strumLine:ChartStrumLine) {
 		return switch (strumLine.position) {
 			case "dad": 0;
 			case "boyfriend": 1;

@@ -35,7 +35,7 @@ class OptionsMenu extends BaseMenuState {
 		],
 		"gameplay" => [
 			new ForeverOption("Downscroll", "downScroll"),
-			new ForeverOption("Centered Notefield", "centerNotefield"),
+			new ForeverOption("Centered Receptors", "centerStrums"),
 			new ForeverOption("Ghost Tapping", "ghostTapping"),
 		],
 		"visuals" => [

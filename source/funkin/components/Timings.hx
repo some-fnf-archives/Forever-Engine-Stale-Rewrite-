@@ -72,7 +72,6 @@ class Timings {
 		accuracyWindow = totalMs = 0.0;
 		health = 1.0;
 		rank = "N/A";
-		
 	}
 
 	public static function judgeNote(timeStamp:Float):Judgement {

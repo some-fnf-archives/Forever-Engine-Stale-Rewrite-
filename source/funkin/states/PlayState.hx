@@ -10,7 +10,8 @@ import forever.core.scripting.*;
 import forever.display.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.components.Timings;
-import funkin.components.parsers.ForeverChartData.ForeverEvents as ChartEventOptions;
+import funkin.components.parsers.ForeverChartData;
+import funkin.components.parsers.ForeverEvents as ChartEventOptions;
 import funkin.objects.*;
 import funkin.objects.StageBase;
 import funkin.objects.notes.Note;
@@ -131,9 +132,9 @@ class PlayState extends FNFState {
 		gameCamera.follow(camLead, LOCKON);
 
 		// -- PREPARE CHARACTERS -- //
-		add(player = new Character(stage.playerPosition.x, stage.playerPosition.y, Chart.current.gameInfo.player, true));
-		add(enemy = new Character(stage.enemyPosition.x, stage.enemyPosition.y, Chart.current.gameInfo.enemy, false));
-		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, Chart.current.gameInfo.crowd, false));
+		add(player = new Character(stage.playerPosition.x, stage.playerPosition.y, Chart.current.gameInfo.chars[0], true));
+		add(enemy = new Character(stage.enemyPosition.x, stage.enemyPosition.y, Chart.current.gameInfo.chars[1], false));
+		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, Chart.current.gameInfo.chars[2], false));
 
 		// -- PREPARE USER INTERFACE -- //
 		add(comboGroup = new ComboGroup());
@@ -152,14 +153,14 @@ class PlayState extends FNFState {
 		// -- PREPARE CHART AND NOTEFIELDS -- //
 		Conductor.bpm = Chart.current.songInfo.beatsPerMinute;
 
-		for (lane in playField.noteFields) {
+		for (lane in playField.strumLines) {
 			lane.changeStrumSpeed(Chart.current.gameInfo.noteSpeed);
 			lane.onNoteHit.add(hitBehavior);
 			lane.onNoteMiss.add(missBehavior);
 		}
 
-		for (i in 0...playField.playerField.members.length) {
-			var strum = playField.playerField.members[i];
+		for (i in 0...playField.plrStrums.members.length) {
+			var strum = playField.plrStrums.members[i];
 			strum.doNoteSplash(null, true);
 		}
 
@@ -209,6 +210,8 @@ class PlayState extends FNFState {
 		if (Controls.PAUSE)
 			openPauseMenu();
 
+		if (FlxG.keys.justPressed.SEVEN)
+			sys.io.File.saveContent('./${currentSong.folder}-${currentSong.difficulty}.json', ChartLoader.exportChart(Chart.current));
 		callFunPack("postUpdate", [elapsed]);
 	}
 
@@ -235,7 +238,7 @@ class PlayState extends FNFState {
 		if (hitEvent.cancelled)
 			return;
 
-		final isEnemy:Bool = (note.parent == playField.enemyField);
+		final isEnemy:Bool = (note.parent == playField.enmStrums);
 		var character:Character = isEnemy ? enemy : player;
 		// TODO: a better system -Crow
 		if (character.animationContext != 3) { // 3 means "spe"

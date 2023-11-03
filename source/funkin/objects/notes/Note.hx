@@ -3,20 +3,36 @@ package funkin.objects.notes;
 import forever.display.ForeverSprite;
 import funkin.components.Timings;
 import funkin.components.parsers.ForeverChartData.NoteData;
-import funkin.objects.notes.NoteField;
+import funkin.objects.notes.StrumLine;
 import haxe.ds.IntMap;
 
 /**
  * Note Types
- * Custom one aren't listed here, they are instead
+ * Custom ones aren't listed here, they are instead
  * handled by the abstract automatically
 **/
 enum abstract NoteType(String) from String to String {
 	var NORMAL:String = null;
 	var MINE:String = "mine";
 
-	inline function getDefList():Array<String> {
+	/**
+	 * Default List of Note Types.
+	 * @return Array<String>
+	**/
+	inline function getDefaultList():Array<String> {
 		return [NORMAL, MINE];
+	}
+
+	/**
+	 * Obtains the priority of a notetype.
+	 * @param type 
+	 * @return Int
+	**/
+	public static inline function getHitbox(type:String):Float {
+		return switch type {
+			case MINE: 0.5; // nerf mines? lower values mean less room to hit
+			case _: 0.0;
+		}
 	}
 }
 
@@ -35,7 +51,7 @@ class Note extends ForeverSprite {
 	public var data:NoteData;
 
 	/** Note Parent Notefield. **/
-	public var parent:NoteField;
+	public var parent:StrumLine;
 
 	/** If this note should follow its parent. **/
 	public var mustFollowParent:Bool = true;
@@ -59,7 +75,7 @@ class Note extends ForeverSprite {
 	public var wasHit:Bool = false;
 	public var isLate:Bool = false;
 	public var canBeHit:Bool = false;
-	public var lowPriority:Bool = false;
+	public var hitbox:Float = 0.0;
 
 	// NOTE TYPE BEHAVIOR //
 	public var splash:Bool = false;
@@ -76,8 +92,9 @@ class Note extends ForeverSprite {
 
 		this.data = data;
 		this.type = data.type;
+
 		wasHit = isLate = canBeHit = false;
-		lowPriority = false;
+		hitbox = NoteType.getHitbox(data.type);
 		speedMult = 1.0;
 
 		if (isSustain)
@@ -94,7 +111,7 @@ class Note extends ForeverSprite {
 			if (!parent.cpuControl) {
 				final timings = Timings.timings.get("fnf");
 				final hitTime = (data.time - Conductor.time);
-				canBeHit = hitTime < (timings.last() / 1000.0);
+				canBeHit = hitTime < ((timings.last() / 1000.0) * hitbox);
 			}
 			else // you can never be so sure.
 				canBeHit = false;

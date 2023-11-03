@@ -19,7 +19,7 @@ class ChartEditor extends FlxSubState {
 	var gridSize:Int = 50;
 
 	var keyAmount:Int = 4;
-	var noteFields:Int = 2;
+	var strumLines:Int = 2;
 	var stepLength:Int = 16;
 
 	var charterZoom:Float = 1.0;
@@ -40,7 +40,7 @@ class ChartEditor extends FlxSubState {
 		bg1.alpha = 0.7;
 		bg2.alpha = 0.07;
 
-		for (i in [bg1, bg2]) 
+		for (i in [bg1, bg2])
 			i.scrollFactor.set();
 	}
 
@@ -50,7 +50,7 @@ class ChartEditor extends FlxSubState {
 			FlxGridOverlay.createGrid(gridSize, gridSize, gridSize * 2, gridSize * 2, true, FlxColor.WHITE, FlxColor.BLACK), true);
 		cbTexture.bitmap.colorTransform(new Rectangle(0, 0, gridSize * 2, gridSize * 2), new ColorTransform(1, 1, 1, 0.20));
 
-		checkerboard = new FlxTiledSprite(cbTexture, gridSize * keyAmount * noteFields, gridSize * stepLength);
+		checkerboard = new FlxTiledSprite(cbTexture, gridSize * keyAmount * strumLines, gridSize * stepLength);
 		checkerboard.screenCenter(XY);
 		add(checkerboard);
 	}

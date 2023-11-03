@@ -12,9 +12,9 @@ import haxe.ds.Vector;
  * Note Fields, Notes, etc.
 **/
 class PlayField extends FlxGroup {
-	public var noteFields:Array<NoteField> = [];
-	public var playerField:NoteField;
-	public var enemyField:NoteField;
+	public var strumLines:Array<StrumLine> = [];
+	public var plrStrums:StrumLine;
+	public var enmStrums:StrumLine;
 
 	public var noteGroup:FlxTypedSpriteGroup<Note>;
 
@@ -27,12 +27,12 @@ class PlayField extends FlxGroup {
 
 		final strumY:Float = Settings.downScroll ? FlxG.height - 150 : 50;
 
-		add(enemyField = new NoteField(this, 100, strumY, "default", true));
-		add(playerField = new NoteField(this, FlxG.width - 550, strumY, "default", false));
+		add(enmStrums = new StrumLine(this, 100, strumY, "default", true));
+		add(plrStrums = new StrumLine(this, FlxG.width - 550, strumY, "default", false));
 
-		if (Settings.centerNotefield) {
-			enemyField.visible = false;
-			playerField.x = (FlxG.width - playerField.width) * 0.5;
+		if (Settings.centerStrums) {
+			enmStrums.visible = false;
+			plrStrums.x = (FlxG.width - plrStrums.width) * 0.5;
 		}
 
 		add(noteGroup = new FlxTypedSpriteGroup<Note>());
@@ -43,7 +43,7 @@ class PlayField extends FlxGroup {
 			noteGroup.add(new Note());
 
 		// I know this is dumb as shit and I should just make a group but I don't wanna lol
-		forEachOfType(NoteField, function(n:NoteField) noteFields.push(n));
+		forEachOfType(StrumLine, function(n:StrumLine) strumLines.push(n));
 		// also arrays are just easier to iterate !!!
 
 		for (i in 0...Chart.current.notes.length)
@@ -51,8 +51,8 @@ class PlayField extends FlxGroup {
 	}
 
 	override function destroy():Void {
-		for (noteField in noteFields)
-			noteField.destroy();
+		for (strumLine in strumLines)
+			strumLine.destroy();
 		noteGroup.destroy();
 		super.destroy();
 	}
@@ -60,18 +60,25 @@ class PlayField extends FlxGroup {
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		while (!paused && noteGroup != null && noteList.length != 0 && curNote < noteList.length) {
-			final target:NoteField = noteFields[noteList[curNote].notefield];
+		while (!paused && noteGroup != null && noteList.length != 0 && curNote != noteList.length) {
+			if (noteList[curNote] == null) {
+				curNote++; // skip
+				return;
+			}
+			if (strumLines[noteList[curNote].lane] == null) {
+				curNote++; // skip
+				return;
+			}
 			final timeDifference:Float = noteList[curNote].time - Conductor.time;
 
-			if (noteList[curNote] == null || target == null || timeDifference > 1.8) // 1800
+			if (timeDifference > 1.8) // 1800
 				return;
 
 			var epicNote:Note = noteGroup.recycle(Note).appendData(noteList[curNote]);
-			epicNote.parent = target;
+			epicNote.parent = strumLines[noteList[curNote].lane];
 			add(epicNote);
 
-			curNote += 1;
+			curNote++;
 		}
 	}
 }
