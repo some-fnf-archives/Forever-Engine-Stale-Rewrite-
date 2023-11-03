@@ -88,7 +88,7 @@ class CrashHandler extends Sprite {
 		// create the error title!
 		errorTitle.defaultTextFormat = tf2;
 
-		random.shuffleArray(imagineBeingFunny, 3);
+		random.shuffle(imagineBeingFunny);
 		// imagineBeingFunny = ["IT WAS A MISS INPUT, MISS INPUT CALM DOWN, YOU CALM THE FUCK DOWN"]; // testing long
 		var quote:String = random.getObject(imagineBeingFunny);
 		errorTitle.text = '${quote}\n';
