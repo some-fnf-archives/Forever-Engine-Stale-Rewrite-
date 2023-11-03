@@ -16,6 +16,9 @@ import openfl.ui.Keyboard;
 /**
  * In-game crash handler state.
  * 
+ * made for Forever Engine
+ * @see https://github.com/crowplexus/Forever-Engine
+ * 
  * @author crowplexus
 **/
 class CrashHandler extends Sprite {
