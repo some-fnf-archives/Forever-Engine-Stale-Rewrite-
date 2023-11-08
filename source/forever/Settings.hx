@@ -89,7 +89,7 @@ class Settings {
 	public static function update():Void {
 		FlxG.autoPause = Settings.autoPause;
 		if (FlxG.drawFramerate != Settings.framerateCap)
-			Main.setFPSCap(Settings.framerateCap);
+			Tools.changeMaxFramerate(Settings.framerateCap);
 		FlxG.sound.volume = Tools.toFloatPercent(Settings.masterVolume);
 	}
 }

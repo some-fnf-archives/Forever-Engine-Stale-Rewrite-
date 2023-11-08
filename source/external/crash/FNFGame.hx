@@ -161,12 +161,7 @@ class FNFGame extends FlxGame {
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
-		while (FlxG.sound.list.members.length != 0)
-			FlxG.sound.list.members.pop().stop().destroy();
-		while (FlxG.sound.defaultMusicGroup.sounds.length != 0)
-			FlxG.sound.defaultMusicGroup.sounds.pop().stop().destroy();
-		while (FlxG.sound.defaultSoundGroup.sounds.length != 0)
-			FlxG.sound.defaultSoundGroup.sounds.pop().stop().destroy();
+		AssetHelper.destroyAllSounds();
 
 		Main.self.addChild(new CrashHandler(e.details()));
 		_viewingCrash = true;

@@ -3,17 +3,10 @@ package forever;
 import flixel.FlxG;
 import flixel.input.FlxInput;
 import flixel.input.keyboard.FlxKey;
-import flixel.util.FlxSignal.FlxTypedSignal;
-
-typedef KeyMap = Map<String, Array<FlxKey>>;
-
-// typedef GamepadKey = ; // TODO
 
 @:build(forever.macros.ControlsMacro.build())
 class Controls {
-	/**
-	 * the global dominant instance of Controls
-	**/
+	/** The global instance of the Base Controls class. **/
 	public static var current:BaseControls;
 
 	/**
@@ -75,7 +68,7 @@ class BaseControls {
 	 * Default Contorls, used when booting the game for the first time
 	 * or resetting your key settings
 	**/
-	public static final defaultControls:KeyMap = [
+	public static final defaultControls:Map<String, Array<FlxKey>> = [
 		"left" => [A, LEFT],
 		"down" => [S, DOWN],
 		"up" => [W, UP],
@@ -96,10 +89,7 @@ class BaseControls {
 	];
 
 	/** Your own Custom Controls. **/
-	public var myControls:KeyMap = [];
-
-	/** Signal called when a controller is found. **/
-	public var onPadFind:FlxTypedSignal<Bool->Void>;
+	public var myControls:Map<String, Array<FlxKey>> = [];
 
 	/** Indicator set if you are playing with a controller. **/
 	public var gamepadMode:Bool = false;
@@ -107,7 +97,6 @@ class BaseControls {
 	/** Creates a new instance of the Controls Base Class. **/
 	public function new():Void {
 		myControls = cloneControlsMap();
-		onPadFind = new FlxTypedSignal();
 		gamepadMode = false;
 	}
 
@@ -136,8 +125,8 @@ class BaseControls {
 		return false;
 	}
 
-	@:dox(hide) @:noCompletion private static function cloneControlsMap():KeyMap {
-		var newMap:KeyMap = [];
+	@:dox(hide) @:noCompletion private static function cloneControlsMap():Map<String, Array<FlxKey>> {
+		var newMap:Map<String, Array<FlxKey>> = [];
 		for (key => value in defaultControls)
 			newMap[key] = value.copy();
 		return newMap;

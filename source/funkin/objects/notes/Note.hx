@@ -31,7 +31,7 @@ enum abstract NoteType(String) from String to String {
 	public static inline function getHitbox(type:String):Float {
 		return switch type {
 			case MINE: 0.5; // nerf mines? lower values mean less room to hit
-			case _: 0.0;
+			case _: 1.0;
 		}
 	}
 }
@@ -111,7 +111,7 @@ class Note extends ForeverSprite {
 			if (!parent.cpuControl) {
 				final timings = Timings.timings.get("fnf");
 				final hitTime = (data.time - Conductor.time);
-				canBeHit = hitTime < ((timings.last() / 1000.0) * hitbox);
+				canBeHit = hitTime < (timings.last() / 1000.0) * hitbox;
 			}
 			else // you can never be so sure.
 				canBeHit = false;
@@ -129,7 +129,6 @@ class Note extends ForeverSprite {
 			return;
 
 		final strum:Strum = parent.members[direction];
-
 		if (strum == null)
 			return;
 

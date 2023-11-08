@@ -71,6 +71,17 @@ class ForeverSprite extends FlxSprite {
 	}
 
 	/**
+	 * Adjusts Offsets so they are consistent with the sprite's scale.
+	 * @param givenScale 
+	**/
+	public function resizeOffsets(?givenScale:Float):Void {
+		if (givenScale == null)
+			givenScale = scale.x;
+		for (i in animOffsets.keys())
+			animOffsets.set(i, [animOffsets.get(i)[0] * givenScale, animOffsets.get(i)[1] * givenScale]);
+	}
+
+	/**
 	 * Plays an animation in the current sprite, while also offsetting it.
 	 * @param name			The name of the animation to play.
 	 * @param forced		Will force the animation to play, interrupting existing ones and resetting the frame.

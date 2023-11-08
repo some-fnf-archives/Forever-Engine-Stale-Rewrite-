@@ -219,20 +219,24 @@ class AssetHelper {
 			}
 		}
 
+		destroyAllSounds();
+	}
+
+	@:dox(hide) private static function _clearCacheMajor():Void {
+		currentUsedAssets = [];
+		// Clear the loaded songs as they use the most memory.
+		OpenFLAssets.cache.clear('assets/songs');
+		// Run the garbage colector.
+		openfl.system.System.gc();
+	}
+
+	@:dox(hide) public static function destroyAllSounds():Void {
 		while (FlxG.sound.list.members.length != 0)
 			FlxG.sound.list.members.pop().stop().destroy();
 		while (FlxG.sound.defaultMusicGroup.sounds.length != 0)
 			FlxG.sound.defaultMusicGroup.sounds.pop().stop().destroy();
 		while (FlxG.sound.defaultSoundGroup.sounds.length != 0)
 			FlxG.sound.defaultSoundGroup.sounds.pop().stop().destroy();
-	}
-
-	private static function _clearCacheMajor():Void {
-		currentUsedAssets = [];
-		// Clear the loaded songs as they use the most memory.
-		OpenFLAssets.cache.clear('assets/songs');
-		// Run the garbage colector.
-		openfl.system.System.gc();
 	}
 }
 

@@ -167,6 +167,17 @@ class Tools {
 	}
 
 	#if !macro // prevent flixel classes from printing errors to the console (in haxe 4.3+)
+	public static function changeMaxFramerate(newFramerate:Int):Void {
+		if (newFramerate > FlxG.drawFramerate) {
+			FlxG.updateFramerate = newFramerate;
+			FlxG.drawFramerate = newFramerate;
+		}
+		else {
+			FlxG.drawFramerate = newFramerate;
+			FlxG.updateFramerate = newFramerate;
+		}
+	}
+
 	public static function generateCheckmark():ChildSprite {
 		var newCheckmark:ChildSprite = new ChildSprite();
 		newCheckmark.frames = AssetHelper.getAsset("menus/options/checkboxThingie", ATLAS_SPARROW);

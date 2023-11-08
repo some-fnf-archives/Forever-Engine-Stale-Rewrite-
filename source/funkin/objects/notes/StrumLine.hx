@@ -1,6 +1,7 @@
 package funkin.objects.notes;
 
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.input.FlxInput.FlxInputState;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSignal.FlxTypedSignal;
 import flixel.util.FlxSort;
@@ -104,6 +105,8 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 	public var onNoteHit:FlxTypedSignal<Note->Void>;
 	public var onNoteMiss:FlxTypedSignal<(Int, Note) -> Void>;
 
+	public var controls:Array<String> = ["left", "down", "up", "right"];
+
 	public function new(playField:PlayField, x:Float, y:Float, skin:String = "default", cpuControl:Bool = true):Void {
 		super();
 
@@ -114,7 +117,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		onNoteHit = new FlxTypedSignal<Note->Void>();
 		onNoteMiss = new FlxTypedSignal<(Int, Note) -> Void>();
 
-		if (!cpuControl) {
+		if (!cpuControl && playField != null) {
 			FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, inputKeyPress);
 			FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_UP, inputKeyRelease);
 		}
@@ -132,7 +135,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 	}
 
 	override function destroy():Void {
-		if (!cpuControl) {
+		if (!cpuControl && playField != null) {
 			FlxG.stage.removeEventListener(openfl.events.KeyboardEvent.KEY_DOWN, inputKeyPress);
 			FlxG.stage.removeEventListener(openfl.events.KeyboardEvent.KEY_UP, inputKeyRelease);
 		}
@@ -179,71 +182,52 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 
 	public function inputKeyPress(event:KeyboardEvent):Void {
 		var key:Int = getKeyFromEvent(event.keyCode);
-		if (playField == null || (playField != null && playField.paused) || key < 0 || cpuControl)
-			return;
+		if (key == -1 || playField.paused) return;
 
 		var currentStrum:Strum = members[key];
-
-		var notesHittable:Array<Note> = playField.noteGroup.members.filter(function(n:Note) {
+		var notesHittable:Array<Note> = playField.noteGroup.members.filter(function(n:Note):Bool {
 			return n.parent == this && n.alive && n.data.dir == key && !n.isLate && !n.wasHit && n.canBeHit;
 		});
-
-		if (notesHittable.length != 0) {
-			var frontNote:Note = notesHittable[0];
-
-			if (notesHittable.length > 1) {
-				// sort through the notes
-				notesHittable.sort(sortHitNotes);
-
-				var behindNote:Note = notesHittable[1];
-				// if the note behind is 5 seconds apart from the front one, invalidate it
-				if (Math.abs(behindNote.data.time - frontNote.data.time) < 0.005)
-					invalidateNote(behindNote);
-				// just in case, if the note behind is actually in FRONT of the supposedly front note, swap them.
-				else if (behindNote.data.time < frontNote.data.time)
-					frontNote = behindNote;
-				// wow that is a dumb check, which surprisingly works -Crow
-			}
-
-			onNoteHit.dispatch(frontNote);
-			currentStrum.playStrum(HIT, true);
-		}
-		else {
-			if (!Settings.ghostTapping)
-				onNoteMiss.dispatch(key, null);
-		}
+		if (notesHittable.length > 1) // sort through the notes if we can
+			notesHittable.sort(sortHitNotes);
 
 		if (currentStrum?.animPlayed != HIT)
-			currentStrum?.playStrum(PRESS, true);
+			currentStrum.playStrum(PRESS, true);
+	
+		if (notesHittable.length == 0) {
+			if (!Settings.ghostTapping)
+				onNoteMiss.dispatch(key, null);
+			return;
+		}
+
+		var frontNote:Note = notesHittable[0];
+		if (notesHittable.length > 1) {
+			var behindNote:Note = notesHittable[1];
+			// if the note behind is 2 seconds apart from the front one, invalidate it
+			if (Math.abs(behindNote.data.time - frontNote.data.time) < 0.002)
+				invalidateNote(behindNote);
+			// just in case, if the note behind is actually in FRONT of the supposedly front note, swap them.
+			else if (behindNote.data.time < frontNote.data.time)
+				frontNote = behindNote;
+			// wow that is a dumb check, which surprisingly works -Crow
+		}
+		onNoteHit.dispatch(frontNote);
+		currentStrum.playStrum(HIT, true);
 	}
 
 	public function inputKeyRelease(event:KeyboardEvent):Void {
 		var key:Int = getKeyFromEvent(event.keyCode);
-		if (playField == null || (playField != null && playField.paused) || key < 0 || cpuControl)
-			return;
+		if (key == -1 || playField.paused) return;
 		members[key]?.playStrum(STATIC, true);
 	}
 
-	public inline function getKeyFromEvent(key:FlxKey):Int {
-		var key:Int = -1;
-		if (key == NONE)
-			return key;
-
-		final controls:Array<String> = ["left", "down", "up", "right"];
-
+	public function getKeyFromEvent(key:FlxKey):Int {
 		for (i in 0...controls.length) {
-			var kys:Array<FlxKey> = Controls.current.myControls.get(controls[i]);
-			var press:Bool = Controls.current.justPressed(controls[i]);
-			var release:Bool = Controls.current.justReleased(controls[i]);
-
-			for (_key in kys)
-				if (key == _key && (press || release)) {
-					key = i;
-					break;
-				}
+			for (targetKey in Controls.current.myControls.get(controls[i]))
+				if (key == targetKey)
+					return i;
 		}
-
-		return key;
+		return -1;
 	}
 
 	/**

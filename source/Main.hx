@@ -58,15 +58,4 @@ class Main extends Sprite {
 	private function onStateCreate(state:FlxState):Void {
 		@:privateAccess AssetHelper.clearCacheEntirely(true);
 	}
-
-	public static function setFPSCap(newFramerate:Int):Void {
-		if (newFramerate > FlxG.drawFramerate) {
-			FlxG.updateFramerate = newFramerate;
-			FlxG.drawFramerate = newFramerate;
-		}
-		else {
-			FlxG.drawFramerate = newFramerate;
-			FlxG.updateFramerate = newFramerate;
-		}
-	}
 }
