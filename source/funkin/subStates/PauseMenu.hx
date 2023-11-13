@@ -64,6 +64,9 @@ class PauseMenu extends FlxSubState {
 		}
 
 		updateSelection();
+
+		// so in the original game the sound just plays when you trigger the menu so...
+		FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 	}
 
 	override function update(elapsed:Float):Void {
@@ -94,7 +97,7 @@ class PauseMenu extends FlxSubState {
 	function updateSelection(newSel:Int = 0):Void {
 		curSel = FlxMath.wrap(curSel + newSel, 0, pauseGroup.members.length - 1);
 
-		// if (newSel != 0) // so in the original game the sound just plays when you trigger the menu so...
+		if (newSel != 0)
 		FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
 		for (i in 0...pauseGroup.members.length) {

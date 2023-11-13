@@ -227,6 +227,7 @@ class PlayState extends FNFState {
 		while (scriptPack.length != 0)
 			scriptPack.pop().destroy();
 		current = null;
+		Timings.reset();
 		super.destroy();
 	}
 
@@ -246,6 +247,8 @@ class PlayState extends FNFState {
 			character.playAnim(character.singingSteps[note.data.dir], true);
 			character.holdTmr = 0.0;
 		}
+		if (vocals != null && vocals.playing)
+			vocals.volume = 1.0;
 
 		if (!note.parent.cpuControl) {
 			var millisecondTiming:Float = Math.abs((note.data.time - Conductor.time) * 1000.0);
@@ -253,6 +256,8 @@ class PlayState extends FNFState {
 			Timings.totalMs += millisecondTiming;
 
 			var params = Tools.getEnumParams(judgement);
+
+			missPunishIncrease = 0.0;
 
 			Timings.score += params[1];
 			Timings.health += 0.035;
@@ -281,6 +286,8 @@ class PlayState extends FNFState {
 		callFunPack("postHitBehavior", []);
 	}
 
+	var missPunishIncrease:Float = 0.0;
+
 	public function missBehavior(dir:Int, note:Note = null):Void {
 		var missEvent:CancellableEvent = new CancellableEvent();
 		callFunPack("missBehavior", [dir, note, missEvent]);
@@ -289,11 +296,17 @@ class PlayState extends FNFState {
 
 		if (note != null)
 			note.parent.invalidateNote(note);
+		if (vocals != null && vocals.playing)
+			vocals.volume = 0.0;
 
 		if (Timings.combo > 0)
 			Timings.combo = 0;
 		else
 			Timings.combo--;
+		Timings.score -= 250;
+		if (missPunishIncrease <= 0.01) missPunishIncrease = 1.0;
+		Timings.health -= 0.035 * missPunishIncrease;
+		missPunishIncrease += 0.075;
 		Timings.misses += 1;
 
 		displayJudgement("miss", MISS);

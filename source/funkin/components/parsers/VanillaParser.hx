@@ -83,7 +83,14 @@ class VanillaParser {
 
 							final noteHold:Float = Math.max(j[2], 0.0) / 1000.0;
 							final strumLine:Int = Std.int(j[1]) >= keys != bar.mustHitSection ? 1 : 0;
-							final noteType:String = Std.isOfType(j[3], String) ? j[3] : null;
+
+							var noteType:String = null;
+							if (Std.isOfType(j[3], String)) {
+								noteType = switch(Std.string(j[3])) {
+									case "Hurt Note": "mine"; // psych moment
+									default: j[3];
+								}
+							}
 
 							// only required fields
 							final note:NoteData = {time: j[0] / 1000.0, dir: Std.int(j[1]) % keys};

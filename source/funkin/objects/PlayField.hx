@@ -107,16 +107,6 @@ class PlayField extends FlxGroup {
 	override function update(elapsed:Float):Void {
 		healthBar.bar.percent = Timings.health * 50;
 
-		final iconOffset:Int = 25;
-		iconP1.x = healthBar.x + (healthBar.bar.width * (1 - healthBar.bar.percent / 100)) - iconOffset;
-		iconP2.x = healthBar.x + (healthBar.bar.width * (1 - healthBar.bar.percent / 100)) - (iconP2.width - iconOffset);
-
-		for (icon in [iconP1, iconP2]) {
-			final weight:Float = 1.0 - 1.0 / Math.exp(5.0 * elapsed);
-			icon.scale.set(FlxMath.lerp(icon.scale.x, 1.0, weight), FlxMath.lerp(icon.scale.y, 1.0, weight));
-			// icon.updateHitbox();
-		}
-
 		while (!paused && noteGroup != null && noteList.length != 0 && curNote != noteList.length) {
 			var unspawnNote:NoteData = noteList[curNote];
 			if (unspawnNote == null) {
@@ -156,13 +146,13 @@ class PlayField extends FlxGroup {
 		scoreBar.text = '< ${tempScore} >\n';
 		scoreBar.screenCenter(X);
 
-		DiscordRPC.updatePresence('Playing: ${play.currentSong.display}', '${scoreBar.text}');
+		if (play != null)
+			DiscordRPC.updatePresence('Playing: ${play.currentSong.display}', '${scoreBar.text}');
 	}
 
 	public function onBeat(beat:Int):Void {
 		for (icon in [iconP1, iconP2])
-			icon.scale.set(1.15, 1.15);
-		// icon.updateHitbox();
+			icon.doBump(beat);
 	}
 
 	public function getHUD():Array<FlxSprite>

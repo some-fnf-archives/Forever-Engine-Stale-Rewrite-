@@ -1,26 +1,38 @@
 package funkin.ui;
 
 import flixel.graphics.FlxGraphic;
+import flixel.math.FlxMath;
 import forever.display.ForeverSprite;
 import funkin.states.PlayState;
 import haxe.ds.IntMap;
-import openfl.utils.Assets as OpenFLAssets;
 
 class HealthIcon extends ChildSprite {
 	public var initialWidth:Float = 0.0;
 	public var initialHeight:Float = 0.0;
 
 	public var isPlayer:Bool = false;
-
 	public var character(default, set):String;
+
+	// -- CUSTOMIZATION -- //
+	public var autoPosition:Bool = true;
+	public var autoBop:Bool = true;
+
+	public var healthSteps:IntMap<Int> = [
+		// *
+		0 => 0, // Default
+		20 => 1, // Lose
+		// *
+	];
 
 	public function new(character:String = "bf", isPlayer:Bool = false, parent:FlxSprite = null):Void {
 		super();
 
 		this.isPlayer = isPlayer;
 		this.character = character;
-		if (parent != null)
+		if (parent != null) {
 			this.parent = parent;
+			this.autoPosition = false;
+		}
 	}
 
 	function set_character(newChar:String):String {
@@ -52,22 +64,33 @@ class HealthIcon extends ChildSprite {
 		super.update(elapsed);
 
 		var hp:HealthBar = PlayState.current != null ? PlayState.current.playField.healthBar : null;
-		if (hp != null) {
-			updateFrame(isPlayer ? hp.bar.percent : 100 - hp.bar.percent);
+		if (hp == null) return;
+
+		if (autoPosition == true) {
+			var iconOffset:Int = 25;
+			if (!isPlayer) iconOffset = cast(width - iconOffset, Int);
+			x = (hp.x + (hp.bar.width * (1 - hp.bar.percent / 100))) - iconOffset;
+		}
+
+		if (autoBop == true && scale.x != 1.0) {
+			final weight:Float = 1.0 - 1.0 / Math.exp(5.0 * elapsed);
+			scale.set(FlxMath.lerp(scale.x, 1.0, weight), FlxMath.lerp(scale.y, 1.0, weight));
+			// updateHitbox();
 			offset.y = 0;
 		}
-	}
 
-	public var healthSteps:IntMap<Int> = [
-		// *
-		0 => 0, // Default
-		20 => 1, // Lose
-		// *
-	];
+		updateFrame(isPlayer ? hp.bar.percent : 100 - hp.bar.percent);
+	}
 
 	public dynamic function updateFrame(health:Float):Void {
 		for (percent => frame in healthSteps)
 			if (health >= percent)
 				animation.curAnim.curFrame = frame;
+	}
+
+	public dynamic function doBump(beat:Int):Void {
+		if (autoBop != true) return;
+		scale.set(1.15, 1.15);
+		// updateHitbox();
 	}
 }
