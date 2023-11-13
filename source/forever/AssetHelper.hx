@@ -146,13 +146,17 @@ class AssetHelper {
 	**/
 	public static function getSound(file:String, ?customKey:String = null):Sound {
 		try {
+			file = file.toLowerCase();
+
 			final keyName:String = customKey != null ? customKey : file;
 			// prevent remapping
 			if (loadedSounds.get(keyName) != null)
 				return loadedSounds.get(keyName);
 			final sound:Sound = #if sys Sound.fromAudioBuffer(lime.media.AudioBuffer.fromFile(file)) #else OpenFLAssets.getSound(file) #end;
-			sendToCache(keyName, sound, SOUND);
-			currentUsedAssets.push(keyName);
+			if (sound != null) {
+				sendToCache(keyName, sound, SOUND);
+				currentUsedAssets.push(keyName);
+			}
 			return sound;
 		}
 		catch (e:haxe.Exception)

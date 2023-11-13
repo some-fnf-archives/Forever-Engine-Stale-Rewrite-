@@ -68,6 +68,7 @@ class ModsMenu extends FlxSubState {
 
 		if (Controls.ACCEPT) {
 			trace('loading "${modsGroup.members[curSel].text}" mod...');
+			FlxG.save.data.currentMod = modsGroup.members[curSel].text;
 			Mods.loadMod(modsGroup.members[curSel].text);
 			var resetCallback:Void->Void = Mods.mods[curSel].resetGame ? Mods.resetGame : FlxG.resetState;
 			resetCallback();

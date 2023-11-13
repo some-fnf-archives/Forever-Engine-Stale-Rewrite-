@@ -30,7 +30,10 @@ class Init extends FlxState {
 
 		Controls.current = new BaseControls();
 		#if DISCORD forever.core.DiscordWrapper.initialize("1157951594667708416"); #end
-		#if MODS forever.core.Mods.initialize(); #end
+		#if MODS
+		forever.core.Mods.initialize();
+		if (FlxG.save.data.currentMod != null) forever.core.Mods.loadMod(FlxG.save.data.currentMod);
+		#end
 
 		// make sure there is a note configuration set
 		funkin.objects.notes.NoteConfig.reloadConfig();

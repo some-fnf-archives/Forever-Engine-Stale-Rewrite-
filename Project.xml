@@ -73,8 +73,8 @@
 	<!-- [ Libraries ] -->
 	<!-- _____________ -->
 
-	<haxelib name="flixel-nova" />
-	<haxelib name="flixel-addons-nova" />
+	<haxelib name="flixel-arwen" />
+	<haxelib name="flixel-addons-arwen" />
 	<haxelib name="hxcpp-debug-server" if="debug" />
 
 	<haxelib name="hxdiscord_rpc" if="DISCORD" />

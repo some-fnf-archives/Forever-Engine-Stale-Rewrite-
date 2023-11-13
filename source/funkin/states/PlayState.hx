@@ -96,15 +96,22 @@ class PlayState extends FNFState {
 		setPackVar('game', this);
 
 		// -- PREPARE AUDIO -- //
-		inst = new FlxSound().loadEmbedded(AssetHelper.getAsset('songs/${currentSong.folder}/audio/Inst', SOUND));
-		vocals = new FlxSound().loadEmbedded(AssetHelper.getAsset('songs/${currentSong.folder}/audio/Voices', SOUND));
-		FlxG.sound.list.add(vocals);
-		inst.onComplete = endPlay.bind();
-		FlxG.sound.music = inst;
+		vocals = new FlxSound();
 
-		FlxG.sound.music.looped = false;
-		vocals.looped = false;
+		var instTrack = AssetHelper.getAsset('songs/${currentSong.folder}/audio/Inst', SOUND);
+		var vocalTrack = AssetHelper.getAsset('songs/${currentSong.folder}/audio/Voices', SOUND);
 
+		if (instTrack != null) {
+			inst = new FlxSound().loadEmbedded(instTrack);
+			FlxG.sound.music = inst;
+			inst.onComplete = endPlay.bind();
+			FlxG.sound.music.looped = false;
+		}
+		if (vocalTrack != null) {
+			vocals.loadEmbedded(vocalTrack);
+			FlxG.sound.list.add(vocals);
+			vocals.looped = false;
+		}
 		Timings.reset();
 
 		Conductor.time = -(60.0 / Conductor.bpm) * 16.0;
@@ -241,7 +248,7 @@ class PlayState extends FNFState {
 		final isEnemy:Bool = (note.parent == playField.enmStrums);
 		var character:Character = isEnemy ? enemy : player;
 		// TODO: a better system -Crow
-		if (character.animationContext != 3) { // 3 means "spe"
+		if (character.animationContext != 3) { // 3 means "special"
 			character.playAnim(character.singingSteps[note.data.dir], true);
 			character.holdTmr = 0.0;
 		}
@@ -512,8 +519,10 @@ class PlayState extends FNFState {
 		if (startPlayEvt.cancelled)
 			return;
 
-		FlxG.sound.music.play();
-		vocals.play();
+		if (FlxG.sound.music != null) {
+			FlxG.sound.music.play();
+			vocals.play();
+		}
 
 		songState = PLAYING;
 	}

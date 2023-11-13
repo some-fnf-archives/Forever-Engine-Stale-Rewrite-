@@ -223,9 +223,12 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 
 	public function getKeyFromEvent(key:FlxKey):Int {
 		for (i in 0...controls.length) {
-			for (targetKey in Controls.current.myControls.get(controls[i]))
-				if (key == targetKey)
+			for (targetKey in Controls.current.myControls.get(controls[i])) {
+				var wasPressed:Bool = FlxG.keys.checkStatus(targetKey, JUST_PRESSED);
+				var wasReleased:Bool = FlxG.keys.checkStatus(targetKey, JUST_RELEASED);
+				if (key == targetKey && (wasPressed || wasReleased))
 					return i;
+			}
 		}
 		return -1;
 	}

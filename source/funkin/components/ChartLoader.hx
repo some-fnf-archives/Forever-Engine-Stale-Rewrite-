@@ -1,5 +1,6 @@
 package funkin.components;
 
+import flixel.util.FlxSort;
 import funkin.components.parsers.*;
 import funkin.components.parsers.ForeverChartData;
 
@@ -51,10 +52,8 @@ class ChartLoader {
 					trace('${dataType.toString()} Chart Type is not implemented *yet*');
 			}
 
-			if (chart.notes.length > 1)
-				chart.notes.sort((a:NoteData, b:NoteData) -> Std.int(a.time - b.time));
-			if (chart.events.length > 1)
-				chart.events.sort((a:ForeverEvent, b:ForeverEvent) -> Std.int(a.time - b.time));
+			if (chart.notes.length > 1) chart.notes.sort((a:NoteData, b:NoteData) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
+			if (chart.events.length > 1) chart.events.sort((a:ForeverEvent, b:ForeverEvent) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 		}
 		catch (e:haxe.Exception)
 			trace('Failed to parse chart, type was ${dataType.toString()}, Error:\n${e.details()} '

@@ -39,8 +39,7 @@ class PlayField extends FlxGroup {
 
 		noteList = new Vector<NoteData>(Chart.current.notes.length);
 		// allocate notes before beginning
-		for (i in 0...32)
-			noteGroup.add(new Note());
+		for (i in 0...32) noteGroup.add(new Note());
 
 		// I know this is dumb as shit and I should just make a group but I don't wanna lol
 		forEachOfType(StrumLine, function(n:StrumLine) strumLines.push(n));
@@ -64,17 +63,17 @@ class PlayField extends FlxGroup {
 			var unspawnNote:NoteData = noteList[curNote];
 			if (unspawnNote == null) {
 				curNote++; // skip
-				return;
+				break;
 			}
 			var strum:StrumLine = strumLines[unspawnNote.lane];
 			if (strum == null) {
 				curNote++; // skip
-				return;
+				break;
 			}
 			final timeDifference:Float = unspawnNote.time - Conductor.time;
 
-			if (timeDifference > (0.8 * strum.members[unspawnNote.dir].speed)) // 800 * scrollSpeed
-				return;
+			if (timeDifference > 1.5 / (strum.members[unspawnNote.dir].speed / Conductor.rate)) // 1500 / (scrollSpeed / rate)
+				break;
 
 			var epicNote:Note = noteGroup.recycle(Note).appendData(unspawnNote);
 			epicNote.parent = strumLines[unspawnNote.lane];

@@ -90,7 +90,7 @@ class Mods {
 		}
 	}
 
-	public static function loadMod(mod:String):Void {
+	public static function loadMod(mod:String, ?skipReset:Bool = false):Void {
 		if (mod == null || mod == "Unload Mods" || mod == "Friday Night Funkin'") {
 			AssetHelper.searchLevel = "";
 			currentMod = null;
@@ -98,7 +98,6 @@ class Mods {
 		}
 
 		var modStrings:Array<String> = mods.map(function(coolMod:ForeverMod):String return coolMod.title);
-		var willReset:Bool = false;
 
 		if (modStrings.contains(mod)) {
 			var folder:String = "";
