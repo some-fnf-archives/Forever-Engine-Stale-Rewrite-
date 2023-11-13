@@ -38,8 +38,16 @@ class PlayField extends FlxGroup {
 		add(noteGroup = new FlxTypedSpriteGroup<Note>());
 
 		noteList = new Vector<NoteData>(Chart.current.notes.length);
+
+		var allocateThisMany:Int = 5; // remind me to make this be higher depending on the note count of a song
 		// allocate notes before beginning
-		for (i in 0...32) noteGroup.add(new Note());
+		var i:Int = 0;
+		while (i < allocateThisMany) {
+			var oi = new Note();
+			noteGroup.add(oi);
+			oi.kill();
+			i++;
+		}
 
 		// I know this is dumb as shit and I should just make a group but I don't wanna lol
 		forEachOfType(StrumLine, function(n:StrumLine) strumLines.push(n));
