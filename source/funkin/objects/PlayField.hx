@@ -65,13 +65,14 @@ class PlayField extends FlxGroup {
 				curNote++; // skip
 				return;
 			}
-			if (strumLines[noteList[curNote].lane] == null) {
+			var strum:StrumLine = strumLines[noteList[curNote].lane];
+			if (strum == null) {
 				curNote++; // skip
 				return;
 			}
 			final timeDifference:Float = noteList[curNote].time - Conductor.time;
 
-			if (timeDifference > 1.8) // 1800
+			if (timeDifference > (0.8 * strum.members[curNote.dir].speed)) // 800 * scrollSpeed
 				return;
 
 			var epicNote:Note = noteGroup.recycle(Note).appendData(noteList[curNote]);
