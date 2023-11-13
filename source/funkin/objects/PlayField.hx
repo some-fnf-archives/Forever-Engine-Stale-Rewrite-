@@ -61,22 +61,23 @@ class PlayField extends FlxGroup {
 		super.update(elapsed);
 
 		while (!paused && noteGroup != null && noteList.length != 0 && curNote != noteList.length) {
-			if (noteList[curNote] == null) {
+			var unspawnNote:NoteData = noteList[curNote];
+			if (unspawnNote == null) {
 				curNote++; // skip
 				return;
 			}
-			var strum:StrumLine = strumLines[noteList[curNote].lane];
+			var strum:StrumLine = strumLines[unspawnNote.lane];
 			if (strum == null) {
 				curNote++; // skip
 				return;
 			}
-			final timeDifference:Float = noteList[curNote].time - Conductor.time;
+			final timeDifference:Float = unspawnNote.time - Conductor.time;
 
-			if (timeDifference > (0.8 * strum.members[curNote.dir].speed)) // 800 * scrollSpeed
+			if (timeDifference > (0.8 * strum.members[unspawnNote.dir].speed)) // 800 * scrollSpeed
 				return;
 
-			var epicNote:Note = noteGroup.recycle(Note).appendData(noteList[curNote]);
-			epicNote.parent = strumLines[noteList[curNote].lane];
+			var epicNote:Note = noteGroup.recycle(Note).appendData(unspawnNote);
+			epicNote.parent = strumLines[unspawnNote.lane];
 			add(epicNote);
 
 			curNote++;
