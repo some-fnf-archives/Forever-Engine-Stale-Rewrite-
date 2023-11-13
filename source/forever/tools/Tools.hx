@@ -213,10 +213,8 @@ class Tools {
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			return;
 
-		if (music == null)
-			music = defaultMenuMusic;
-		if (bpm == null)
-			bpm = defaultMenuBeats;
+		if (music == null) music = defaultMenuMusic;
+		if (bpm == null) bpm = defaultMenuBeats;
 
 		FlxG.sound.playMusic(AssetHelper.getAsset('audio/bgm/${music}', SOUND), doFadeIn ? 0.0 : 0.7);
 		if (doFadeIn)

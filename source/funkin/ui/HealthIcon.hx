@@ -51,7 +51,7 @@ class HealthIcon extends ChildSprite {
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		var hp:HealthBar = PlayState.current != null ? PlayState.current.hud.healthBar : null;
+		var hp:HealthBar = PlayState.current != null ? PlayState.current.playField.healthBar : null;
 		if (hp != null) {
 			updateFrame(isPlayer ? hp.bar.percent : 100 - hp.bar.percent);
 			offset.y = 0;

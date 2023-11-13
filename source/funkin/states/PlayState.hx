@@ -20,7 +20,6 @@ import funkin.states.editors.*;
 import funkin.states.menus.*;
 import funkin.subStates.PauseMenu;
 import funkin.ui.ComboSprite;
-import funkin.ui.HUD;
 
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
@@ -49,7 +48,6 @@ class PlayState extends FNFState {
 
 	public var bg:ForeverSprite;
 	public var playField:PlayField;
-	public var hud:HUD;
 
 	public var camLead:FlxObject;
 
@@ -146,14 +144,10 @@ class PlayState extends FNFState {
 		// -- PREPARE USER INTERFACE -- //
 		add(comboGroup = new ComboGroup());
 		add(playField = new PlayField());
-		add(hud = new HUD());
-		hud.alpha = 0;
+		for (hud in playField.getHUD())
+			hud.alpha = 0;
 
-		// update song display so it shows song name and difficulty (like intended)
-		hud.centerMark.text = '- ${currentSong.display} [${currentSong.difficulty.toUpperCase()}] -';
-		hud.centerMark.screenCenter(X);
-
-		playField.camera = hud.camera = hudCamera;
+		playField.camera = hudCamera;
 		if (Settings.fixedJudgements)
 			comboGroup.camera = hudCamera;
 
@@ -278,7 +272,7 @@ class PlayState extends FNFState {
 			displayCombo(Timings.combo, chosenType);
 
 			Timings.updateRank();
-			hud.updateScore();
+			playField.updateScore();
 		}
 
 		note.parent.invalidateNote(note);
@@ -306,7 +300,7 @@ class PlayState extends FNFState {
 		displayCombo(Timings.combo, MISS);
 
 		Timings.updateRank();
-		hud.updateScore();
+		playField.updateScore();
 
 		callFunPack("postMissBehavior", [dir]);
 	}
@@ -397,7 +391,7 @@ class PlayState extends FNFState {
 
 	override function onBeat(beat:Int):Void {
 		callFunPack("onBeat", [beat]);
-		hud.onBeat(beat);
+		playField.onBeat(beat);
 		// let 'em do their thing!
 		doDancersDance(beat);
 	}
@@ -440,7 +434,7 @@ class PlayState extends FNFState {
 		if (vocals != null && vocals.playing)
 			vocals.resume();
 		songState = PLAYING;
-		DiscordRPC.updatePresence('${currentSong.display}', '${hud.scoreBar.text}');
+		DiscordRPC.updatePresence('${currentSong.display}', '${playField.scoreBar.text}');
 		pauseTweens(false);
 		super.closeSubState();
 	}
@@ -497,7 +491,7 @@ class PlayState extends FNFState {
 
 	function openPauseMenu():Void {
 		pauseTweens(true);
-		DiscordRPC.updatePresence('${currentSong.display} [PAUSED]', '${hud.scoreBar.text}');
+		DiscordRPC.updatePresence('${currentSong.display} [PAUSED]', '${playField.scoreBar.text}');
 		final pause:PauseMenu = new PauseMenu();
 		pause.camera = altCamera;
 		playField.paused = true;
@@ -557,7 +551,8 @@ class PlayState extends FNFState {
 
 		if (songState != PLAYING) {
 			Conductor.time = -(60.0 / Conductor.bpm) * 4.0;
-			FlxTween.tween(hud, {alpha: 1.0}, (60.0 / Conductor.bpm) * 2.0, {ease: FlxEase.sineIn});
+			for (hud in playField.getHUD())
+				FlxTween.tween(hud, {alpha: 1.0}, (60.0 / Conductor.bpm) * 2.0, {ease: FlxEase.sineIn});
 		}
 
 		var sprCount:ForeverSprite = null;
