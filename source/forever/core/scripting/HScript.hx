@@ -33,6 +33,10 @@ class HScript #if SCRIPTING extends Iris #end {
 			set(className, cls);
 			trace(imports);
 		});
+		set("closeScript", () -> {
+			this.destroy();
+			cast(FlxG.state, funkin.states.base.FNFState).validCheck(this);
+		});
 
 		set("FlxG", flixel.FlxG);
 		set("FlxSprite", flixel.FlxSprite);

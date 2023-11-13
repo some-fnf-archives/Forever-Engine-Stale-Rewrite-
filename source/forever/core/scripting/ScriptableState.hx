@@ -5,13 +5,14 @@ import flixel.addons.transition.FlxTransitionableState;
 import forever.core.scripting.HScript;
 
 class ScriptableState extends FlxTransitionableState {
-	public var scriptPack:Array<HScript> = [];
 	public var stateName:String = "ScriptableState";
 
 	public function new(?stateName:String = null) {
 		super();
 		this.stateName = stateName != null ? stateName : Type.getClassName(Type.getClass(this));
 	}
+
+	public var scriptPack:Array<HScript> = [];
 
 	public function initAllScriptsAt(directories:Array<String>):Array<HScript> {
 		final pack:Array<HScript> = [];
@@ -44,6 +45,14 @@ class ScriptableState extends FlxTransitionableState {
 			return;
 		scriptPack.push(newScript);
 		newScript.call("onInit");
+	}
+
+	public function validCheck(script:HScript):Void {
+		@:privateAccess {
+			if (script == null || script.interp == null)
+				if (scriptPack.contains(script))
+					scriptPack.remove(script);
+		}
 	}
 
 	public function setPackVar(name:String, obj:Dynamic):Void {

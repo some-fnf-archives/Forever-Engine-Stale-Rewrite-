@@ -204,15 +204,17 @@ class PlayState extends FNFState {
 			eventIndex += 1;
 		}
 
-		/*
-			if (FlxG.keys.justPressed.SEVEN)
-				openChartEditor();
-		 */
+		#if FE_DEBUG
+		if (FlxG.keys.justPressed.SEVEN)
+			openChartEditor();
+		#end
 		if (Controls.PAUSE)
 			openPauseMenu();
 
+		#if sys
 		if (FlxG.keys.justPressed.SEVEN)
 			sys.io.File.saveContent('./${currentSong.folder}-${currentSong.difficulty}.json', ChartLoader.exportChart(Chart.current));
+		#end
 		callFunPack("postUpdate", [elapsed]);
 	}
 

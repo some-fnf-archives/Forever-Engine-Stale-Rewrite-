@@ -112,6 +112,7 @@ class Character extends ForeverSprite {
 			characterScript.set('char', this);
 			@:privateAccess characterScript.set('isPlayer', this._isPlayer);
 			characterScript.call('generate', []);
+			cast(FlxG.state, funkin.states.base.FNFState).appendToScriptPack(characterScript);
 		}
 
 		if (_isPlayer)
@@ -126,8 +127,6 @@ class Character extends ForeverSprite {
 	}
 
 	override function update(elapsed:Float):Void {
-		if (characterScript != null)
-			characterScript.set("update", [elapsed]);
 		updateAnimation(elapsed);
 		if (animation.curAnim != null) {
 			if (animationContext == SING)
@@ -140,8 +139,6 @@ class Character extends ForeverSprite {
 				holdTmr = 0.0;
 			}
 		}
-		if (characterScript != null)
-			characterScript.call("updatePost", [elapsed]);
 	}
 
 	public function dance(forced:Bool = false):Void {
