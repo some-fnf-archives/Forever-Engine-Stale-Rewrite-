@@ -135,7 +135,7 @@ class PlayField extends FlxGroup {
 
 	public var divider:String = " • ";
 
-	public function updateScore():Void {
+	public dynamic function updateScore():Void {
 		if (scoreBar == null) return;
 
 		var tempScore:String = 'Score: ${Timings.score}' //
