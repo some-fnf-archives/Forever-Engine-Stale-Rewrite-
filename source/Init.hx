@@ -63,6 +63,7 @@ class Init extends FlxState {
 	function setupTransition():Void {
 		var graphic:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
 		graphic.destroyOnNoUse = false;
+		graphic.persist = true;
 
 		final transition:TransitionTileData = {
 			asset: graphic,

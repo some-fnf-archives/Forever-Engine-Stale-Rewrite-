@@ -1,114 +1,85 @@
 package forever.ui;
 
-import external.memory.Memory;
-import flixel.FlxG;
-import forever.ui.overlay.*;
 import openfl.display.Sprite;
+#if cpp
+import external.memory.Memory;
+#end
+import flixel.util.FlxStringUtil;
+import openfl.text.TextFormat;
+import openfl.text.TextField;
 
 /**
- * Displays a Bar at the top of the screen with Text Information,
- * such as Current Framerate, RAM Usage, etc,
- * all the displayed info can be customized.
+ * The main overlay container used to instantiate a nice looking information
+ * box that shows game info (e.g: Frames per Second, Memory Usage, etc...)
 **/
-class ForeverOverlay extends Sprite {
-	/** List of Monitors that have been appended to this Overlay. **/
-	public var monitors:Array<BaseOverlayMonitor> = [];
+class OverlayContainer extends Sprite {
+	public function new():Void {
+		super();
 
-	/** Counts your Current Frames per Second. **/
-	public var currentFPS:Int = 0;
+		addChild(new ForeverOverlay());
+	}
 
 	@:noCompletion @:dox(hide)
 	private var deltaTimeout:Int = 0;
-	private var times:Array<Float> = [];
 
-	/**
-	 * Instantiates the Overlay.
-	 * @param monis 		the Monitors that should be appended by default when creating the overlay.
-	**/
-	public function new(monis:Array<BaseOverlayMonitor>):Void {
+	override function __enterFrame(deltaTime:Int):Void {
+		if (deltaTimeout >= 1000) { // if 1 second has passed.
+			deltaTimeout = 0;
+			return;
+		}
+		getChildAt(0).__enterFrame(deltaTime);
+		deltaTimeout += deltaTime;
+	}
+}
+
+/**
+ * Overlay that shows FPS and Debug information
+ * 
+ * TODO: give it an actual visuals later -Crow
+**/
+class ForeverOverlay extends TextField {
+	/** Counts your current Frames per Second. **/
+	public var currentFPS:Int = 0;
+
+	/** Counts your current Memory Usage. **/
+	public var staticRAM(get, never):Float;
+
+	/** Counts your highest Memory Usage. **/
+	private var peakRAM:Float = 0.0;
+
+	@:dox(hide) private var times:Array<Float> = [];
+
+	public function new():Void {
 		super();
 
-		if (monis == null)
-			monis == [];
+		x = 10;
+		y = 10;
 
-		this.monitors = monis;
-		_appendMonitors(monitors);
-
-		flixel.FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, (e) -> {
-			switch (e.keyCode) {
-				case openfl.ui.Keyboard.F1:
-					visible = !visible;
-			}
-		});
-
-		doMonitorUpdate();
+		defaultTextFormat = new TextFormat("_sans", 12, 0xFFFFFFFF);
+		mouseEnabled = selectable = false;
+		multiline = true;
+		autoSize = LEFT;
 	}
 
-	/** Updates each overlay monitor (if any). **/
-	public function doMonitorUpdate():Void {
-		if (monitors.length == 0 || monitors == null)
-			return;
-
-		for (monitor in monitors)
-			monitor.update();
-	}
-
-	override function __enterFrame(deltaTime:Int) {
-		super.__enterFrame(deltaTime);
-
+	override function __enterFrame(deltaTime:Int):Void {
 		var now:Float = haxe.Timer.stamp();
 		times.push(now);
 		while (times[0] < now - 1)
 			times.shift();
 
 		currentFPS = currentFPS < FlxG.drawFramerate ? times.length : FlxG.drawFramerate;
+		if (staticRAM > peakRAM)
+			peakRAM = staticRAM;
 
-		if (monitors.length > 0) {
-			graphics.clear();
-			graphics.beginFill(0, 0.6);
-			graphics.drawRect(0, 0, flixel.FlxG.stage.application.window.width, 20);
-			graphics.endFill();
-
-			deltaTimeout += deltaTime;
-			if (deltaTimeout >= 1000) { // if 1 second has passed.
-				doMonitorUpdate();
-				deltaTimeout = 0;
-			}
-
-			_repositionMonitors();
+		if (visible) {
+			text = '${currentFPS} FPS'
+			#if cpp + '\n${FlxStringUtil.formatBytes(Memory.getCurrentUsage())} / ${FlxStringUtil.formatBytes(Memory.getPeakUsage())} [TASK]' #end //
+			+ '\n${FlxStringUtil.formatBytes(staticRAM)} / ${FlxStringUtil.formatBytes(peakRAM)} [GC]'
+			+ '\n\nFOREVER ENGINE v${Main.version}';
 		}
 	}
 
-	private function _appendMonitors(monitor:Array<BaseOverlayMonitor>):Void {
-		if (monitors.length == 0 || monitors == null)
-			return;
-
-		for (i in 0...monitors.length)
-			addChild(monitors[i]);
-	}
-
-	private function _repositionMonitors():Void {
-		if (monitors.length == 0 || monitors == null)
-			return;
-
-		monitors[0].x = 5;
-		monitors[0].x = 0;
-
-		if (monitors.length > 1) {
-			for (i in 1...monitors.length) {
-				var mon:BaseOverlayMonitor = monitors[i];
-				var width:Int = flixel.FlxG.stage.application.window.width;
-				var last = monitors[i - 1];
-
-				switch (mon.align) {
-					case RIGHT:
-						mon.x = Math.floor(width - mon.width);
-						mon.y = last.y;
-					default:
-						mon.x = last.x + (last.width + 20);
-						mon.y = last.y;
-				}
-			}
-		}
+	inline function get_staticRAM():Float {
+		return openfl.system.System.totalMemory;
 	}
 }

@@ -134,18 +134,33 @@ class OptionsMenu extends BaseMenuState {
 		}
 	}
 
+	var holdTime:Float = 0.0;
+
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (Std.isOfType(iconGroup.members[curSel], Alphabet)) {
-			final left:Bool = Controls.LEFT_P;
-			final right:Bool = Controls.RIGHT_P;
-			final option:ForeverOption = optionsListed.get(curCateg)[curSel];
-
-			if (left || right) {
-				option.changeValue(left ? -1 : 1);
+			function optionChange(changeFactor:Int = 0):Void {
+				final option:ForeverOption = optionsListed.get(curCateg)[curSel];
+				option.changeValue(changeFactor);
+	
 				cast(iconGroup.members[curSel], Alphabet).text = '${option.value}';
 				FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
+			}
+
+			if (Controls.UI_LEFT_P || Controls.UI_RIGHT_P) {
+				optionChange(Controls.UI_LEFT_P ? -1 : 1);
+				holdTime = 0.0;
+			}
+
+			if (Controls.UI_LEFT || Controls.UI_RIGHT) {
+				// literally stolen from psych engine thx shadowmario
+				var checkLastHold:Int = Math.floor((holdTime - 0.5) * 20);
+				holdTime += elapsed;
+				var checkNewHold:Int = Math.floor((holdTime - 0.5) * 20);
+
+				if(holdTime > 0.5 && checkNewHold - checkLastHold > 0)
+					optionChange((checkNewHold - checkLastHold) * (Controls.UI_LEFT ? -1 : 1));
 			}
 		}
 	}

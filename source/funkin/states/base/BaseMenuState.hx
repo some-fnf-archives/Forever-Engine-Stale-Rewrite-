@@ -43,16 +43,16 @@ class BaseMenuState extends FNFState {
 		super.update(elapsed);
 
 		if (canChangeSelection) {
-			final pressUp:Bool = Controls.UP_P;
-			final pressDown:Bool = Controls.DOWN_P;
+			final pressUp:Bool = Controls.UI_UP_P;
+			final pressDown:Bool = Controls.UI_DOWN_P;
 
 			if (pressUp || pressDown)
 				updateSelection(pressUp ? -1 : 1);
 		}
 
 		if (canChangeAlternative) {
-			final pressLeft:Bool = Controls.LEFT_P;
-			final pressRight:Bool = Controls.RIGHT_P;
+			final pressLeft:Bool = Controls.UI_LEFT_P;
+			final pressRight:Bool = Controls.UI_RIGHT_P;
 
 			if (pressLeft || pressRight)
 				updateSelectionAlt(pressLeft ? -1 : 1);

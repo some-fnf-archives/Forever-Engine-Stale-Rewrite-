@@ -31,11 +31,11 @@ class HScript #if SCRIPTING extends Iris #end {
 			var cls:Dynamic = (cast Type.resolveClass(name)) ?? (cast Type.resolveEnum(name));
 			imports.set(className, cls);
 			set(className, cls);
-			trace(imports);
+			// trace(imports);
 		});
 		set("closeScript", () -> {
 			this.destroy();
-			cast(FlxG.state, funkin.states.base.FNFState).validCheck(this);
+			cast(FlxG.state, funkin.states.base.FNFState).validCheck();
 		});
 
 		set("FlxG", flixel.FlxG);

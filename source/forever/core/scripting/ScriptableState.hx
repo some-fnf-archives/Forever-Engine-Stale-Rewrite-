@@ -47,13 +47,7 @@ class ScriptableState extends FlxTransitionableState {
 		newScript.call("onInit");
 	}
 
-	public function validCheck(script:HScript):Void {
-		@:privateAccess {
-			if (script == null || script.interp == null)
-				if (scriptPack.contains(script))
-					scriptPack.remove(script);
-		}
-	}
+	public function validCheck():Void {}
 
 	public function setPackVar(name:String, obj:Dynamic):Void {
 		if (scriptPack.length == 0)

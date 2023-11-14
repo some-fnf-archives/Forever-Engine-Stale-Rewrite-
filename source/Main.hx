@@ -1,8 +1,10 @@
 package;
 
 import flixel.FlxState;
+
+import forever.ui.ForeverConsole;
 import forever.ui.ForeverOverlay;
-import forever.ui.overlay.*;
+
 import openfl.display.Sprite;
 
 typedef GameClient = #if CRASH_HANDLER external.crash.FNFGame #else flixel.FlxGame #end;
@@ -16,8 +18,8 @@ class Main extends Sprite {
 	public static var noGpuBitmaps:Bool = false;
 
 	private var gameClient:GameClient;
-
-	public var overlay:ForeverOverlay;
+	public var overlay:OverlayContainer;
+	// public var console:ForeverConsole;
 
 	public function new():Void {
 		super();
@@ -33,7 +35,8 @@ class Main extends Sprite {
 		#end
 
 		addChild(gameClient = new GameClient(1280, 720, Init, initialFramerate, initialFramerate, true));
-		addChild(overlay = new ForeverOverlay([new FramerateMonitor(), new MemoryMonitor(), new VersionMonitor()]));
+		addChild(overlay = new OverlayContainer());
+		// addChild(console = new ForeverConsole());
 	}
 
 	private function onResizeGame(width:Int, height:Int):Void {

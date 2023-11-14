@@ -103,8 +103,9 @@ class Character extends ForeverSprite {
 			default:
 				try
 					parseFromImpl(file, implementation)
-				catch (e:haxe.Exception)
-					trace('[Character:loadCharacter]: Failed to parse "${implementation.toString()}" type character of name "${name}"\n\nError: ${e.details()}');
+				catch (e:haxe.Exception) {
+					// trace('[Character:loadCharacter]: Failed to parse "${implementation.toString()}" type character of name "${name}"\n\nError: ${e.details()}');
+				}
 		}
 
 		if (Tools.fileExists(AssetHelper.getAsset('data/characters/${name}', HSCRIPT))) {
