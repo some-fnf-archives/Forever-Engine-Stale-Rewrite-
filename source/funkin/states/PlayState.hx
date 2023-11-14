@@ -90,8 +90,8 @@ class PlayState extends FNFState {
 			AssetHelper.getPath("data/scripts/global"),
 			AssetHelper.getPath('songs/${currentSong.folder}/scripts'),
 		]);
-		callFunPack("create", []);
 		setPackVar('game', this);
+		callFunPack("create", []);
 
 		// -- PREPARE AUDIO -- //
 		vocals = new FlxSound();

@@ -44,7 +44,6 @@ class ScriptableState extends FlxTransitionableState {
 		if (scriptPack.contains(newScript))
 			return;
 		scriptPack.push(newScript);
-		newScript.call("onInit");
 	}
 
 	public function validCheck():Void {}
