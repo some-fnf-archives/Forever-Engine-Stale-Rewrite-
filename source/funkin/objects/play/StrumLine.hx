@@ -157,10 +157,11 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		var image:String = noteSkin.splashes.image; // change to note type stuff later.
 
 		// it looks like a ship when formatted like this lol -Crow
-		var noteSplash:NoteSplash = playField.splashGroup.recycleLoop(NoteSplash) //
+		var noteSplash:NoteSplash = playField.splashGroup.recycle(NoteSplash) //
 			.resetProps(image, noteSkin.splashes.animations, //
 				noteSkin.splashes.size, note.dir);
 		// *
+		noteSplash.timeScale = members[note.dir].timeScale;
 		noteSplash.antialiasing = members[note.dir].antialiasing;
 		noteSplash.alpha = preload ? 0.0000001 : noteSkin.splashes.alpha;
 		noteSplash.centerToObject(members[note.dir], XY);
