@@ -90,6 +90,7 @@ class Note extends ForeverSprite {
 
 		this.data = data;
 		this.type = data.type;
+		this.speedMult = 1.0;
 
 		wasHit = isLate = canBeHit = false;
 		hitbox = NoteType.getHitbox(data.type);
@@ -134,7 +135,7 @@ class Note extends ForeverSprite {
 		visible = parent.visible;
 
 		final time:Float = Conductor.time - data.time;
-		final distance:Float = time * (400.0 * speed) / 0.7; // this needs to be 400.0 since time is second-based
+		final distance:Float = time * (400.0 * (speed * speedMult)) / 0.7; // this needs to be 400.0 since time is second-based
 
 		x = strum.x;
 		y = strum.y + distance * scrollDifference;
