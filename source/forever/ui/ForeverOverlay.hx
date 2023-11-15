@@ -72,10 +72,9 @@ class ForeverOverlay extends TextField {
 			peakRAM = staticRAM;
 
 		if (visible) {
-			text = '${currentFPS} FPS'
+			text = '${currentFPS} FPS - FOREVER ENGINE v${Main.version}'
 			#if cpp + '\n${FlxStringUtil.formatBytes(Memory.getCurrentUsage())} / ${FlxStringUtil.formatBytes(Memory.getPeakUsage())} [TASK]' #end //
-			+ '\n${FlxStringUtil.formatBytes(staticRAM)} / ${FlxStringUtil.formatBytes(peakRAM)} [GC]'
-			+ '\n\nFOREVER ENGINE v${Main.version}';
+			+ '\n${FlxStringUtil.formatBytes(staticRAM)} / ${FlxStringUtil.formatBytes(peakRAM)} [GC]';
 		}
 	}
 

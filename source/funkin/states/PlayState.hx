@@ -6,8 +6,11 @@ import flixel.FlxSubState;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import flixel.util.FlxTimer;
+
 import forever.core.scripting.*;
 import forever.display.ForeverSprite;
+import forever.display.RecycledSpriteGroup;
+
 import funkin.components.ChartLoader;
 import funkin.components.Timings;
 import funkin.components.parsers.ForeverEvents as ChartEventOptions;
@@ -19,6 +22,7 @@ import funkin.states.editors.*;
 import funkin.states.menus.*;
 import funkin.subStates.PauseMenu;
 import funkin.ui.ComboSprite;
+
 
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
@@ -63,7 +67,7 @@ class PlayState extends FNFState {
 	public var inst:FlxSound;
 	public var vocals:FlxSound;
 
-	public var comboGroup:ComboGroup;
+	public var comboGroup:RecycledSpriteGroup<ComboSprite>;
 
 	/**
 	 * Constructs the Gameplay State
@@ -141,7 +145,7 @@ class PlayState extends FNFState {
 		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, Chart.current.gameInfo.chars[2], false));
 
 		// -- PREPARE USER INTERFACE -- //
-		add(comboGroup = new ComboGroup());
+		add(comboGroup = new RecycledSpriteGroup<ComboSprite>());
 		add(playField = new PlayField());
 		for (hud in playField.getHUD())
 			hud.alpha = 0;
@@ -158,10 +162,8 @@ class PlayState extends FNFState {
 			lane.onNoteMiss.add(missBehavior);
 		}
 
-		for (i in 0...playField.plrStrums.members.length) {
-			var strum = playField.plrStrums.members[i];
-			strum.doNoteSplash(null, true);
-		}
+		for (i in 0...4) // preload notesplashes
+			playField.plrStrums.createSplash({time: 0.0, dir: 0, type: "default"}, true, true);
 
 		#if DISCORD
 		DiscordRPC.updatePresenceDetails('Playing: ${currentSong.display}', '');
@@ -272,10 +274,10 @@ class PlayState extends FNFState {
 			Timings.increaseJudgeHits(params[0]);
 
 			if (params[3] || note.splash)
-				note.parent.members[note.direction].doNoteSplash(note);
+				note.parent.createSplash(note.data);
 
 			final chosenType:ComboPopType = FlxMath.roundDecimal(Timings.accuracy, 2) >= 100 ? PERFECT : NORMAL;
-			displayJudgement(params[0], chosenType);
+			displayJudgement(params[0], note.data.time < Conductor.time, chosenType);
 			displayCombo(Timings.combo, chosenType);
 
 			Timings.updateRank();
@@ -288,7 +290,7 @@ class PlayState extends FNFState {
 		callFunPack("postHitBehavior", []);
 	}
 
-	var missPunishIncrease:Float = 0.0;
+	private var missPunishIncrease:Float = 0.0;
 
 	public function missBehavior(dir:Int, note:Note = null):Void {
 		var missEvent:CancellableEvent = new CancellableEvent();
@@ -311,8 +313,10 @@ class PlayState extends FNFState {
 		missPunishIncrease += 0.075;
 		Timings.misses += 1;
 
-		displayJudgement("miss", MISS);
-		displayCombo(Timings.combo, MISS);
+		if (missPopups) {
+			displayJudgement("miss", true, MISS);
+			displayCombo(Timings.combo, MISS);
+		}
 
 		Timings.updateRank();
 		playField.updateScore();
@@ -320,10 +324,17 @@ class PlayState extends FNFState {
 		callFunPack("postMissBehavior", [dir]);
 	}
 
+	/** Enables the Golden Judgements & Combo Popups when having a perfect combo. **/
+	public var perfectPopups:Bool = true;
+	/** Enables the Red Miss Popups when missing notes. **/
+	public var missPopups:Bool = true;
+	/** Enables the timing sprites when hitting notes too early or late. **/
+	public var timingPopups:Bool = true;
+
 	private var lastJSpr:ComboSprite = null;
 
-	public function displayJudgement(name:String, type:ComboPopType = NORMAL):Void {
-		if (type == PERFECT && name == "sick")
+	public function displayJudgement(name:String, isLate:Bool = false, type:ComboPopType = NORMAL):Void {
+		if (type == PERFECT && name == "sick" && perfectPopups)
 			name = "sick-perfect";
 
 		final placement:Float = FlxG.width * 0.55;
@@ -353,6 +364,31 @@ class PlayState extends FNFState {
 
 		final crochet:Float = (60.0 / Conductor.bpm);
 
+		// sick and miss don't have timings blehhhh
+		if (timingPopups && (name != "sick-perfect" && name != "sick" && name != "miss")) {
+			final timing:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
+			var size:Float = PlayField.isPixel ? 6.0 : 0.7;
+
+			timing.loadSprite('${name}-${isLate ? "late" : "early"}0', playField.skin);
+			timing.antialiasing = !PlayField.isPixel;
+			timing.scale.set(size, size);
+			timing.updateHitbox();
+
+			// set positions and stuff
+			timing.timeScale = jSpr.timeScale;
+			timing.setPosition(jSpr.x + (isLate ? 50 : -15), jSpr.y);
+			timing.acceleration.set(jSpr.acceleration.x, jSpr.acceleration.y);
+			timing.velocity.set(jSpr.velocity.x, jSpr.velocity.y);
+
+			timing.tween({alpha: 0}, 0.4, {
+				onComplete: function(twn:FlxTween):Void {
+					timing.kill();
+					comboGroup.remove(timing, true);
+				},
+				startDelay: crochet + (crochet * 4.0) * 0.05
+			});
+		}
+
 		jSpr.tween({alpha: 0}, 0.4, {
 			onComplete: function(twn:FlxTween):Void {
 				jSpr.kill();
@@ -365,7 +401,7 @@ class PlayState extends FNFState {
 	}
 
 	public function displayCombo(combo:Int, type:ComboPopType = NORMAL):Void {
-		final prefix:String = type == PERFECT ? "gold" : "normal";
+		final prefix:String = (type == PERFECT && perfectPopups) ? "gold" : "normal";
 		final comboArr:Array<String> = Std.string(combo).split("");
 		final xOff:Float = comboArr.length - 3;
 

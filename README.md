@@ -28,10 +28,10 @@ You need the LATEST version of haxe to be able to compile Forever, previous vers
 
 - Current Features:
     - [x] FULL Discord Rich Presence Support.
-    - [x] Scripting Support with HScript.
-
     - [x] Modding:
-        - [ ] Being able to load Multiple Mods at once.
+        - [x] Scripting (HScript).
+        - [x] Being able to override existing assets
+        - [x] Being able to add new assets
 
     - [x] Softcoded (allows you to add something of your own without modifying the source code):
         - [x] Characters.

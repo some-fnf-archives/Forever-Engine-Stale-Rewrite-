@@ -3,7 +3,10 @@ package funkin.objects;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.math.FlxMath;
+
 import forever.display.ForeverText;
+import forever.display.RecycledSpriteGroup;
+
 import funkin.components.ChartLoader.Chart;
 import funkin.components.Timings;
 import funkin.components.parsers.ForeverChartData.NoteData;
@@ -11,6 +14,7 @@ import funkin.objects.play.*;
 import funkin.states.PlayState;
 import funkin.ui.HealthBar;
 import funkin.ui.HealthIcon;
+
 import haxe.ds.Vector;
 
 /**
@@ -28,6 +32,7 @@ class PlayField extends FlxGroup {
 	public var enmStrums:StrumLine;
 
 	public var noteGroup:FlxTypedSpriteGroup<Note>;
+	public var splashGroup:RecycledSpriteGroup<NoteSplash>;
 
 	public var paused:Bool = false;
 	public var noteList:Vector<NoteData>;
@@ -56,6 +61,7 @@ class PlayField extends FlxGroup {
 		}
 
 		add(noteGroup = new FlxTypedSpriteGroup<Note>());
+		add(splashGroup = new RecycledSpriteGroup<NoteSplash>());
 
 		final hbY:Float = Settings.downScroll ? FlxG.height * 0.1 : FlxG.height * 0.875;
 
@@ -103,6 +109,7 @@ class PlayField extends FlxGroup {
 		for (strumLine in strumLines)
 			strumLine.destroy();
 		noteGroup.destroy();
+		splashGroup.destroy();
 		super.destroy();
 	}
 
@@ -121,7 +128,6 @@ class PlayField extends FlxGroup {
 				break;
 			}
 			final timeDifference:Float = unspawnNote.time - Conductor.time;
-
 			if (timeDifference > 1.5 / (strum.members[unspawnNote.dir].speed / Conductor.rate)) // 1500 / (scrollSpeed / rate)
 				break;
 

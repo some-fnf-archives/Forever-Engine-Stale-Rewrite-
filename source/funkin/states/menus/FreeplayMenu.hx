@@ -144,10 +144,6 @@ class FreeplayMenu extends BaseMenuState {
 		if (!_loaded)
 			return;
 
-		for (si in iconGroup.members)
-			if (si.animation.curAnim.curFrame != 0)
-				si.animation.curAnim.curFrame = 0;
-
 		lerpScore = Math.floor(Tools.fpsLerp(lerpScore, intendedScore, 0.1));
 		scoreTxt.text = 'PERSONAL BEST:${lerpScore}';
 
@@ -173,6 +169,7 @@ class FreeplayMenu extends BaseMenuState {
 			sn.targetY = i - curSel;
 			sn.alpha = sn.targetY == 0 ? 1.0 : 0.6;
 			si.alpha = sn.alpha;
+			si.animation.curAnim.curFrame = 0;
 		}
 
 		if (bg.color != songs[curSel].color) {

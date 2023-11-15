@@ -56,7 +56,7 @@ class Note extends ForeverSprite {
 	public var mustFollowParent:Bool = true;
 
 	/** Note Speed Multiplier. **/
-	public var speedMult:Float = 0.0;
+	public var speedMult:Float = 1.0;
 
 	/** the Type Data of this note, often defines behavior and texture. **/
 	public var type(get, set):String;
@@ -93,8 +93,6 @@ class Note extends ForeverSprite {
 
 		wasHit = isLate = canBeHit = false;
 		hitbox = NoteType.getHitbox(data.type);
-		speedMult = 1.0;
-
 		playAnim(animations[0], true);
 		return this;
 	}
@@ -136,7 +134,7 @@ class Note extends ForeverSprite {
 		visible = parent.visible;
 
 		final time:Float = Conductor.time - data.time;
-		final distance:Float = time * (400.0 * Math.abs(speed)) / 0.7; // this needs to be 400.0 since time is second-based
+		final distance:Float = time * (400.0 * speed) / 0.7; // this needs to be 400.0 since time is second-based
 
 		x = strum.x;
 		y = strum.y + distance * scrollDifference;
@@ -164,7 +162,7 @@ class Note extends ForeverSprite {
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 	@:noCompletion inline function set_speed(v:Float):Float
-		return speed = Tools.quantize(v, 1000); // roundDecimal(v, 3)
+		return speed = Tools.quantize(v, 1000);
 
 	@:noCompletion inline function get_isSustain():Bool
 		return data?.holdLen != 0.0;
@@ -185,7 +183,8 @@ class Note extends ForeverSprite {
 				for (i in parent.noteSkin.notes.animations) {
 					var dir:String = Tools.NOTE_DIRECTIONS[direction ?? 0];
 					var color:String = Tools.NOTE_COLORS[direction ?? 0];
-					addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
+					addAtlasAnim(i.name, i.prefix.replace("{dir}", dir).replace("{color}", color), i.fps, i.looped);
+					if (i.offsets != null) setOffset(i.name, i.offsets.x, i.offsets.y);
 					animations.push(i.name);
 				}
 				this.antialiasing = !(parent.noteSkin.name == "pixel" || parent.noteSkin.name.endsWith("-pixel"));

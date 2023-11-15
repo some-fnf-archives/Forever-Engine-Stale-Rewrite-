@@ -1,5 +1,6 @@
 package funkin.objects.play;
 
+import funkin.components.parsers.ForeverChartData.NoteData;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSignal.FlxTypedSignal;
@@ -17,34 +18,28 @@ class Strum extends ForeverSprite {
 	public var speed:Float = 1.0;
 	public var animations:Array<String> = new Array<String>();
 	public var animPlayed:Int = -1;
-
-	// todo: make a better splash system that doesn't suck ass -Crow
-	public var splash:ForeverSprite = null;
 	public var skin:NoteSkin = null;
 
 	public function new(x:Float, y:Float, skin:NoteSkin, id:Int):Void {
 		super(x, y);
 
-		frames = AssetHelper.getAsset('images/notes/${skin.strums.image}', ATLAS_SPARROW);
-		this.ID = id;
 		this.skin = skin;
+		this.ID = id;
+
+		frames = AssetHelper.getAsset('images/notes/${skin.strums.image}', ATLAS_SPARROW);
 		this.antialiasing = !(skin.name == "pixel" || skin.name.endsWith("-pixel"));
 
 		for (i in skin.strums.animations) {
 			var dir:String = Tools.NOTE_DIRECTIONS[id];
 			var color:String = Tools.NOTE_COLORS[id];
 
-			addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
+			addAtlasAnim(i.name, i.prefix.replace("{dir}", dir).replace("{color}", color), i.fps, i.looped);
+			if (i.offsets != null)
+				setOffset(i.name, i.offsets.x, i.offsets.y);
 			animations.push(i.name);
 		}
 
 		playStrum(STATIC, true);
-	}
-
-	override function update(elapsed:Float):Void {
-		super.update(elapsed * timeScale);
-		if (splash != null && splash.alive)
-			splash.update(elapsed * timeScale);
 	}
 
 	public function playStrum(type:Int, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
@@ -52,36 +47,6 @@ class Strum extends ForeverSprite {
 		centerOrigin();
 		centerOffsets();
 		animPlayed = type;
-	}
-
-	public function doNoteSplash(note:Note = null, cache:Bool = false):Void {
-		if (splash == null) {
-			splash = new ForeverSprite();
-			splash.frames = Paths.getSparrowAtlas('notes/${skin.splashes.image}');
-
-			for (i in skin.splashes.animations) {
-				var dir:String = Tools.NOTE_DIRECTIONS[ID];
-				var color:String = Tools.NOTE_COLORS[ID];
-
-				splash.addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
-			}
-
-			splash.centerToObject(this, XY);
-			splash.scale.set(skin.splashes.size, skin.splashes.size);
-			splash.updateHitbox();
-
-			splash.animation.finishCallback = function(anim:String):Void splash.kill();
-		}
-
-		splash.revive();
-		splash.alpha = cache ? 0.000001 : skin.splashes.alpha;
-		splash.playAnim('${FlxG.random.int(1, skin.splashes.animations.length - 1)}', true);
-	}
-
-	override function draw():Void {
-		super.draw();
-		if (splash != null && splash.alive)
-			splash.draw();
 	}
 }
 
@@ -156,12 +121,13 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 
 		// bro think they psych engine
 		var targetAlpha:Float = (Settings.centerStrums && cpuControl) ? 0.6 : 0.8; // pair with original FE
+		var keys:Int = 4;
 
-		for (i in 0...4) {
+		for (i in 0...keys) {
 			final strum:Strum = new Strum(0, 0, noteSkin, i);
-			strum.x += i * fieldWidth;
 			strum.scale.set(size, size);
 			strum.updateHitbox();
+			strum.x += (fieldWidth * i);
 			add(strum);
 
 			if (!skipStrumTween) {
@@ -187,9 +153,23 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		}
 	}
 
+	public function createSplash(note:NoteData, force:Bool = false, preload:Bool = false):Void {
+		var image:String = noteSkin.splashes.image; // change to note type stuff later.
+
+		// it looks like a ship when formatted like this lol -Crow
+		var noteSplash:NoteSplash = playField.splashGroup.recycleLoop(NoteSplash) //
+			.resetProps(image, noteSkin.splashes.animations, //
+				noteSkin.splashes.size, note.dir);
+		// *
+		noteSplash.alpha = preload ? 0.0000001 : noteSkin.splashes.alpha;
+		noteSplash.centerToObject(members[note.dir], XY);
+		noteSplash.pop(force);
+	}
+
 	public function inputKeyPress(event:KeyboardEvent):Void {
 		var key:Int = getKeyFromEvent(event.keyCode);
-		if (key == -1 || playField.paused) return;
+		if (key == -1 || playField.paused)
+			return;
 
 		var currentStrum:Strum = members[key];
 		var notesHittable:Array<Note> = playField.noteGroup.members.filter(function(n:Note):Bool {
@@ -200,7 +180,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 
 		if (currentStrum?.animPlayed != HIT)
 			currentStrum.playStrum(PRESS, true);
-	
+
 		if (notesHittable.length == 0) {
 			if (!Settings.ghostTapping)
 				onNoteMiss.dispatch(key, null);
@@ -224,7 +204,8 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 
 	public function inputKeyRelease(event:KeyboardEvent):Void {
 		var key:Int = getKeyFromEvent(event.keyCode);
-		if (key == -1 || playField.paused) return;
+		if (key == -1 || playField.paused)
+			return;
 		members[key]?.playStrum(STATIC, true);
 	}
 
@@ -256,15 +237,11 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 	}
 
 	@:dox(hide) @:noCompletion function get_spacing():Int {
-		if (noteSkin.strums.spacing >= 30) // minimum spacing is 30
-			return noteSkin.strums.spacing;
-		return 160;
+		return noteSkin.strums.spacing ?? 160;
 	}
 
 	@:dox(hide) @:noCompletion function get_size():Float {
-		if (noteSkin.strums.size > 0)
-			return noteSkin.strums.size;
-		return 0.7;
+		return noteSkin.strums.size ?? 0.7;
 	}
 
 	@:dox(hide) @:noCompletion inline function get_fieldWidth():Float

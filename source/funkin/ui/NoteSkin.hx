@@ -21,7 +21,7 @@ typedef AnimationConfig = {
 /** Handler for Note Skins. **/
 class NoteSkin {
 	/** String Map that stores already loaded noteskins, used for precaching. **/
-	public static var skinsLoaded:StringMap<NoteSkin>;
+	public static var skinsLoaded:StringMap<NoteSkin> = new StringMap<NoteSkin>();
 
 	public var name:String;
 
@@ -30,18 +30,19 @@ class NoteSkin {
 	public var notes:{?sustain:String} & GenericSkin;
 
 	public function new(name:String):Void {
-		skinsLoaded = new StringMap<NoteSkin>();
 		loadSkin(name);
 	}
 
-	public function loadSkin(v:String):Void {
+	public function loadSkin(v:String, force:Bool = false):Void {
 		this.name = v;
 
 		if (skinsLoaded.exists(v) && skinsLoaded.get(v) != null) {
-			strums = skinsLoaded.get(v).strums;
-			notes = skinsLoaded.get(v).notes;
-			splashes = skinsLoaded.get(v).splashes;
-			return;
+			if (!force) {
+				strums = skinsLoaded.get(v).strums;
+				notes = skinsLoaded.get(v).notes;
+				splashes = skinsLoaded.get(v).splashes;
+				return;
+			}
 		}
 
 		var dum:Dynamic = dummy();
@@ -70,9 +71,9 @@ class NoteSkin {
 			strums: {
 				image: "default/receptors",
 				animations: [
-					{name: "static", prefix: "${dir} static", fps: 24, looped: false},
-					{name: "pressed", prefix: "${dir} press", fps: 24, looped: false},
-					{name: "confirm", prefix: "${dir} confirm", fps: 24, looped: false}
+					{name: "static", prefix: "{dir} static", fps: 24, looped: false},
+					{name: "pressed", prefix: "{dir} press", fps: 24, looped: false},
+					{name: "confirm", prefix: "{dir} confirm", fps: 24, looped: false}
 				],
 				spacing: 160,
 				size: 0.7
@@ -80,17 +81,17 @@ class NoteSkin {
 			notes: {
 				image: "default/notes",
 				animations: [
-					{name: "scroll", prefix: "${dir}0", fps: 24, looped: false},
-					{name: "hold", prefix: "${dir} hold piece", fps: 24, looped: false},
-					{name: "end", prefix: "${dir} hold end", fps: 24, looped: false}
+					{name: "scroll", prefix: "{dir}0", fps: 24, looped: false},
+					{name: "hold", prefix: "{dir} hold piece", fps: 24, looped: false},
+					{name: "end", prefix: "{dir} hold end", fps: 24, looped: false}
 				],
 				size: 0.7
 			},
 			splashes: {
 				image: "default/splashes",
 				animations: [
-					{name: "1", prefix: "${dir}1", fps: 24, looped: false},
-					{name: "2", prefix: "${dir}2", fps: 24, looped: false}
+					{name: "1", prefix: "{dir}1", fps: 24, looped: false},
+					{name: "2", prefix: "{dir}2", fps: 24, looped: false}
 				],
 				alpha: 0.6,
 				size: 1.0

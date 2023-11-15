@@ -210,9 +210,7 @@ class Tools {
 	 * @param bpm 			The BPM of the music (needed for beat events and such).
 	**/
 	public static function checkMenuMusic(music:String = null, ?doFadeIn:Bool = false, ?bpm:Null<Float>):Void {
-		if (FlxG.sound.music != null && FlxG.sound.music.playing)
-			return;
-
+		if (FlxG.sound.music != null && FlxG.sound.music.playing) return;
 		if (music == null) music = defaultMenuMusic;
 		if (bpm == null) bpm = defaultMenuBeats;
 
@@ -223,7 +221,7 @@ class Tools {
 		Conductor.bpm = bpm;
 
 		// reset stuff
-		FlxG.sound.music.onComplete = function():Void Conductor.init(false);
+		Conductor.init(false);
 	}
 
 	/**

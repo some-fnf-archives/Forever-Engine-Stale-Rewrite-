@@ -74,9 +74,7 @@ class ChartLoader {
 	}
 }
 
-/**
- * Structure for Forever Engine Charts.
-**/
+/** Structure for Forever Engine Charts. **/
 class Chart {
 	public var notes:Array<NoteData> = [];
 	public var events:Array<ForeverEvent> = [];

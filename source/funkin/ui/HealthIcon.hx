@@ -50,7 +50,7 @@ class HealthIcon extends ChildSprite {
 			initialWidth = width;
 			initialHeight = height;
 
-			animation.add("icon", [for (i in 0...frames.frames.length) i], 24, false, isPlayer);
+			animation.add("icon", [for (i in 0...frames.frames.length) i], 0, false, isPlayer);
 			animation.play("icon");
 
 			antialiasing = !char.endsWith("-pixel");

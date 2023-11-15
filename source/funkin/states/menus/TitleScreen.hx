@@ -153,7 +153,7 @@ class TitleScreen extends FNFState {
 
 		if (gfDance != null) {
 			var dir:String = gfBopped ? 'Left' : 'Right';
-			gfDance.playAnim('dance${dir}');
+			gfDance.playAnim('dance${dir}', gfBopped);
 			gfBopped = !gfBopped;
 		}
 

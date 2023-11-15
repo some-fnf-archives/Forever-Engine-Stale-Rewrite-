@@ -113,6 +113,7 @@ class Mods {
 	}
 
 	public static function resetGame():Void {
+		funkin.ui.NoteSkin.skinsLoaded.clear();
 		funkin.states.menus.TitleScreen.seenIntro = false;
 		forever.Settings.flush();
 
