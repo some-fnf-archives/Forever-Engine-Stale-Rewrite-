@@ -37,7 +37,7 @@ class TitleScreen extends FNFState {
 	override function create():Void {
 		super.create();
 
-		forever.core.Mods.loadInitScript();
+		#if MODS forever.core.Mods.loadInitScript(); #end
 
 		if (Tools.fileExists(AssetHelper.getPath("data/titleScreen", YAML))) {
 			final introData = AssetHelper.parseAsset("data/titleScreen", YAML);
@@ -61,7 +61,9 @@ class TitleScreen extends FNFState {
 			Tools.defaultMenuBeats = introData.menuBPM ?? 102.0;
 		}
 
-		DiscordRPC.updatePresence("In the Menus", "TITLE SCREEN");
+		#if DISCORD
+		DiscordRPC.updatePresenceDetails("In the Menus", "TITLE SCREEN");
+		#end
 		randomBlurb = FlxG.random.getObject(getRandomText());
 
 		FlxTransitionableState.skipNextTransIn = false;

@@ -18,7 +18,11 @@ class VanillaParser {
 				var chick:String = json.player3 ?? json.gfVersion ?? "gf";
 
 				chart.songInfo = {beatsPerMinute: json.bpm, stepsPerBeat: 4, beatsPerBar: 4};
-				chart.gameInfo = {noteSpeed: json.speed ?? 1.0, chars: [player, enemy, chick], stageBG: json.stage ?? getVanillaStage(json)};
+				chart.gameInfo = {
+					noteSpeed: json.speed ?? 1.0, chars: [player, enemy, chick],
+					stageBG: json.stage ?? getVanillaStage(json.song),
+					skin: getStageSkin(json.song) ?? json.assetModifier ?? "normal"
+				};
 
 				var bars:Array<Dynamic> = cast(json.notes, Array<Dynamic>);
 
@@ -127,6 +131,13 @@ class VanillaParser {
 			case "pico", "philly", "philly-nice", "blammed": "phillyCity";
 			case "spookeez", "south", "monster": "spookyHouse";
 			default: "stage";
+		}
+	}
+
+	public static inline function getStageSkin(song:String):String {
+		return switch (song.toLowerCase().replace(" ", "-")) {
+			case "senpai", "roses", "thorns": "pixel";
+			default: "normal";
 		}
 	}
 }

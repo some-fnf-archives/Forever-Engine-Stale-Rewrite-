@@ -1,6 +1,22 @@
 menuMusic: "freakyMenu"
 menuBPM: 102.0
 
+# Here's custom intro text sections!!
+#
+# a Section Line may be constructed like this
+#
+# - {step: stephere (optional) beat: beatHere, text: "yourTextHere", exec: "yourMethodHere", force: false | true}
+#
+# Sections have special methods that can be used
+# in the `exec` field, you get the following methods
+#
+# "create" -> Creates a new text collection and breaks lines when you put a comma (,)
+# "add" -> Adds to an existing text collection
+# "delete" -> Deletes the current displayed text collection
+#
+# Additionally, you may include `force` whenever you need to force and operation to happen
+# this `force` field may be used with the `create` or `add` methods
+#
 introSections:
   - {beat: 1, text: "crowplexus, ne_eo, itsaizakku, nxtvithor, sayofthelor", exec: "create"}
   - {beat: 3, text: "PRESENT", exec: "add"}

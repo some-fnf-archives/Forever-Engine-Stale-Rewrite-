@@ -1,13 +1,10 @@
-package funkin.objects.notes;
+package funkin.objects.play;
 
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
-import flixel.input.FlxInput.FlxInputState;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSignal.FlxTypedSignal;
-import flixel.util.FlxSort;
 import forever.display.ForeverSprite;
-import haxe.ds.IntMap;
-import haxe.ds.StringMap;
+import funkin.ui.NoteSkin;
 import openfl.events.KeyboardEvent;
 
 enum abstract StrumAnimationType(Int) to Int {
@@ -18,27 +15,27 @@ enum abstract StrumAnimationType(Int) to Int {
 
 class Strum extends ForeverSprite {
 	public var speed:Float = 1.0;
-	public var animations:IntMap<String> = new IntMap<String>();
+	public var animations:Array<String> = new Array<String>();
 	public var animPlayed:Int = -1;
 
 	// todo: make a better splash system that doesn't suck ass -Crow
 	public var splash:ForeverSprite = null;
+	public var skin:NoteSkin = null;
 
-	public function new(x:Float, y:Float, skin:String = "default", id:Int):Void {
+	public function new(x:Float, y:Float, skin:NoteSkin, id:Int):Void {
 		super(x, y);
 
-		frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.strums.image}', ATLAS_SPARROW);
+		frames = AssetHelper.getAsset('images/notes/${skin.strums.image}', ATLAS_SPARROW);
 		this.ID = id;
+		this.skin = skin;
+		this.antialiasing = !(skin.name == "pixel" || skin.name.endsWith("-pixel"));
 
-		if (NoteConfig.config.strums.anims.length > 0) {
-			for (i in NoteConfig.config.strums.anims) {
-				var dir:String = Tools.NOTE_DIRECTIONS[id];
-				var color:String = Tools.NOTE_COLORS[id];
+		for (i in skin.strums.animations) {
+			var dir:String = Tools.NOTE_DIRECTIONS[id];
+			var color:String = Tools.NOTE_COLORS[id];
 
-				addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
-				if (i.type != null)
-					animations.set(i.type, i.name);
-			}
+			addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
+			animations.push(i.name);
 		}
 
 		playStrum(STATIC, true);
@@ -51,7 +48,7 @@ class Strum extends ForeverSprite {
 	}
 
 	public function playStrum(type:Int, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
-		playAnim(animations.get(type), forced, reversed, frame);
+		playAnim(animations[type], forced, reversed, frame);
 		centerOrigin();
 		centerOffsets();
 		animPlayed = type;
@@ -60,29 +57,25 @@ class Strum extends ForeverSprite {
 	public function doNoteSplash(note:Note = null, cache:Bool = false):Void {
 		if (splash == null) {
 			splash = new ForeverSprite();
-			splash.frames = Paths.getSparrowAtlas('notes/${NoteConfig.config.splashes.image}');
+			splash.frames = Paths.getSparrowAtlas('notes/${skin.splashes.image}');
 
-			for (i in NoteConfig.config.splashes.anims) {
+			for (i in skin.splashes.animations) {
 				var dir:String = Tools.NOTE_DIRECTIONS[ID];
 				var color:String = Tools.NOTE_COLORS[ID];
 
 				splash.addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
-				/*
-					if (i.type != null)
-						splash.animations.set(i.type, i.name);
-				 */
 			}
 
 			splash.centerToObject(this, XY);
-			splash.scale.set(NoteConfig.config.splashes.size, NoteConfig.config.splashes.size);
+			splash.scale.set(skin.splashes.size, skin.splashes.size);
 			splash.updateHitbox();
 
 			splash.animation.finishCallback = function(anim:String):Void splash.kill();
 		}
 
 		splash.revive();
-		splash.alpha = cache ? 0.000001 : NoteConfig.config.splashes.alpha;
-		splash.playAnim('${FlxG.random.int(1, NoteConfig.config.splashes.anims.length - 1)}', true);
+		splash.alpha = cache ? 0.000001 : skin.splashes.alpha;
+		splash.playAnim('${FlxG.random.int(1, skin.splashes.animations.length - 1)}', true);
 	}
 
 	override function draw():Void {
@@ -98,6 +91,8 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 	public var cpuControl:Bool;
 	public var globalSpeed(default, set):Float = 1.0;
 
+	public var noteSkin:NoteSkin;
+
 	// READ ONLY VARIABLES
 	public var size(get, never):Float;
 	public var spacing(get, never):Int;
@@ -108,7 +103,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 
 	public var controls:Array<String> = ["left", "down", "up", "right"];
 
-	public function new(playField:PlayField, x:Float, y:Float, newSpeed:Float = 1.0, skin:String = "default", cpuControl:Bool = true):Void {
+	public function new(playField:PlayField, x:Float, y:Float, newSpeed:Float = 1.0, skin:String = "normal", cpuControl:Bool = true):Void {
 		super();
 
 		this.playField = playField;
@@ -150,8 +145,11 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		if (newSpeed != null) this.globalSpeed = newSpeed;
 	}
 
-	public function regenStrums(skin:String = "default", skipStrumTween:Bool = false):Void {
+	public function regenStrums(skin:String, skipStrumTween:Bool = false):Void {
 		this.skin = skin;
+
+		if (noteSkin != null) noteSkin.loadSkin(skin);
+		else noteSkin = new NoteSkin(skin);
 
 		while (members.length > 0)
 			members.pop().destroy();
@@ -160,7 +158,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		var targetAlpha:Float = (Settings.centerStrums && cpuControl) ? 0.6 : 0.8; // pair with original FE
 
 		for (i in 0...4) {
-			final strum:Strum = new Strum(0, 0, skin, i);
+			final strum:Strum = new Strum(0, 0, noteSkin, i);
 			strum.x += i * fieldWidth;
 			strum.scale.set(size, size);
 			strum.updateHitbox();
@@ -258,15 +256,15 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 	}
 
 	@:dox(hide) @:noCompletion function get_spacing():Int {
-		if (NoteConfig.config.strums.spacing >= 30) // minimum spacing is 30
-			return NoteConfig.config.strums.spacing;
-		return NoteConfig.getDummyConfig().strums.spacing;
+		if (noteSkin.strums.spacing >= 30) // minimum spacing is 30
+			return noteSkin.strums.spacing;
+		return 160;
 	}
 
 	@:dox(hide) @:noCompletion function get_size():Float {
-		if (NoteConfig.config.strums.size > 0)
-			return NoteConfig.config.strums.size;
-		return NoteConfig.getDummyConfig().strums.size;
+		if (noteSkin.strums.size > 0)
+			return noteSkin.strums.size;
+		return 0.7;
 	}
 
 	@:dox(hide) @:noCompletion inline function get_fieldWidth():Float

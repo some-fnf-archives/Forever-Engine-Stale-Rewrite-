@@ -7,7 +7,7 @@ import forever.display.ForeverText;
 import funkin.components.ChartLoader.Chart;
 import funkin.components.Timings;
 import funkin.components.parsers.ForeverChartData.NoteData;
-import funkin.objects.notes.*;
+import funkin.objects.play.*;
 import funkin.states.PlayState;
 import funkin.ui.HealthBar;
 import funkin.ui.HealthIcon;
@@ -20,7 +20,8 @@ import haxe.ds.Vector;
 class PlayField extends FlxGroup {
 	private var play(get, never):PlayState;
 
-	function get_play():PlayState { return PlayState.current; }
+	public var skin(get, never):String;
+	public static var isPixel(get, never):Bool;
 
 	public var strumLines:Array<StrumLine> = [];
 	public var plrStrums:StrumLine;
@@ -46,8 +47,8 @@ class PlayField extends FlxGroup {
 		final strumY:Float = Settings.downScroll ? FlxG.height - 150 : 50;
 		final speed:Float = Chart.current.gameInfo.noteSpeed;
 
-		add(enmStrums = new StrumLine(this, 100, strumY, speed, true));
-		add(plrStrums = new StrumLine(this, FlxG.width - 550, strumY, speed, false));
+		add(enmStrums = new StrumLine(this, 100, strumY, speed, skin, true));
+		add(plrStrums = new StrumLine(this, FlxG.width - 550, strumY, speed, skin, false));
 
 		if (Settings.centerStrums) {
 			enmStrums.visible = false;
@@ -124,8 +125,9 @@ class PlayField extends FlxGroup {
 			if (timeDifference > 1.5 / (strum.members[unspawnNote.dir].speed / Conductor.rate)) // 1500 / (scrollSpeed / rate)
 				break;
 
-			var epicNote:Note = noteGroup.recycle(Note).appendData(unspawnNote);
+			var epicNote:Note = noteGroup.recycle(Note);
 			epicNote.parent = strumLines[unspawnNote.lane];
+			epicNote.appendData(unspawnNote);
 			add(epicNote);
 
 			curNote++;
@@ -147,8 +149,10 @@ class PlayField extends FlxGroup {
 		scoreBar.text = '< ${tempScore} >\n';
 		scoreBar.screenCenter(X);
 
+		#if DISCORD
 		if (play != null)
 			DiscordRPC.updatePresence('Playing: ${play.currentSong.display}', '${scoreBar.text}');
+		#end
 	}
 
 	public function onBeat(beat:Int):Void {
@@ -158,4 +162,12 @@ class PlayField extends FlxGroup {
 
 	public function getHUD():Array<FlxSprite>
 		return [healthBar, iconP1, iconP2, scoreBar, centerMark];
+
+	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
+
+	function get_play():PlayState { return PlayState.current; }
+	function get_skin():String return Chart.current.gameInfo.skin ?? "normal";
+
+	static function get_isPixel():Bool
+		return Chart.current.gameInfo.skin == "pixel" || Chart.current.gameInfo.skin.endsWith("-pixel");
 }

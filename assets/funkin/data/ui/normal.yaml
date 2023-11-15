@@ -1,0 +1,25 @@
+noteConfig:
+  strums:
+    image: "default/receptors"
+    animations:
+      - {name: "static", prefix: "${dir} static", fps: 24, looped: false}
+      - {name: "pressed", prefix: "${dir} press", fps: 24, looped: false}
+      - {name: "confirm", prefix: "${dir} confirm", fps: 24, looped: false}
+    spacing: 160
+    size: 0.7
+
+  notes:
+    image: "default/notes"
+    animations:
+      - {name: "scroll", prefix: "${dir}0", fps: 0, looped: false}
+      - {name: "hold", prefix: "${dir} hold piece", fps: 0, looped: false}
+      - {name: "end", prefix: "${dir} hold end", fps: 0, looped: false}
+    size: 0.7
+
+  splashes:
+    image: "default/splashes"
+    animations:
+      - {name: "1", prefix: "${dir}1", fps: 24, looped: false}
+      - {name: "2", prefix: "${dir}2", fps: 24, looped: false}
+    alpha: 0.6
+    size: 1.0

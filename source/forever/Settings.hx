@@ -52,7 +52,7 @@ class Settings {
 	 *
 	 * [NOTE]: only applies to non-special notes, including the Enemy's notes if they have a different style.
 	**/
-	public static var noteSkin:String = "default";
+	public static var noteSkin:String = "normal";
 
 	/** Applies a Screen Filter to your game, to view the game as a colorblind person would. **/
 	public static var screenFilter:String = "none";

@@ -32,7 +32,9 @@ class MainMenu extends BaseMenuState {
 	override function create():Void {
 		super.create();
 
-		DiscordRPC.updatePresence("In the Menus", "MAIN MENU");
+		#if DISCORD
+		DiscordRPC.updatePresenceDetails("In the Menus", "MAIN MENU");
+		#end
 		Tools.checkMenuMusic(null, false, 102.0);
 
 		canChangeMods = true;

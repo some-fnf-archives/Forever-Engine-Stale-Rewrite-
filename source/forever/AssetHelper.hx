@@ -43,7 +43,7 @@ class AssetHelper {
 	**/
 	public static function getPath(?asset:String, ?type:ForeverAsset):String {
 		final gottenPath:String = type.getExtension('assets/funkin/${asset}');
-		final modPath:String = type.getExtension('${Mods.MODS_FOLDER}/${searchLevel}/${asset}');
+		#if MODS final modPath:String = type.getExtension('${Mods.MODS_FOLDER}/${searchLevel}/${asset}'); #end
 		return #if MODS Tools.fileExists(modPath) ? modPath : #end
 		gottenPath;
 	}

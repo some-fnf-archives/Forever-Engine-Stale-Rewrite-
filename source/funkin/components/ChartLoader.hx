@@ -46,7 +46,7 @@ class ChartLoader {
 					}
 					if (json.gameInfo != null) {
 						var chars:Array<String> = json.gameInfo?.chars ?? ["bf", "dad", "gf"];
-						chart.gameInfo = {noteSpeed: json.gameInfo?.noteSpeed ?? 1.0, chars: chars, stageBG: json.gameInfo?.stageBG ?? null};
+						chart.gameInfo = {noteSpeed: json.gameInfo?.noteSpeed ?? 1.0, chars: chars, stageBG: json.gameInfo?.stageBG ?? null, skin: json.gameInfo?.skin ?? "normal"};
 					}
 				default:
 					trace('${dataType.toString()} Chart Type is not implemented *yet*');
@@ -81,7 +81,7 @@ class Chart {
 	public var notes:Array<NoteData> = [];
 	public var events:Array<ForeverEvent> = [];
 	public var songInfo:ForeverSongData = {beatsPerMinute: 100.0, stepsPerBeat: 4, beatsPerBar: 4};
-	public var gameInfo:ForeverGameplayData = {noteSpeed: 1.0, chars: ["bf", "dad", "gf"], stageBG: null};
+	public var gameInfo:ForeverGameplayData = {noteSpeed: 1.0, chars: ["bf", "dad", "gf"], stageBG: null, skin: "normal"};
 
 	public static var current:Chart;
 

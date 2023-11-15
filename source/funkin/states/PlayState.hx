@@ -10,11 +10,10 @@ import forever.core.scripting.*;
 import forever.display.ForeverSprite;
 import funkin.components.ChartLoader;
 import funkin.components.Timings;
-import funkin.components.parsers.ForeverChartData;
 import funkin.components.parsers.ForeverEvents as ChartEventOptions;
 import funkin.objects.*;
 import funkin.objects.StageBase;
-import funkin.objects.notes.Note;
+import funkin.objects.play.Note;
 import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
@@ -164,11 +163,13 @@ class PlayState extends FNFState {
 			strum.doNoteSplash(null, true);
 		}
 
-		DiscordRPC.updatePresence('Playing: ${currentSong.display}', '');
+		#if DISCORD
+		DiscordRPC.updatePresenceDetails('Playing: ${currentSong.display}', '');
+		#end
 
 		// cache combo and stuff
 		var comboCache:ComboSprite = new ComboSprite();
-		comboCache.loadSprite("sick-perfect");
+		comboCache.loadSprite("sick-perfect", playField.skin);
 		comboCache.alpha = 0.0000001;
 		comboGroup.add(comboCache);
 		new FlxTimer().start(0.3, function(tmr:FlxTimer):Void comboCache.kill());
@@ -327,9 +328,10 @@ class PlayState extends FNFState {
 
 		final placement:Float = FlxG.width * 0.55;
 		final jSpr:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
-		var size:Float = /* Settings.fixedJudgements ? 0.5 : */ 0.7;
+		var size:Float = PlayField.isPixel ? 6.0 : 0.7;
 
-		jSpr.loadSprite('${name}0');
+		jSpr.loadSprite('${name}0', playField.skin);
+		jSpr.antialiasing = !PlayField.isPixel;
 		jSpr.scale.set(size, size);
 		jSpr.updateHitbox();
 
@@ -374,8 +376,9 @@ class PlayState extends FNFState {
 
 			final comboX:Float = (lastJSpr.x + lastJSpr.width) + (43 * (i - xOff)) - 200;
 			final cnSpr:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
-			final size:Float = /* Settings.fixedJudgements ? 0.3 : */ 0.5;
-			cnSpr.loadSprite(comboName);
+			final size:Float = PlayField.isPixel ? 6.0 : 0.5;
+			cnSpr.loadSprite(comboName, playField.skin);
+			cnSpr.antialiasing = !PlayField.isPixel;
 
 			cnSpr.x = comboX;
 			cnSpr.y = lastJSpr.y + 90;
@@ -448,7 +451,9 @@ class PlayState extends FNFState {
 		if (vocals != null && vocals.playing)
 			vocals.resume();
 		songState = PLAYING;
-		DiscordRPC.updatePresence('${currentSong.display}', '${playField.scoreBar.text}');
+		#if DISCORD
+		DiscordRPC.updatePresenceDetails('${currentSong.display}', '${playField.scoreBar.text}');
+		#end
 		pauseTweens(false);
 		super.closeSubState();
 	}
@@ -495,7 +500,9 @@ class PlayState extends FNFState {
 	// -- HELPER FUNCTIONS -- //
 
 	function openChartEditor():Void {
-		DiscordRPC.updatePresence('Charting: ${currentSong.display}');
+		#if DISCORD
+		DiscordRPC.updatePresenceDetails('Charting: ${currentSong.display}');
+		#end
 		final charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
 		playField.paused = true;
@@ -505,7 +512,9 @@ class PlayState extends FNFState {
 
 	function openPauseMenu():Void {
 		pauseTweens(true);
-		DiscordRPC.updatePresence('${currentSong.display} [PAUSED]', '${playField.scoreBar.text}');
+		#if DISCORD
+		DiscordRPC.updatePresenceDetails('${currentSong.display} [PAUSED]', '${playField.scoreBar.text}');
+		#end
 		final pause:PauseMenu = new PauseMenu();
 		pause.camera = altCamera;
 		playField.paused = true;
@@ -585,10 +594,15 @@ class PlayState extends FNFState {
 				sprCount.screenCenter();
 				sprCount.timeScale = Conductor.rate;
 				sprCount.camera = hudCamera;
+				if (PlayField.isPixel) {
+					sprCount.antialiasing = false;
+					sprCount.scale.set(6.0, 6.0);
+					sprCount.updateHitbox();
+				}
 				add(sprCount);
 
 				sprCount.stopTweens();
-				sprCount.tween({alpha: 0}, (60.0 / Conductor.bpm), {
+				sprCount.tween({alpha: 0}, (60.0 / Conductor.bpm) * 0.0005, {
 					ease: FlxEase.sineOut,
 					onComplete: function(t) {
 						sprCount.kill();
@@ -596,7 +610,7 @@ class PlayState extends FNFState {
 				});
 			}
 
-			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/countdown/normal/${sounds[countdownPosition]}', SOUND), 0.8);
+			FlxG.sound.play(AssetHelper.getAsset('audio/countdown/${playField.skin}/${sounds[countdownPosition]}', SOUND), 0.8);
 			countdownPosition++;
 			callFunPack("countdownProgress", [countdownPosition, songState]);
 		}, 4);
@@ -612,8 +626,8 @@ class PlayState extends FNFState {
 
 	function getCountdownSprite(tick:Int):ForeverSprite {
 		final sprites:Array<String> = ["prepare", "ready", "set", "go"];
-		if (sprites[tick] != null && Tools.fileExists(AssetHelper.getPath('images/ui/normal/${sprites[tick]}', IMAGE)))
-			return new ForeverSprite(0, 0, 'images/ui/normal/${sprites[tick]}', {"scale.x": 0.9, "scale.y": 0.9});
+		if (sprites[tick] != null && Tools.fileExists(AssetHelper.getPath('images/ui/${playField.skin}/${sprites[tick]}', IMAGE)))
+			return new ForeverSprite(0, 0, 'images/ui/${playField.skin}/${sprites[tick]}', {"scale.x": 0.9, "scale.y": 0.9});
 		return null;
 	}
 }

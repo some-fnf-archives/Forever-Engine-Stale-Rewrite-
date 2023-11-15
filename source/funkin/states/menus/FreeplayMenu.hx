@@ -35,7 +35,9 @@ class FreeplayMenu extends BaseMenuState {
 	override function create():Void {
 		super.create();
 
-		DiscordRPC.updatePresence("In the Menus", "FREEPLAY");
+		#if DISCORD
+		DiscordRPC.updatePresenceDetails("In the Menus", "FREEPLAY");
+		#end
 		Tools.checkMenuMusic(null, false, 102.0);
 
 		canChangeMods = true;

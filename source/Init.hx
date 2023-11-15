@@ -9,6 +9,7 @@ import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import forever.Controls;
+import haxe.ds.StringMap;
 
 /**
  * This is the initialization class, it simply modifies and initializes a few important variables
@@ -35,25 +36,19 @@ class Init extends FlxState {
 		if (FlxG.save.data.currentMod != null) forever.core.Mods.loadMod(FlxG.save.data.currentMod);
 		#end
 
-		// make sure there is a note configuration set
-		funkin.objects.notes.NoteConfig.reloadConfig();
-
 		// precache and exclude some stuff from being cleared in cache.
-		final cacheGraphics:haxe.ds.StringMap<flixel.graphics.FlxGraphic> = [
+		final cacheGraphics:StringMap<flixel.graphics.FlxGraphic> = [
 			"boldAlphabet" => AssetHelper.getGraphic(AssetHelper.getPath("images/ui/letters/bold", IMAGE), "boldAlphabet")
 		];
 
-		final cacheSounds:haxe.ds.StringMap<openfl.media.Sound> = [
+		final cacheSounds:StringMap<openfl.media.Sound> = [
 			"scrollMenu" => AssetHelper.getSound("audio/sfx/scrollMenu", "scrollMenu"),
 			"cancelMenu" => AssetHelper.getSound("audio/sfx/cancelMenu", "cancelMenu"),
 			"confirmMenu" => AssetHelper.getSound("audio/sfx/confirmMenu", "confirmMenu")
 		];
 
-		for (k => v in cacheGraphics)
-			AssetHelper.excludedGraphics.set(k, v);
-
-		for (k => v in cacheSounds)
-			AssetHelper.excludedSounds.set(k, v);
+		for (k => v in cacheGraphics) AssetHelper.excludedGraphics.set(k, v);
+		for (k => v in cacheSounds) AssetHelper.excludedSounds.set(k, v);
 
 		FlxTransitionableState.skipNextTransIn = true;
 

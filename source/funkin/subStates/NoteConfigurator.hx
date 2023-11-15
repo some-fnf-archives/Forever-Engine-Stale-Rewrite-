@@ -1,11 +1,11 @@
 package funkin.subStates;
 
 import flixel.FlxSubState;
-import funkin.objects.notes.Note;
+import funkin.objects.play.Note;
 
 class NoteConfigurator extends FlxSubState {
 	public var notesShown:Array<Note> = [];
-	public var skinsNamed:Array<String> = ["default"];
+	public var skinsNamed:Array<String> = ["normal"];
 
 	public function new():Void {
 		super();

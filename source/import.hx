@@ -10,7 +10,9 @@ import forever.AssetHelper;
 import forever.tools.Paths;
 import forever.Settings;
 import forever.Controls;
+#if DISCORD
 import forever.core.DiscordWrapper as DiscordRPC;
+#end
 // FUNKIN IMPORTS
 import funkin.components.Conductor;
 

@@ -26,6 +26,9 @@ typedef ForeverGameplayData = { // :3
 
 	/** Declares the game's background/stage during gameplay. **/
 	var stageBG:String;
+
+	/** Declares the name of the skin used in game. **/
+	var skin:String;
 }
 
 typedef NoteData = {

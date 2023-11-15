@@ -1,6 +1,8 @@
 package external.crash;
 
+#if DISCORD
 import forever.core.DiscordWrapper;
+#end
 import openfl.geom.Matrix;
 import openfl.display.Sprite;
 import openfl.display.Stage;
@@ -50,7 +52,7 @@ class CrashHandler extends Sprite {
 		// Ne_Eo
 		"U fucking messed up, i can't believe you",
 		"What are you??? A idiot program -Godot RAMsey",
-		'I told you, ${DiscordWrapper.username ?? "the human"} was gonna crash the engine',
+		'I told you, ${#if DISCORD DiscordWrapper.username ?? #end "the human"} was gonna crash the engine',
 		// SrtHero278
 		"GET IN THE CAR I FUCKED UP",
 		"...Oh dear. Your brain       is... a                  underwhelming. ",
@@ -106,7 +108,7 @@ class CrashHandler extends Sprite {
 		// create the error text
 		loggedError.defaultTextFormat = tf;
 		loggedError.text = '\n\n${stack}\n'
-			+ "\nPress R to Unload your mods if needed, Press ESCAPE to Reset"
+			#if MODS + "\nPress R to Unload your mods if needed, Press ESCAPE to Reset" #end
 			+ "\nIf you feel like this error shouldn't have happened,"
 			+ "\nPlease report it to our GitHub Page by pressing SPACE";
 
@@ -159,19 +161,22 @@ class CrashHandler extends Sprite {
 	public function keyActions(e:KeyboardEvent):Void {
 		switch e.keyCode {
 			case Keyboard.R:
+				#if MODS
 				forever.core.Mods.loadMod(null);
 				_modReset = true;
+				#end
 			case Keyboard.SPACE:
 				FlxG.openURL("https://github.com/crowplexus/Forever-Engine/issues");
 			case Keyboard.ESCAPE:
 				_stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyActions);
+				#if MODS if (_modReset) forever.core.Mods.resetGame();
+				else #end FlxG.switchState(new funkin.states.menus.MainMenu());
 
 				_active = false;
 				@:privateAccess Main.self.gameClient._viewingCrash = false;
 				// now that the crash handler should be no longer active, remove it from the game container.
 				if (Main.self != null && Main.self.contains(this))
 					Main.self.removeChild(this);
-				forever.core.Mods.resetGame();
 		}
 	}
 

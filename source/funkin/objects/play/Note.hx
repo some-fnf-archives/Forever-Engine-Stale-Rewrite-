@@ -1,10 +1,9 @@
-package funkin.objects.notes;
+package funkin.objects.play;
 
 import forever.display.ForeverSprite;
 import funkin.components.Timings;
 import funkin.components.parsers.ForeverChartData.NoteData;
-import funkin.objects.notes.StrumLine;
-import haxe.ds.IntMap;
+import funkin.objects.play.StrumLine;
 
 /**
  * Note Types
@@ -82,10 +81,9 @@ class Note extends ForeverSprite {
 	public var isMine:Bool = false;
 
 	// NOTESKIN CONFIG STUFF //
-	var animations:IntMap<String> = new IntMap<String>();
+	var animations:Array<String> = new Array<String>();
 
-	// placeholder.
-	var sustain:FlxSprite;
+	var sustain:Sustain;
 
 	public function appendData(data:NoteData):Note {
 		setPosition(-5000, -5000);
@@ -97,9 +95,7 @@ class Note extends ForeverSprite {
 		hitbox = NoteType.getHitbox(data.type);
 		speedMult = 1.0;
 
-		if (isSustain)
-			sustain = new FlxSprite().makeSolid(10, 1, 0xFF9D9D9D);
-		playAnim(animations.get(0), true);
+		playAnim(animations[0], true);
 		return this;
 	}
 
@@ -107,6 +103,10 @@ class Note extends ForeverSprite {
 		if (parent != null && alive) {
 			if (mustFollowParent)
 				followParent();
+			if (sustain != null && sustain.visible && sustain.alive && sustain.exists) {
+				sustain.centerToObject(this, X);
+				sustain.y = this.y - 5;
+			}
 
 			if (!parent.cpuControl) {
 				final timings = Timings.timings.get("fnf");
@@ -119,7 +119,7 @@ class Note extends ForeverSprite {
 	}
 
 	override function draw():Void {
-		if (sustain != null && sustain.visible && sustain.exists)
+		if (sustain != null && sustain.visible && sustain.alive && sustain.exists)
 			sustain.draw();
 		super.draw(); // draw behind the note for now
 	}
@@ -137,11 +137,6 @@ class Note extends ForeverSprite {
 
 		final time:Float = Conductor.time - data.time;
 		final distance:Float = time * (400.0 * Math.abs(speed)) / 0.7; // this needs to be 400.0 since time is second-based
-
-		if (isSustain && sustain != null) {
-			sustain.scale.y = (data.holdLen * 0.5) * Math.abs(speed / 0.7);
-			sustain.centerToObject(this, XY);
-		}
 
 		x = strum.x;
 		y = strum.y + distance * scrollDifference;
@@ -168,8 +163,6 @@ class Note extends ForeverSprite {
 	}
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
-	// do gay ass sustain nae nae shit here later
-	// because I think tiled sprites will need it
 	@:noCompletion inline function set_speed(v:Float):Float
 		return speed = Tools.quantize(v, 1000); // roundDecimal(v, 3)
 
@@ -180,24 +173,32 @@ class Note extends ForeverSprite {
 		return data?.dir ?? 0;
 
 	@:noCompletion inline function get_type():String
-		return data?.type ?? "default";
+		return data?.type ?? "normal";
 
 	@:noCompletion function set_type(v:String):String {
 		switch (v) {
 			// case "your-note-type": // in case you wanna hardcode instead
 			default:
-				frames = AssetHelper.getAsset('images/notes/${NoteConfig.config.notes.image}', ATLAS_SPARROW);
-				if (NoteConfig.config.notes.anims.length > 0) {
-					for (i in NoteConfig.config.notes.anims) {
-						var dir:String = Tools.NOTE_DIRECTIONS[direction ?? 0];
-						var color:String = Tools.NOTE_COLORS[direction ?? 0];
-						addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
-						if (i.type != null)
-							animations.set(i.type, i.name);
-					}
+				var image:String = parent.noteSkin.notes.image;
+				frames = AssetHelper.getAsset('images/notes/${image}', ATLAS_SPARROW);
+
+				for (i in parent.noteSkin.notes.animations) {
+					var dir:String = Tools.NOTE_DIRECTIONS[direction ?? 0];
+					var color:String = Tools.NOTE_COLORS[direction ?? 0];
+					addAtlasAnim(i.name, i.prefix.replace("${dir}", dir).replace("${color}", color), i.fps, i.looped);
+					animations.push(i.name);
 				}
-				scale.set(NoteConfig.config.notes.size, NoteConfig.config.notes.size);
+				this.antialiasing = !(parent.noteSkin.name == "pixel" || parent.noteSkin.name.endsWith("-pixel"));
+				scale.set(parent.noteSkin.notes.size, parent.noteSkin.notes.size);
 				updateHitbox();
+
+				/*
+				if (isSustain) {
+					final sLen:Single = cast((data.holdLen * 0.5) * Math.abs(speed) / (Math.abs(scale.y)), Single);
+					final img:String = parent.noteSkin.notes.sustain ?? parent.noteSkin.notes.image;
+					sustain = new Sustain('notes/${img}', animations[1], sLen, parent.noteSkin.notes.size);
+				}
+				*/
 		}
 
 		return v;

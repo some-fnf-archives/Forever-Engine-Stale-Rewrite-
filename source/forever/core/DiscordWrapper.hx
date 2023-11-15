@@ -1,13 +1,13 @@
 package forever.core;
 
-#if DISCORD
 import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types.DiscordEventHandlers;
 import hxdiscord_rpc.Types.DiscordRichPresence;
 import hxdiscord_rpc.Types.DiscordUser;
 
 class DiscordWrapper {
-	public static var username:String = null;
+	public static var username:String;
+	public static var presence:DiscordRichPresence;
 
 	@:allow(Init)
 	/**
@@ -29,12 +29,12 @@ class DiscordWrapper {
 				Discord.UpdateConnection();
 				#end
 				Discord.RunCallbacks();
-
 				// Wait 2 seconds until the next loop...
 				Sys.sleep(2);
 			}
 		});
 
+		presence = DiscordRichPresence.create();
 		openfl.Lib.application.onExit.add((exitCode:Int) -> Discord.Shutdown());
 	}
 
@@ -49,7 +49,6 @@ class DiscordWrapper {
 	**/
 	public static function updatePresence(state:String = "", details:String = "", ?largeImage:String = "forevermic", ?largeText:String = null,
 			?smallImage:String = "", ?smallText:String = ""):Void {
-		final presence:DiscordRichPresence = DiscordRichPresence.create();
 		presence.details = details;
 		presence.state = state;
 
@@ -61,6 +60,28 @@ class DiscordWrapper {
 		presence.smallImageKey = smallImage;
 		presence.smallImageText = smallText;
 
+		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(presence));
+	}
+
+	/**
+	 * Updates your Discord Rich Presence details.
+	**/
+	public static function updatePresenceDetails(state:String = "", details:String = ""):Void {
+		presence.state = state;
+		presence.details = details;
+		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(presence));
+	}
+
+	/**
+	 * Updates your Discord Rich Presence icons.
+	**/
+	public static function updatePresenceIcons(largeImage:String = "forevermic", ?smallImage:String = "", ?largeText:String = null, ?smallText:String = ""):Void {
+		if (largeText == null)
+			largeText = 'v${Main.version}';
+		presence.largeImageKey = largeImage;
+		presence.largeImageText = largeText;
+		presence.smallImageKey = smallImage;
+		presence.smallImageText = smallText;
 		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(presence));
 	}
 
@@ -82,18 +103,3 @@ class DiscordWrapper {
 		trace('[DiscordWrapper:_onErr] An Error has occurred, message: ${message}! - Error Code: ${errorCode}');
 	}
 }
-#else
-
-/**
- * This Platform cannot use Discord Rich Presence.
- * thus, this is a stub class.
-**/
-class DiscordWrapper {
-	@:allow(Init)
-	function new(clientID:String):Void {}
-
-	@:dox(hide)
-	public static function updatePresence(state:String = "", details:String = "", ?largeImage:String = "forevermic", ?largeText:String = null,
-		?smallImage:String = "", ?smallText:String = ""):Void {}
-}
-#end
