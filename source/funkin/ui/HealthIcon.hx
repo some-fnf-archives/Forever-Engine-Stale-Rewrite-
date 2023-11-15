@@ -68,7 +68,7 @@ class HealthIcon extends ChildSprite {
 
 		if (autoPosition == true) {
 			var iconOffset:Int = 25;
-			if (!isPlayer) iconOffset = cast(width - iconOffset, Int);
+			if (!isPlayer) iconOffset = cast(width - iconOffset);
 			x = (hp.x + (hp.bar.width * (1 - hp.bar.percent / 100))) - iconOffset;
 		}
 

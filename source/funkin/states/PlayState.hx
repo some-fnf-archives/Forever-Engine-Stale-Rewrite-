@@ -155,7 +155,6 @@ class PlayState extends FNFState {
 		Conductor.bpm = Chart.current.songInfo.beatsPerMinute;
 
 		for (lane in playField.strumLines) {
-			lane.changeStrumSpeed(Chart.current.gameInfo.noteSpeed);
 			lane.onNoteHit.add(hitBehavior);
 			lane.onNoteMiss.add(missBehavior);
 		}

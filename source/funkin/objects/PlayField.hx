@@ -43,6 +43,19 @@ class PlayField extends FlxGroup {
 	public function new():Void {
 		super();
 
+		final strumY:Float = Settings.downScroll ? FlxG.height - 150 : 50;
+		final speed:Float = Chart.current.gameInfo.noteSpeed;
+
+		add(enmStrums = new StrumLine(this, 100, strumY, speed, true));
+		add(plrStrums = new StrumLine(this, FlxG.width - 550, strumY, speed, false));
+
+		if (Settings.centerStrums) {
+			enmStrums.visible = false;
+			plrStrums.x = (FlxG.width - plrStrums.width) * 0.5;
+		}
+
+		add(noteGroup = new FlxTypedSpriteGroup<Note>());
+
 		final hbY:Float = Settings.downScroll ? FlxG.height * 0.1 : FlxG.height * 0.875;
 
 		add(healthBar = new HealthBar(0, hbY));
@@ -64,18 +77,6 @@ class PlayField extends FlxGroup {
 		add(scoreBar);
 
 		updateScore();
-
-		final strumY:Float = Settings.downScroll ? FlxG.height - 150 : 50;
-
-		add(enmStrums = new StrumLine(this, 100, strumY, "default", true));
-		add(plrStrums = new StrumLine(this, FlxG.width - 550, strumY, "default", false));
-
-		if (Settings.centerStrums) {
-			enmStrums.visible = false;
-			plrStrums.x = (FlxG.width - plrStrums.width) * 0.5;
-		}
-
-		add(noteGroup = new FlxTypedSpriteGroup<Note>());
 
 		noteList = new Vector<NoteData>(Chart.current.notes.length);
 

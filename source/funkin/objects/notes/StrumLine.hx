@@ -96,6 +96,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 	public var skin:String;
 	public var playField:PlayField;
 	public var cpuControl:Bool;
+	public var globalSpeed(default, set):Float = 1.0;
 
 	// READ ONLY VARIABLES
 	public var size(get, never):Float;
@@ -107,12 +108,11 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 
 	public var controls:Array<String> = ["left", "down", "up", "right"];
 
-	public function new(playField:PlayField, x:Float, y:Float, skin:String = "default", cpuControl:Bool = true):Void {
+	public function new(playField:PlayField, x:Float, y:Float, newSpeed:Float = 1.0, skin:String = "default", cpuControl:Bool = true):Void {
 		super();
 
-		this.skin = skin;
-		this.cpuControl = cpuControl;
 		this.playField = playField;
+		this.cpuControl = cpuControl;
 
 		onNoteHit = new FlxTypedSignal<Note->Void>();
 		onNoteMiss = new FlxTypedSignal<(Int, Note) -> Void>();
@@ -122,7 +122,9 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 			FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_UP, inputKeyRelease);
 		}
 
-		regenStrums(x, y);
+		regenStrums(skin, false);
+		// DON'T CALL THIS WHILE NO STRUMS EXIST, SINCE THEY NEED TO EXIST SO THEIR SPEED CAN BE SET
+		setupStrumline(x, y, newSpeed);
 	}
 
 	override function update(elapsed:Float):Void {
@@ -142,9 +144,14 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		super.destroy();
 	}
 
-	public function regenStrums(x:Float = 0, y:Float = 0, skipStrumTween:Bool = false):Void {
-		this.x = x;
-		this.y = y;
+	public function setupStrumline(?x:Null<Float>, ?y:Null<Float>, ?newSpeed:Null<Float>):Void {
+		if (x != null) this.x = x;
+		if (y != null) this.y = y;
+		if (newSpeed != null) this.globalSpeed = newSpeed;
+	}
+
+	public function regenStrums(skin:String = "default", skipStrumTween:Bool = false):Void {
+		this.skin = skin;
 
 		while (members.length > 0)
 			members.pop().destroy();
@@ -176,8 +183,10 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 				if (Std.isOfType(members[i], Strum))
 					members[i].speed = newSpeed;
 		}
-		else
+		else {
 			members[strumID].speed = newSpeed;
+			globalSpeed = newSpeed;
+		}
 	}
 
 	public function inputKeyPress(event:KeyboardEvent):Void {
@@ -262,4 +271,9 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 
 	@:dox(hide) @:noCompletion inline function get_fieldWidth():Float
 		return spacing * size;
+
+	@:dox(hide) @:noCompletion function set_globalSpeed(v:Float):Float {
+		changeStrumSpeed(v);
+		return globalSpeed = v;
+	}
 }
