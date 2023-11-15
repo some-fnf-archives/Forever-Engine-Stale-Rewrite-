@@ -161,6 +161,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 			.resetProps(image, noteSkin.splashes.animations, //
 				noteSkin.splashes.size, note.dir);
 		// *
+		noteSplash.antialiasing = members[note.dir].antialiasing;
 		noteSplash.alpha = preload ? 0.0000001 : noteSkin.splashes.alpha;
 		noteSplash.centerToObject(members[note.dir], XY);
 		noteSplash.pop(force);
