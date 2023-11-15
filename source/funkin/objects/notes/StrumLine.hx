@@ -82,7 +82,7 @@ class Strum extends ForeverSprite {
 
 		splash.revive();
 		splash.alpha = cache ? 0.000001 : NoteConfig.config.splashes.alpha;
-		splash.playAnim('${FlxG.random.int(1, 2)}', true);
+		splash.playAnim('${FlxG.random.int(1, NoteConfig.config.splashes.anims.length - 1)}', true);
 	}
 
 	override function draw():Void {
