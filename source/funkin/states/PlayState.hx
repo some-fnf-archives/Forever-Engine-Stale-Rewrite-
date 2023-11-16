@@ -97,8 +97,19 @@ class PlayState extends FNFState {
 		// -- PREPARE AUDIO -- //
 		vocals = new FlxSound();
 
-		var instTrack = AssetHelper.getAsset('songs/${songMeta.folder}/audio/Inst', SOUND);
-		var vocalTrack = AssetHelper.getAsset('songs/${songMeta.folder}/audio/Voices', SOUND);
+		var instTrack = null;
+		var vocalTrack = null;
+
+		// -- FIXES FOR LINUX -- //
+
+		var audioFolder:String = 'songs/${songMeta.folder}/audio';
+		for (i in Tools.listFiles(AssetHelper.getPath(audioFolder))) {
+			var fileName:String = i.toLowerCase().replace("." + haxe.io.Path.extension(i), "");
+			if (fileName == "inst")
+				instTrack = AssetHelper.getAsset('${audioFolder}/${i}', SOUND);
+			if (fileName == "vocals" || fileName == "voices")
+				vocalTrack = AssetHelper.getAsset('${audioFolder}/${i}', SOUND);
+		}
 
 		if (instTrack != null) {
 			inst = new FlxSound().loadEmbedded(instTrack);
@@ -616,18 +627,13 @@ class PlayState extends FNFState {
 				FlxTween.tween(hud, {alpha: 1.0}, (60.0 / Conductor.bpm) * 2.0, {ease: FlxEase.sineIn});
 		}
 
-		var sprCount:ForeverSprite = null;
 		final sounds:Array<String> = ['intro3', 'intro2', 'intro1', 'introGo'];
+		final crochet:Float = (60.0 / Conductor.bpm);
 
-		var countdownTimer:FlxTimer = new FlxTimer().start(60.0 / Conductor.bpm, function(tmr:FlxTimer) {
-			if (countdownPosition > sounds.length - 1) {
-				sprCount.destroy();
-				return;
-			}
-
+		var countdownTimer:FlxTimer = new FlxTimer().start(crochet, function(tmr:FlxTimer) {
 			doDancersDance(tmr.loopsLeft);
 
-			sprCount = getCountdownSprite(countdownPosition);
+			var sprCount = getCountdownSprite(countdownPosition);
 			if (sprCount != null) {
 				sprCount.screenCenter();
 				sprCount.timeScale = Conductor.rate;
@@ -640,10 +646,10 @@ class PlayState extends FNFState {
 				add(sprCount);
 
 				sprCount.stopTweens();
-				sprCount.tween({alpha: 0}, (60.0 / Conductor.bpm) * 0.0005, {
+				sprCount.tween({alpha: 0, y: sprCount.y + 100}, crochet, {
 					ease: FlxEase.sineOut,
 					onComplete: function(t) {
-						sprCount.kill();
+						sprCount.destroy();
 					}
 				});
 			}

@@ -159,11 +159,36 @@ class Tools {
 		assetsLibrary.sort(function(a:String, b:String):Int {
 			a = a.toUpperCase();
 			b = b.toUpperCase();
-
 			return (a < b ? -1 : a > b ? 1 : 0);
 		});
 		#end
 		return assetsLibrary;
+	}
+	
+	/**
+	 * Lists every file in the specified path
+	 * @param path 				the path to get files from
+	 * @return Array<String>
+	**/
+	public static inline function listFiles(path:String):Array<String> {
+		var fileLibrary:Array<String> = [];
+		#if sys
+		fileLibrary = sys.FileSystem.readDirectory(path).filter(function(f:String) return haxe.io.Path.extension(f) != "");
+		#else
+		for (file in OpenFLAssets.list().filter(list -> list.contains('${path}'))) {
+			var f:String = file.replace('${path}/', '');
+			if (f.contains('/'))
+				f = f.replace(daFolder.substring(f.indexOf('/'), f.length), ''); // fancy
+			if (!fileLibrary.contains(f) && haxe.io.Path.extension(f) != "")
+				fileLibrary.push(f);
+		}
+		fileLibrary.sort(function(a:String, b:String):Int {
+			a = a.toUpperCase();
+			b = b.toUpperCase();
+			return (a < b ? -1 : a > b ? 1 : 0);
+		});
+		#end
+		return fileLibrary;
 	}
 
 	#if !macro // prevent flixel classes from printing errors to the console (in haxe 4.3+)
