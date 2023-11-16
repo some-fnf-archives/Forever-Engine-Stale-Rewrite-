@@ -4,6 +4,13 @@
 	<!-- [ Forever Engine Custom Nodes ] -->
 	<!-- _______________________________ -->
 
+	<section if="haxe_ver < 4.3">
+		<prebuild command='echo It is hightly recommended to use Forever Engine with Haxe 4.3 or later' />
+		<prebuild command='echo Forever does not *properly* function in older versions, and most times it will not compile' />
+		<prebuild command='echo Please consider upgrading to the latest version, Thank you for your patience.' />
+		<prebuild command='echo -CrowPlexus' />
+	</section>
+
 	<define name="DISCORD" if="cpp" />
 	<define name="MODS" if="desktop" unless="hl || neko" />
 	<define name="CRASH_HANDLER" />
