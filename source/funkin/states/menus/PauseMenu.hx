@@ -133,7 +133,7 @@ class PauseMenu extends FlxSubState {
 		forEachOfType(ForeverText, function(text:ForeverText):Void {
 			FlxTween.tween(text, {alpha: 0}, 0.05, {ease: FlxEase.expoIn});
 		});
-\
+
 		FlxTween.tween(bg, {alpha: 0}, 0.5, {
 			ease: FlxEase.expoIn,
 			onComplete: function(twn:FlxTween) FlxG.state.closeSubState()
