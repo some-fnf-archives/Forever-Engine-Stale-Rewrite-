@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<!-- _______________________________ -->
 	<!-- [ Forever Engine Custom Nodes ] -->
-	<!-- _______________________________ -->
 
 	<section if="haxe_ver < 4.3">
 		<prebuild command='echo It is hightly recommended to use Forever Engine with Haxe 4.3 or later' />
@@ -28,9 +26,7 @@
 	<!-- to set the icon ourselves when the game starts -->
 	<assets path="art/iconOG.png" rename="icon.png" if="linux" />
 
-	<!-- ________________________ -->
 	<!-- [ Application Settings ] -->
-	<!-- ________________________ -->
 
 	<app title="Friday Night Funkin' (Forever)" file="Funkin-Forever" company="CrowPlexus" />
 	<app main="Main" package="com.crowplexus.funkinforever" packageName="com.crowplexus.funkinforever" />
@@ -42,9 +38,7 @@
 	<!--Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2-->
 	<set name="SWF_VERSION" value="11.8" />
 
-	<!-- ___________________ -->
 	<!-- [ Window Settings ] -->
-	<!-- ___________________ -->
 
 	<!--These window settings apply to all targets-->
 	<window width="1280" height="720" fps="" background="#000000" hardware="true" vsync="false" allow-high-dpi="true" />
@@ -76,9 +70,7 @@
 	<!-- <assets path="mods" rename="mods" if="MODS" /> -->
 	<assets path="locale" rename="assets/data/locale" if="TRANSLATIONS" />
 
-	<!-- _____________ -->
 	<!-- [ Libraries ] -->
-	<!-- _____________ -->
 
 	<haxelib name="flixel-arwen" />
 	<haxelib name="flixel-addons-arwen" />
@@ -95,9 +87,7 @@
 	<!-- <haxelib name="tjson" /> -->
 	<haxelib name="yaml" />
 
-	<!-- _______________ -->
 	<!-- [ Haxedefines ] -->
-	<!-- _______________ -->
 
 	<!--Optimise inputs, be careful you will get null errors if you don't use conditionals in your game-->
 	<haxedef name="FLX_NO_MOUSE" if="mobile" />

@@ -47,13 +47,15 @@ class FreeplayMenu extends BaseMenuState {
 
 		for (i in localSongData) {
 			final song:Array<String> = i.trim().split("|");
-			songs.push({
+			final song:FreeplaySong = {
 				name: song[0].trim(),
 				folder: song[1].trim(),
 				character: song[2].trim(),
 				color: FlxColor.fromString(song[3]?.trim()) ?? 0xFF606060, // penis
 				difficulties: song[4] != null ? Tools.removeSpaces(song[4]).split(",") : Difficulty.getDefault()
-			});
+			}
+			if (songs.contains(song)) continue;
+			songs.push(song);
 		};
 
 		add(bg = new ForeverSprite(0, 0, "menus/menuDesat", {color: 0xFF606060}));

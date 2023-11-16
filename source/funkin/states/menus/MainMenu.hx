@@ -24,7 +24,7 @@ class MainMenu extends BaseMenuState {
 	public var camLead:FlxObject;
 
 	var options:Array<MainMenuOption> = [
-		{name: "story", callback: function():Void FlxG.switchState(new FreeplayMenu())},
+		{name: "story", callback: function():Void FlxG.switchState(new StoryMenu())},
 		{name: "freeplay", callback: function():Void FlxG.switchState(new FreeplayMenu())},
 		{name: "options", callback: function():Void FlxG.switchState(new OptionsMenu())}
 	];

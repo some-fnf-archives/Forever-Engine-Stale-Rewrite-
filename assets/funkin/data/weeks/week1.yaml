@@ -1,0 +1,10 @@
+songs:
+  - {name: "Bopeebo", folder: "bopeebo", character: "dad", color: "#606060"}
+  - {name: "Fresh", folder: "fresh", character: "dad", color: "#606060"}
+  - {name: "Dad Battle", folder: "dadbattle", character: "dad", color: "#606060"}
+
+tagline: "My Week"
+image: "week1"
+characters: ["dad", "bf", "gf"]
+difficulties: ["easy", "normal", "hard"]
+startsLocked: false
