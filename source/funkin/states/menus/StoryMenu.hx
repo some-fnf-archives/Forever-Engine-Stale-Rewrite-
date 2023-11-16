@@ -13,6 +13,9 @@ class StoryMenu extends BaseMenuState {
 	override function create() {
 		super.create();
 
+		this.canChangeAlternative = true;
+		this.canChangeMods        = true;
+
 		// -- USER INTERFACE -- //
 
 		final yellowBG:FlxSprite = new FlxSprite(0, 50).makeSolid(FlxG.width, FlxG.height - 100, FlxColor.fromRGB(255, 226, 127));
@@ -33,10 +36,15 @@ class StoryMenu extends BaseMenuState {
 		if (Controls.BACK)
 			FlxG.switchState(new MainMenu());
 	}
-}
 
-// faz um negocio de selecionar week aqui?
-// tipo updateSelection sei la 
+	override function updateSelection(newSel:Int = 0):Void {
+		super.updateSelection(newSel);
+	}
+
+	override function updateSelectionAlt(newSelAlt:Int = 0):Void {
+		super.updateSelectionAlt(newSelAlt);
+	}
+}
 
 @:structInit class StoryWeek {
 	public var tagline:String = "My Week";
