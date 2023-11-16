@@ -84,7 +84,7 @@ class HealthIcon extends ChildSprite {
 
 	public dynamic function updateFrame(health:Float):Void {
 		for (percent => frame in healthSteps)
-			if (health >= percent)
+			if (health <= percent && animation.curAnim.frames[frame] != -1)
 				animation.curAnim.curFrame = frame;
 	}
 

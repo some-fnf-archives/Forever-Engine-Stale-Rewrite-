@@ -51,17 +51,17 @@ class ForeverConsole extends Sprite {
 
 	/**
 	 * Displays the Console on-screen
-	 * @param forceHide 		true means it will force hide it no matter if its already hidden or not,
+	 * @param force 			true means it will force hide it no matter if its already hidden or not,
 	 * 							false means it will force show it,
 	 * 							null means it won't force at all.
-	 */
-	function showOrHide(forceHide:Bool = null):Void {
+	**/
+	function showOrHide(force:Bool = null):Void {
 		final beingShown:Bool = this.x == 0;
 		final outside:Float = _stage.stageWidth;
 		visible = beingShown;
 
 		if (showTween != null) showTween.cancel();
-		showTween = FlxTween.num(this.x, (beingShown || forceHide == false) ? 0 : outside, 0.5, {ease: FlxEase.expoOut});
+		showTween = FlxTween.num(this.x, (beingShown || force == false) ? 0 : outside, 0.5, {ease: FlxEase.expoOut});
 	}
 
 	override function __enterFrame(deltaTime:Int) {

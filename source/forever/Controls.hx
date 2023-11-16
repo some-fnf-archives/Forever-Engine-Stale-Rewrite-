@@ -82,7 +82,7 @@ class BaseControls {
 		"accept" => [ENTER, SPACE],
 		"back" => [BACKSPACE, ESCAPE],
 		"pause" => [ENTER, ESCAPE],
-		"reset" => [R],
+		"reset" => [R, NONE],
 		#if MODS
 		"switch mods" => [SLASH, CONTROL],
 		#end
@@ -90,6 +90,16 @@ class BaseControls {
 
 	/** Your own Custom Controls. **/
 	public var myControls:Map<String, Array<FlxKey>> = [];
+
+	/**
+	 * Ordered Array with the order of which the control options should appear in the menu.
+	**/
+	public var keyOrder:Array<String> = [
+        "left", "down", "up", "right",
+		"ui_left", "ui_down", "ui_up", "ui_right",
+		"accept", "back", "pause", "reset",
+		#if MODS "switch mods", #end
+    ];
 
 	/** Indicator set if you are playing with a controller. **/
 	public var gamepadMode:Bool = false;

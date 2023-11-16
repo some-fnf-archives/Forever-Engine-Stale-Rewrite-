@@ -1,4 +1,4 @@
-package funkin.subStates;
+package funkin.states.options;
 
 import flixel.FlxSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;

@@ -1,14 +1,13 @@
 package funkin.states.menus;
 
-import flixel.FlxBasic;
-import flixel.FlxObject;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import forever.tools.ForeverOption;
 import forever.display.ForeverSprite;
 import forever.display.ForeverText;
-import funkin.ui.Alphabet;
+import forever.tools.ForeverOption;
+import funkin.states.PlayState.PlaySong;
 import funkin.states.base.BaseMenuState;
-import funkin.subStates.NoteConfigurator;
+import funkin.states.options.*;
+import funkin.ui.Alphabet;
 import haxe.ds.StringMap;
 
 class OptionsMenu extends BaseMenuState {
@@ -24,6 +23,7 @@ class OptionsMenu extends BaseMenuState {
 			new ForeverOption("General", CATEGORY),
 			new ForeverOption("Gameplay", CATEGORY),
 			new ForeverOption("Visuals", CATEGORY),
+			// new ForeverOption("Controls", NONE),
 			new ForeverOption("Exit", NONE), // this is also a dummy type
 		],
 		"general" => [
@@ -37,9 +37,10 @@ class OptionsMenu extends BaseMenuState {
 			new ForeverOption("Downscroll", "downScroll"),
 			new ForeverOption("Centered Receptors", "centerStrums"),
 			new ForeverOption("Ghost Tapping", "ghostTapping"),
+			new ForeverOption("Reset Button", "resetButton"),
 		],
 		"visuals" => [
-			new ForeverOption("Note Skin >", CATEGORY),
+			// new ForeverOption("Note Skin >", CATEGORY),
 			new ForeverOption("Stage Dim", "stageDim", NUMBER(0, 100, 1)),
 			new ForeverOption("Fixed Judgements", "fixedJudgements"),
 			new ForeverOption("Clip Style", "sustainLayer", CHOICE(["stepmania", "fnf"])),
@@ -49,6 +50,13 @@ class OptionsMenu extends BaseMenuState {
 	var curCateg:String = "main";
 	var categoriesAccessed:Array<String> = [];
 	var infoText:ForeverText;
+
+	var gameplayMusic:PlaySong = null;
+
+	public function new(gameplayMusic:PlaySong = null):Void {
+		super("OptionsMenu");
+		this.gameplayMusic = gameplayMusic;
+	}
 
 	override function create():Void {
 		super.create();
@@ -80,9 +88,14 @@ class OptionsMenu extends BaseMenuState {
 		onAccept = function():Void {
 			var option:ForeverOption = optionsListed.get(curCateg)[curSel];
 			switch (option.name.toLowerCase()) {
+				/*
 				case "note skin >":
 					persistentUpdate = false;
-					openSubState(new NoteConfigurator());
+					openSubState(new NoteSettingsMenu());
+				case "controls":
+					persistentUpdate = false;
+					openSubState(new ControlsMenu());
+				*/
 				case "exit":
 					FlxG.sound.play(AssetHelper.getAsset('audio/sfx/cancelMenu', SOUND));
 					canChangeSelection = false;
@@ -95,6 +108,7 @@ class OptionsMenu extends BaseMenuState {
 				case CATEGORY:
 					reloadCategory(option.name);
 				default:
+					if (option.type == NONE) return;
 					FlxG.sound.play(AssetHelper.getAsset('audio/sfx/confirmMenu', SOUND));
 
 					option.changeValue();
@@ -256,12 +270,11 @@ class OptionsMenu extends BaseMenuState {
 
 	function exitMenu():Void {
 		Settings.flush();
-
-		/**
-			if (fromGameplay)
-				FlxG.switchState(new funkin.states.PlayState());
-			else
-		**/
-		FlxG.switchState(new MainMenu());
+		if (gameplayMusic != null) {
+			if (funkin.states.menus.PauseMenu.pauseMusic != null)
+				funkin.states.menus.PauseMenu.pauseMusic.stop();
+			FlxG.switchState(new funkin.states.PlayState(gameplayMusic));
+		}
+		else FlxG.switchState(new MainMenu());
 	}
 }

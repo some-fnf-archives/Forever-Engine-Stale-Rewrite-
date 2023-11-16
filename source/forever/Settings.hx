@@ -42,6 +42,9 @@ class Settings {
 	/** Defines the limit for your frames per second. **/
 	public static var framerateCap:Int = 60;
 
+	/** Whether to enable the reset (Quick Game Over) button during gameplay. **/
+	public static var resetButton:Bool = true;
+
 	// -- VISUALS -- //
 
 	/** How should judgemnt animations be displayed when popping up? **/

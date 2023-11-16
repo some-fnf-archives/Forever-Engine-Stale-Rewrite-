@@ -44,7 +44,8 @@ class Init extends FlxState {
 		final cacheSounds:StringMap<openfl.media.Sound> = [
 			"scrollMenu" => AssetHelper.getSound("audio/sfx/scrollMenu", "scrollMenu"),
 			"cancelMenu" => AssetHelper.getSound("audio/sfx/cancelMenu", "cancelMenu"),
-			"confirmMenu" => AssetHelper.getSound("audio/sfx/confirmMenu", "confirmMenu")
+			"confirmMenu" => AssetHelper.getSound("audio/sfx/confirmMenu", "confirmMenu"),
+			"breakfast" => AssetHelper.getSound("audio/bgm/breakfast", "breakfast"),
 		];
 
 		for (k => v in cacheGraphics) AssetHelper.excludedGraphics.set(k, v);

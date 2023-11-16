@@ -20,9 +20,7 @@ import funkin.objects.play.Note;
 import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
-import funkin.subStates.PauseMenu;
 import funkin.ui.ComboSprite;
-
 
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
@@ -204,6 +202,10 @@ class PlayState extends FNFState {
 
 			processEvent(curEvent.event);
 			eventIndex += 1;
+		}
+
+		if (Controls.RESET && Settings.resetButton) {
+			// die.
 		}
 
 		#if FE_DEBUG
