@@ -38,10 +38,10 @@ class PauseMenu extends FlxSubState {
 			PauseButton('Restart Song', function():Void {
 				closing = true;
 				if (pauseMusic != null) pauseMusic.stop();
-				FlxG.switchState(new PlayState(PlayState.current.currentSong));
+				FlxG.switchState(new PlayState(PlayState.current.songMeta));
 			}),
 			PauseButton('Change Options', function():Void {
-				FlxG.switchState(new OptionsMenu(PlayState.current.currentSong));
+				FlxG.switchState(new OptionsMenu(PlayState.current.songMeta));
 			}),
 			PauseButton('Exit to menu', function():Void {
 				closing = true;
@@ -65,8 +65,8 @@ class PauseMenu extends FlxSubState {
 		});
 
 		final pauseInfoArray:Array<String> = [ // overengineering but i don't care. -Crow
-			'Song: ${PlayState.current.currentSong.display}',
-			'Difficulty: ${PlayState.current.currentSong.difficulty.toUpperCase()}',
+			'Song: ${PlayState.current.songMeta.display}',
+			'Difficulty: ${PlayState.current.songMeta.difficulty.toUpperCase()}',
 			'Time: ${(FlxG.sound.music.time / 1000.0).formatTime()} / ${(FlxG.sound.music.length / 1000.0).formatTime()}'
 			// 'Blueballed: ${PlayState.current.deathCount}'
 		];

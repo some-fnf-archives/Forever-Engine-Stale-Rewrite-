@@ -43,7 +43,7 @@ typedef PlaySong = {
 class PlayState extends FNFState {
 	public static var current:PlayState;
 
-	public var currentSong:PlaySong = {display: "Test", folder: "test", difficulty: "normal"};
+	public var songMeta:PlaySong = {display: "Test", folder: "test", difficulty: "normal"};
 	public var playMode:Int = FREEPLAY;
 	public var songState:Int = STOPPED;
 
@@ -73,7 +73,7 @@ class PlayState extends FNFState {
 	**/
 	public function new(songInfo:PlaySong):Void {
 		super();
-		this.currentSong = songInfo;
+		this.songMeta = songInfo;
 	}
 
 	override function create():Void {
@@ -89,7 +89,7 @@ class PlayState extends FNFState {
 
 		scriptPack = initAllScriptsAt([
 			AssetHelper.getPath("data/scripts/global"),
-			AssetHelper.getPath('songs/${currentSong.folder}/scripts'),
+			AssetHelper.getPath('songs/${songMeta.folder}/scripts'),
 		]);
 		setPackVar('game', this);
 		callFunPack("create", []);
@@ -97,8 +97,8 @@ class PlayState extends FNFState {
 		// -- PREPARE AUDIO -- //
 		vocals = new FlxSound();
 
-		var instTrack = AssetHelper.getAsset('songs/${currentSong.folder}/audio/Inst', SOUND);
-		var vocalTrack = AssetHelper.getAsset('songs/${currentSong.folder}/audio/Voices', SOUND);
+		var instTrack = AssetHelper.getAsset('songs/${songMeta.folder}/audio/Inst', SOUND);
+		var vocalTrack = AssetHelper.getAsset('songs/${songMeta.folder}/audio/Voices', SOUND);
 
 		if (instTrack != null) {
 			inst = new FlxSound().loadEmbedded(instTrack);
@@ -164,7 +164,7 @@ class PlayState extends FNFState {
 			playField.plrStrums.createSplash({time: 0.0, dir: 0, type: "default"}, true, true);
 
 		#if DISCORD
-		DiscordRPC.updatePresenceDetails('Playing: ${currentSong.display}', '');
+		DiscordRPC.updatePresenceDetails('Playing: ${songMeta.display}', '');
 		#end
 
 		// cache combo and stuff
@@ -217,7 +217,7 @@ class PlayState extends FNFState {
 
 		#if sys
 		if (FlxG.keys.justPressed.SEVEN)
-			sys.io.File.saveContent('./${currentSong.folder}-${currentSong.difficulty}.json', ChartLoader.exportChart(Chart.current));
+			sys.io.File.saveContent('./${songMeta.folder}-${songMeta.difficulty}.json', ChartLoader.exportChart(Chart.current));
 		#end
 		callFunPack("postUpdate", [elapsed]);
 	}
@@ -490,7 +490,7 @@ class PlayState extends FNFState {
 			vocals.resume();
 		songState = PLAYING;
 		#if DISCORD
-		DiscordRPC.updatePresenceDetails('${currentSong.display}', '${playField.scoreBar.text}');
+		DiscordRPC.updatePresenceDetails('${songMeta.display}', '${playField.scoreBar.text}');
 		#end
 		pauseTweens(false);
 		super.closeSubState();
@@ -539,7 +539,7 @@ class PlayState extends FNFState {
 
 	function openChartEditor():Void {
 		#if DISCORD
-		DiscordRPC.updatePresenceDetails('Charting: ${currentSong.display}');
+		DiscordRPC.updatePresenceDetails('Charting: ${songMeta.display}');
 		#end
 		final charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
@@ -551,7 +551,7 @@ class PlayState extends FNFState {
 	function openPauseMenu():Void {
 		pauseTweens(true);
 		#if DISCORD
-		DiscordRPC.updatePresenceDetails('${currentSong.display} [PAUSED]', '${playField.scoreBar.text}');
+		DiscordRPC.updatePresenceDetails('${songMeta.display} [PAUSED]', '${playField.scoreBar.text}');
 		#end
 		final pause:PauseMenu = new PauseMenu();
 		pause.camera = altCamera;
