@@ -10,6 +10,9 @@ class StoryMenu extends BaseMenuState {
 	var weekName:ForeverText;
 	var weekScore:ForeverText;
 
+	var arrowLeft:FlxSprite; // pera como q pega xml mesmo? nao lembro
+	var arrowRight:FlxSprite;
+
 	override function create() {
 		super.create();
 
@@ -21,11 +24,29 @@ class StoryMenu extends BaseMenuState {
 		final yellowBG:FlxSprite = new FlxSprite(0, 50).makeSolid(FlxG.width, FlxG.height - 100, FlxColor.fromRGB(255, 226, 127));
 
 		weekScore = new ForeverText(10, 5, FlxG.width * 0.5, "WEEK SCORE: 1000000", 40);
-		weekName = new ForeverText((FlxG.width/2) - 10, 5, FlxG.width/2, "WEEK NAME", 40);  // agr sim o calculo ta certo :D 
+		weekName = new ForeverText((FlxG.width/2) - 10, 5, FlxG.width/2, "WEEK NAME", 40);
 		weekScore.borderSize = weekName.borderSize = 0.0;
 		weekName.alignment = RIGHT;
 
+		var arrowUI = AssetHelper.getAsset("menus/story/arrows", ATLAS_SPARROW);
+
+		arrowLeft = new FlxSprite(FlxG.width/2 - 175, 3.2 * FlxG.height/4); // desculpa crow por ser muito nerdola com multiplicação e divisão :(
+		arrowLeft.frames = arrowUI;
+		arrowLeft.animation.addByPrefix("idle", "arrow push left");
+		arrowLeft.animation.addByPrefix("pressed", "arrow left");
+		arrowLeft.animation.play("idle");
+
+		arrowRight = new FlxSprite(FlxG.width/2 + 175, 3.2 * FlxG.height/4);
+		arrowRight.frames = arrowUI;
+		arrowRight.animation.addByPrefix("idle", "arrow push right");
+		arrowRight.animation.addByPrefix("pressed", "arrow right");
+		arrowRight.animation.play("idle");
+
 		add(yellowBG);
+
+		add(arrowLeft);
+		add(arrowRight);
+
 		add(weekScore);
 		add(weekName);
 	}
