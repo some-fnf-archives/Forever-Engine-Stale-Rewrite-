@@ -152,10 +152,10 @@ class FreeplayMenu extends BaseMenuState {
 		// just copied from base game lol
 		scoreTxt.x = FlxG.width - scoreTxt.width - 6;
 		backPB.scale.x = FlxG.width - scoreTxt.x + 6;
-		backPB.x = FlxG.width - backPB.scale.x / 2;
+		backPB.x = FlxG.width - backPB.scale.x * 0.5;
 
-		difficultyTxt.x = Math.floor(backPB.x + backPB.width / 2);
-		difficultyTxt.x -= (difficultyTxt.width / 2);
+		difficultyTxt.x = Math.floor(backPB.x + backPB.width * 0.5);
+		difficultyTxt.x -= (difficultyTxt.width * 0.5);
 	}
 
 	override function updateSelection(newSel:Int = 0):Void {

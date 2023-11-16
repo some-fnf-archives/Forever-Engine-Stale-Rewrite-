@@ -87,7 +87,8 @@ class Conductor {
 	// -- HELPER CONVERSION FUNCTIONS -- //
 
 	public static inline function timeToBeat(time:Float, _bpm:Float):Float {
-		return (time * _bpm) / 60.0;
+		// this looks very stupid but that is literally the correct answer, + dividing is slower.
+		return (time * _bpm) * 0.01666666666666;
 	}
 
 	public static inline function timeToStep(time:Float, _bpm:Float):Float {
@@ -95,11 +96,11 @@ class Conductor {
 	}
 
 	public static inline function timeToBar(time:Float, _bpm:Float):Float {
-		return timeToBeat(time, _bpm) * 0.25; // (*0.25 = /4.0)
+		return timeToBeat(time, _bpm) * 0.25;
 	}
 
 	public static inline function beatToTime(beatTime:Float, _bpm:Float):Float {
-		return (beatTime * 60.0) / _bpm;
+		return (beatTime * 0.01666666666666) / _bpm;
 	}
 
 	public static inline function stepToTime(time:Float, _bpm:Float):Float {
