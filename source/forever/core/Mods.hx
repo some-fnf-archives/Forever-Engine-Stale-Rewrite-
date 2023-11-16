@@ -137,7 +137,7 @@ class Mods {
 			return;
 
 		FlxG.state.persistentUpdate = false;
-		FlxG.state.openSubState(new funkin.states.options.ModsMenu());
+		FlxG.state.openSubState(new funkin.states.menus.ModsMenu());
 	}
 }
 #end

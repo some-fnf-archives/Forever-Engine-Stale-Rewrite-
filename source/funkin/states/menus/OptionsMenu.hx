@@ -6,7 +6,7 @@ import forever.display.ForeverText;
 import forever.tools.ForeverOption;
 import funkin.states.PlayState.PlaySong;
 import funkin.states.base.BaseMenuState;
-import funkin.states.options.*;
+import funkin.states.menus.*;
 import funkin.ui.Alphabet;
 import haxe.ds.StringMap;
 
@@ -60,6 +60,11 @@ class OptionsMenu extends BaseMenuState {
 
 	override function create():Void {
 		super.create();
+
+		#if DISCORD
+		DiscordRPC.updatePresenceDetails("In the Menus", "OPTIONS");
+		#end
+		Tools.checkMenuMusic(null, false, 102.0);
 
 		add(bg = new ForeverSprite(0, 0, "menus/menuDesat", {color: 0xFFEA71FD}));
 		bg.scale.set(1.15, 1.15);
@@ -270,11 +275,8 @@ class OptionsMenu extends BaseMenuState {
 
 	function exitMenu():Void {
 		Settings.flush();
-		if (gameplayMusic != null) {
-			if (funkin.states.menus.PauseMenu.pauseMusic != null)
-				funkin.states.menus.PauseMenu.pauseMusic.stop();
+		if (gameplayMusic != null) 
 			FlxG.switchState(new funkin.states.PlayState(gameplayMusic));
-		}
 		else FlxG.switchState(new MainMenu());
 	}
 }

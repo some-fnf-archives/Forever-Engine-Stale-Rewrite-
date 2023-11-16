@@ -27,7 +27,7 @@ class PauseMenu extends FlxSubState {
 	var curSel:Int = 0;
 	var closing:Bool = true;
 
-	public static var pauseMusic:FlxSound;
+	public var pauseMusic:FlxSound;
 	public var future:Future<FlxSound>;
 
 	public function new():Void {
