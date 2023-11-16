@@ -49,8 +49,8 @@ class NoteSkin {
 		var yamlData = AssetHelper.parseAsset('data/ui/${name}', YAML);
 
 		if (yamlData == null) {
-			trace("[FunkinSkin:new()]: Unexpected error when loading skin data -> Null Object Reference");
-			trace("[FunkinSkin:new()]: Loading Default Skin...");
+			trace("[NoteSkin:new()]: Unexpected error when loading skin data -> Null Object Reference");
+			trace("[NoteSkin:new()]: Loading Default Skin...");
 			name = "normal";
 
 			strums = dum.strums;
