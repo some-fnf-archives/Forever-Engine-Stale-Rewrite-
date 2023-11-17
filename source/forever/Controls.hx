@@ -4,7 +4,8 @@ package forever;
 /**
  * Controls Class, stores key shortcuts
  *
- * If you want to modify the Controls Core, please go into `ControlsManager`
+ * If you want to add new keys, or modify the backend,
+ * please go into `ControlsManager`
 **/
 class Controls {
 	/** The global instance of the Base Controls class. **/
