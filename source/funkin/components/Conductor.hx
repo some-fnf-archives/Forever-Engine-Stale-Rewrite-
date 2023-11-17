@@ -2,15 +2,26 @@ package funkin.components;
 
 import flixel.util.FlxSignal;
 
+/**
+ * The Conductor is one of the most important components within Friday Night Funkin'
+ *
+ * It helps us to manage the song's time, along with synching it to the beat,
+ * Just like your average rhythm game.
+ *
+ * @author voiddevv (Original GDScript Implementation) crowplexus (Haxe Implementation)
+**/
 class Conductor {
-	static var _timeDelta:Float = 0.0;
-	static var _lastTime:Float = -1.0;
-	static var _lastStep:Int = -1;
-	static var _lastBeat:Int = -1;
-	static var _lastBar:Int = -1;
+	@:dox(hide) static var _timeDelta:Float = 0.0;
+	@:dox(hide) static var _lastTime:Float = -1.0;
+	@:dox(hide) static var _lastStep:Int = -1;
+	@:dox(hide) static var _lastBeat:Int = -1;
+	@:dox(hide) static var _lastBar:Int = -1;
 
+	/** How many beats per minute will count. **/
 	public static var bpm:Float = 100.0;
+	/** Current (Music) Time, calcualted in seconds. **/
 	public static var time:Float = 0.0;
+	/** Current Music Pitch + Speed Rate. **/
 	public static var rate:Float = 1.0;
 
 	public static var active:Bool = true;
@@ -21,14 +32,21 @@ class Conductor {
 	/** How many beats there are in a measure/bar. **/
 	public static var beatsPerBar:Int = 4;
 
+	/** The Current Step, expressed with a integer. **/
 	public static var step(get, never):Int;
+	/** The Current Beat, expressed with a integer. **/
 	public static var beat(get, never):Int;
+	/** The Current Bar/Measure, expressed with a integer. **/
 	public static var bar(get, never):Int;
 
+	/** The Delta Time between the last and current beat. **/
 	public static var beatDelta(get, never):Float;
+	/** The Delta Time between the last and current step. **/
 	public static var stepDelta(get, never):Float;
 
+	/** The Time (in seconds) within a beat. **/
 	public static var stepTime:Float = 0.0;
+	/** The Time (in seconds) within a step. **/
 	public static var beatTime:Float = 0.0;
 
 	public static var onStep:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
@@ -47,14 +65,13 @@ class Conductor {
 		}
 	}
 
-	public static function update(elapsed:Float):Void {
-		if (!active)
-			return;
+	public static function update(deltaTime:Float):Void {
+		if (!active) return;
 
 		_timeDelta = time - _lastTime;
 
-		if (FlxG.state.active) {
-			time += elapsed;
+		if (FlxG.state != null && FlxG.state.exists) {
+			time += deltaTime;
 			if (FlxG.sound.music != null && FlxG.sound.music.playing) {
 				if (Math.abs(time - FlxG.sound.music.time / 1000.0) >= 0.05) // interpolation.
 					time = FlxG.sound.music.time / 1000.0;

@@ -79,8 +79,8 @@ class MainMenu extends BaseMenuState {
 
 		var versionLabel:ForeverText = new ForeverText(5, FlxG.height - #if MODS 35 #else 30 #end, 0, 'Forever Engine v${Main.version}', 16);
 		#if MODS
-		var modKb1:String = BaseControls.getKeyFromAction("switch mods").toString();
-		var modKb2:String = BaseControls.getKeyFromAction("switch mods", 1).toString();
+		var modKb1:String = forever.ControlsManager.getKeyFromAction("switch mods").toString();
+		var modKb2:String = forever.ControlsManager.getKeyFromAction("switch mods", 1).toString();
 		versionLabel.text += '\nPress ${modKb1} or ${modKb2} to Switch Mods';
 		#end
 		versionLabel.scrollFactor.set();

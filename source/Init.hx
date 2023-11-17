@@ -8,7 +8,6 @@ import flixel.addons.transition.TransitionData;
 import flixel.graphics.FlxGraphic;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import forever.Controls;
 import haxe.ds.StringMap;
 
 /**
@@ -29,7 +28,7 @@ class Init extends FlxState {
 		flixel.FlxSprite.defaultAntialiasing = forever.Settings.globalAntialias;
 		setupTransition();
 
-		Controls.current = new BaseControls();
+		forever.Controls.current = new forever.ControlsManager();
 		#if DISCORD forever.core.DiscordWrapper.initialize("1157951594667708416"); #end
 		#if MODS
 		forever.core.Mods.initialize();

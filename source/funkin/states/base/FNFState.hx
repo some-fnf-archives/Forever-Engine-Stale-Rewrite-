@@ -3,7 +3,7 @@ package funkin.states.base;
 import forever.core.scripting.ScriptableState;
 
 class FNFState extends ScriptableState {
-	public var controls(get, never):BaseControls;
+	public var controls(get, never):forever.ControlsManager;
 
 	override function create():Void {
 		super.create();
@@ -28,6 +28,6 @@ class FNFState extends ScriptableState {
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
-	function get_controls():BaseControls
+	function get_controls():forever.ControlsManager
 		return Controls.current;
 }
