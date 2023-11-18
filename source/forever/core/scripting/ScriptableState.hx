@@ -55,13 +55,19 @@ class ScriptableState extends FlxTransitionableState {
 			script.set(name, obj);
 	}
 
-	public function callFunPack(method:String, ?args:Array<Dynamic>):Void {
+	public function callFunPack(method:String, ?args:Array<Dynamic>):Dynamic {
 		if (scriptPack.length == 0)
 			return;
-		if (args == null)
-			args = [];
-		for (script in scriptPack)
-			script.call(method, args);
+
+		var ret:Dynamic = null;
+		
+		for (script in scriptPack) {
+			var val:Dynamic = script.call(method, args).methodVal;
+			if (val != null) // we do not need to set the value to null if the method is a void
+				ret = val;
+		}
+		
+		return ret;
 	}
 }
 
