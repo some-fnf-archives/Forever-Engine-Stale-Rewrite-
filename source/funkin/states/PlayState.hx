@@ -34,10 +34,10 @@ enum abstract MusicState(Int) to Int {
 	var PAUSED = 2;
 }
 
-typedef PlaySong = {
-	var display:String;
-	var folder:String;
-	var difficulty:String;
+@:structInit class PlaySong {
+	public var display:String;
+	public var folder:String;
+	public var difficulty:String;
 }
 
 class PlayState extends FNFState {
