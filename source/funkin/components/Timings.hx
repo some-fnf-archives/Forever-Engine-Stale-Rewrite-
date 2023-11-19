@@ -38,10 +38,7 @@ class Timings {
 		Judgement("shit", -150, 0, false)
 	];
 
-	public static final timings:StringMap<Array<Float>> = [
-		"fnf" => [33.33, 91.67, 133.33, 166.67],
-		"etterna" => [45.0, 90.0, 135.0, 180.0],
-	];
+	public static final timings:Array<Float> = [33.33, 91.67, 133.33, 166.67];
 
 	public static var score:Int = 0;
 	public static var health(default, set):Float = 1.0;
@@ -76,8 +73,6 @@ class Timings {
 
 	public static function judgeNote(timeStamp:Float):Judgement {
 		var judgement:Judgement = judgements.last();
-		final timings = timings.get("fnf");
-
 		for (i in 0...timings.length) {
 			if (timeStamp > timings[i])
 				continue;
@@ -86,7 +81,6 @@ class Timings {
 				break;
 			}
 		}
-
 		return judgement;
 	}
 

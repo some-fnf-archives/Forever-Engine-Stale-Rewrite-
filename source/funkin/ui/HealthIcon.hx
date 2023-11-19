@@ -63,13 +63,13 @@ class HealthIcon extends ChildSprite {
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		var hp:HealthBar = PlayState.current != null ? PlayState.current.playField.healthBar : null;
+		var hp:ProgressBar = PlayState.current != null ? PlayState.current.playField.healthBar : null;
 		if (hp == null) return;
 
 		if (autoPosition == true) {
 			var iconOffset:Int = 25;
 			if (!isPlayer) iconOffset = cast(width - iconOffset);
-			x = (hp.x + (hp.bar.width * (1 - hp.bar.percent / 100))) - iconOffset;
+			x = (hp.x + (hp.width * (1 - hp.percent / 100))) - iconOffset;
 		}
 
 		if (autoBop == true && scale.x != 1.0) {
@@ -79,7 +79,7 @@ class HealthIcon extends ChildSprite {
 			offset.y = 0;
 		}
 
-		updateFrame(isPlayer ? hp.bar.percent : 100 - hp.bar.percent);
+		updateFrame(isPlayer ? hp.percent : 100 - hp.percent);
 	}
 
 	public dynamic function updateFrame(health:Float):Void {

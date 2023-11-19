@@ -12,7 +12,7 @@ import funkin.components.Timings;
 import funkin.components.parsers.ForeverChartData.NoteData;
 import funkin.objects.play.*;
 import funkin.states.PlayState;
-import funkin.ui.HealthBar;
+import funkin.ui.ProgressBar;
 import funkin.ui.HealthIcon;
 
 import haxe.ds.Vector;
@@ -23,28 +23,30 @@ import haxe.ds.Vector;
 **/
 class PlayField extends FlxGroup {
 	private var play(get, never):PlayState;
-
 	public var skin(get, never):String;
 	public static var isPixel(get, never):Bool;
 
-	public var strumLines:Array<StrumLine> = [];
+	// -- PLAY NODES -- //
+
 	public var plrStrums:StrumLine;
 	public var enmStrums:StrumLine;
-
 	public var noteGroup:FlxTypedSpriteGroup<Note>;
-	public var splashGroup:RecycledSpriteGroup<NoteSplash>;
+	public var strumLines:Array<StrumLine> = [];
 
 	public var paused:Bool = false;
 	public var noteList:Vector<NoteData>;
 	public var curNote:Int = 0;
 
 	// -- UI NODES -- //
+
 	public var scoreBar:ForeverText;
 	public var centerMark:ForeverText;
 
-	public var healthBar:HealthBar;
+	public var healthBar:ProgressBar;
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
+
+	public var splashGroup:RecycledSpriteGroup<NoteSplash>;
 
 	public function new():Void {
 		super();
@@ -65,7 +67,7 @@ class PlayField extends FlxGroup {
 
 		final hbY:Float = Settings.downScroll ? FlxG.height * 0.1 : FlxG.height * 0.875;
 
-		add(healthBar = new HealthBar(0, hbY));
+		add(healthBar = new ProgressBar(0, hbY, "images/ui/normal/healthBar"));
 		healthBar.screenCenter(X);
 
 		add(iconP1 = new HealthIcon(PlayState.current?.player?.icon ?? "face", true));
@@ -115,7 +117,7 @@ class PlayField extends FlxGroup {
 	}
 
 	override function update(elapsed:Float):Void {
-		healthBar.bar.percent = Timings.health * 50;
+		healthBar.updateBar(Timings.health);
 
 		while (!paused && noteGroup != null && noteList.length != 0 && curNote != noteList.length) {
 			var unspawnNote:NoteData = noteList[curNote];

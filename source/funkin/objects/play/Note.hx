@@ -108,9 +108,8 @@ class Note extends ForeverSprite {
 			}
 
 			if (!parent.cpuControl) {
-				final timings = Timings.timings.get("fnf");
 				final hitTime = (data.time - Conductor.time);
-				canBeHit = hitTime < (timings.last() / 1000.0) * hitbox;
+				canBeHit = hitTime < (Timings.timings.last() / 1000.0) * hitbox;
 			}
 			else // you can never be so sure.
 				canBeHit = false;

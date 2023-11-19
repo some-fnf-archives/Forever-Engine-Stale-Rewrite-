@@ -326,6 +326,9 @@ class PlayState extends FNFState {
 		missPunishIncrease += 0.075;
 		Timings.misses += 1;
 
+		if (player.animationContext != 3)
+			player.playAnim(player.singingSteps[dir] + "miss", true);
+
 		if (missPopups) {
 			displayJudgement("miss", true, MISS);
 			displayCombo(Timings.combo, MISS);

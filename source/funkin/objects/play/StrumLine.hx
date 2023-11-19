@@ -51,22 +51,20 @@ class Strum extends ForeverSprite {
 }
 
 class StrumLine extends FlxTypedSpriteGroup<Strum> {
-	public var skin:String;
-	public var playField:PlayField;
 	public var cpuControl:Bool;
-	public var globalSpeed(default, set):Float = 1.0;
+	public var onNoteHit:FlxTypedSignal<Note->Void>;
+	public var onNoteMiss:FlxTypedSignal<(Int, Note) -> Void>;
 
+	public var controls:Array<String> = ["left", "down", "up", "right"];
+
+	public var playField:PlayField;
+	public var globalSpeed(default, set):Float;
 	public var noteSkin:NoteSkin;
 
 	// READ ONLY VARIABLES
 	public var size(get, never):Float;
 	public var spacing(get, never):Int;
 	public var fieldWidth(get, never):Float;
-
-	public var onNoteHit:FlxTypedSignal<Note->Void>;
-	public var onNoteMiss:FlxTypedSignal<(Int, Note) -> Void>;
-
-	public var controls:Array<String> = ["left", "down", "up", "right"];
 
 	public function new(playField:PlayField, x:Float, y:Float, newSpeed:Float = 1.0, skin:String = "normal", cpuControl:Bool = true):Void {
 		super();
@@ -111,32 +109,31 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 	}
 
 	public function regenStrums(skin:String, skipStrumTween:Bool = false):Void {
-		this.skin = skin;
-
 		if (noteSkin != null) noteSkin.loadSkin(skin);
 		else noteSkin = new NoteSkin(skin);
 
 		while (members.length > 0)
 			members.pop().destroy();
 
-		// bro think they psych engine
-		var targetAlpha:Float = (Settings.centerStrums && cpuControl) ? 0.6 : 0.8; // pair with original FE
-		var keys:Int = 4;
-
-		for (i in 0...keys) {
-			final strum:Strum = new Strum(0, 0, noteSkin, i);
+		for (i in 0...4) {
+			final strum:Strum = new Strum(fieldWidth * i, 0, noteSkin, i);
 			strum.scale.set(size, size);
 			strum.updateHitbox();
-			strum.x += (fieldWidth * i);
 			add(strum);
 
 			if (!skipStrumTween) {
 				strum.alpha = 0.0;
-				final crochet:Float = 60.0 / Conductor.bpm;
-				strum.tween({alpha: targetAlpha}, (crochet) * 4.0, {
+				// bro think they psych engine
+				final targetAlpha = (Settings.centerStrums && cpuControl) ? 0.6 : 0.8; // pair with original FE
+				strum.tween({alpha: targetAlpha}, (60.0 / Conductor.bpm) * 4.0, {
 					ease: FlxEase.circOut,
-					startDelay: crochet * i
+					startDelay: (60.0 / Conductor.bpm) * i
 				});
+			}
+
+			if (!cpuControl && playField != null) {
+				inputsHeld.push(false);
+				blockedInputs.push(false);
 			}
 		}
 	}
@@ -144,8 +141,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 	public function changeStrumSpeed(newSpeed:Float, strumID:Int = -1):Void {
 		if (strumID == -1 || strumID > members.indexOf(members.last())) {
 			for (i in 0...members.length)
-				if (Std.isOfType(members[i], Strum))
-					members[i].speed = newSpeed;
+				members[i].speed = newSpeed;
 		}
 		else {
 			members[strumID].speed = newSpeed;
@@ -155,7 +151,6 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 
 	public function createSplash(note:NoteData, force:Bool = false, preload:Bool = false):Void {
 		var image:String = noteSkin.splashes.image; // change to note type stuff later.
-
 		// it looks like a ship when formatted like this lol -Crow
 		var noteSplash:NoteSplash = playField.splashGroup.recycle(NoteSplash) //
 			.resetProps(image, noteSkin.splashes.animations, //
@@ -168,54 +163,59 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		noteSplash.pop(force);
 	}
 
+	var inputsHeld:Array<Bool> = [];
+	var blockedInputs:Array<Bool> = [];
+
 	public function inputKeyPress(event:KeyboardEvent):Void {
 		var key:Int = getKeyFromEvent(event.keyCode);
-		if (key == -1 || playField.paused)
-			return;
+		if (key == -1 || playField.paused) return;
 
-		var currentStrum:Strum = members[key];
 		var notesHittable:Array<Note> = playField.noteGroup.members.filter(function(n:Note):Bool {
-			return n.parent == this && n.alive && n.data.dir == key && !n.isLate && !n.wasHit && n.canBeHit;
+			var ableToHit:Bool = n.parent == this && !n.isLate && !n.wasHit && n.canBeHit;
+			return blockedInputs[key] != true && n.alive && n.data.dir == key && ableToHit;
 		});
-		if (notesHittable.length > 1) // sort through the notes if we can
-			notesHittable.sort(sortHitNotes);
 
-		if (currentStrum?.animPlayed != HIT)
-			currentStrum.playStrum(PRESS, true);
+		if (members[key]?.animPlayed != HIT)
+			members[key].playStrum(PRESS, true);
 
-		if (notesHittable.length == 0) {
-			if (!Settings.ghostTapping)
-				onNoteMiss.dispatch(key, null);
-			return;
+		while (notesHittable != null) {
+			if (notesHittable.length == 0) {
+				if (!Settings.ghostTapping)
+					onNoteMiss.dispatch(key, null);
+				break;
+			}
+
+			var frontNote:Note = notesHittable[0];
+
+			if (notesHittable.length > 1) {
+				notesHittable.sort(sortHitNotes);
+				var behindNote:Note = notesHittable[1];
+				// if the note behind is 2 seconds apart from the front one, invalidate it
+				if (Math.abs(behindNote.data.time - frontNote.data.time) < 0.002)
+					invalidateNote(behindNote);
+				// just in case, if the note behind is actually in FRONT of the supposedly front note, swap them.
+				else if (behindNote.data.time < frontNote.data.time)
+					frontNote = behindNote;
+				// wow that is a dumb check, which surprisingly works -Crow
+			}
+
+			onNoteHit.dispatch(frontNote);
+			members[key]?.playStrum(HIT, true);
+			break;
 		}
-
-		var frontNote:Note = notesHittable[0];
-		if (notesHittable.length > 1) {
-			var behindNote:Note = notesHittable[1];
-			// if the note behind is 2 seconds apart from the front one, invalidate it
-			if (Math.abs(behindNote.data.time - frontNote.data.time) < 0.002)
-				invalidateNote(behindNote);
-			// just in case, if the note behind is actually in FRONT of the supposedly front note, swap them.
-			else if (behindNote.data.time < frontNote.data.time)
-				frontNote = behindNote;
-			// wow that is a dumb check, which surprisingly works -Crow
-		}
-		onNoteHit.dispatch(frontNote);
-		currentStrum.playStrum(HIT, true);
 	}
 
 	public function inputKeyRelease(event:KeyboardEvent):Void {
 		var key:Int = getKeyFromEvent(event.keyCode);
-		if (key == -1 || playField.paused)
-			return;
+		if (key == -1 || playField.paused) return;
 		members[key]?.playStrum(STATIC, true);
 	}
 
 	public function getKeyFromEvent(key:FlxKey):Int {
 		for (i in 0...controls.length) {
 			for (targetKey in Controls.current.myControls.get(controls[i])) {
-				var wasPressed:Bool = FlxG.keys.checkStatus(targetKey, JUST_PRESSED);
-				var wasReleased:Bool = FlxG.keys.checkStatus(targetKey, JUST_RELEASED);
+				final wasPressed:Bool = FlxG.keys.checkStatus(targetKey, JUST_PRESSED);
+				final wasReleased:Bool = FlxG.keys.checkStatus(targetKey, JUST_RELEASED);
 				if (key == targetKey && (wasPressed || wasReleased))
 					return i;
 			}

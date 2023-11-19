@@ -14,10 +14,6 @@ class ForeverSprite extends FlxSprite {
 
 	public var timeScale:Float = 1.0;
 
-	override function update(elapsed:Float):Void {
-		super.update(elapsed * timeScale);
-	}
-
 	/**
 	 * Creates a new Forever Sprite.
 	 * @param x				The initial X Position of the Sprite.
@@ -31,6 +27,10 @@ class ForeverSprite extends FlxSprite {
 		antialiasing = Settings.globalAntialias;
 		if (graphic != null)
 			addGraphic(graphic, properties);
+	}
+
+	override function update(elapsed:Float):Void {
+		super.update(elapsed * timeScale);
 	}
 
 	/**
