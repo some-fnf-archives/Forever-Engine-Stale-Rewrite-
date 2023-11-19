@@ -57,7 +57,7 @@ class ScriptableState extends FlxTransitionableState {
 
 	public function callFunPack(method:String, ?args:Array<Dynamic>):Dynamic {
 		if (scriptPack.length == 0)
-			return;
+			return null;
 
 		var ret:Dynamic = null;
 		
