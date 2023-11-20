@@ -8,7 +8,7 @@ import forever.display.ForeverSprite;
 import funkin.states.base.FNFState;
 import funkin.ui.Alphabet;
 
-@:structInit class IntroTextSection {
+typedef IntroTextSection = {
 	public var exec:String;
 	@:optional public var beat:Int;
 	@:optional public var text:String;
