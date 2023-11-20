@@ -1,18 +1,16 @@
 package funkin.states.base;
 
-import forever.core.scripting.ScriptableState;
-
-class FNFState extends ScriptableState {
+class FNFState extends forever.core.scripting.ScriptableState {
 	public var controls(get, never):forever.ControlsManager;
 
 	override function new(stateName:String = null):Void {
 		super(stateName);
 
-		Conductor.active = false;
+		Conductor.init(true);
 
-		if (!Conductor.onStep.has(onStep)) Conductor.onStep.add(onStep);
-		if (!Conductor.onBeat.has(onBeat)) Conductor.onBeat.add(onBeat);
-		if (!Conductor.onBar.has(onBar)) Conductor.onBar.add(onBar);
+		Conductor.onStep.add(onStep);
+		Conductor.onBeat.add(onBeat);
+		Conductor.onBar.add(onBar);
 	}
 
 	override function update(elapsed:Float):Void {

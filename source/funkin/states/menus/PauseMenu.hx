@@ -23,6 +23,7 @@ class PauseMenu extends FlxSubState {
 	var pauseGroup:FlxTypedGroup<Alphabet>;
 	var pauseItems:Array<PauseButton> = [];
 
+	var bg:FlxSprite;
 	var curSel:Int = 0;
 	var closing:Bool = true;
 
@@ -30,8 +31,7 @@ class PauseMenu extends FlxSubState {
 	public var future:Future<FlxSound>;
 
 	public function new():Void {
-		super(0xFF000000);
-		_bgSprite.alpha = 0.0;
+		super();
 
 		pauseLists.set("default", [
 			PauseButton('Resume', resumeSong),
@@ -51,7 +51,12 @@ class PauseMenu extends FlxSubState {
 			})
 		]);
 
-		FlxTween.tween(_bgSprite, {alpha: 0.6}, 0.5, {
+		bg = new FlxSprite().makeSolid(FlxG.width, FlxG.height, 0xFF000000);
+		bg.antialiasing = false;
+		bg.alpha = 0;
+		add(bg);
+
+		FlxTween.tween(bg, {alpha: 0.6}, 0.5, {
 			ease: FlxEase.expoIn,
 			onComplete: function(twn:FlxTween) {
 				closing = false;
@@ -129,7 +134,7 @@ class PauseMenu extends FlxSubState {
 			FlxTween.tween(text, {alpha: 0}, 0.05, {ease: FlxEase.expoIn});
 		});
 
-		FlxTween.tween(_bgSprite, {alpha: 0}, 0.5, {
+		FlxTween.tween(bg, {alpha: 0}, 0.5, {
 			ease: FlxEase.expoIn,
 			onComplete: function(twn:FlxTween) FlxG.state.closeSubState()
 		});

@@ -479,14 +479,14 @@ class PlayState extends FNFState {
 			callFunPack(contextNames, [bar]);
 	}
 
-	function doDancersDance(beat:Int):Void {
+	function doDancersDance(beat:Int, ?forced:Bool = false):Void {
 		var chars:Array<Character> = [player, enemy, crowd];
 		for (character in chars) {
 			if (character == null)
 				continue;
 			// 0 = IDLE | 1 = SING | 2 = MISS
 			if (character.animationContext == 0 && beat % character.danceInterval == 0)
-				character.dance();
+				character.dance(forced);
 		}
 	}
 
@@ -636,7 +636,7 @@ class PlayState extends FNFState {
 		final crochet:Float = (60.0 / Conductor.bpm);
 
 		var countdownTimer:FlxTimer = new FlxTimer().start(crochet, function(tmr:FlxTimer) {
-			doDancersDance(tmr.loopsLeft);
+			doDancersDance(tmr.loopsLeft, true);
 
 			var sprCount = getCountdownSprite(countdownPosition);
 			if (sprCount != null) {
