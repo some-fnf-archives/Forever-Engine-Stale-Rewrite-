@@ -20,13 +20,13 @@ class StageBase extends FlxSpriteGroup {
 	public var hudZoom:Float = 1.0;
 
 	/** The default player position **/
-	public var playerPosition:FlxPoint = FlxPoint.get(770, 430);
+	public var playerPosition:FlxPoint = FlxPoint.get(770, 450);
 
 	/** The default enemy position **/
-	public var enemyPosition:FlxPoint = FlxPoint.get(100, 100);
+	public var enemyPosition:FlxPoint = FlxPoint.get(100, 450);
 
 	/** The default crowd position **/
-	public var crowdPosition:FlxPoint = FlxPoint.get(400, 130);
+	public var crowdPosition:FlxPoint = FlxPoint.get(400, 360);
 
 	var stageObjects:StringMap<ForeverSprite> = new StringMap<ForeverSprite>();
 	var scriptModule:HScript = null;
@@ -42,13 +42,13 @@ class StageBase extends FlxSpriteGroup {
 				hudZoom = data.hudZoom ?? 1.0;
 
 				playerPosition.x = data.playerPos?.x ?? 770;
-				playerPosition.y = data.playerPos?.y ?? 430;
+				playerPosition.y = data.playerPos?.y ?? 450;
 
-				enemyPosition.x = data.enemyPos?.x ?? 770;
-				enemyPosition.y = data.enemyPos?.y ?? 430;
+				enemyPosition.x = data.enemyPos?.x ?? 100;
+				enemyPosition.y = data.enemyPos?.y ?? 450;
 
-				crowdPosition.x = data.crowdPos?.x ?? 770;
-				crowdPosition.y = data.crowdPos?.y ?? 430;
+				crowdPosition.x = data.crowdPos?.x ?? 400;
+				crowdPosition.y = data.crowdPos?.y ?? 360;
 
 				var objects:Array<Dynamic> = data.objects;
 				for (obj in objects) {

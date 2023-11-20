@@ -19,7 +19,8 @@ import openfl.utils.Assets as OpenFLAssets;
 	"VANILLA_V1=>Base Game (0.2.8)",
 	"CODENAME=>Codename Engine",
 	"CROW=>Crow Engine",
-	"PSYCH=>Psych Engine"
+	"PSYCH=>Psych Engine",
+	"MARU=>Maru Engine",
 ]))
 enum abstract EngineImpl(Int) from Int to Int {}
 

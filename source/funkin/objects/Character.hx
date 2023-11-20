@@ -168,6 +168,15 @@ class Character extends ForeverSprite {
 
 	@:noPrivateAccess
 	private function parseFromImpl(file:Dynamic, impl:EngineImpl):Void {
+		function setScale(newScale:FlxPoint):Void {
+			if (newScale != null) {
+				var oldScale:FlxPoint = this.scale;
+				if (newScale != oldScale) {
+					scale.set(newScale.x, newScale.y);
+					updateHitbox();
+				}
+			}
+		}
 		switch (impl) {
 			case FOREVER:
 				var data = AssetHelper.parseAsset('data/characters/${name}.yaml', YAML);
@@ -176,7 +185,7 @@ class Character extends ForeverSprite {
 						trace('[Character:parseFromImpl()]: Character ${name} could not be parsed due to a inexistent file, Please provide a file called "${name}.yaml" in the "data/characters directory.');
 
 				// automatically searches for packer and sparrow
-				frames = AssetHelper.getAsset('images/${data.spritesheet}', ATLAS);
+				frames = AssetHelper.getAsset('images/characters/${data.spritesheet}', ATLAS);
 
 				var animations:Array<Dynamic> = data.animations ?? [];
 				if (animations.length > 0) {
@@ -189,22 +198,24 @@ class Character extends ForeverSprite {
 				else
 					addAtlasAnim("idle", "BF idle dance", 24, false, []);
 
+				positionDisplace.set(data.positionDisplace?.x ?? 0.0, data.positionDisplace?.y ?? 0.0);
+				cameraDisplace.set(data.cameraDisplace?.x ?? 0.0, data.cameraDisplace?.y ?? 0.0);
+
 				flipX = data.flip?.x ?? false;
 				flipY = data.flip?.y ?? false;
-				icon = data.icon;
+
+				if (data.scale != null)
+					setScale(FlxPoint.get(data.scale.x ?? 1.0, data.scale.y ?? 1.0));
 
 				dancingSteps = data.dancingSteps ?? dancingSteps;
 				singingSteps = data.singingSteps ?? singingSteps;
 
 				singDuration = data.singDuration ?? 4.0;
 				danceInterval = data.danceInterval ?? 2;
-
-				positionDisplace.set(data.positionDisplace?.x ?? 0.0, data.positionDisplace?.y ?? 0.0);
-				cameraDisplace.set(data.cameraDisplace?.x ?? 0.0, data.cameraDisplace?.y ?? 0.0);
+				icon = data.icon;
 
 			case PSYCH:
-				var charImage:String = file?.image ?? 'characters/${name}';
-				frames = AssetHelper.getAsset('images/${charImage}', ATLAS);
+				frames = AssetHelper.getAsset('images/characters/${name}', ATLAS);
 
 				var psychAnimArray:Array<Dynamic> = file.animations;
 				for (anim in psychAnimArray) {
@@ -212,65 +223,22 @@ class Character extends ForeverSprite {
 					setOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
 				}
 
-				// shouldnt this be array<float>?
-				var globalOffset:Array<Dynamic> = file.position ?? [0, 0];
-				var globalCamOffset:Array<Dynamic> = file.camera_position ?? [0, 0];
+				final globalOffset:Array<Float> = cast(file.position) ?? [0, 0];
+				final globalCamOffset:Array<Float> = cast(file.camera_position) ?? [0, 0];
 
-				positionDisplace.set(Std.parseFloat(globalOffset[0]), Std.parseFloat(globalOffset[1]));
-				cameraDisplace.set(Std.parseFloat(globalCamOffset[0]), Std.parseFloat(globalCamOffset[1]));
+				positionDisplace.set(globalOffset[0], globalOffset[1]);
+				cameraDisplace.set(globalCamOffset[0], globalCamOffset[1]);
 
 				icon = file.healthicon;
 				flipX = file.flip_x ?? false;
-				scale.set(file.scale ?? 1.0, file.scale ?? 1.0);
-				updateHitbox();
+				if (file.scale != null)
+					setScale(FlxPoint.get(file.scale.x ?? 1.0, file.scale.y ?? 1.0));
 				singDuration = file.sing_duration ?? 4;
 
 				if (animation.exists("danceLeft") && animation.exists("danceRight")) {
 					dancingSteps = ["danceLeft", "danceRight"];
 					danceInterval = 1;
 				}
-
-			/*
-				case CODENAME:
-					// * written by: @Ne_Eo * //
-
-					var plainXML = AssetHelper.getAsset('data/characters/${name}', XML);
-					var charXML = Xml.parse(plainXML).firstElement();
-					if (charXML == null) throw new haxe.Exception("Missing \"character\" node in XML.");
-					var xml = new Access(charXML);
-
-					// no flxanimate support sadly
-
-					var charImage = name;
-
-					//if (xml.x.exists("isPlayer")) playerOffsets = (xml.x.get("isPlayer") == "true");
-					//if (xml.x.exists("isGF")) isGF = (xml.x.get("isGF") == "true");
-					if (xml.x.exists("x")) positionDisplace.x = Std.parseFloat(xml.x.get("x"));
-					if (xml.x.exists("y")) positionDisplace.y = Std.parseFloat(xml.x.get("y"));
-					if (xml.x.exists("gameOverChar")) gameOverCharacter = xml.x.get("gameOverChar");
-					if (xml.x.exists("camx")) cameraDisplace.x = Std.parseFloat(xml.x.get("camx"));
-					if (xml.x.exists("camy")) cameraDisplace.y = Std.parseFloat(xml.x.get("camy"));
-					if (xml.x.exists("holdTime")) singDuration = Std.parseFloat(xml.x.get("holdTime")) ?? 4;
-					if (xml.x.exists("flipX")) flipX = (xml.x.get("flipX") == "true");
-					//if (xml.x.exists("icon")) icon = xml.x.get("icon");
-					//if (xml.x.exists("color")) iconColor = FlxColor.fromString(xml.x.get("color"));
-					if (xml.x.exists("scale")) {
-						var scale = CodenameTools.getDefault(Std.parseFloat(xml.x.get("scale")), 1);
-						this.scale.set(scale, scale);
-						updateHitbox();
-					}
-					if (xml.x.exists("antialiasing")) antialiasing = (xml.x.get("antialiasing") == "true");
-					if (xml.x.exists("sprite")) charImage = xml.x.get("sprite");
-
-					frames = AssetHelper.getAsset('images/characters/${charImage}', ATLAS);
-
-					animation.destroyAnimations();
-					animDatas.clear();
-					for (anim in xml.nodes.anim)
-					{
-						CodenameTools.addXMLAnimation(this, anim);
-					}
-			 */
 
 			case CROW:
 				frames = AssetHelper.getAsset('images/characters/${name}/${name}', ATLAS);
@@ -289,8 +257,8 @@ class Character extends ForeverSprite {
 				dancingSteps = file.idleList ?? dancingSteps;
 				singingSteps = file.singList ?? singingSteps;
 
-				scale.set(file.scale?.x ?? 1.0, file.scale?.y ?? 1.0);
-				updateHitbox();
+				if (file.scale != null)
+					setScale(FlxPoint.get(file.scale.x ?? 1.0, file.scale.y ?? 1.0));
 
 			default:
 				trace('[Character:parseFromImpl()]: Missing character parsing for "${impl.toString()}" on character $name.');
