@@ -71,18 +71,15 @@ class Alphabet extends FlxTypedSpriteGroup<GlyphGroup> {
 
 		var i:Int = 0;
 		while (i != members.length) {
-			if (i == 0) continue;
 			members[i].destroy();
 			remove(members[i], true);
 			i++;
 		}
 
 		final glyphPos:FlxPoint = FlxPoint.get();
-		var rows:Int = 0;
 
-		var line:GlyphGroup = this.recycle(GlyphGroup);
-		line.alpha = 1.0;
-		line.clear();
+		var rows:Int = 0;
+		var line:GlyphGroup = new GlyphGroup(); // this.recycle(GlyphGroup);
 
 		for (i in 0...newText.length) {
 			final char:String = newText.charAt(i);
@@ -90,9 +87,7 @@ class Alphabet extends FlxTypedSpriteGroup<GlyphGroup> {
 				glyphPos.x = 0;
 				glyphPos.y = ++rows * AlphabetGlyph.Y_PER_ROW;
 				add(line);
-				line = this.recycle(GlyphGroup);
-				line.alpha = 1.0;
-				line.clear();
+				line = new GlyphGroup(); // this.recycle(GlyphGroup);
 				continue;
 			}
 
@@ -201,13 +196,10 @@ class ChildAlphabet extends Alphabet {
 		super.update(elapsed);
 
 		if (parent != null) {
-			switch (alignment) {
-				default:
-					this.x = parent.x + increment.x;
-				case CENTER:
-					this.x = parent.x + ((width - parent.width) * 0.5) + increment.x;
-				case RIGHT:
-					this.x = parent.x + (parent.width + 30) + increment.x;
+			this.x = switch (alignment) {
+				case CENTER: parent.x + ((width - parent.width) * 0.5) + increment.x;
+				case RIGHT: parent.x + (parent.width + 30) + increment.x;
+				default: parent.x + increment.x;
 			}
 			this.y = parent.y + increment.y;
 		}

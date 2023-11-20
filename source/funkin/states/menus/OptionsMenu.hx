@@ -68,7 +68,7 @@ class OptionsMenu extends BaseMenuState {
 
 		#if MODS
 		if (gameplayMusic == null)
-			optionsListed.get("main").insert(#if FE_DEV 1 #else 2 #end, new ForeverOption("Mods", NONE));
+			optionsListed.get("main").insert(#if FE_DEV 2 #else 1 #end, new ForeverOption("Mods", NONE));
 		#end
 
 		#if DISCORD
@@ -225,8 +225,8 @@ class OptionsMenu extends BaseMenuState {
 
 			optionLabel.y += (90 * (i - Math.floor(cataOptions.length * 0.5)));
 			optionLabel.isMenuItem = curCateg.toLowerCase() != "main"; // HARD CODED LOL
-			optionLabel.forceLerp.x = 50;
-			optionLabel.menuSpacing.y = 130;
+			optionLabel.forceLerp.x = 100;
+			optionLabel.menuSpacing.y = 80;
 
 			optionLabel.alpha = 0.6;
 			optionLabel.targetY = i;
