@@ -72,9 +72,9 @@ class Alphabet extends FlxTypedSpriteGroup<GlyphGroup> {
 		var i:Int = 0;
 		while (i != members.length) {
 			members[i].destroy();
-			remove(members[i], true);
 			i++;
 		}
+		clear();
 
 		final glyphPos:FlxPoint = FlxPoint.get();
 
