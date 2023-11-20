@@ -1,7 +1,8 @@
 songs:
-  - {name: "Bopeebo", folder: "bopeebo", character: "dad", color: "#606060"}
-  - {name: "Fresh", folder: "fresh", character: "dad", color: "#606060"}
-  - {name: "Dad Battle", folder: "dadbattle", character: "dad", color: "#606060"}
+ - ["Bopeebo", "Fresh", "Dad Battle"] # Display Names
+ - ["bopeebo", "fresh", "dadbattle"] # Folder Names
+ - ["dad"] # Characters (will use the first one if the others aren't specified)
+ - ["#9271FD"] # Colors (will use the first one if the others aren't specified)
 
 tagline: "My Week"
 image: "week1"

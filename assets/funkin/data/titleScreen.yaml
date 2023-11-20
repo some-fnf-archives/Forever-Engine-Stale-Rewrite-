@@ -18,16 +18,16 @@ menuBPM: 102.0
 # this `force` field may be used with the `create` or `add` methods
 #
 introSections:
-  - {beat: 1, text: "crowplexus, ne_eo, itsaizakku, nxtvithor, sayofthelor", exec: "create"}
-  - {beat: 3, text: "PRESENT", exec: "add"}
-  - {beat: 4, exec: "delete"}
-  - {beat: 5, text: "*Not* associated, with", exec: "create"}
-  - {beat: 7, text: "Newgrounds", exec: "add"}
-  - {beat: 8, exec: "delete"}
-  - {beat: 9, text: "${random[0]}", exec: "create"}
-  - {beat: 11, text: "${random[1]}", exec: "add"}
-  - {beat: 12, exec: "delete"}
-  - {beat: 13, text: "Funkin'", exec: "add", force: true}
-  - {beat: 14, text: "Forever", exec: "add"}
-  - {beat: 15, text: "Engine", exec: "add"}
-  - {beat: 16, exec: "finish"}
+ - {beat: 1, text: "crowplexus, ne_eo, itsaizakku, nxtvithor, sayofthelor", exec: "create"}
+ - {beat: 3, text: "PRESENT", exec: "add"}
+ - {beat: 4, exec: "delete"}
+ - {beat: 5, text: "*Not* associated, with", exec: "create"}
+ - {beat: 7, text: "Newgrounds", exec: "add"}
+ - {beat: 8, exec: "delete"}
+ - {beat: 9, text: "${random[0]}", exec: "create"}
+ - {beat: 11, text: "${random[1]}", exec: "add"}
+ - {beat: 12, exec: "delete"}
+ - {beat: 13, text: "Funkin'", exec: "add", force: true}
+ - {beat: 14, text: "Forever", exec: "add"}
+ - {beat: 15, text: "Engine", exec: "add"}
+ - {beat: 16, exec: "finish"}
