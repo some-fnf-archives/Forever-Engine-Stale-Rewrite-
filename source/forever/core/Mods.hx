@@ -131,13 +131,5 @@ class Mods {
 			initScript.destroy();
 		}
 	}
-
-	public static function openModsMenu():Void {
-		if (FlxG.state == null)
-			return;
-
-		FlxG.state.persistentUpdate = false;
-		FlxG.state.openSubState(new funkin.states.menus.ModsMenu());
-	}
 }
 #end

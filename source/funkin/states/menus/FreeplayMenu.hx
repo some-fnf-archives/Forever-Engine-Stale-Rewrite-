@@ -40,7 +40,6 @@ class FreeplayMenu extends BaseMenuState {
 		#end
 		Tools.checkMenuMusic(null, false, 102.0);
 
-		canChangeMods = true;
 		canChangeAlternative = true;
 
 		var localSongData:Array<String> = Tools.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));

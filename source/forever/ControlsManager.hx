@@ -38,12 +38,17 @@ class ControlsManager {
 
 	/**
 	 * Ordered Array with the order of which the control options should appear in the menu.
+	 *
+	 * Arrays of a single item are treated as a category,
+	 * items with blank names don't get added in the menu.
 	**/
-	public var keyOrder:Array<String> = [
-        "left", "down", "up", "right",
-		"ui_left", "ui_down", "ui_up", "ui_right",
-		"accept", "back", "pause", "reset",
-		#if MODS "switch mods", #end
+	public var keyOrder:Array<Array<String>> = [
+        ["NOTES"],
+		["left", "down", "up", "right"],
+		["USER INTERFACE"],
+		["ui_left", "ui_down", "ui_up", "ui_right", "accept", "back", "pause"],
+		["DEBUG"],
+		["reset", #if MODS "switch mods", #end ""],
     ];
 
 	/** Indicator set if you are playing with a controller. **/

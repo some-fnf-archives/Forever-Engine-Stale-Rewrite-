@@ -242,9 +242,7 @@ class Tools {
 		FlxG.sound.playMusic(AssetHelper.getAsset('audio/bgm/${music}', SOUND), doFadeIn ? 0.0 : 0.7);
 		if (doFadeIn)
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
-		FlxG.sound.music.looped = true;
 		Conductor.bpm = bpm;
-
 		// reset stuff
 		Conductor.init(false);
 	}
@@ -256,10 +254,8 @@ class Tools {
 	**/
 	public static function centerToObject(object:FlxObject, target:FlxObject, axes:FlxAxes = XY):FlxObject {
 		// literally just FlxObject.screenCenter but it uses `base` instead of `FlxG.width` and `FlxG.height`
-		if (axes.x)
-			object.x = target.x + (target.width * 0.5) - (object.width * 0.5);
-		if (axes.y)
-			object.y = target.y + (target.height * 0.5) - (object.height * 0.5);
+		if (axes.x) object.x = target.x + (target.width * 0.5) - (object.width * 0.5);
+		if (axes.y) object.y = target.y + (target.height * 0.5) - (object.height * 0.5);
 		return object;
 	}
 

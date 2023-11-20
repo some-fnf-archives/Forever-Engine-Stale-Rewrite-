@@ -65,10 +65,15 @@
 	</section>
 
 	<source path="source" />
-	<assets path="assets" />
-
-	<!-- <assets path="mods" rename="mods" if="MODS" /> -->
-	<assets path="locale" rename="assets/data/locale" if="TRANSLATIONS" />
+	<section if="MODS">
+		<assets path="assets" />
+		<!-- <assets path="mods" rename="mods" if="MODS" /> -->
+		<assets path="locale" rename="assets/funkin/data/locale" if="TRANSLATIONS" />
+	</section>
+	<section unless="MODS">
+		<assets path="assets/funkin" rename="assets" unless="MODS" />
+		<assets path="locale" rename="assets/data/locale" if="TRANSLATIONS" />
+	</section>
 
 	<!-- [ Libraries ] -->
 

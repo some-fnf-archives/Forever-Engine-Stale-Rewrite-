@@ -7,6 +7,7 @@ import forever.tools.ForeverOption;
 import funkin.states.PlayState.PlaySong;
 import funkin.states.base.BaseMenuState;
 import funkin.states.menus.*;
+import funkin.states.options.*;
 import funkin.ui.Alphabet;
 import haxe.ds.StringMap;
 
@@ -20,11 +21,15 @@ class OptionsMenu extends BaseMenuState {
 
 	public var optionsListed:StringMap<Array<ForeverOption>> = [
 		"main" => [
+			new ForeverOption("Preferences", CATEGORY),
+			#if FE_DEV new ForeverOption("Controls", NONE),
+			new ForeverOption("Offset", NONE), #end
+			new ForeverOption("Exit", NONE),
+		],
+		"preferences" => [
 			new ForeverOption("General", CATEGORY),
 			new ForeverOption("Gameplay", CATEGORY),
 			new ForeverOption("Visuals", CATEGORY),
-			// new ForeverOption("Controls", NONE),
-			new ForeverOption("Exit", NONE), // this is also a dummy type
 		],
 		"general" => [
 			new ForeverOption("Auto Pause", "autoPause"),
@@ -61,6 +66,11 @@ class OptionsMenu extends BaseMenuState {
 	override function create():Void {
 		super.create();
 
+		#if MODS
+		if (gameplayMusic == null)
+			optionsListed.get("main").insert(#if FE_DEV 1 #else 2 #end, new ForeverOption("Mods", NONE));
+		#end
+
 		#if DISCORD
 		DiscordRPC.updatePresenceDetails("In the Menus", "OPTIONS");
 		#end
@@ -93,45 +103,45 @@ class OptionsMenu extends BaseMenuState {
 		onAccept = function():Void {
 			var option:ForeverOption = optionsListed.get(curCateg)[curSel];
 			switch (option.name.toLowerCase()) {
-				/*
-				case "note skin >":
-					persistentUpdate = false;
-					openSubState(new NoteSettingsMenu());
+				#if FE_DEV
 				case "controls":
 					persistentUpdate = false;
 					openSubState(new ControlsMenu());
-				*/
+				case "offset":
+					persistentUpdate = false;
+					openSubState(new OffsetMenu());
+				#end
+				#if MODS
+				case "mods":
+					persistentUpdate = false;
+					openSubState(new ModsMenu());
+				#end
 				case "exit":
 					FlxG.sound.play(AssetHelper.getAsset('audio/sfx/cancelMenu', SOUND));
 					canChangeSelection = false;
 					canBackOut = false;
 					canAccept = false;
 					exitMenu();
-			}
-
-			switch (option.type) {
-				case CATEGORY:
-					reloadCategory(option.name);
 				default:
-					if (option.type == NONE) return;
-					FlxG.sound.play(AssetHelper.getAsset('audio/sfx/confirmMenu', SOUND));
-
-					option.changeValue();
-					var isSelector:Bool = false;
-
 					switch (option.type) {
-						case CHECKMARK:
-							// safe casting, HashLink won't let me write unsafe code :( -Crow
-							cast(iconGroup.members[curSel], ForeverSprite).playAnim('${option.value}');
-						case CHOICE(options):
-							isSelector = true;
-						case NUMBER(min, max, decimals, clamp):
-							isSelector = true;
+						case NONE: // nothing.
+						case CATEGORY:
+							reloadCategory(option.name);
 						default:
-					}
+							FlxG.sound.play(AssetHelper.getAsset('audio/sfx/confirmMenu', SOUND));
+							option.changeValue();
 
-					if (isSelector)
-						cast(iconGroup.members[curSel], Alphabet).text = '${option.value}';
+							function changeSelector():Void cast(iconGroup.members[curSel], Alphabet).text = '${option.value}';
+
+							switch (option.type) {
+								case CHECKMARK:
+									// safe casting, HashLink won't let me write unsafe code :( -Crow
+									cast(iconGroup.members[curSel], ForeverSprite).playAnim('${option.value}');
+								case CHOICE(options): changeSelector();
+								case NUMBER(min, max, decimals, clamp): changeSelector();
+								default:
+							}
+					}
 			}
 		}
 
@@ -204,12 +214,10 @@ class OptionsMenu extends BaseMenuState {
 	}
 
 	function reloadOptions():Void {
-		while (optionsGroup.members.length != 0)
-			optionsGroup.members.pop().destroy();
-		while (iconGroup.members.length != 0)
-			cast(iconGroup.members.pop(), FlxSprite).destroy();
+		while (optionsGroup.members.length != 0) optionsGroup.members.pop().destroy();
+		while (iconGroup.members.length != 0) cast(iconGroup.members.pop(), FlxSprite).destroy();
 
-		var cataOptions:Array<ForeverOption> = optionsListed.get(curCateg);
+		final cataOptions:Array<ForeverOption> = optionsListed.get(curCateg);
 
 		for (i in 0...cataOptions.length) {
 			final optionLabel:Alphabet = new Alphabet(0, 0, cataOptions[i].name, BOLD, LEFT);
@@ -217,35 +225,31 @@ class OptionsMenu extends BaseMenuState {
 
 			optionLabel.y += (90 * (i - Math.floor(cataOptions.length * 0.5)));
 			optionLabel.isMenuItem = curCateg.toLowerCase() != "main"; // HARD CODED LOL
-			optionLabel.menuSpacing.y = 80;
+			optionLabel.forceLerp.x = 50;
+			optionLabel.menuSpacing.y = 130;
 
 			optionLabel.alpha = 0.6;
 			optionLabel.targetY = i;
 			optionsGroup.add(optionLabel);
 
-			var isSelector:Bool = false;
+			function generateSelector():Void {
+				final selectorName:ChildAlphabet = new ChildAlphabet(Std.string(cataOptions[i].value), BOLD, RIGHT);
+				selectorName.parent = optionLabel;
+				iconGroup.add(selectorName);
+			}
 
 			switch (cataOptions[i].type) { // create an attachment
 				case CHECKMARK:
-					var newCheckmark:ChildSprite = Tools.generateCheckmark();
+					final newCheckmark:ChildSprite = Tools.generateCheckmark();
 					newCheckmark.parent = optionLabel;
 					newCheckmark.align = LEFT;
 
 					newCheckmark.playAnim('${cataOptions[i].value} finished');
 					iconGroup.add(newCheckmark);
 
-				case CHOICE(options):
-					isSelector = true;
-				case NUMBER(min, max, decimals, clamp):
-					isSelector = true;
-				default:
-					iconGroup.add(new FlxSprite()); // prevent issues
-			}
-
-			if (isSelector) {
-				final selectorName:ChildAlphabet = new ChildAlphabet(Std.string(cataOptions[i].value), BOLD, RIGHT);
-				selectorName.parent = optionLabel;
-				iconGroup.add(selectorName);
+				case CHOICE(options): generateSelector();
+				case NUMBER(min, max, decimals, clamp): generateSelector();
+				default: iconGroup.add(new FlxSprite()); // prevent issues
 			}
 		}
 

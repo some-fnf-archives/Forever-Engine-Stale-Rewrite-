@@ -7,13 +7,16 @@ import openfl.text.TextFormatAlign;
 
 using StringTools;
 
+typedef GlyphGroup = FlxTypedSpriteGroup<AlphabetGlyph>;
+
 /**
  * A class for rendering text in a special funky font!
  * Includes left, center, and right sided aligning!
  *
  * @author swordcube
  */
-class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
+class Alphabet extends FlxTypedSpriteGroup<GlyphGroup> {
+	/** Type of the Texture used for the letters, usually `BOLD`. **/
 	public var type(default, set):AlphabetGlyphType;
 
 	/** The currently set alignment type for the text. **/
@@ -66,14 +69,20 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 		if (text == newText && !force) // what's the point of regenerating
 			return;
 
-		for (glyph in members)
-			glyph.destroy();
-		clear();
+		var i:Int = 0;
+		while (i != members.length) {
+			if (i == 0) continue;
+			members[i].destroy();
+			remove(members[i], true);
+			i++;
+		}
 
 		final glyphPos:FlxPoint = FlxPoint.get();
 		var rows:Int = 0;
 
-		var line:FlxTypedSpriteGroup<AlphabetGlyph> = new FlxTypedSpriteGroup();
+		var line:GlyphGroup = this.recycle(GlyphGroup);
+		line.alpha = 1.0;
+		line.clear();
 
 		for (i in 0...newText.length) {
 			final char:String = newText.charAt(i);
@@ -81,7 +90,9 @@ class Alphabet extends FlxTypedSpriteGroup<FlxTypedSpriteGroup<AlphabetGlyph>> {
 				glyphPos.x = 0;
 				glyphPos.y = ++rows * AlphabetGlyph.Y_PER_ROW;
 				add(line);
-				line = new FlxTypedSpriteGroup();
+				line = this.recycle(GlyphGroup);
+				line.alpha = 1.0;
+				line.clear();
 				continue;
 			}
 

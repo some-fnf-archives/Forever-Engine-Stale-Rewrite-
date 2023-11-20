@@ -37,8 +37,6 @@ class MainMenu extends BaseMenuState {
 		#end
 		Tools.checkMenuMusic(null, false, 102.0);
 
-		canChangeMods = true;
-
 		add(camLead = new FlxObject(0, 0, 1, 1));
 		add(bg = new ForeverSprite(0, 0, "menus/menuBG"));
 		add(magenta = new ForeverSprite(0, 0, "menus/menuDesat"));
@@ -77,12 +75,7 @@ class MainMenu extends BaseMenuState {
 
 		FlxG.camera.follow(camLead, null, 0.16);
 
-		var versionLabel:ForeverText = new ForeverText(5, FlxG.height - #if MODS 35 #else 30 #end, 0, 'Forever Engine v${Main.version}', 16);
-		#if MODS
-		var modKb1:String = forever.ControlsManager.getKeyFromAction("switch mods").toString();
-		var modKb2:String = forever.ControlsManager.getKeyFromAction("switch mods", 1).toString();
-		versionLabel.text += '\nPress ${modKb1} or ${modKb2} to Switch Mods';
-		#end
+		var versionLabel:ForeverText = new ForeverText(5, FlxG.height - 30, 0, 'Forever Engine v${Main.version}', 16);
 		versionLabel.scrollFactor.set();
 		add(versionLabel);
 

@@ -44,7 +44,7 @@ class ProgressBar extends ForeverSprite {
             active: false,
             outline: 4.0,
             inFront: true,
-            sprite: new FlxSprite().makeGraphic(cast width, cast height)
+            sprite: new FlxSprite().makeSolid(cast width, cast height)
         }
     }
 

@@ -16,8 +16,7 @@ class StoryMenu extends BaseMenuState {
 	override function create() {
 		super.create();
 
-		this.canChangeAlternative = true;
-		this.canChangeMods        = true;
+		canChangeAlternative = true;
 
 		// -- USER INTERFACE -- //
 

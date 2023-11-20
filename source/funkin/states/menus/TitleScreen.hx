@@ -8,13 +8,12 @@ import forever.display.ForeverSprite;
 import funkin.states.base.FNFState;
 import funkin.ui.Alphabet;
 
-typedef IntroTextSection = {
-	var exec:String;
-
-	@:optional var beat:Int;
-	@:optional var text:String;
-	@:optional var force:Bool;
-	@:optional var step:Int;
+@:structInit class IntroTextSection {
+	public var exec:String;
+	@:optional public var beat:Int;
+	@:optional public var text:String;
+	@:optional public var force:Bool;
+	@:optional public var step:Int;
 }
 
 class TitleScreen extends FNFState {
@@ -97,6 +96,7 @@ class TitleScreen extends FNFState {
 		mainGroup.add(enterTxt);
 
 		new flixel.util.FlxTimer().start(0.05, function(tmr) {
+			Conductor.active = true;
 			Tools.checkMenuMusic(null, true, 102.0);
 		});
 
@@ -130,11 +130,6 @@ class TitleScreen extends FNFState {
 				FlxG.sound.music.time = 9400.0;
 			}
 		}
-
-		#if MODS
-		if (Controls.current.justPressed("switch mods"))
-			forever.core.Mods.openModsMenu();
-		#end
 	}
 
 	var gfBopped:Bool = false;

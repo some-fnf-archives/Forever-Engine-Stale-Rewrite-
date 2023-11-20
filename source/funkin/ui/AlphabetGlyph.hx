@@ -6,8 +6,11 @@ import forever.display.ForeverSprite;
 class AlphabetGlyph extends ForeverSprite {
 	public static final Y_PER_ROW:Float = 60;
 
-	public static final letters:Array<String> = "abcdefghijklmnopqrstuvwxyz".split("");
-	public static final allGlyphs:Array<String> = "abcdefghijklmnopqrstuvwxyz0123456789#$%&()[]|~<>←↓↑→-_!'.+?*^\\/\",=×♥".split("");
+	public static final letters:String = "abcdefghijklmnopqrstuvwxyz";
+	public static final numbers:String = "0123456789";
+	public static final symbols:String = "#$%&()[]|~<>←↓↑→-_!'.+?*^\\/\",=×♥";
+
+	public static final allGlyphs:Array<String> = (letters + numbers + symbols).split("");
 
 	public var type(default, set):AlphabetGlyphType;
 	public var char(default, set):String;
@@ -17,6 +20,7 @@ class AlphabetGlyph extends ForeverSprite {
 
 	public function new(x:Float = 0, y:Float = 0, char:String = "", ?type:AlphabetGlyphType = BOLD):Void {
 		super(x, y);
+
 		@:bypassAccessor this.type = type;
 		this.char = char;
 	}
@@ -113,7 +117,7 @@ class AlphabetGlyph extends ForeverSprite {
 		var asset:String = type == BOLD ? "bold" : "normal";
 		frames = AssetHelper.getAsset('images/ui/letters/${asset}', ATLAS_SPARROW);
 
-		final isLetter:Bool = letters.contains(newChar.toLowerCase());
+		final isLetter:Bool = letters.split("").contains(newChar.toLowerCase());
 		var converted:String = convert(newChar);
 
 		if (type != BOLD && isLetter) {

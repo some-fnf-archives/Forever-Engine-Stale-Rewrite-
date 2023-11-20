@@ -41,6 +41,7 @@ enum abstract MusicState(Int) to Int {
 }
 
 class PlayState extends FNFState {
+	/** Current (existing) instance of PlayState. **/
 	public static var current:PlayState;
 
 	public var songMeta:PlaySong = {display: "Test", folder: "test", difficulty: "normal"};
@@ -74,9 +75,10 @@ class PlayState extends FNFState {
 	public function new(songInfo:PlaySong):Void {
 		super();
 		this.songMeta = songInfo;
+		Conductor.active = true;
 	}
 
-	override function create():Void {
+	@:dox(hide) override function create():Void {
 		super.create();
 
 		current = this;
@@ -219,7 +221,7 @@ class PlayState extends FNFState {
 			// die.
 		}
 
-		#if FE_DEBUG
+		#if FE_DEV
 		if (FlxG.keys.justPressed.SEVEN)
 			openChartEditor();
 		#end
