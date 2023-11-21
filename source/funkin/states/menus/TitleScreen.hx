@@ -9,11 +9,11 @@ import funkin.states.base.FNFState;
 import funkin.ui.Alphabet;
 
 typedef IntroTextSection = {
-	public var exec:String;
-	@:optional public var beat:Int;
-	@:optional public var text:String;
-	@:optional public var force:Bool;
-	@:optional public var step:Int;
+	var exec:String;
+	var ?text:String;
+	var ?force:Bool;
+	var ?step:Int;
+	var ?beat:Int;
 }
 
 class TitleScreen extends FNFState {
