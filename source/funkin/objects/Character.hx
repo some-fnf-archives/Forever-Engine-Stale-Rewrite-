@@ -192,7 +192,7 @@ class Character extends ForeverSprite {
 					for (i in animations) {
 						addAtlasAnim(i.name, i.prefix, i.fps ?? 24, i.loop ?? false, cast(i.indices ?? []));
 						if (i.x != null)
-							setOffset(i.x, i.y);
+							setOffset(i.name, i.x, i.y);
 					}
 				}
 				else

@@ -136,6 +136,7 @@ class FreeplayMenu extends BaseMenuState {
 			FlxG.switchState(new MainMenu());
 		}
 
+		bg.color = songs[curSel].color; // Start color
 		updateSelection();
 	}
 

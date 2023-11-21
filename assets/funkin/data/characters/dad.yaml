@@ -6,7 +6,7 @@ dancingSteps: ["idle"]
 singingSteps: ["singLEFT", "singDOWN", "singUP", "singRIGHT"]
 
 positionDisplace: {x: 0.0, y: 0.0}
-cameraDisplace: {x: 0.0, y: 0}
+cameraDisplace: {x: 150.0, y: 0.0}
 danceInterval: 2
 singDuration: 6.1
 
@@ -14,6 +14,6 @@ animations:
  - {name: "idle", prefix: "Dad idle dance", fps: 24, loop: false, x: 0, y: 0}
 
  - {name: "singLEFT", prefix: "Dad Sing Note LEFT", fps: 24, loop: false, x: -10, y: 10}
- - {name: "singDOWN", prefix: "Dad Sing Note DOWN", fps: 24, loop: false, x: 0, y: -50}
+ - {name: "singDOWN", prefix: "Dad Sing Note DOWN", fps: 24, loop: false, x: 0, y: -30}
  - {name: "singUP", prefix: "Dad Sing Note UP", fps: 24, loop: false, x: -6, y: 50}
  - {name: "singRIGHT", prefix: "Dad Sing Note RIGHT", fps: 24, loop: false, x: 0, y: 27}

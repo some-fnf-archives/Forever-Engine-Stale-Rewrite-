@@ -137,7 +137,7 @@ class PlayField extends FlxGroup {
 			var epicNote:Note = noteGroup.recycle(Note);
 			epicNote.parent = strumLines[unspawnNote.lane];
 			epicNote.appendData(unspawnNote);
-			add(epicNote);
+			noteGroup.add(epicNote);
 
 			curNote++;
 		}

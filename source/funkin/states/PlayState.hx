@@ -22,6 +22,8 @@ import funkin.states.editors.*;
 import funkin.states.menus.*;
 import funkin.ui.ComboSprite;
 
+import funkin.substates.GameOverSubState;
+
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
 	var FREEPLAY = 1;
@@ -151,9 +153,9 @@ class PlayState extends FNFState {
 		gameCamera.follow(camLead, LOCKON);
 
 		// -- PREPARE CHARACTERS -- //
+		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, Chart.current.gameInfo.chars[2], false));
 		add(player = new Character(stage.playerPosition.x, stage.playerPosition.y, Chart.current.gameInfo.chars[0], true));
 		add(enemy = new Character(stage.enemyPosition.x, stage.enemyPosition.y, Chart.current.gameInfo.chars[1], false));
-		add(crowd = new Character(stage.crowdPosition.x, stage.crowdPosition.y, Chart.current.gameInfo.chars[2], false));
 
 		// -- PREPARE USER INTERFACE -- //
 		add(comboGroup = new RecycledSpriteGroup<ComboSprite>());
@@ -340,6 +342,14 @@ class PlayState extends FNFState {
 		playField.updateScore();
 
 		callFunPack("postMissBehavior", [dir]);
+
+		if (Timings.health <= 0) {
+			final gameOver:GameOverSubState = new GameOverSubState();
+			gameOver.camera = altCamera;
+			playField.paused = true;
+			songState = PAUSED;
+			openSubState(gameOver);
+		}
 	}
 
 	/** Enables the Golden Judgements & Combo Popups when having a perfect combo. **/
