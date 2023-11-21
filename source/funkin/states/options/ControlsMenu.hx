@@ -34,6 +34,8 @@ class ControlsMenu extends FlxSubState {
     public var grpControls:FlxTypedGroup<ForeverText>;
     public var grpDescriptions:FlxTypedGroup<ForeverText>;
 
+    var editing:Bool = false;
+    
     override function create():Void {
         super.create();
 
@@ -70,18 +72,18 @@ class ControlsMenu extends FlxSubState {
 
                 final optionName:ForeverText = new ForeverText(0, 0, 0, "", 48);
                 optionName.text = ControlsFormatter.format(optionsList[i][j]).toUpperCase();
-
+                
                 if (isCategory) { // CATEGORIES
                     optionName.setPosition(130, initY + (60 * i));
                     maxListItems[0]++;
                     grpOptions.add(optionName);
                 } else { // ACTUAL CONTROLS
-                    optionName.setPosition(FlxG.width * 0.5, initY + (60 * j));
+                    optionName.setPosition(FlxG.width * 0.5 + 30, initY + (60 * j));
                     maxListItems[1]++;
                     grpControls.add(optionName);
                 }
 
-                grpDescriptions.add(!hasDesc ? null : new ForeverText(0, initY, bg.width, descriptors.get(optionsList[i][j]), 40));
+                grpDescriptions.add(!hasDesc ? null : new ForeverText(FlxG.width * 0.5 + 30, initY, FlxG.width * 0.4, descriptors.get(optionsList[i][j]), 40));
             }
         }
         trace(maxListItems);
@@ -110,6 +112,14 @@ class ControlsMenu extends FlxSubState {
             if (i == curSel) grpOptions.members[i].text = "> " + optionsList[i][0];
             else grpOptions.members[i].text = optionsList[i][0];
         }
+        if(editing){
+            grpControls.visible = true;
+            grpDescriptions.visible = false;
+        }
+        else{
+            grpControls.visible = false;
+            grpDescriptions.visible = true;
+        }
     }
     
     function updateSelection(newSel:Int = 0):Void {
@@ -125,7 +135,16 @@ class ControlsMenu extends FlxSubState {
 
         if (Controls.BACK) {
             // Settings.saveControls();
-            close();
+            if (!editing)
+                close();
+            else{
+                editing = false;
+                updateText();
+            }
+        }
+        if (Controls.ACCEPT && editing == false) {
+            editing = true;
+            updateText();
         }
     }
 }

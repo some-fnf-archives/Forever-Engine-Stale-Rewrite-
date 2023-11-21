@@ -48,7 +48,7 @@ class ControlsManager {
 		["USER INTERFACE"],
 		["ui_left", "ui_down", "ui_up", "ui_right", "accept", "back", "pause"],
 		["DEBUG"],
-		["reset", #if MODS "switch mods", #end ""],
+		["reset"#if MODS ,"switch mods" #end],
     ];
 
 	/** Indicator set if you are playing with a controller. **/
