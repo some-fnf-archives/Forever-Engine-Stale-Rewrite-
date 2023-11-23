@@ -1,7 +1,6 @@
 dump
 export
 .vscode
-.github
 .git
 vscode-project.hxml
 docs/doc.xml
