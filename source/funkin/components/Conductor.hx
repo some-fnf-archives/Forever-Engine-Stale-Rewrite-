@@ -11,11 +11,9 @@ import flixel.util.FlxSignal;
  * @author voiddevv (Original GDScript Implementation) crowplexus (Haxe Implementation)
 **/
 class Conductor {
-	@:dox(hide) static var _timeDelta:Float = 0.0;
+	// this looks very stupid but that is literally the correct answer, + dividing is slower.
+	@:dox(hide) public static final SIXTY_IN_MULT:Float = 0.01666666666666;
 	@:dox(hide) static var _lastTime:Float = -1.0;
-	@:dox(hide) static var _lastStep:Int = -1;
-	@:dox(hide) static var _lastBeat:Int = -1;
-	@:dox(hide) static var _lastBar:Int = -1;
 
 	/** How many beats per minute will count. **/
 	public static var bpm:Float = 100.0;
@@ -40,24 +38,32 @@ class Conductor {
 	public static var bar(get, never):Int;
 
 	/** The Delta Time between the last and current beat. **/
-	public static var beatDelta(get, never):Float;
+	public static var crochet(get, never):Float;
 	/** The Delta Time between the last and current step. **/
-	public static var stepDelta(get, never):Float;
+	public static var stepCrochet(get, never):Float;
 
 	/** The Time (in seconds) within a beat. **/
-	public static var stepTime:Float = 0.0;
+	public static var beatf:Float = 0.0;
 	/** The Time (in seconds) within a step. **/
-	public static var beatTime:Float = 0.0;
+	public static var stepf:Float = 0.0;
+	/** The Time (in seconds) within a bar. **/
+	public static var barf:Float = 0.0;
 
+	/** Signal emitted when a (new) step is hit. **/
 	public static var onStep:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	/** Signal emitted when a (new) beat is hit. **/
 	public static var onBeat:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
+	/** Signal emitted when a (new) bar is hit. **/
 	public static var onBar:FlxTypedSignal<Int->Void> = new FlxTypedSignal();
 
+	/**
+	 * Resets the time variables from the Conductor,
+	 *
+	 * @param resetSignals 		Will also remove every connected method in the music signals.
+	**/
 	public static function init(resetSignals:Bool = true):Void {
 		time = 0.0;
 		_lastTime = -1.0;
-		_lastStep = _lastBar = _lastBeat = -1;
-
 		if (resetSignals) {
 			onStep.removeAll();
 			onBeat.removeAll();
@@ -68,8 +74,6 @@ class Conductor {
 	public static function update(deltaTime:Float):Void {
 		if (!active) return;
 
-		_timeDelta = time - _lastTime;
-
 		if (FlxG.state != null && FlxG.state.exists) {
 			time += deltaTime;
 			if (FlxG.sound.music != null && FlxG.sound.music.playing) {
@@ -79,70 +83,58 @@ class Conductor {
 		}
 
 		if (time >= 0.0) {
-			stepTime += stepDelta;
-			beatTime += beatDelta;
-
-			if (step > _lastStep) {
+			final timeDelta:Float = time - _lastTime;
+			final beatDelta:Float = (bpm * SIXTY_IN_MULT) * timeDelta;
+			// *
+			if (step != Math.floor(stepf += (beatDelta * stepsPerBeat)))
 				onStep.dispatch(step);
-				_lastStep = step;
-			}
-
-			if (beat > _lastBeat) {
+			if (beat != Math.floor(beatf += beatDelta))
 				onBeat.dispatch(beat);
-				_lastBeat = beat;
-			}
-
-			if (bar > _lastBar) {
+			if (bar != Math.floor(barf += (beatDelta / beatsPerBar)))
 				onBar.dispatch(bar);
-				_lastBar = bar;
-			}
-
+			// *
 			_lastTime = time;
 		}
 	}
 
 	// -- HELPER CONVERSION FUNCTIONS -- //
 
+	/** Converts the given amount of time, using the `_bpm`, to a Beat. **/
 	public static inline function timeToBeat(time:Float, _bpm:Float):Float {
-		// this looks very stupid but that is literally the correct answer, + dividing is slower.
-		return (time * _bpm) * 0.01666666666666;
+		return (time * _bpm) * SIXTY_IN_MULT;
 	}
 
+	/** Converts the given amount of time, using the `_bpm`, to a Step. **/
 	public static inline function timeToStep(time:Float, _bpm:Float):Float {
-		return timeToBeat(time, _bpm) * 4.0;
+		return timeToBeat(time, _bpm) * stepsPerBeat;
 	}
 
+	/** Converts the given amount of time, using the `_bpm`, to a Bar. **/
 	public static inline function timeToBar(time:Float, _bpm:Float):Float {
-		return timeToBeat(time, _bpm) * 0.25;
+		return timeToBeat(time, _bpm) / beatsPerBar;
 	}
 
+	/** Converts the time of a beat, using the `_bpm`, to Time (in seconds). **/
 	public static inline function beatToTime(beatTime:Float, _bpm:Float):Float {
-		return (beatTime * 0.01666666666666) / _bpm;
+		return (beatTime * SIXTY_IN_MULT) / _bpm;
 	}
 
+	/** Converts the time of a step, using the `_bpm`, to Time (in seconds). **/
 	public static inline function stepToTime(time:Float, _bpm:Float):Float {
-		return beatToTime(time, _bpm) * 4.0;
+		return beatToTime(time, _bpm) * stepsPerBeat;
 	}
 
+	/** Converts the time of a bar, using the `_bpm`, to Time (in seconds). **/
 	public static inline function barToTime(time:Float, _bpm:Float):Float {
-		return beatToTime(time, _bpm) * 0.25;
+		return beatToTime(time, _bpm) / beatsPerBar;
 	}
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
-	@:noCompletion inline static function get_beatDelta():Float {
-		return (bpm / 60.0) * _timeDelta;
-	}
+	@:noCompletion @:dox(hide) inline static function get_crochet():Float return 60.0 / bpm;
+	@:noCompletion @:dox(hide) inline static function get_stepCrochet():Float return crochet * stepsPerBeat;
 
-	@:noCompletion inline static function get_stepDelta():Float
-		return beatDelta * 4.0;
-
-	@:noCompletion inline static function get_step():Int
-		return Math.floor(timeToStep(time, bpm));
-
-	@:noCompletion inline static function get_beat():Int
-		return Math.floor(step * 0.25);
-
-	@:noCompletion inline static function get_bar():Int
-		return Math.floor(beat * 0.25);
+	@:noCompletion @:dox(hide) inline static function get_step():Int return Math.floor(stepf);
+	@:noCompletion @:dox(hide) inline static function get_beat():Int return Math.floor(beatf);
+	@:noCompletion @:dox(hide) inline static function get_bar():Int return Math.floor(barf);
 }

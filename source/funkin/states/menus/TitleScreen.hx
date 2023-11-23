@@ -143,7 +143,7 @@ class TitleScreen extends FNFState {
 			logo.scale.set(1.05, 1.05);
 			logo.updateHitbox();
 
-			logoTween = FlxTween.tween(logo.scale, {x: 0.9, y: 0.9}, (60.0 / Conductor.bpm), {ease: FlxEase.expoOut});
+			logoTween = FlxTween.tween(logo.scale, {x: 0.9, y: 0.9}, (Conductor.crochet), {ease: FlxEase.expoOut});
 		}
 
 		if (gfDance != null) {

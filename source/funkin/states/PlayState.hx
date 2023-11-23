@@ -128,7 +128,7 @@ class PlayState extends FNFState {
 		}
 		Timings.reset();
 
-		Conductor.time = -(60.0 / Conductor.bpm) * 16.0;
+		Conductor.time = -(Conductor.crochet) * 16.0;
 		FlxG.mouse.visible = false;
 
 		// -- PREPARE CAMERAS -- //
@@ -390,8 +390,6 @@ class PlayState extends FNFState {
 		jSpr.velocity.y = -FlxG.random.int(140, 175);
 		jSpr.velocity.x = -FlxG.random.int(0, 10);
 
-		final crochet:Float = (60.0 / Conductor.bpm);
-
 		// sick and miss don't have timings blehhhh
 		if (timingPopups && (name != "sick-perfect" && name != "sick" && name != "miss")) {
 			final timing:ComboSprite = comboGroup.recycleLoop(ComboSprite).resetProps();
@@ -413,7 +411,7 @@ class PlayState extends FNFState {
 					timing.kill();
 					comboGroup.remove(timing, true);
 				},
-				startDelay: crochet + (crochet * 4.0) * 0.05
+				startDelay: Conductor.crochet + (Conductor.crochet * 4.0) * 0.05
 			});
 		}
 
@@ -422,7 +420,7 @@ class PlayState extends FNFState {
 				jSpr.kill();
 				comboGroup.remove(jSpr, true);
 			},
-			startDelay: crochet + (crochet * 4.0) * 0.05
+			startDelay: Conductor.crochet + (Conductor.crochet * 4.0) * 0.05
 		});
 
 		lastJSpr = jSpr;
@@ -458,14 +456,12 @@ class PlayState extends FNFState {
 			cnSpr.velocity.y = -FlxG.random.int(140, 160);
 			cnSpr.velocity.x = FlxG.random.int(-5, 5);
 
-			final crochet:Float = (60.0 / Conductor.bpm);
-
 			cnSpr.tween({alpha: 0}, 0.5, {
 				onComplete: function(twn:FlxTween):Void {
 					cnSpr.kill();
 					comboGroup.remove(cnSpr, true);
 				},
-				startDelay: (crochet * 4.0) * 0.08
+				startDelay: (Conductor.crochet * 4.0) * 0.08
 			});
 		}
 	}
@@ -637,15 +633,14 @@ class PlayState extends FNFState {
 			return;
 
 		if (songState != PLAYING) {
-			Conductor.time = -(60.0 / Conductor.bpm) * 4.0;
+			Conductor.time = -(Conductor.crochet) * 4.0;
 			for (hud in playField.getHUD())
-				FlxTween.tween(hud, {alpha: 1.0}, (60.0 / Conductor.bpm) * 2.0, {ease: FlxEase.sineIn});
+				FlxTween.tween(hud, {alpha: 1.0}, (Conductor.crochet) * 2.0, {ease: FlxEase.sineIn});
 		}
 
 		final sounds:Array<String> = ['intro3', 'intro2', 'intro1', 'introGo'];
-		final crochet:Float = (60.0 / Conductor.bpm);
 
-		var countdownTimer:FlxTimer = new FlxTimer().start(crochet, function(tmr:FlxTimer) {
+		var countdownTimer:FlxTimer = new FlxTimer().start(Conductor.crochet, function(tmr:FlxTimer) {
 			doDancersDance(tmr.loopsLeft, true);
 
 			var sprCount = getCountdownSprite(countdownPosition);
@@ -661,7 +656,7 @@ class PlayState extends FNFState {
 				add(sprCount);
 
 				sprCount.stopTweens();
-				sprCount.tween({alpha: 0, y: sprCount.y + 100}, crochet, {
+				sprCount.tween({alpha: 0, y: sprCount.y + 100}, Conductor.crochet, {
 					ease: FlxEase.sineOut,
 					onComplete: function(t) {
 						sprCount.destroy();

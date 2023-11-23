@@ -21,15 +21,12 @@ class OptionsMenu extends BaseMenuState {
 
 	public var optionsListed:StringMap<Array<ForeverOption>> = [
 		"main" => [
-			new ForeverOption("Preferences", CATEGORY),
-			#if FE_DEV new ForeverOption("Controls", NONE),
-			new ForeverOption("Offset", NONE), #end
-			new ForeverOption("Exit", NONE),
-		],
-		"preferences" => [
 			new ForeverOption("General", CATEGORY),
 			new ForeverOption("Gameplay", CATEGORY),
 			new ForeverOption("Visuals", CATEGORY),
+			#if FE_DEV new ForeverOption("Controls", NONE),
+			new ForeverOption("Offset", NONE), #end
+			new ForeverOption("Exit", NONE),
 		],
 		"general" => [
 			new ForeverOption("Auto Pause", "autoPause"),

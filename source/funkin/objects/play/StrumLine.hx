@@ -125,9 +125,9 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 				strum.alpha = 0.0;
 				// bro think they psych engine
 				final targetAlpha = (Settings.centerStrums && cpuControl) ? 0.6 : 0.8; // pair with original FE
-				strum.tween({alpha: targetAlpha}, (60.0 / Conductor.bpm) * 4.0, {
+				strum.tween({alpha: targetAlpha}, (Conductor.crochet) * 4.0, {
 					ease: FlxEase.circOut,
-					startDelay: (60.0 / Conductor.bpm) * i
+					startDelay: (Conductor.crochet) * i
 				});
 			}
 
