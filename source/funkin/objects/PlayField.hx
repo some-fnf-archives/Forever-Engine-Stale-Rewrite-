@@ -67,9 +67,9 @@ class PlayField extends FlxGroup {
 
 		final hbY:Float = Settings.downScroll ? FlxG.height * 0.1 : FlxG.height * 0.875;
 
-    var hbPath:String = 'images/ui/${skin}/healthBar';
-    if (!Tools.fileExists(AssetHelper.getPath(hbPath, IMAGE)))
-        hbPath = hbPath.replace(skin, "normal");
+        var hbPath:String = 'images/ui/${skin}/healthBar';
+        if (!Tools.fileExists(AssetHelper.getPath(hbPath, IMAGE)))
+            hbPath = hbPath.replace(skin, "normal");
 
 		add(healthBar = new ProgressBar(0, hbY, hbPath));
 		healthBar.screenCenter(X);

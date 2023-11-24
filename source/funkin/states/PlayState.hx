@@ -481,7 +481,7 @@ class PlayState extends FNFState {
 	}
 
 	override function onBar(bar:Int):Void {
-    final names:Array<String> = ["onBar", "onSection", "onMeasure"];
+        final names:Array<String> = ["onBar", "onSection", "onMeasure"];
 		for (contextNames in names) callFunPack(contextNames, [bar]);
 	}
 
