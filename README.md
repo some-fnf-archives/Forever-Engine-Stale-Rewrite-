@@ -26,23 +26,22 @@ You need the LATEST version of haxe to be able to compile Forever, previous vers
 
 ---
 
-- Current Features:
-    - [x] FULL Discord Rich Presence Support.
-    - [x] Modding:
-        - [x] Scripting (HScript).
-        - [x] Being able to override existing assets
-        - [x] Being able to add new assets
+- [x] Discord Rich Presence Support.
+- [x] Modding:
+    - [x] Scripting (HScript).
+    - [x] Being able to override existing assets.
+    - [x] Being able to add new assets.
 
-    - [x] Softcoded (allows you to add something of your own without modifying the source code):
-        - [x] Characters.
-        - [x] Note Skins.
-        - [ ] Story Mode Levels.
-        - [x] Freeplay Songs.
-        - [ ] Discord RPC.
-        - [ ] Settings.
+- [x] Softcoded Components (allows you to add something of your own without modifying the source code):
+    - [x] Characters.
+    - [x] Note Skins.
+    - [ ] Story Mode Levels.
+    - [x] Freeplay Songs.
+    - [ ] Discord RPC.
+    - [ ] Settings.
 
 
-- Planned Features:
+- Planned:
     - Note Coloring.
     - More Freedom and Extensibility With Mods.
 
