@@ -474,15 +474,15 @@ class PlayState extends FNFState {
 	}
 
 	override function onStep(step:Int):Void {
-		var soundTime:Float = vocals.time / 1000.0;
+		final soundTime:Float = vocals.time / 1000.0;
 		if (Math.abs(Conductor.time - soundTime) > 20.0)
 			vocals.time = FlxG.sound.music.time;
 		callFunPack("onStep", [step]);
 	}
 
 	override function onBar(bar:Int):Void {
-		for (contextNames in ["onBar", "onSection", "onMeasure"])
-			callFunPack(contextNames, [bar]);
+    final names:Array<String> = ["onBar", "onSection", "onMeasure"];
+		for (contextNames in names) callFunPack(contextNames, [bar]);
 	}
 
 	function doDancersDance(beat:Int, ?forced:Bool = false):Void {

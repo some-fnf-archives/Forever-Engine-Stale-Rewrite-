@@ -67,7 +67,11 @@ class PlayField extends FlxGroup {
 
 		final hbY:Float = Settings.downScroll ? FlxG.height * 0.1 : FlxG.height * 0.875;
 
-		add(healthBar = new ProgressBar(0, hbY, "images/ui/normal/healthBar"));
+    var hbPath:String = 'images/ui/${skin}/healthBar';
+    if (!Tools.fileExists(AssetHelper.getPath(hbPath, IMAGE)))
+        hbPath = hbPath.replace(skin, "normal");
+
+		add(healthBar = new ProgressBar(0, hbY, hbPath));
 		healthBar.screenCenter(X);
 
 		add(iconP1 = new HealthIcon(PlayState.current?.player?.icon ?? "face", true));

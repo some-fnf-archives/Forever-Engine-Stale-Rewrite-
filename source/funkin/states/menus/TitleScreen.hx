@@ -8,8 +8,8 @@ import forever.display.ForeverSprite;
 import funkin.states.base.FNFState;
 import funkin.ui.Alphabet;
 
-typedef IntroTextSection = {
-	public var exec:String;
+@:structInit class IntroTextSection {
+	public var exec:String; // TODO: make this a void but let YAML still use it as string
 	@:optional public var beat:Int;
 	@:optional public var text:String;
 	@:optional public var force:Bool;
@@ -42,15 +42,13 @@ class TitleScreen extends FNFState {
 			final introData = AssetHelper.parseAsset("data/titleScreen", YAML);
 			if (introData.introSections != null) {
 				introSections = [];
+
 				final dataArray:Array<Dynamic> = introData.introSections;
 				for (i in dataArray) {
-					if (i.exec == null)
-						continue;
+					if (i.exec == null) continue;
 					introSections.push({
-						beat: i.beat,
-						step: i.step,
-						text: i.text,
-						exec: i.exec,
+						beat: i.beat, step: i.step,
+						text: i.text, exec: i.exec,
 						force: i.force
 					});
 				}
@@ -152,18 +150,14 @@ class TitleScreen extends FNFState {
 			gfBopped = !gfBopped;
 		}
 
-		if (seenIntro)
-			return;
-
+		if (seenIntro) return;
 		for (i in 0...introSections.length)
 			if (introSections[i].beat == beat)
 				parseIntroEvent(introSections[i]);
 	}
 
 	override function onStep(step:Int):Void {
-		if (seenIntro)
-			return;
-
+		if (seenIntro) return;
 		for (i in 0...introSections.length)
 			if (introSections[i].step == step)
 				parseIntroEvent(introSections[i]);
