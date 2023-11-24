@@ -1,8 +1,10 @@
-# Friday Night Funkin': Forever
+# Friday Night Funkin': Forever (ALPHA)
 
 ![logo](/art/forever/foreverLogo-small.png)
 
-Forever is a complete recreation of [Friday Night Funkin'](https://github.com/FunkinCrew/Funkin) which aims to bring a more customizable experience along with neat features for helping in the creation of mods.
+---
+
+Forever is a complete recreation of [Friday Night Funkin'](https://github.com/FunkinCrew/Funkin) which aims to bring a more enhanced experience over the base game, providing features and enhancements seen in other rhythm games, along with modding support.
 
 Currently, Forever is in a HUGE development phase, but may already contain the features its meant to, feedback will always be appreciated and we hope to bring a neat modding tool for the community.
 
@@ -14,17 +16,15 @@ Forever is, and will always be, a Community-Driven Project as a love letter to i
 
 **Not as a means to bring said previous owner back into it.**
 
-# NOTICE:
+---
 
---- 
+# NOTICE:
 
 You need the LATEST version of haxe to be able to compile Forever, previous versions lack a lot of useful syntax stuff that forever makes use of, [Download Latest Haxe](https://haxe.org/download/), then run `setup.bat` (or `setup.sh` if you are on Linux or Mac)
 
 ---
 
 # FEATURES
-
----
 
 - [x] Discord Rich Presence Support.
 - [x] Modding:
