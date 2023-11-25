@@ -13,6 +13,7 @@ using flixel.util.FlxSpriteUtil;
 @:allow(funkin.states.menus.OptionsMenu)
 class ControlsMenu extends FlxSubState {
     public var curSel:Int = 0;
+    public var curControl:Int = 0;
     public var isBinding:Bool = false;
 
     public function new():Void {
@@ -35,6 +36,8 @@ class ControlsMenu extends FlxSubState {
     public var grpDescriptions:FlxTypedGroup<ForeverText>;
 
     var editing:Bool = false;
+
+    final controlsIDs:Array<Int> = [];
     
     override function create():Void {
         super.create();
@@ -76,10 +79,13 @@ class ControlsMenu extends FlxSubState {
                 if (isCategory) { // CATEGORIES
                     optionName.setPosition(130, initY + (60 * i));
                     maxListItems[0]++;
+                    optionName.ID = i;
                     grpOptions.add(optionName);
                 } else { // ACTUAL CONTROLS
                     optionName.setPosition(FlxG.width * 0.5 + 30, initY + (60 * j));
                     maxListItems[1]++;
+                    optionName.visible = false;
+                    controlsIDs.push(j);
                     grpControls.add(optionName);
                 }
 
@@ -105,25 +111,63 @@ class ControlsMenu extends FlxSubState {
         */
     }
 
-    function updateText():Void {    
+    function updateText():Void {
+        grpDescriptions.visible = !editing;
+        grpControls.visible = editing;
+
         final optionsList:Array<Array<String>> = Controls.current.keyOrder;
-        for (i in 0...grpOptions.length) {
-            if (grpDescriptions.members[i] != null) grpDescriptions.members[i].visible = i == curSel;
-            if (i == curSel) grpOptions.members[i].text = "> " + optionsList[i][0];
-            else grpOptions.members[i].text = optionsList[i][0];
-        }
-        if(editing){
-            grpControls.visible = true;
-            grpDescriptions.visible = false;
+        if(!editing){
+            for (i in 0...grpOptions.length) {
+                if (grpDescriptions.members[i] != null) grpDescriptions.members[i].visible = i == curSel;
+                for (j in 0...optionsList.length)
+                    if (j == grpOptions.members[i].ID){
+                        var str:String = (i == curSel) ? "> " : "";
+                        grpOptions.members[i].text = str + optionsList[j][0];
+                    }
+            }
         }
         else{
-            grpControls.visible = false;
-            grpDescriptions.visible = true;
+            for (i in 0...controlsIDs.length){    
+                var str:String = (i == curControl) ? "> " : "";
+                grpControls.members[i].text = str + optionsList[(2 * curSel) + 1][quantCont.indexOf(i)];
+            }
+        }
+    }
+
+    var count:Int = 0;
+    var repeatCount:Int = 0;
+
+    var quantCont:Array<Int> = [0]; 
+
+    // eu sei, é muita contagem pra pouco código X-X  (caiu a energia em casa lets gooooooooooooooooooooo)
+
+    function openControls() {
+        if(editing){
+            quantCont = [];
+            count = 0;
+            repeatCount = 0;
+            for (i in 0...controlsIDs.length) {
+                grpControls.members[i].visible = false;
+                if(count != controlsIDs[i]){
+                    repeatCount++;
+                    count = 0;
+                }
+                if (count == controlsIDs[i] && repeatCount == curSel){ // se inserir um else aqui ele vai "sumir" com uma opção quando curSel > 0
+                    grpControls.members[i].visible = true;
+                    quantCont.push(i);
+                }
+                count++;
+            }
         }
     }
     
     function updateSelection(newSel:Int = 0):Void {
-        curSel = FlxMath.wrap(curSel + newSel, 0, maxListItems[(!isBinding ? 0 : 1)] - 1);
+        if (!editing) {
+            curSel = FlxMath.wrap(curSel + newSel, 0, maxListItems[(!isBinding ? 0 : 1)] - 1);
+        }
+        else {
+            curControl = FlxMath.wrap(curControl + newSel, quantCont[0], quantCont.length + quantCont[0] - 1);
+        }
         updateText();
 	}
 
@@ -142,8 +186,10 @@ class ControlsMenu extends FlxSubState {
                 updateText();
             }
         }
-        if (Controls.ACCEPT && editing == false) {
+        if (Controls.ACCEPT && !editing) {
             editing = true;
+            openControls();
+            curControl = quantCont[0];
             updateText();
         }
     }
