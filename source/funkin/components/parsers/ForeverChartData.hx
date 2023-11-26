@@ -45,7 +45,7 @@ typedef NoteData = {
 	@:optional var type:String;
 
 	/** The length of the note's hold/sustain. **/
-	@:optional var holdLen:Single;
+	@:optional var holdLen:Float;
 
 	/** The note's animation, acts as a suffix if it starts with "-" **/
 	@:optional var animation:String;
