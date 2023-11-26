@@ -65,7 +65,7 @@ class PauseMenu extends FlxSubState {
 		});
 
 		final pauseInfoArray:Array<String> = [ // overengineering but i don't care. -Crow
-			'Song: ${PlayState.current.songMeta.display}',
+			'Song: ${PlayState.current.songMeta.name}',
 			'Difficulty: ${PlayState.current.songMeta.difficulty.toUpperCase()}',
 			'Time: ${(FlxG.sound.music.time / 1000.0).formatTime()} / ${(FlxG.sound.music.length / 1000.0).formatTime()}'
 			// 'Blueballed: ${PlayState.current.deathCount}'

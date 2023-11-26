@@ -79,7 +79,7 @@ class PlayField extends FlxGroup {
 		for (i in [iconP1, iconP2]) i.y = healthBar.y - (i.height * 0.5);
 
 		// [${play.songMeta.difficulty.toUpperCase()}] -'
-		centerMark = new ForeverText(0, (Settings.downScroll ? FlxG.height - 40 : 15), 0, '- ${play.songMeta.display} -', 20);
+		centerMark = new ForeverText(0, (Settings.downScroll ? FlxG.height - 40 : 15), 0, '- ${play.songMeta.name} -', 20);
 		centerMark.alignment = CENTER;
 		centerMark.borderSize = 2.0;
 		centerMark.screenCenter(X);
@@ -94,10 +94,9 @@ class PlayField extends FlxGroup {
 
 		noteList = new Vector<NoteData>(Chart.current.notes.length);
 
-		var allocateThisMany:Int = 5; // remind me to make this be higher depending on the note count of a song
 		// allocate notes before beginning
 		var i:Int = 0;
-		while (i < allocateThisMany) {
+		while (i < Math.floor(Chart.current.notes.length / 16)) {
 			var oi = new Note();
 			noteGroup.add(oi);
 			oi.kill();
@@ -164,7 +163,7 @@ class PlayField extends FlxGroup {
 
 		#if DISCORD
 		if (play != null)
-			DiscordRPC.updatePresence('Playing: ${play.songMeta.display}', '${scoreBar.text}');
+			DiscordRPC.updatePresence('Playing: ${play.songMeta.name}', '${scoreBar.text}');
 		#end
 	}
 
@@ -173,14 +172,11 @@ class PlayField extends FlxGroup {
 			icon.doBump(beat);
 	}
 
-	public function getHUD():Array<FlxSprite>
-		return [healthBar, iconP1, iconP2, scoreBar, centerMark];
-
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
-	function get_play():PlayState { return PlayState.current; }
-	function get_skin():String return Chart.current.gameInfo.skin ?? "normal";
+	public inline function getHUD():Array<FlxSprite> return [healthBar, iconP1, iconP2, scoreBar, centerMark];
 
-	static function get_isPixel():Bool
-		return Chart.current.gameInfo.skin == "pixel" || Chart.current.gameInfo.skin.endsWith("-pixel");
+	inline function get_play():PlayState return PlayState.current;
+	inline function get_skin():String return Chart.current.gameInfo.skin ?? "normal";
+	static inline function get_isPixel():Bool return Chart.current.gameInfo.skin == "pixel" || Chart.current.gameInfo.skin.endsWith("-pixel") ?? false;
 }
