@@ -190,7 +190,7 @@ class Note extends ForeverSprite {
 
 				/*
 				if (isSustain) {
-					final sLen:Single = cast((data.holdLen * 0.5) * Math.abs(speed) / (Math.abs(scale.y)), Single);
+					final sLen:Float = (data.holdLen * 0.5) * Math.abs(speed) / Math.abs(scale.y);
 					final img:String = parent.noteSkin.notes.sustain ?? parent.noteSkin.notes.image;
 					sustain = new Sustain('notes/${img}', animations[1], sLen, parent.noteSkin.notes.size);
 				}

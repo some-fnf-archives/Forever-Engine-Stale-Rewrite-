@@ -65,7 +65,7 @@ class OptionsMenu extends BaseMenuState {
 
 		#if MODS
 		if (gameplayMusic == null)
-			optionsListed.get("main").insert(#if FE_DEV 2 #else 1 #end, new ForeverOption("Mods", NONE));
+			optionsListed.get("main").insert(#if FE_DEV 4 #else 5 #end, new ForeverOption("Mods", NONE));
 		#end
 
 		#if DISCORD
