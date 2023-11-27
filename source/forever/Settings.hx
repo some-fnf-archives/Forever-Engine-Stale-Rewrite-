@@ -1,5 +1,9 @@
 package forever;
 
+import openfl.filters.ColorMatrixFilter;
+import haxe.ds.StringMap;
+import openfl.filters.BitmapFilter;
+
 /**
  * Contains Default Values for Settings
  * if you wish to create one, here's how
@@ -45,6 +49,9 @@ class Settings {
 	/** Whether to enable the reset (Quick Game Over) button during gameplay. **/
 	public static var resetButton:Bool = true;
 
+	/** Defines the (spawn) offset of the notes. **/
+	public static var noteOffset:Float = 0.0;
+
 	// -- VISUALS -- //
 
 	/** How should judgemnt animations be displayed when popping up? **/
@@ -57,6 +64,11 @@ class Settings {
 	**/
 	public static var noteSkin:String = "normal";
 
+	/** If the (main) camera should zoom every four beats. **/
+	public static var cameraZooms:Bool = true;
+	/** If the HUD should bump every four beats. **/
+	public static var hudZooms:Bool = true;
+
 	/** Applies a Screen Filter to your game, to view the game as a colorblind person would. **/
 	public static var screenFilter:String = "none";
 
@@ -65,9 +77,6 @@ class Settings {
 
 	/** Check this to attach judgements to the center of the screen, making them easier to read. **/
 	public static var fixedJudgements:Bool = false;
-
-	/** Where should the sustain clip to? either above the note (fnf) or below it (stepmania). **/
-	public static var sustainLayer:String = "stepmania";
 
 	/** Defines if the antialiasing filter affects all graphics. **/
 	public static var globalAntialias:Bool = true;
@@ -94,6 +103,37 @@ class Settings {
 		if (FlxG.drawFramerate != Settings.framerateCap)
 			Tools.changeMaxFramerate(Settings.framerateCap);
 		FlxG.sound.volume = Tools.toFloatPercent(Settings.masterVolume);
+		applyFilter(Settings.screenFilter);
+	}
+
+	/**
+	 * Applies the current selected filter to the screen.
+	**/
+	public static function applyFilter(filter:String):Void {
+		final filters:Array<BitmapFilter> = [];
+		final filterList:StringMap<Array<Float>> = [
+			"deuteranopia" => [
+				0.43, 0.72, -.15, 0, 0,
+				0.34, 0.57, 0.09, 0, 0,
+				-.02, 0.03,    1, 0, 0,
+				0,    0,    0, 1, 0,
+			],
+			"protanopia" => [
+				0.20, 0.99, -.19, 0, 0,
+				0.16, 0.79, 0.04, 0, 0,
+				0.01, -.01,    1, 0, 0,
+				0,    0,    0, 1, 0,
+			],
+			"tritanopia" => [
+				0.97, 0.11, -.08, 0, 0,
+				0.02, 0.82, 0.16, 0, 0,
+				0.06, 0.88, 0.18, 0, 0,
+				0,    0,    0, 1, 0,
+			]
+		];
+
+		if (filterList.get(filter.toLowerCase()) != null) filters.push(new ColorMatrixFilter(filterList.get(filter.toLowerCase())));
+		FlxG.game.setFilters(filters);
 	}
 }
 
@@ -102,32 +142,3 @@ enum abstract JudgementPopupType(Int) from Int to Int {}
 
 @:build(forever.macros.EnumHelper.makeEnum(["None", "Deuteranopia", "Protanopia", "Tritanopia"]))
 enum abstract ScreenFilterType(Int) from Int to Int {}
-
-@:build(forever.macros.EnumHelper.makeEnum(["fnf", "stepmania"]))
-enum abstract SustainLayerType(Int) from Int to Int {}
-/*enum abstract JudgementPositionType(Int) from Int to Int {
-	var LEGACY = 0;
-	var NEVER_OFFSCREEN = 1;
-	var FOREVER = 2;
-
-	public inline function toString():String {
-		return switch this {
-			case LEGACY: "Legacy";
-			case NEVER_OFFSCREEN: "Never Offscreen";
-			case FOREVER: "Forever";
-			case _: Std.string(this);
-		}
-	}
-	}
-	enum abstract JudgementPopupType(Int) from Int to Int {
-	var FUNKIN = 0;
-	var SIMPLY = 1;
-
-	public inline function toString():String {
-		return switch this {
-			case FUNKIN: "Funkin (Base Game)";
-			case SIMPLY: "Simply";
-			case _: Std.string(this);
-		}
-	}
-}*/

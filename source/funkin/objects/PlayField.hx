@@ -133,7 +133,7 @@ class PlayField extends FlxGroup {
 				curNote++; // skip
 				break;
 			}
-			final timeDifference:Float = unspawnNote.time - Conductor.time;
+			final timeDifference:Float = (unspawnNote.time - Conductor.time) - Settings.noteOffset;
 			if (timeDifference > 1.5 / (strum.members[unspawnNote.dir].speed / Conductor.rate)) // 1500 / (scrollSpeed / rate)
 				break;
 

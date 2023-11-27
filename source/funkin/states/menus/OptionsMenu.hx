@@ -1,5 +1,6 @@
 package funkin.states.menus;
 
+import flixel.math.FlxMath;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import forever.display.ForeverSprite;
 import forever.display.ForeverText;
@@ -23,9 +24,8 @@ class OptionsMenu extends BaseMenuState {
 		"main" => [
 			new ForeverOption("General", CATEGORY),
 			new ForeverOption("Gameplay", CATEGORY),
+			#if FE_DEV new ForeverOption("Controls", NONE), #end
 			new ForeverOption("Visuals", CATEGORY),
-			#if FE_DEV new ForeverOption("Controls", NONE),
-			new ForeverOption("Offset", NONE), #end
 			new ForeverOption("Exit", NONE),
 		],
 		"general" => [
@@ -33,19 +33,18 @@ class OptionsMenu extends BaseMenuState {
 			new ForeverOption("Anti-aliasing", "globalAntialias"),
 			new ForeverOption("VRAM Sprites", "vramSprites"),
 			new ForeverOption("Framerate Cap", "framerateCap", NUMBER(30, 240, 1)),
-			new ForeverOption("Filter", "screenFilter", CHOICE(["none", "deuteranopia", "protanopia", "tritanopia"])),
 		],
 		"gameplay" => [
 			new ForeverOption("Downscroll", "downScroll"),
 			new ForeverOption("Centered Receptors", "centerStrums"),
 			new ForeverOption("Ghost Tapping", "ghostTapping"),
 			new ForeverOption("Reset Button", "resetButton"),
+			new ForeverOption("Note Offset", "noteOffset", NUMBER(-150, 150, 1)),
 		],
 		"visuals" => [
-			// new ForeverOption("Note Skin >", CATEGORY),
 			new ForeverOption("Stage Dim", "stageDim", NUMBER(0, 100, 1)),
 			new ForeverOption("Fixed Judgements", "fixedJudgements"),
-			new ForeverOption("Clip Style", "sustainLayer", CHOICE(["stepmania", "fnf"])),
+			new ForeverOption("Filter", "screenFilter", CHOICE(["none", "deuteranopia", "protanopia", "tritanopia"])),
 		],
 	];
 
@@ -56,17 +55,23 @@ class OptionsMenu extends BaseMenuState {
 	var gameplayMusic:PlaySong = null;
 
 	public function new(gameplayMusic:PlaySong = null):Void {
-		super("OptionsMenu");
+		super();
 		this.gameplayMusic = gameplayMusic;
 	}
 
 	override function create():Void {
 		super.create();
 
+		Conductor.active = true;
+		Conductor.time = 0.0;
+
 		#if MODS
 		if (gameplayMusic == null)
-			optionsListed.get("main").insert(#if FE_DEV 4 #else 5 #end, new ForeverOption("Mods", NONE));
+			optionsListed.get("main").insert(3, new ForeverOption("Mods", NONE));
 		#end
+		optionsListed.get("visuals")[2].onChangeV = function(v:ForeverOption):Void {
+			Settings.applyFilter(Settings.screenFilter);
+		}
 
 		#if DISCORD
 		DiscordRPC.updatePresenceDetails("In the Menus", "OPTIONS");
@@ -104,9 +109,6 @@ class OptionsMenu extends BaseMenuState {
 				case "controls":
 					persistentUpdate = false;
 					openSubState(new ControlsMenu());
-				case "offset":
-					persistentUpdate = false;
-					openSubState(new OffsetMenu());
 				#end
 				#if MODS
 				case "mods":
@@ -128,7 +130,8 @@ class OptionsMenu extends BaseMenuState {
 							FlxG.sound.play(AssetHelper.getAsset('audio/sfx/confirmMenu', SOUND));
 							option.changeValue();
 
-							function changeSelector():Void cast(iconGroup.members[curSel], Alphabet).text = '${option.value}';
+							function changeSelector():Void
+								cast(iconGroup.members[curSel], Alphabet).text = '${option.value}';
 
 							switch (option.type) {
 								case CHECKMARK:
@@ -165,11 +168,13 @@ class OptionsMenu extends BaseMenuState {
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
+		if (FlxG.camera.zoom != 1.0)
+			FlxG.camera.zoom = FlxMath.lerp(FlxG.camera.zoom, 1.0, 0.05);
+
 		if (Std.isOfType(iconGroup.members[curSel], Alphabet)) {
 			function optionChange(changeFactor:Int = 0):Void {
 				final option:ForeverOption = optionsListed.get(curCateg)[curSel];
 				option.changeValue(changeFactor);
-	
 				cast(iconGroup.members[curSel], Alphabet).text = '${option.value}';
 				FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 			}
@@ -185,7 +190,7 @@ class OptionsMenu extends BaseMenuState {
 				holdTime += elapsed;
 				var checkNewHold:Int = Math.floor((holdTime - 0.5) * 20);
 
-				if(holdTime > 0.5 && checkNewHold - checkLastHold > 0)
+				if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
 					optionChange((checkNewHold - checkLastHold) * (Controls.UI_LEFT ? -1 : 1));
 			}
 		}
@@ -208,11 +213,17 @@ class OptionsMenu extends BaseMenuState {
 		infoText.text = optionsListed.get(curCateg)[curSel].description;
 		infoText.x = Math.floor(FlxG.width - infoText.width) * 0.5;
 		infoText.y = Math.floor(FlxG.height - infoText.height) - 5;
+
+		// aaa
+		if (optionsListed.get(curCateg)[curSel].onHover != null)
+			optionsListed.get(curCateg)[curSel].onHover(optionsListed.get(curCateg)[curSel]);
 	}
 
 	function reloadOptions():Void {
-		while (optionsGroup.members.length != 0) optionsGroup.members.pop().destroy();
-		while (iconGroup.members.length != 0) cast(iconGroup.members.pop(), FlxSprite).destroy();
+		while (optionsGroup.members.length != 0)
+			optionsGroup.members.pop().destroy();
+		while (iconGroup.members.length != 0)
+			cast(iconGroup.members.pop(), FlxSprite).destroy();
 
 		final cataOptions:Array<ForeverOption> = optionsListed.get(curCateg);
 
@@ -244,9 +255,12 @@ class OptionsMenu extends BaseMenuState {
 					newCheckmark.playAnim('${cataOptions[i].value} finished');
 					iconGroup.add(newCheckmark);
 
-				case CHOICE(options): generateSelector();
-				case NUMBER(min, max, decimals, clamp): generateSelector();
-				default: iconGroup.add(new FlxSprite()); // prevent issues
+				case CHOICE(options):
+					generateSelector();
+				case NUMBER(min, max, decimals, clamp):
+					generateSelector();
+				default:
+					iconGroup.add(new FlxSprite()); // prevent issues
 			}
 		}
 
@@ -254,6 +268,13 @@ class OptionsMenu extends BaseMenuState {
 		curSel = 0;
 
 		updateSelection();
+	}
+
+	public override function onBeat(beat:Int):Void {
+		if (optionsGroup.members[curSel].text.toLowerCase() == "note offset") {
+			if (beat % 2 == 0) FlxG.camera.zoom += 0.023;
+			FlxG.sound.play(Paths.sound("metronome"));
+		}
 	}
 
 	function reloadCategory(name:String):Void {
@@ -276,8 +297,9 @@ class OptionsMenu extends BaseMenuState {
 
 	function exitMenu():Void {
 		Settings.flush();
-		if (gameplayMusic != null) 
+		if (gameplayMusic != null)
 			FlxG.switchState(new funkin.states.PlayState(gameplayMusic));
-		else FlxG.switchState(new MainMenu());
+		else
+			FlxG.switchState(new MainMenu());
 	}
 }

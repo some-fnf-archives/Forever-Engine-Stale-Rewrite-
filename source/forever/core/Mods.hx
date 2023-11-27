@@ -29,7 +29,7 @@ class Mods {
 	public static final MODS_FOLDER:String = "assets";
 
 	/** Mod API Version **/
-	public static final API_VERSION:String = "1.0.0-PRE";
+	public static final API_VERSION:String = Main.version;
 
 	/** List of Mods found. **/
 	public static var mods:Array<ForeverMod> = [];
