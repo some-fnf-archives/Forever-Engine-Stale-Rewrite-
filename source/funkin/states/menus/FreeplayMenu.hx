@@ -103,7 +103,7 @@ class FreeplayMenu extends BaseMenuState {
 				canAccept = false;
 
 				var song:funkin.states.PlayState.PlaySong = {
-					display: songs[curSel].name,
+					name: songs[curSel].name,
 					folder: songs[curSel].folder,
 					difficulty: Difficulty.list[curSelAlt]
 				};

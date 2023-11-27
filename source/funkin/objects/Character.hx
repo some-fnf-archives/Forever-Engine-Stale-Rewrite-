@@ -122,7 +122,7 @@ class Character extends ForeverSprite {
 		x += positionDisplace.x;
 		y += positionDisplace.y;
 
-		dance();
+		dance(true);
 
 		return this;
 	}

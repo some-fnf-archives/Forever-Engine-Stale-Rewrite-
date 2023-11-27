@@ -8,13 +8,13 @@ import funkin.components.parsers.ForeverChartData.NoteData;
 import funkin.ui.NoteSkin;
 import openfl.events.KeyboardEvent;
 
-enum abstract StrumAnimationType(Int) to Int {
+enum abstract ReceptorAnimationType(Int) to Int {
 	var STATIC = 0;
 	var PRESS = 1;
 	var HIT = 2;
 }
 
-class Strum extends ForeverSprite {
+class Receptor extends ForeverSprite {
 	public var speed:Float = 1.0;
 	public var animations:Array<String> = new Array<String>();
 	public var animPlayed:Int = -1;
@@ -50,7 +50,7 @@ class Strum extends ForeverSprite {
 	}
 }
 
-class StrumLine extends FlxTypedSpriteGroup<Strum> {
+class StrumLine extends FlxTypedSpriteGroup<Receptor> {
 	public var cpuControl:Bool;
 	public var onNoteHit:FlxTypedSignal<Note->Void>;
 	public var onNoteMiss:FlxTypedSignal<(Int, Note) -> Void>;
@@ -108,7 +108,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		if (newSpeed != null) this.globalSpeed = newSpeed;
 	}
 
-	public function regenStrums(skin:String, skipStrumTween:Bool = false):Void {
+	public function regenStrums(skin:String, skipStartTween:Bool = false):Void {
 		if (noteSkin != null) noteSkin.loadSkin(skin);
 		else noteSkin = new NoteSkin(skin);
 
@@ -116,16 +116,16 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 			members.pop().destroy();
 
 		for (i in 0...4) {
-			final strum:Strum = new Strum(fieldWidth * i, 0, noteSkin, i);
-			strum.scale.set(size, size);
-			strum.updateHitbox();
-			add(strum);
+			final receptor:Receptor = new Receptor(fieldWidth * i, 0, noteSkin, i);
+			receptor.scale.set(size, size);
+			receptor.updateHitbox();
+			add(receptor);
 
-			if (!skipStrumTween) {
-				strum.alpha = 0.0;
+			if (!skipStartTween) {
+				receptor.alpha = 0.0;
 				// bro think they psych engine
 				final targetAlpha = (Settings.centerStrums && cpuControl) ? 0.6 : 0.8; // pair with original FE
-				strum.tween({alpha: targetAlpha}, (Conductor.crochet) * 4.0, {
+				receptor.tween({alpha: targetAlpha}, (Conductor.crochet) * 4.0, {
 					ease: FlxEase.circOut,
 					startDelay: (Conductor.crochet) * i
 				});
@@ -138,13 +138,13 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		}
 	}
 
-	public function changeStrumSpeed(newSpeed:Float, strumID:Int = -1):Void {
-		if (strumID == -1 || strumID > members.indexOf(members.last())) {
+	public function changeSpeed(newSpeed:Float, direction:Int = -1):Void {
+		if (direction == -1 || direction > members.indexOf(members.last())) {
 			for (i in 0...members.length)
 				members[i].speed = newSpeed;
 		}
 		else {
-			members[strumID].speed = newSpeed;
+			members[direction].speed = newSpeed;
 			globalSpeed = newSpeed;
 		}
 	}
@@ -250,7 +250,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
 		return spacing * size;
 
 	@:dox(hide) @:noCompletion function set_globalSpeed(v:Float):Float {
-		changeStrumSpeed(v);
+		changeSpeed(v);
 		return globalSpeed = v;
 	}
 }

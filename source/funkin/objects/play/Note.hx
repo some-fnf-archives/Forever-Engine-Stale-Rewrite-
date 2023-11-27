@@ -148,12 +148,9 @@ class Note extends ForeverSprite {
 	}
 
 	public function followParent():Void {
-		if (parent == null || this.data == null || !alive)
-			return;
-
-		final strum:Strum = parent.members[direction];
-		if (strum == null)
-			return;
+		if (parent == null || this.data == null || !alive) return;
+		final strum:Receptor = parent.members[direction];
+		if (strum == null) return;
 
 		speed = strum.speed;
 		visible = parent.visible;

@@ -6,11 +6,9 @@ import flixel.FlxSubState;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import flixel.util.FlxTimer;
-
 import forever.core.scripting.*;
 import forever.display.ForeverSprite;
 import forever.display.RecycledSpriteGroup;
-
 import funkin.components.ChartLoader;
 import funkin.components.Timings;
 import funkin.components.parsers.ForeverEvents as ChartEventOptions;
@@ -21,7 +19,6 @@ import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
 import funkin.ui.ComboSprite;
-
 import funkin.substates.GameOverSubState;
 
 enum abstract GameplayMode(Int) to Int {
@@ -37,7 +34,7 @@ enum abstract MusicState(Int) to Int {
 }
 
 @:structInit class PlaySong {
-	public var display:String;
+	public var name:String;
 	public var folder:String;
 	public var difficulty:String;
 }
@@ -46,7 +43,7 @@ class PlayState extends FNFState {
 	/** Current (existing) instance of PlayState. **/
 	public static var current:PlayState;
 
-	public var songMeta:PlaySong = {display: "Test", folder: "test", difficulty: "normal"};
+	public var songMeta:PlaySong = {name: "Test", folder: "test", difficulty: "normal"};
 	public var playMode:Int = FREEPLAY;
 	public var songState:Int = STOPPED;
 
@@ -77,7 +74,6 @@ class PlayState extends FNFState {
 	public function new(songInfo:PlaySong):Void {
 		super();
 		this.songMeta = songInfo;
-		Conductor.active = true;
 	}
 
 	@:dox(hide) override function create():Void {
@@ -118,7 +114,7 @@ class PlayState extends FNFState {
 		if (instTrack != null) {
 			inst = new FlxSound().loadEmbedded(instTrack);
 			FlxG.sound.music = inst;
-			inst.onComplete = endPlay.bind();
+			inst.onComplete = () -> beginCutscene(true);
 			FlxG.sound.music.looped = false;
 		}
 		if (vocalTrack != null) {
@@ -179,7 +175,7 @@ class PlayState extends FNFState {
 			playField.plrStrums.createSplash({time: 0.0, dir: 0, type: "default"}, true, true);
 
 		#if DISCORD
-		DiscordRPC.updatePresenceDetails('Playing: ${songMeta.display}', '');
+		DiscordRPC.updatePresenceDetails('Playing: ${songMeta.name}', '');
 		#end
 
 		// cache combo and stuff
@@ -191,44 +187,46 @@ class PlayState extends FNFState {
 
 		callFunPack("createPost", []);
 
-		countdownRoutine();
 		if (Chart.current != null && Chart.current.events[0] != null)
 			processEvent(Chart.current.events[0].event);
+
+		// -- CUTSCENES -- //
+		beginCutscene(false);
+	}
+
+	public function beginCutscene(endingRound:Bool):Void {
+		switch (songMeta.folder) {
+			// case "song-folder": // in case you wanna hardcode
+			default:
+				final cutsceneEvent:CancellableEvent = new CancellableEvent();
+				callFunPack(endingRound ? "ending" : "start" + "Cutscene", [cutsceneEvent]);
+				if (cutsceneEvent.cancelled) return;
+
+				final routineToFollow = endingRound ? endPlay : countdownRoutine;
+				routineToFollow();
+		}
 	}
 
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		var updateEvt:CancellableEvent = new CancellableEvent();
+		final updateEvt:CancellableEvent = new CancellableEvent();
 		callFunPack("update", [elapsed, updateEvt]);
-		if (updateEvt.cancelled)
-			return;
+		if (updateEvt.cancelled) return;
 
 		if (Conductor.time >= 0 && songState != PAUSED) {
 			startPlay();
 		}
 
 		FlxG.camera.followLerp = FlxMath.bound(elapsed * 2.4 * stage.cameraSpeed * (FlxG.updateFramerate / 60.0), 0.0, 1.0);
-
-		while (eventIndex < Chart.current.events.length) {
-			var curEvent = Chart.current.events[eventIndex];
-			if ((curEvent.time - Conductor.time) > 0.0)
-				break;
-
-			processEvent(curEvent.event);
-			eventIndex += 1;
-		}
+		parseEventColumn(Chart.current.events, eventIndex, (e) -> processEvent(e.event), 0.0); // old rewrite type beat
 
 		if (Controls.RESET && Settings.resetButton) {
 			// die.
 		}
 
-		#if FE_DEV
-		if (FlxG.keys.justPressed.SEVEN)
-			openChartEditor();
-		#end
-		if (Controls.PAUSE)
-			openPauseMenu();
+		#if FE_DEV if (FlxG.keys.justPressed.SEVEN) openChartEditor(); #end
+		if (Controls.PAUSE) openPauseMenu();
 
 		#if sys
 		if (FlxG.keys.justPressed.SEVEN)
@@ -252,14 +250,20 @@ class PlayState extends FNFState {
 		super.destroy();
 	}
 
-	public function hitBehavior(note:Note):Void {
-		if (note.wasHit)
-			return;
+	public function parseEventColumn(column:Array<Dynamic>, index:Int, fun:Dynamic->Void, ?delay:Float = 0.0):Void {
+		while (index < column.length - 1) {
+			if ((column[index].time - Conductor.time) > delay) break;
+			if (fun != null) fun(column[index]);
+			index++;
+		}
+	}
 
-		var hitEvent:CancellableEvent = new CancellableEvent();
+	public function hitBehavior(note:Note):Void {
+		if (note.wasHit) return;
+
+		final hitEvent:CancellableEvent = new CancellableEvent();
 		callFunPack("hitBehavior", [note, hitEvent]);
-		if (hitEvent.cancelled)
-			return;
+		if (hitEvent.cancelled) return;
 
 		final isEnemy:Bool = (note.parent == playField.enmStrums);
 		var character:Character = isEnemy ? enemy : player;
@@ -277,7 +281,6 @@ class PlayState extends FNFState {
 			Timings.totalMs += millisecondTiming;
 
 			var params = Tools.getEnumParams(judgement);
-
 			missPunishIncrease = 0.0;
 
 			Timings.score += params[1];
@@ -310,10 +313,9 @@ class PlayState extends FNFState {
 	private var missPunishIncrease:Float = 0.0;
 
 	public function missBehavior(dir:Int, note:Note = null):Void {
-		var missEvent:CancellableEvent = new CancellableEvent();
+		final missEvent:CancellableEvent = new CancellableEvent();
 		callFunPack("missBehavior", [dir, note, missEvent]);
-		if (missEvent.cancelled)
-			return;
+		if (missEvent.cancelled) return;
 
 		if (note != null)
 			note.parent.invalidateNote(note);
@@ -325,7 +327,8 @@ class PlayState extends FNFState {
 		else
 			Timings.combo--;
 		Timings.score -= 250;
-		if (missPunishIncrease <= 0.01) missPunishIncrease = 1.0;
+		if (missPunishIncrease <= 0.01)
+			missPunishIncrease = 1.0;
 		Timings.health -= 0.035 * missPunishIncrease;
 		missPunishIncrease += 0.075;
 		Timings.misses += 1;
@@ -354,8 +357,10 @@ class PlayState extends FNFState {
 
 	/** Enables the Golden Judgements & Combo Popups when having a perfect combo. **/
 	public var perfectPopups:Bool = true;
+
 	/** Enables the Red Miss Popups when missing notes. **/
 	public var missPopups:Bool = true;
+
 	/** Enables the timing sprites when hitting notes too early or late. **/
 	public var timingPopups:Bool = true;
 
@@ -481,15 +486,15 @@ class PlayState extends FNFState {
 	}
 
 	override function onBar(bar:Int):Void {
-        final names:Array<String> = ["onBar", "onSection", "onMeasure"];
-		for (contextNames in names) callFunPack(contextNames, [bar]);
+		final names:Array<String> = ["onBar", "onSection", "onMeasure"];
+		for (contextNames in names)
+			callFunPack(contextNames, [bar]);
 	}
 
 	function doDancersDance(beat:Int, ?forced:Bool = false):Void {
 		var chars:Array<Character> = [player, enemy, crowd];
 		for (character in chars) {
-			if (character == null)
-				continue;
+			if (character == null) continue;
 			// 0 = IDLE | 1 = SING | 2 = MISS
 			if (character.animationContext == 0 && beat % character.danceInterval == 0)
 				character.dance(forced);
@@ -512,7 +517,7 @@ class PlayState extends FNFState {
 			vocals.resume();
 		songState = PLAYING;
 		#if DISCORD
-		DiscordRPC.updatePresenceDetails('${songMeta.display}', '${playField.scoreBar.text}');
+		DiscordRPC.updatePresenceDetails('${songMeta.name}', '${playField.scoreBar.text}');
 		#end
 		pauseTweens(false);
 		super.closeSubState();
@@ -561,7 +566,7 @@ class PlayState extends FNFState {
 
 	function openChartEditor():Void {
 		#if DISCORD
-		DiscordRPC.updatePresenceDetails('Charting: ${songMeta.display}');
+		DiscordRPC.updatePresenceDetails('Charting: ${songMeta.name}');
 		#end
 		final charter:ChartEditor = new ChartEditor();
 		charter.camera = altCamera;
@@ -573,7 +578,7 @@ class PlayState extends FNFState {
 	function openPauseMenu():Void {
 		pauseTweens(true);
 		#if DISCORD
-		DiscordRPC.updatePresenceDetails('${songMeta.display} [PAUSED]', '${playField.scoreBar.text}');
+		DiscordRPC.updatePresenceDetails('${songMeta.name} [PAUSED]', '${playField.scoreBar.text}');
 		#end
 		final pause:PauseMenu = new PauseMenu();
 		pause.camera = altCamera;
@@ -588,13 +593,10 @@ class PlayState extends FNFState {
 	}
 
 	function startPlay():Void {
-		if (FlxG.sound.music.playing && songState != PAUSED)
-			return;
-
-		var startPlayEvt:CancellableEvent = new CancellableEvent();
+		if (FlxG.sound.music.playing && songState != PAUSED) return;
+		final startPlayEvt:CancellableEvent = new CancellableEvent();
 		callFunPack("startPlay", [startPlayEvt]);
-		if (startPlayEvt.cancelled)
-			return;
+		if (startPlayEvt.cancelled) return;
 
 		if (FlxG.sound.music != null) {
 			FlxG.sound.music.play();
@@ -605,32 +607,30 @@ class PlayState extends FNFState {
 	}
 
 	function endPlay():Void {
-		var endPlayEvt:CancellableEvent = new CancellableEvent();
+		final endPlayEvt:CancellableEvent = new CancellableEvent();
 		callFunPack("endPlay", [endPlayEvt]);
-		if (endPlayEvt.cancelled)
-			return;
+		if (endPlayEvt.cancelled) return;
 
 		FlxG.sound.music.stop();
 		vocals.stop();
 
-		var cb:Void->Void = switch playMode {
-			case STORY: function():Void FlxG.switchState(new MainMenu());
-			case CHARTER: function():Void {
-					Conductor.init();
-					openChartEditor();
-				}
-			case _: function():Void FlxG.switchState(new FreeplayMenu());
+		switch (playMode) {
+			case STORY: FlxG.switchState(new MainMenu());
+			#if FE_DEV
+			case CHARTER:
+				Conductor.init();
+				openChartEditor();
+			#end
+			case _: FlxG.switchState(new FreeplayMenu());
 		}
-		cb();
 	}
 
 	var countdownPosition:Int = 0;
 
 	public function countdownRoutine():Void {
-		var countdownEvt:CancellableEvent = new CancellableEvent();
+		final countdownEvt:CancellableEvent = new CancellableEvent();
 		callFunPack("countdownRoutine", [countdownPosition, songState, countdownEvt]);
-		if (countdownEvt.cancelled)
-			return;
+		if (countdownEvt.cancelled) return;
 
 		if (songState != PLAYING) {
 			Conductor.time = -(Conductor.crochet) * 4.0;
@@ -640,10 +640,8 @@ class PlayState extends FNFState {
 
 		final sounds:Array<String> = ['intro3', 'intro2', 'intro1', 'introGo'];
 
-		var countdownTimer:FlxTimer = new FlxTimer().start(Conductor.crochet, function(tmr:FlxTimer) {
-			doDancersDance(tmr.loopsLeft, true);
-
-			var sprCount = getCountdownSprite(countdownPosition);
+		new FlxTimer().start(Conductor.crochet, function(tmr:FlxTimer) {
+			final sprCount = getCountdownSprite(countdownPosition);
 			if (sprCount != null) {
 				sprCount.screenCenter();
 				sprCount.timeScale = Conductor.rate;
@@ -666,6 +664,8 @@ class PlayState extends FNFState {
 
 			FlxG.sound.play(AssetHelper.getAsset('audio/countdown/${playField.skin}/${sounds[countdownPosition]}', SOUND), 0.8);
 			countdownPosition++;
+
+			doDancersDance(tmr.loops);
 			callFunPack("countdownProgress", [countdownPosition, songState]);
 		}, 4);
 	}
