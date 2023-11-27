@@ -17,11 +17,14 @@ class Conductor {
 
 	/** How many beats per minute will count. **/
 	public static var bpm:Float = 100.0;
+
 	/** Current (Music) Time, calcualted in seconds. **/
 	public static var time:Float = 0.0;
+
 	/** Current Music Pitch + Speed Rate. **/
 	public static var rate:Float = 1.0;
 
+	/** If the Conductor is currently active. **/
 	public static var active:Bool = true;
 
 	/** How many beats there are in a step. **/
@@ -32,20 +35,25 @@ class Conductor {
 
 	/** The Current Step, expressed with a integer. **/
 	public static var step(get, never):Int;
+
 	/** The Current Beat, expressed with a integer. **/
 	public static var beat(get, never):Int;
+
 	/** The Current Bar/Measure, expressed with a integer. **/
 	public static var bar(get, never):Int;
 
 	/** The Delta Time between the last and current beat. **/
 	public static var crochet(get, never):Float;
+
 	/** The Delta Time between the last and current step. **/
 	public static var stepCrochet(get, never):Float;
 
 	/** The Time (in seconds) within a beat. **/
 	public static var beatf:Float = 0.0;
+
 	/** The Time (in seconds) within a step. **/
 	public static var stepf:Float = 0.0;
+
 	/** The Time (in seconds) within a bar. **/
 	public static var barf:Float = 0.0;
 
@@ -71,7 +79,7 @@ class Conductor {
 		}
 	}
 
-	public static function update(deltaTime:Float):Void {
+	@:dox(hide) public static function update(deltaTime:Float):Void {
 		if (!active) return;
 
 		if (FlxG.state != null && FlxG.state.exists) {
@@ -100,34 +108,22 @@ class Conductor {
 	// -- HELPER CONVERSION FUNCTIONS -- //
 
 	/** Converts the given amount of time, using the `_bpm`, to a Beat. **/
-	public static inline function timeToBeat(time:Float, _bpm:Float):Float {
-		return (time * _bpm) * SIXTY_IN_MULT;
-	}
+	public static inline function timeToBeat(_time:Float, _bpm:Float):Float return { (_time * _bpm) * SIXTY_IN_MULT; }
 
 	/** Converts the given amount of time, using the `_bpm`, to a Step. **/
-	public static inline function timeToStep(time:Float, _bpm:Float):Float {
-		return timeToBeat(time, _bpm) * stepsPerBeat;
-	}
+	public static inline function timeToStep(_time:Float, _bpm:Float):Float return timeToBeat(_time, _bpm) * stepsPerBeat;
 
 	/** Converts the given amount of time, using the `_bpm`, to a Bar. **/
-	public static inline function timeToBar(time:Float, _bpm:Float):Float {
-		return timeToBeat(time, _bpm) / beatsPerBar;
-	}
+	public static inline function timeToBar(_time:Float, _bpm:Float):Float return timeToBeat(_time, _bpm) / beatsPerBar;
 
 	/** Converts the time of a beat, using the `_bpm`, to Time (in seconds). **/
-	public static inline function beatToTime(beatTime:Float, _bpm:Float):Float {
-		return (beatTime * SIXTY_IN_MULT) / _bpm;
-	}
+	public static inline function beatToTime(_beatt:Float, _bpm:Float):Float { return (_beatt * SIXTY_IN_MULT) / _bpm; }
 
 	/** Converts the time of a step, using the `_bpm`, to Time (in seconds). **/
-	public static inline function stepToTime(time:Float, _bpm:Float):Float {
-		return beatToTime(time, _bpm) * stepsPerBeat;
-	}
+	public static inline function stepToTime(_stept:Float, _bpm:Float):Float return beatToTime(_stept, _bpm) * stepsPerBeat;
 
 	/** Converts the time of a bar, using the `_bpm`, to Time (in seconds). **/
-	public static inline function barToTime(time:Float, _bpm:Float):Float {
-		return beatToTime(time, _bpm) / beatsPerBar;
-	}
+	public static inline function barToTime(_bart:Float, _bpm:Float):Float return beatToTime(_bart, _bpm) / beatsPerBar;
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 

@@ -46,6 +46,11 @@ class ForeverOption {
 	/** the Value of the Variable. **/
 	public var value(get, set):Dynamic;
 
+	/** Callback fired when hovering over the optiom. **/
+	public var onHover:ForeverOption->Void;
+	/** Callback Fired when the value changes. **/
+	public var onChangeV:ForeverOption->Void;
+
 	/**
 	 * Creates a new option reference struct.
 	**/
@@ -102,6 +107,7 @@ class ForeverOption {
 	@:dox(hide) @:noCompletion function set_value(v:Dynamic):Dynamic {
 		if (Reflect.hasField(Settings, variable))
 			Reflect.setField(Settings, variable, v);
+		if (onChangeV != null) onChangeV(this);
 		return v;
 	}
 }

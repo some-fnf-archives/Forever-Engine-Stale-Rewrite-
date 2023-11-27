@@ -67,6 +67,12 @@ class PlayState extends FNFState {
 
 	public var comboGroup:RecycledSpriteGroup<ComboSprite>;
 
+	public var bumpEnabled:Bool = Settings.cameraZooms;
+	public var hudBump:Bool = Settings.hudZooms;
+
+	public var bumpIntensity:Float = 0.015;
+	public var hudBumpIntensity:Float = 0.05;
+
 	/**
 	 * Constructs the Gameplay State
 	 * @param songInfo 			Assigns a new song to the PlayState.

@@ -32,6 +32,10 @@ class MainMenu extends BaseMenuState {
 	override function create():Void {
 		super.create();
 
+		// -- making sure everything is alrightttt -- //
+		Conductor.active = false;
+		Conductor.time = 0.0;
+
 		#if DISCORD
 		DiscordRPC.updatePresenceDetails("In the Menus", "MAIN MENU");
 		#end
@@ -75,7 +79,7 @@ class MainMenu extends BaseMenuState {
 
 		FlxG.camera.follow(camLead, null, 0.16);
 
-		var versionLabel:ForeverText = new ForeverText(5, FlxG.height - 30, 0, 'Forever Engine v${Main.version}', 16);
+		var versionLabel:ForeverText = new ForeverText(5, FlxG.height - 20, 0, 'Forever Engine v${Main.version}', 16);
 		versionLabel.scrollFactor.set();
 		add(versionLabel);
 
