@@ -232,9 +232,11 @@ class StrumLine extends FlxTypedSpriteGroup<Receptor> {
 	}
 
 	public function invalidateNote(badNote:Note):Void {
-		badNote.visible = badNote.active = false;
-		badNote.kill();
-		playField.noteGroup.remove(badNote, true);
+		if (!badNote.isSustain) {
+			badNote.visible = badNote.active = false;
+			badNote.kill();
+			playField.noteGroup.remove(badNote, true);
+		}
 		// badNote.destroy();
 	}
 

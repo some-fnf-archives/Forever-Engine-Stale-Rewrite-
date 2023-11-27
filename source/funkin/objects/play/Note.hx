@@ -1,5 +1,6 @@
 package funkin.objects.play;
 
+import flixel.math.FlxRect;
 import forever.display.ForeverSprite;
 import funkin.components.Timings;
 import funkin.components.parsers.ForeverChartData.NoteData;
@@ -98,7 +99,10 @@ class Note extends ForeverSprite {
 	public function new() {
 		super();
 		sustain = new Sustain(0.7);
+		sustain.alpha = 0.6;
 		tail = new FlxSprite(-999, -999);
+		tail.clipRect = new FlxRect();
+		tail.alpha = 0.6;
 	}
 
 	public function appendData(data:NoteData):Note {
@@ -123,10 +127,24 @@ class Note extends ForeverSprite {
 				followParent();
 
 			if (isSustain) {
+				sustain.update(elapsed * timeScale);
+				tail.updateAnimation(elapsed * timeScale);
+
+				if (wasHit) {
+					holdLen -= elapsed;
+					if (holdLen <= 0) {
+						visible = active = false;
+						kill();
+						parent.playField.noteGroup.remove(this, true);
+					}
+				}
+
 				sustain.x = this.x + this.width * 0.5;
 				sustain.y = this.y + this.height * 0.5 - 5 * scrollDifference;
 				tail.x = sustain.x - tail.width * 0.5;
 				tail.y = (Settings.downScroll) ? sustain.y - sustain.height - tail.height : sustain.y + sustain.height;
+				tail.clipRect.y = -Math.min(sustain.sustainMult, 0) * tail.frameHeight;
+				tail.clipRect = tail.clipRect;
 				sustain.flipY = tail.flipY = Settings.downScroll;
 			}
 
@@ -144,7 +162,8 @@ class Note extends ForeverSprite {
 			sustain.draw();
 			tail.draw();
 		}
-		super.draw(); // draw behind the note for now
+		if (!isSustain || !wasHit)
+			super.draw(); // draw behind the note for now
 	}
 
 	public function followParent():Void {
@@ -156,7 +175,7 @@ class Note extends ForeverSprite {
 		visible = parent.visible;
 
 		final time:Float = Conductor.time - data.time;
-		final distance:Float = time * (400.0 * (speed * speedMult)) / 0.7; // this needs to be 400.0 since time is second-based
+		final distance:Float = (isSustain && wasHit) ? 0.0 : time * (400.0 * (speed * speedMult)) / 0.7; // this needs to be 400.0 since time is second-based
 
 		x = strum.x;
 		y = strum.y + distance * scrollDifference;
@@ -233,6 +252,7 @@ class Note extends ForeverSprite {
 					sustain.animation.play("hold");
 					sustain.scale.set(parent.noteSkin.notes.size, parent.noteSkin.notes.size);
 
+					speed = parent.members[direction]?.speed ?? 1.0;
 					holdLen = data?.holdLen ?? 0.0;
 
 					tail.frames = Paths.getSparrowAtlas('notes/${img}');
@@ -240,6 +260,8 @@ class Note extends ForeverSprite {
 					tail.animation.play("tail");
 					tail.scale.set(parent.noteSkin.notes.size, parent.noteSkin.notes.size);
 					tail.updateHitbox();
+					tail.clipRect.width = tail.frameWidth;
+					tail.clipRect.height = tail.frameHeight;
 				}
 		}
 
