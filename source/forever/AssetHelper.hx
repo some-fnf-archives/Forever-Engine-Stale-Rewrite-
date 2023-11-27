@@ -125,7 +125,11 @@ class AssetHelper {
 				return loadedGraphics.get(keyName);
 
 			try {
-				final bd:BitmapData = #if sys OptimizedBitmapData.fromFile(file, vram) #else OpenFLAssets.getBitmapData(file) #end;
+				final bd:BitmapData =
+				#if (sys && !hl) OptimizedBitmapData.fromFile(file, vram)
+				#elseif hl BitmapData.fromFile(file)
+				#else OpenFLAssets.getBitmapData(file) #end;
+
 				final graphic:FlxGraphic = FlxGraphic.fromBitmapData(bd, false, file);
 				graphic.persist = true;
 				graphic.destroyOnNoUse = false;

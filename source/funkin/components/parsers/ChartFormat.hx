@@ -5,30 +5,29 @@ package funkin.components.parsers;
  * 
  * Contains BPM and Time Signature Information, along with additional helper data.
 **/
-typedef ForeverSongData = {
+@:structInit class BeatSignature {
 	/** Declares how many beats per minute there are in a song. **/
-	var beatsPerMinute:Float;
+	public var beatsPerMinute:Float = 100.0;
 
 	/** Declares how many steps there are in a beat (time signatures part 1). **/
-	var stepsPerBeat:Int;
+	public var stepsPerBeat:Int = 4;
 
 	/** Declares how many steps there are in a bar/measure (time signatures part 2). **/
-	var beatsPerBar:Int;
+	public var beatsPerBar:Int = 4;
 }
 
-typedef ForeverGameplayData = { // :3
-
+@:structInit class GameplayData { // :3
 	/** Declares the gameplay's note speed. **/
-	var noteSpeed:Float;
+	public var noteSpeed:Float = 1.0;
 
 	/** Declares your chart characters, in order, player, enemy, crowd. **/
-	var chars:Array<String>;
+	public var chars:Array<String> = ["bf", "dad", "gf"];
 
 	/** Declares the game's background/stage during gameplay. **/
-	var stageBG:String;
+	public var stageBG:String = "stage";
 
 	/** Declares the name of the skin used in game. **/
-	var skin:String;
+	public var skin:String = "default";
 }
 
 typedef NoteData = {

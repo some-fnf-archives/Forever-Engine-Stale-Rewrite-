@@ -1,6 +1,7 @@
 package funkin.components.parsers;
 
 import funkin.components.ChartLoader;
+import funkin.components.parsers.ChartFormat;
 
 /**
  * Codename Engine Chart Parser
@@ -8,24 +9,19 @@ import funkin.components.ChartLoader;
  * @author Ne_Eo
 **/
 class CodenameParser {
-	public static function parseChart(json:Dynamic, diff:String):Chart {
+	public static function parseChart(songName:String, diff:String):Chart {
 		var chart:Chart = new Chart();
 
-		var curBPM:Float = json.bpm;
-		var keys:Int = 4;
-
-		var data:ChartMetadata = {
-			initialBPM: 100,
-			initialSpeed: 1,
-			keyAmount: 4,
-			playerChar: "bf",
-			enemyChar: "dad",
-			crowdChar: "gf",
-			stageBG: "stage"
+		var songData:BeatSignature = {beatsPerMinute: 100.0, stepsPerBeat: 4, beatsPerBar: 4};
+		var gameplayData:GameplayData = {
+			noteSpeed: 1.0,
+			chars: ["bf", "dad", "gf"],
+			stageBG: "stage",
+			skin: "default"
 		}
 
 		// Load into codename format
-		var cnebase:CNEChartMeta = {
+		var cnebase:ChartData = {
 			strumLines: [],
 			noteTypes: [],
 			events: [],
@@ -37,31 +33,23 @@ class CodenameParser {
 			codenameChart: true,
 		};
 
-		var valid:Bool = true;
-		if (!Tools.fileExists(chartPath)) {
-			trace('[WARN] Chart for song ${songName} ($difficulty) at "${chartPath}" was not found.');
-			valid = false;
-		}
-		try {
-			if (valid)
-				cnebase = external.Json.parse(Tools.getText(chartPath));
-		}
-		catch (e)
-			trace('[ERROR] Could not parse chart for song ${songName} ($difficulty): ${e}');
+		final chartPath:String = AssetHelper.getPath('songs/${songName}/${diff}', JSON);
 
-		var metaPath = AssetHelper.getPath('songs/${songName.toLowerCase()}/meta', JSON);
-		var metaDiffPath = AssetHelper.getPath('songs/${songName.toLowerCase()}/meta-${diff.toLowerCase()}', JSON);
+		final valid:Bool = Tools.fileExists(chartPath);
+		if (valid) {
+			try cnebase = external.Json.parse(Tools.getText(chartPath))
+			catch (e) trace('[ERROR] Could not parse chart for song ${songName} ($diff): ${e}');
+		}
 
-		var metadata:ChartMetadata = null;
+		final metaPath = AssetHelper.getPath('songs/${songName.toLowerCase()}/meta', JSON);
+		final metaDiffPath = AssetHelper.getPath('songs/${songName.toLowerCase()}/meta-${diff.toLowerCase()}', JSON);
+
+		var metadata:CNEChartMeta = null;
 		for (path in [metaDiffPath, metaPath]) {
 			if (Tools.fileExists(path)) {
-				try {
-					metadata = AssetHelper.parseAsset(path, JSON);
-				}
-				catch (e)
-					trace('[ERROR] Failed to load song metadata for ${songName} ($path): ${e}');
-				if (metadata != null)
-					break;
+				try metadata = AssetHelper.parseAsset(path, JSON)
+				catch (e) trace('[ERROR] Failed to load song metadata for ${songName} ($path): ${e}');
+				if (metadata != null) break;
 			}
 		}
 
@@ -77,15 +65,14 @@ class CodenameParser {
 			cnebase.meta = loadedMeta;
 		}
 
-		for (strumLine in cnebase.strumLines) {
-			var strumLine = getStrumLine(strumLine);
+		songData.beatsPerMinute = cnebase.meta.bpm;
+		songData.stepsPerBeat = Math.floor(cnebase.meta.stepsPerBeat) ?? 4;
+		songData.beatsPerBar = Math.floor(cnebase.meta.beatsPerMesure) ?? 4;
 
-			if (strumLine == 0)
-				data.enemyChar = strumLine.characters[0];
-			if (strumLine == 1)
-				data.playerChar = strumLine.characters[0];
-			if (strumLine == 2)
-				data.crowdChar = strumLine.characters[0];
+		for (strumLine in cnebase.strumLines) {
+			var sl:Int = getStrumLine(strumLine);
+			if (strumLine.characters[0] == null) continue;
+			gameplayData.chars[sl] = strumLine.characters[0];
 		}
 
 		if (cnebase.strumLines.length > 2) {
@@ -99,67 +86,65 @@ class CodenameParser {
 
 		// preallocate
 		var amt = 0;
-		for (strumLine in cnebase.strumLines) {
-			for (note in strumLine.notes) {
+		for (strumLine in cnebase.strumLines)
+			for (note in strumLine.notes)
 				amt++;
-			}
-		}
 		chart.notes.resize(amt);
 
 		// convert to forever format
 		var i = 0;
 		for (strumLine in cnebase.strumLines) {
-			var strumLine = getStrumLine(strumLine);
-
+			final sl:Int = getStrumLine(strumLine);
 			for (note in strumLine.notes) {
 				var type = null;
-				if (note.noteType != 0) {
+				if (note.type != 0) {
 					// its a srting
-					type = Std.string(cnebase.noteTypes[note.noteType - 1]);
+					type = Std.string(cnebase.noteTypes[note.type - 1]);
 				}
 
-				var foreverNote:NoteData = {
-					time: note.time / 1000.0,
-					direction: note.direction,
-					lane: strumLine,
-					type: type,
-					animation: "",
-					length: Math.max(note.sLen, 0.0) / 1000.0
-				};
-				chart.notes[i] = foreverNote;
+				var fnote:NoteData = {time: note.time / 1000.0, dir: note.id};
+
+				// completely optional fields
+				if (note.sLen != 0.0) fnote.holdLen = Math.max(note.sLen, 0.0) / 1000.0;
+				if (type != null) fnote.type = type;
+				if (sl != 0) fnote.lane = sl;
+
+				chart.notes[i] = fnote;
 				i++;
 			}
 		}
 
-		chart.data = data;
+		chart.songInfo = songData;
+		chart.gameInfo = gameplayData;
 		chart.events = []; // TODO
 
 		return chart;
 	}
 
 	@:dox(hide) @:noPrivateAccess
-	private static function getStrumLine(strumLine:ChartStrumLine) {
+	private static function getStrumLine(strumLine:CNEChartSL) {
 		return switch (strumLine.position) {
 			case "dad": 0;
 			case "boyfriend": 1;
 			case "girlfriend": 2;
+			case _: -1;
 		}
 	}
 }
 
 typedef ChartData = {
-	public var strumLines:Array<ChartStrumLine>;
-	public var events:Array<ChartEvent>;
-	public var meta:ChartMetaData;
+	public var strumLines:Array<CNEChartSL>;
+	public var events:Array<CNEChartEvent>;
+	public var meta:CNEChartMeta;
 	public var codenameChart:Bool;
 	public var stage:String;
 	public var scrollSpeed:Float;
 	public var noteTypes:Array<String>;
 }
 
-typedef ChartStrumLine = {
+typedef CNEChartSL = {
 	var characters:Array<String>;
-	var type:ChartStrumLineType;
+	var type:CNESLType;
 	var notes:Array<ChartNote>;
 	var position:String;
 	var ?visible:Null<Bool>;
@@ -191,13 +176,13 @@ typedef CNEChartMeta = {
 	public var ?opponentModeAllowed:Bool;
 }
 
-typedef ChartEvent = {
-	var name:String;
-	var time:Float;
-	var params:Array<Dynamic>;
+typedef CNEChartEvent = {
+	public var name:String;
+	public var time:Float;
+	public var params:Array<Dynamic>;
 }
 
-enum abstract ChartStrumLineType(Int) from Int to Int {
+enum abstract CNESLType(Int) from Int to Int {
 	/**
 	 * STRUMLINE IS MARKED AS OPPONENT - WILL BE PLAYED BY CPU, OR PLAYED BY PLAYER IF OPPONENT MODE IS ON
 	 */
