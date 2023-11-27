@@ -214,7 +214,7 @@ class Character extends ForeverSprite {
 				icon = data.icon;
 
 			case PSYCH:
-				frames = AssetHelper.getAsset('images/characters/${name}', ATLAS);
+				frames = AssetHelper.getAsset('images/${name}', ATLAS);
 
 				var psychAnimArray:Array<Dynamic> = file.animations;
 				for (anim in psychAnimArray) {
