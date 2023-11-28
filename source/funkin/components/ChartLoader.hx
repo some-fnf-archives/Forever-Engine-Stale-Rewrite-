@@ -2,36 +2,37 @@ package funkin.components;
 
 import flixel.util.FlxSort;
 import funkin.components.parsers.*;
-import funkin.components.parsers.ForeverChartData;
+import funkin.components.parsers.ChartFormat;
 
 typedef ForeverEvent = ChartEvent<ForeverEvents>;
 
 class ChartLoader {
 	public static function load(folder:String, file:String):Chart {
 		var chart:Chart = new Chart();
+
+		// -- IDENTIFY CHART TYPE HERE -- //
+
 		var json = cast(AssetHelper.parseAsset('songs/${folder}/${file}', JSON));
 		var dataType:EngineImpl = FOREVER;
 
-		if (Reflect.hasField(json, "song") && Reflect.hasField(json.song, "player2"))
-			dataType = VANILLA_V1;
-		if (Reflect.hasField(json, "codenameChart"))
-			dataType = CODENAME;
-		if (Reflect.hasField(json, "mustHitSections"))
-			dataType = CROW;
+		if (Reflect.hasField(json, "song") && Reflect.hasField(json.song, "needsVoices")) dataType = VANILLA_V1;
+		if (Reflect.hasField(json, "codenameChart")) dataType = CODENAME;
+		if (Reflect.hasField(json, "mustHitSections")) dataType = CROW;
+
+		// -- PARSING -- //
 
 		try {
 			switch (dataType) {
 				// MISSING CROW
-				case VANILLA_V1 | PSYCH:
-					var ver:Int = dataType == PSYCH ? -1 : 1;
-					// v-1 -> Psych | v1 -> 0.2.8 | v2 -> 0.3
-					chart = VanillaParser.parseChart(json.song, ver);
-				// its unfinished rn so yeah.
-				// case CODENAME: chart = CodenameParser.parseChart(json, file);
+				case VANILLA_V1 | PSYCH: // v-1 -> Psych | v1 -> 0.2.8 | v2 -> 0.3
+					chart = VanillaParser.parseChart(json.song, dataType == PSYCH ? -1 : 1);
+				case CODENAME:
+					chart = CodenameParser.parseChart(folder, file);
 				case FOREVER:
 					// welcome to my tutorial on how to parse charts, first off. -Crow
 					// first you get the die
 					// and then pour it all over yourself -Swordcube
+
 					if (json.notes != null && json.notes.length > 0)
 						chart.notes = cast(json.notes);
 					if (json.events != null && json.events.length > 0)
@@ -45,9 +46,14 @@ class ChartLoader {
 						};
 					}
 					if (json.gameInfo != null) {
-						var chars:Array<String> = json.gameInfo?.chars ?? ["bf", "dad", "gf"];
-						chart.gameInfo = {noteSpeed: json.gameInfo?.noteSpeed ?? 1.0, chars: chars, stageBG: json.gameInfo?.stageBG ?? null, skin: json.gameInfo?.skin ?? "normal"};
+						final chars:Array<String> = json.gameInfo?.chars ?? ["bf", "dad", "gf"];
+						chart.gameInfo = {
+							noteSpeed: json.gameInfo?.noteSpeed ?? 1.0,
+							chars: chars, stageBG: json.gameInfo?.stageBG ?? null,
+							skin: json.gameInfo?.skin ?? "normal"
+						};
 					}
+
 				default:
 					trace('${dataType.toString()} Chart Type is not implemented *yet*');
 			}
@@ -55,9 +61,12 @@ class ChartLoader {
 			if (chart.notes.length > 1) chart.notes.sort((a:NoteData, b:NoteData) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 			if (chart.events.length > 1) chart.events.sort((a:ForeverEvent, b:ForeverEvent) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 		}
-		catch (e:haxe.Exception)
+		catch (e:haxe.Exception) {
 			trace('Failed to parse chart, type was ${dataType.toString()}, Error:\n${e.details()} '
 				+ haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
+		}
+
+		// -- -- -- //
 
 		return chart;
 	}
@@ -78,8 +87,8 @@ class ChartLoader {
 class Chart {
 	public var notes:Array<NoteData> = [];
 	public var events:Array<ForeverEvent> = [];
-	public var songInfo:ForeverSongData = {beatsPerMinute: 100.0, stepsPerBeat: 4, beatsPerBar: 4};
-	public var gameInfo:ForeverGameplayData = {noteSpeed: 1.0, chars: ["bf", "dad", "gf"], stageBG: null, skin: "normal"};
+	public var songInfo:BeatSignature = {beatsPerMinute: 100.0, stepsPerBeat: 4, beatsPerBar: 4};
+	public var gameInfo:GameplayData = {noteSpeed: 1.0, chars: ["bf", "dad", "gf"], stageBG: null, skin: "normal"};
 
 	public static var current:Chart;
 

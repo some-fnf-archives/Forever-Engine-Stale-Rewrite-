@@ -7,9 +7,9 @@ import flixel.math.FlxMath;
 import forever.display.ForeverText;
 import forever.display.RecycledSpriteGroup;
 
-import funkin.components.ChartLoader.Chart;
+import funkin.components.ChartLoader;
 import funkin.components.Timings;
-import funkin.components.parsers.ForeverChartData.NoteData;
+import funkin.components.parsers.ChartFormat.NoteData;
 import funkin.objects.play.*;
 import funkin.states.PlayState;
 import funkin.ui.ProgressBar;

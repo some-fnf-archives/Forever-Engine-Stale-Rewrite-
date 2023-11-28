@@ -3,7 +3,7 @@ package funkin.objects.play;
 import flixel.math.FlxRect;
 import forever.display.ForeverSprite;
 import funkin.components.Timings;
-import funkin.components.parsers.ForeverChartData.NoteData;
+import funkin.components.parsers.ChartFormat.NoteData;
 import funkin.objects.play.StrumLine;
 
 /**
