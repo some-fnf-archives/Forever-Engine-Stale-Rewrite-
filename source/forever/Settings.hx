@@ -1,8 +1,8 @@
 package forever;
 
-import openfl.filters.ColorMatrixFilter;
 import haxe.ds.StringMap;
 import openfl.filters.BitmapFilter;
+import openfl.filters.ColorMatrixFilter;
 
 /**
  * Contains Default Values for Settings
@@ -24,6 +24,10 @@ class Settings {
 
 	/** Check this if you want the game to use the gpu more often to render sprites (experimental). **/
 	public static var vramSprites:Bool = false;
+
+	#if FE_RELEASE
+	public static var updateChecker:Bool = true;
+	#end
 
 	/** Your game's master volume. **/
 	public static var masterVolume:Int = 100;
@@ -66,6 +70,7 @@ class Settings {
 
 	/** If the (main) camera should zoom every four beats. **/
 	public static var cameraZooms:Bool = true;
+
 	/** If the HUD should bump every four beats. **/
 	public static var hudZooms:Bool = true;
 

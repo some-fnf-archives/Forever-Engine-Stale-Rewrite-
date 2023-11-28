@@ -18,24 +18,31 @@ class Init extends FlxState {
 	override function create():Void {
 		super.create();
 
-		FlxG.fixedTimestep = false;
-		FlxG.mouse.useSystemCursor = true;
-		FlxG.game.focusLostFramerate = 10;
-		FlxG.mouse.visible = false;
+		if (FlxG.save.data.firstBoot == null) FlxG.save.data.firstBoot = true;
 
-		forever.Settings.load();
-		// FlxGraphic.defaultPersist = true;
-		flixel.FlxSprite.defaultAntialiasing = forever.Settings.globalAntialias;
+		setupDefaults();
 		setupTransition();
+		precacheAssets();
 
-		forever.Controls.current = new forever.ControlsManager();
-		#if DISCORD forever.core.DiscordWrapper.initialize("1157951594667708416"); #end
-		#if MODS
-		forever.core.Mods.initialize();
-		if (FlxG.save.data.currentMod != null) forever.core.Mods.loadMod(FlxG.save.data.currentMod);
-		#end
+		// -- CUSTOM SPLASH SCREEN -- //
 
-		// precache and exclude some stuff from being cleared in cache.
+		/*
+		final graph:FlxGraphic = Paths.image("ui/splash/clover");
+
+		final clover:FlxSprite = new FlxSprite().loadGraphic(graph, true, graph.width, graph.height);
+		clover.animation.add("wink", [0, 1, 2, 3, 4, 5, 6, 7, 8], 24, false);
+		clover.animation.curAnim.curFrame = 0;
+		clover.alpha = 0.0;
+		add(clover);
+
+		clover.animation.finishCallback = function(a:String):Void
+			FlxG.switchState(Type.createInstance(Main.initialState, []));
+		*/
+
+		FlxG.switchState(Type.createInstance(Main.initialState, []));
+	}
+
+	function precacheAssets():Void {
 		final cacheGraphics:StringMap<flixel.graphics.FlxGraphic> = [
 			"boldAlphabet" => AssetHelper.getGraphic(AssetHelper.getPath("images/ui/letters/bold", IMAGE), "boldAlphabet")
 		];
@@ -47,12 +54,29 @@ class Init extends FlxState {
 			"breakfast" => AssetHelper.getSound(AssetHelper.getPath("audio/bgm/breakfast", SOUND), "breakfast"),
 		];
 
-		for (k => v in cacheGraphics) AssetHelper.excludedGraphics.set(k, v);
-		for (k => v in cacheSounds) AssetHelper.excludedSounds.set(k, v);
-
 		FlxTransitionableState.skipNextTransIn = true;
 
-		FlxG.switchState(Type.createInstance(Main.initialState, []));
+		for (k => v in cacheGraphics) AssetHelper.excludedGraphics.set(k, v);
+		for (k => v in cacheSounds) AssetHelper.excludedSounds.set(k, v);
+	}
+
+	function setupDefaults():Void {
+		FlxG.fixedTimestep = false;
+		FlxG.mouse.useSystemCursor = true;
+		FlxG.game.focusLostFramerate = 10;
+		FlxG.mouse.visible = false;
+
+		forever.Settings.load();
+		// FlxGraphic.defaultPersist = true;
+		flixel.FlxSprite.defaultAntialiasing = forever.Settings.globalAntialias;
+		forever.Controls.current = new forever.ControlsManager();
+
+		#if DISCORD forever.core.DiscordWrapper.initialize("1157951594667708416"); #end
+		#if MODS
+		forever.core.Mods.initialize();
+		if (FlxG.save.data.currentMod != null)
+			forever.core.Mods.loadMod(FlxG.save.data.currentMod);
+		#end
 	}
 
 	function setupTransition():Void {

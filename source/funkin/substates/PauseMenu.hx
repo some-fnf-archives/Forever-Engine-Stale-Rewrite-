@@ -1,12 +1,13 @@
-package funkin.states.menus;
+package funkin.substates;
 
-import forever.display.ForeverText;
 import flixel.FlxSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import flixel.tweens.FlxTween;
+import forever.display.ForeverText;
 import funkin.states.PlayState;
+import funkin.states.menus.*;
 import funkin.ui.Alphabet;
 import lime.app.Future;
 import lime.app.Promise;

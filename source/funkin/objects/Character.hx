@@ -3,7 +3,7 @@ package funkin.objects;
 import flixel.math.FlxPoint;
 import forever.core.scripting.HScript;
 import forever.display.ForeverSprite;
-import haxe.xml.Access;
+import funkin.substates.GameOverSubState.GameOverData;
 
 enum abstract CharacterAnimContext(Int) to Int {
 	var IDLE = 0;
@@ -25,16 +25,11 @@ class Character extends ForeverSprite {
 	public var icon:String = "bf";
 
 	/** Small data structure for the game over screen. **/
-	public var gameOverInfo:Dynamic = {
+	public var gameOverData:GameOverData = {
 		character: "bf-dead",
-		/** Plays during the game over screen. **/
 		loopMusic: "gameOver",
-		/** Plays after hitting the confirm key on the game over screen. **/
 		confirmSound: "gameOverEnd",
-		/** Plays when entering the game over screen**/
-		startSfx: "fnf_loss_sfx",
-		/** deathLifter the sfx, and slightly delays the music, Used in week7 **/
-		deathLines: "tank/jeffGameover-{1...25}"
+		deathSFX: "fnf_loss_sfx"
 	};
 
 	/** Dance Steps, used to track which animations to play when calling `dance()` on a character. **/
@@ -178,10 +173,11 @@ class Character extends ForeverSprite {
 		}
 		switch (impl) {
 			case FOREVER:
-				var data = AssetHelper.parseAsset('data/characters/${name}.yaml', YAML);
-				if (data == null)
-					return
-						trace('[Character:parseFromImpl()]: Character ${name} could not be parsed due to a inexistent file, Please provide a file called "${name}.yaml" in the "data/characters directory.');
+				var data = AssetHelper.parseAsset('data/characters/${name}', YAML);
+				if (data == null) {
+					trace('[Character:parseFromImpl()]: Character ${name} could not be parsed due to a inexistent file, Please provide a file called "${name}.yaml" in the "data/characters directory.');
+					return;
+				}
 
 				// automatically searches for packer and sparrow
 				frames = AssetHelper.getAsset('images/characters/${data.spritesheet}', ATLAS);
@@ -212,6 +208,13 @@ class Character extends ForeverSprite {
 				singDuration = data.singDuration ?? 4.0;
 				danceInterval = data.danceInterval ?? 2;
 				icon = data.icon;
+
+				// -- GAME OVER VALUES -- //
+
+				gameOverData.character = data.gameOverData?.character ?? gameOverData.character;
+				gameOverData.deathSFX = data.gameOverData?.deathSFX ?? gameOverData.deathSFX;
+				gameOverData.loopMusic = data.gameOverData?.loopMusic ?? gameOverData.loopMusic;
+				gameOverData.confirmSound = data.gameOverData?.confirmSound ?? gameOverData.confirmSound;
 
 			case PSYCH:
 				frames = AssetHelper.getAsset('images/${name}', ATLAS);

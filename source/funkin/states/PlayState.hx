@@ -1,5 +1,6 @@
 package funkin.states;
 
+import flixel.math.FlxPoint;
 import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSubState;
@@ -19,7 +20,7 @@ import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
 import funkin.ui.ComboSprite;
-import funkin.substates.GameOverSubState;
+import funkin.substates.*;
 
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
@@ -222,16 +223,14 @@ class PlayState extends FNFState {
 		callFunPack("update", [elapsed, updateEvt]);
 		if (updateEvt.cancelled) return;
 
-		if (Conductor.time >= 0 && songState != PAUSED) {
+		if (Conductor.time >= 0 && songState != PAUSED)
 			startPlay();
-		}
 
 		FlxG.camera.followLerp = FlxMath.bound(elapsed * 2.4 * stage.cameraSpeed * (FlxG.updateFramerate / 60.0), 0.0, 1.0);
 		parseEventColumn(Chart.current.events, eventIndex, (e) -> processEvent(e.event), 0.0); // old rewrite type beat
 
-		if (Controls.RESET && Settings.resetButton) {
-			// die.
-		}
+		if (Controls.RESET && Settings.resetButton)
+			deathCheck(player);
 
 		#if FE_DEV if (FlxG.keys.justPressed.SEVEN) openChartEditor(); #end
 		if (Controls.PAUSE) openPauseMenu();
@@ -353,14 +352,27 @@ class PlayState extends FNFState {
 		playField.updateScore();
 
 		callFunPack("postMissBehavior", [dir]);
+		deathCheck(player);
+	}
 
-		if (Timings.health <= 0) {
-			final gameOver:GameOverSubState = new GameOverSubState();
-			gameOver.camera = altCamera;
-			playField.paused = true;
-			songState = PAUSED;
-			openSubState(gameOver);
+	function deathCheck(char:Character):Bool {
+		if (Timings.health > 0) return false;
+
+		Conductor.active = false;
+		if (FlxG.sound.music != null) {
+			FlxG.sound.music.stop();
+			vocals.stop();
 		}
+
+		final pos:FlxPoint = char.getScreenPosition();
+
+		final gameOver:GameOverSubState = new GameOverSubState(pos.x, pos.y, char.gameOverData, char == player);
+		gameOver.camera = altCamera;
+		playField.paused = true;
+		songState = PAUSED;
+		openSubState(gameOver);
+
+		return true;
 	}
 
 	public function sustainTickBehavior(note:Note) {
@@ -570,8 +582,10 @@ class PlayState extends FNFState {
 				var xPoint:Float = character.getMidpoint().x + character.cameraDisplace.x;
 				var yPoint:Float = character.getMidpoint().y + character.cameraDisplace.y;
 
-				if (camLead.x != xPoint)
+				if (camLead.x != xPoint) {
 					camLead.setPosition(xPoint, yPoint);
+					
+				}
 
 			case ChangeCharacter(who, toCharacter):
 				getCharacterFromID(who).loadCharacter(toCharacter);
@@ -633,8 +647,10 @@ class PlayState extends FNFState {
 		callFunPack("endPlay", [endPlayEvt]);
 		if (endPlayEvt.cancelled) return;
 
-		FlxG.sound.music.stop();
-		vocals.stop();
+		if (FlxG.sound.music != null) {
+			FlxG.sound.music.stop();
+			vocals.stop();
+		}
 
 		switch (playMode) {
 			case STORY: FlxG.switchState(new MainMenu());

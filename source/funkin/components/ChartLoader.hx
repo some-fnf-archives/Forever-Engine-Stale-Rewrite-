@@ -24,8 +24,8 @@ class ChartLoader {
 		try {
 			switch (dataType) {
 				// MISSING CROW
-				case VANILLA_V1 | PSYCH: // v-1 -> Psych | v1 -> 0.2.8 | v2 -> 0.3
-					chart = VanillaParser.parseChart(json.song, dataType == PSYCH ? -1 : 1);
+				case VANILLA_V1 | PSYCH:
+					chart = VanillaParser.parseChart(json.song);
 				case CODENAME:
 					chart = CodenameParser.parseChart(folder, file);
 				case FOREVER:
