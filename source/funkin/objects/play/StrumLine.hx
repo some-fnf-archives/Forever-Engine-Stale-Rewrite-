@@ -4,7 +4,7 @@ import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSignal.FlxTypedSignal;
 import forever.display.ForeverSprite;
-import funkin.components.parsers.ForeverChartData.NoteData;
+import funkin.components.parsers.ChartFormat.NoteData;
 import funkin.ui.NoteSkin;
 import openfl.events.KeyboardEvent;
 

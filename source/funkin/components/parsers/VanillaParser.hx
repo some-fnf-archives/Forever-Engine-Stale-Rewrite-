@@ -1,7 +1,7 @@
 package funkin.components.parsers;
 
 import funkin.components.ChartLoader;
-import funkin.components.parsers.ForeverChartData;
+import funkin.components.parsers.ChartFormat;
 
 class VanillaParser {
 	public static function parseChart(json:Dynamic, version:Int = 1):Chart {
@@ -76,8 +76,7 @@ class VanillaParser {
 					}
 
 					var barNotes:Array<Array<Dynamic>> = cast(bar.sectionNotes);
-					if (barNotes == null)
-						continue;
+					if (barNotes == null) continue;
 
 					for (j in barNotes) {
 						if (Std.int(j[1]) >= 0) { // prevent old psych events from spawning
@@ -100,12 +99,10 @@ class VanillaParser {
 							final note:NoteData = {time: j[0] / 1000.0, dir: Std.int(j[1]) % keys};
 
 							// completely optional fields
-							if (noteHold != 0.0)
-								note.holdLen = noteHold;
-							if (strumLine != 0)
-								note.lane = strumLine;
-							if (noteType != null)
-								note.type = noteType;
+							if (noteHold != 0.0) note.holdLen = noteHold;
+							if (strumLine != 0) note.lane = strumLine;
+							if (noteType != null) note.type = noteType;
+
 							if (noteAnim != null && noteAnim != "")
 								note.animation = noteAnim;
 

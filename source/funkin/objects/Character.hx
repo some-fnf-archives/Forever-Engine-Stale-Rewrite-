@@ -3,7 +3,6 @@ package funkin.objects;
 import flixel.math.FlxPoint;
 import forever.core.scripting.HScript;
 import forever.display.ForeverSprite;
-import forever.tools.CodenameTools;
 import haxe.xml.Access;
 
 enum abstract CharacterAnimContext(Int) to Int {
@@ -215,7 +214,7 @@ class Character extends ForeverSprite {
 				icon = data.icon;
 
 			case PSYCH:
-				frames = AssetHelper.getAsset('images/characters/${name}', ATLAS);
+				frames = AssetHelper.getAsset('images/${name}', ATLAS);
 
 				var psychAnimArray:Array<Dynamic> = file.animations;
 				for (anim in psychAnimArray) {

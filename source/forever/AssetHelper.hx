@@ -116,16 +116,20 @@ class AssetHelper {
 	**/
 	public static function getGraphic(file:String, ?customKey:String = null, ?vram:Bool = true):FlxGraphic {
 		try {
-			final keyName:String = customKey != null ? customKey : file;
 			if (!Tools.fileExists(file, IMAGE))
-				throw '[AssetHelper:getGraphic()]: Error! Attempt to load a Graphic with File "${file}", which does not exist in the FileSystem.';
+				throw('Attempt to load image that does not exist in the FileSystem.');
 
+			final keyName:String = customKey != null ? customKey : file;
 			// prevent remapping
 			if (loadedGraphics.get(keyName) != null)
 				return loadedGraphics.get(keyName);
 
 			try {
-				final bd:BitmapData = #if sys OptimizedBitmapData.fromFile(file, vram) #else OpenFLAssets.getBitmapData(file) #end;
+				final bd:BitmapData =
+				#if (sys && !hl) OptimizedBitmapData.fromFile(file, vram)
+				#elseif hl BitmapData.fromFile(file)
+				#else OpenFLAssets.getBitmapData(file) #end;
+
 				final graphic:FlxGraphic = FlxGraphic.fromBitmapData(bd, false, file);
 				graphic.persist = true;
 				graphic.destroyOnNoUse = false;
@@ -133,12 +137,11 @@ class AssetHelper {
 				currentUsedAssets.push(keyName);
 				return graphic;
 			}
-			catch (e:haxe.Exception)
-				throw '[AssetHelper:getGraphic]: Error! Attempt to load texture for "${file}" which resulted in ${e.message}';
+			catch (e:haxe.Exception) // the other catch below should be able to catch this. -cROW
+				throw('Attempt to load image resulted in: ${e.message}');
 		}
 		catch (e:haxe.Exception)
-			trace('[AssetHelper:getGraphic]: Error! "${file}" returned "${e.message}"');
-
+			throw('[AssetHelper:getGraphic()]: Error with "${file}"\n${e.message}\n');
 		return null;
 	}
 
@@ -168,10 +171,8 @@ class AssetHelper {
 
 	public static function sendToCache(key:String, asset:Dynamic, type:ForeverAsset):Void {
 		switch type {
-			case IMAGE:
-				loadedGraphics.set(key, asset);
-			case SOUND:
-				loadedSounds.set(key, cast(asset, Sound));
+			case IMAGE: loadedGraphics.set(key, asset);
+			case SOUND: loadedSounds.set(key, cast(asset, Sound));
 			default:
 		}
 	}
@@ -185,8 +186,7 @@ class AssetHelper {
 
 	@:dox(hide) static function clearCachedGraphics(force:Bool = false):Void {
 		for (keyGraphic in loadedGraphics.keys()) {
-			if (excludedGraphics.get(keyGraphic) != null)
-				continue;
+			if (excludedGraphics.get(keyGraphic) != null) continue;
 
 			if (!currentUsedAssets.contains(keyGraphic) || force) {
 				var actualGraphic:FlxGraphic = loadedGraphics.get(keyGraphic);
@@ -212,8 +212,7 @@ class AssetHelper {
 
 	@:dox(hide) static function clearCachedSounds(force:Bool = false):Void {
 		for (keySound in loadedSounds.keys()) {
-			if (excludedSounds.get(keySound) != null)
-				continue;
+			if (excludedSounds.get(keySound) != null) continue;
 
 			if (!currentUsedAssets.contains(keySound) || force) {
 				var actualSound:Sound = loadedSounds.get(keySound);

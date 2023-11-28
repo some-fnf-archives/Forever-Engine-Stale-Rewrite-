@@ -31,7 +31,7 @@ class OptionsMenu extends BaseMenuState {
 		"general" => [
 			new ForeverOption("Auto Pause", "autoPause"),
 			new ForeverOption("Anti-aliasing", "globalAntialias"),
-			new ForeverOption("VRAM Sprites", "vramSprites"),
+			#if !hl new ForeverOption("VRAM Sprites", "vramSprites"), #end
 			new ForeverOption("Framerate Cap", "framerateCap", NUMBER(30, 240, 1)),
 		],
 		"gameplay" => [
