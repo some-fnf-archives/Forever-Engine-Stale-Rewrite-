@@ -199,6 +199,8 @@ class PlayState extends FNFState {
 		if (Chart.current != null && Chart.current.events[0] != null)
 			processEvent(Chart.current.events[0].event);
 
+		openfl.system.System.gc();
+
 		// -- CUTSCENES -- //
 		beginCutscene(false);
 	}
