@@ -175,6 +175,8 @@ class PlayState extends FNFState {
 		for (lane in playField.strumLines) {
 			lane.onNoteHit.add(hitBehavior);
 			lane.onNoteMiss.add(missBehavior);
+			lane.onSustainTick.add(sustainTickBehavior);
+			lane.onSustainMiss.add(sustainMissBehavior);
 		}
 
 		for (i in 0...4) // preload notesplashes
@@ -359,6 +361,20 @@ class PlayState extends FNFState {
 			songState = PAUSED;
 			openSubState(gameOver);
 		}
+	}
+
+	public function sustainTickBehavior(note:Note) {
+		final prefix = (note.isLate) ? 'miss' : '';
+		final character:Character = (note.parent == playField.enmStrums) ? enemy : player;
+
+		if (character.animationContext != 3) { // 3 means "special"
+			character.playAnim(character.singingSteps[note.data.dir] + prefix, true);
+			character.holdTmr = 0.0;
+		}
+	}
+
+	public function sustainMissBehavior(note:Note) {
+		Timings.health -= 0.07 * missPunishIncrease * FlxG.elapsed / note.missLen;
 	}
 
 	/** Enables the Golden Judgements & Combo Popups when having a perfect combo. **/

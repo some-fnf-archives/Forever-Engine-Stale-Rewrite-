@@ -128,7 +128,7 @@ class Conductor {
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
 	@:noCompletion @:dox(hide) inline static function get_crochet():Float return 60.0 / bpm;
-	@:noCompletion @:dox(hide) inline static function get_stepCrochet():Float return crochet * stepsPerBeat;
+	@:noCompletion @:dox(hide) inline static function get_stepCrochet():Float return crochet / stepsPerBeat; // whoops! looks like i messed with one! >:3 -srt
 
 	@:noCompletion @:dox(hide) inline static function get_step():Int return Math.floor(stepf);
 	@:noCompletion @:dox(hide) inline static function get_beat():Int return Math.floor(beatf);

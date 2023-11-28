@@ -10,16 +10,10 @@ import flixel.math.FlxPoint;
  */
 class Sustain extends flixel.FlxStrip {
     var _queueRedraw:Bool = true;
-    public var sustainMult(default, set):Float = 3.0;
+    public var sustainMult(default, set):Float = 0.0;
 
-    public function new(image:String, anim:String, length:Float, size:Float):Void {
-        super(640, 360);
-
-        frames = Paths.getSparrowAtlas(image);
-        animation.addByPrefix(anim, anim, 24, true);
-        animation.play(anim);
-
-        sustainMult = length;
+    public function new(size:Float):Void {
+        super(-999, -999);
 
         scale = new FlxCallbackPoint(scaleSet);
         scale.set(size, size);
@@ -33,6 +27,12 @@ class Sustain extends flixel.FlxStrip {
 
     function scaleSet(point:FlxPoint) {
         _queueRedraw = true; //I should prob make this smarter but.....
+        height = sustainMult * point.y;
+    }
+
+    override function set_flipY(newFlip:Bool) {
+        _queueRedraw = _queueRedraw || (flipY != newFlip);
+        return flipY = newFlip;
     }
 
     override function set_angle(newAngle:Float) {
@@ -42,11 +42,14 @@ class Sustain extends flixel.FlxStrip {
     }
 
     function set_sustainMult(newMult:Float) {
+        height = frameHeight * newMult * scale.y;
         _queueRedraw = _queueRedraw || (sustainMult != newMult);
         return sustainMult = newMult;
     }
 
     override public function draw() {
+        if (sustainMult <= 0) return; // dont render anything if theres ZERO OR NEGATIVE tiles.
+
         updateTrig(); //btw this function in FlxSprite already checks for _angleChanged.
         if (_queueRedraw)
             regenVerts();
@@ -60,14 +63,16 @@ class Sustain extends flixel.FlxStrip {
         final ceilMult = Math.ceil(sustainMult);
         final heightChunk = frameHeight; // TEMP
         final offset = heightChunk * (sustainMult % 1);
+        final yScale = (flipY) ? -scale.y : scale.y;
+        final uvOffset = 1.5 / frames.parent.height;
 
         vertices.splice(0, vertices.length);
         uvtData.splice(0, uvtData.length);
         indices.splice(0, indices.length);
         for (i in 0...ceilMult) {
             final halfWidth = frameWidth * 0.5 * scale.x;
-            final topPos = (heightChunk * (i - 1) + offset) * Math.min(i, 1) * scale.y;
-            final bottomPos = (heightChunk * i + offset) * scale.y;
+            final topPos = (heightChunk * (i - 1) + offset) * Math.min(i, 1) * yScale;
+            final bottomPos = (heightChunk * i + offset) * yScale;
 
             vertices[i * 8] = -halfWidth * _cosAngle + topPos * -_sinAngle;
             vertices[i * 8 + 1] = -halfWidth * _sinAngle + topPos * _cosAngle;
@@ -81,8 +86,8 @@ class Sustain extends flixel.FlxStrip {
             vertices[i * 8 + 6] = halfWidth * _cosAngle + bottomPos * -_sinAngle;
             vertices[i * 8 + 7] = halfWidth * _sinAngle + bottomPos * _cosAngle;
 
-            final top = ((ceilMult - i) % 2 == 0) ? frame.uv.y : frame.uv.height;
-            final bottom = ((ceilMult - i) % 2 == 0) ? frame.uv.height : frame.uv.y;
+            final top = ((ceilMult - i) % 2 == 0) ? (frame.uv.height - uvOffset) : (frame.uv.y + uvOffset);
+            final bottom = ((ceilMult - i) % 2 == 0) ? (frame.uv.y + uvOffset) : (frame.uv.height - uvOffset);
 
             uvtData[i * 8] = frame.uv.x;
             uvtData[i * 8 + 1] = (i == 0) ? FlxMath.lerp(top, bottom, sustainMult % 1) : top;
