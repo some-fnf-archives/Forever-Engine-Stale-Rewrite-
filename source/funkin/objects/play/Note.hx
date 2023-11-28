@@ -212,6 +212,8 @@ class Note extends ForeverSprite {
 				} else {
 					parent.members[data.dir].playStrum(HIT, true);
 					parent.onNoteHit.dispatch(this);
+					if (isSustain)
+						holdLen += data.time - Conductor.time;
 					tilTick = Conductor.stepCrochet;
 				}
 			}

@@ -64,6 +64,7 @@ class Sustain extends flixel.FlxStrip {
         final heightChunk = frameHeight; // TEMP
         final offset = heightChunk * (sustainMult % 1);
         final yScale = (flipY) ? -scale.y : scale.y;
+        final uvOffset = 1.5 / frames.parent.height;
 
         vertices.splice(0, vertices.length);
         uvtData.splice(0, uvtData.length);
@@ -85,8 +86,8 @@ class Sustain extends flixel.FlxStrip {
             vertices[i * 8 + 6] = halfWidth * _cosAngle + bottomPos * -_sinAngle;
             vertices[i * 8 + 7] = halfWidth * _sinAngle + bottomPos * _cosAngle;
 
-            final top = ((ceilMult - i) % 2 == 0) ? frame.uv.height : frame.uv.y;
-            final bottom = ((ceilMult - i) % 2 == 0) ? frame.uv.y : frame.uv.height;
+            final top = ((ceilMult - i) % 2 == 0) ? (frame.uv.height - uvOffset) : (frame.uv.y + uvOffset);
+            final bottom = ((ceilMult - i) % 2 == 0) ? (frame.uv.y + uvOffset) : (frame.uv.height - uvOffset);
 
             uvtData[i * 8] = frame.uv.x;
             uvtData[i * 8 + 1] = (i == 0) ? FlxMath.lerp(top, bottom, sustainMult % 1) : top;

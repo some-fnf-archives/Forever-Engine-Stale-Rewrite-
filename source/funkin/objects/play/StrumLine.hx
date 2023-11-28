@@ -204,6 +204,8 @@ class StrumLine extends FlxTypedSpriteGroup<Receptor> {
 			}
 
 			onNoteHit.dispatch(frontNote);
+			if (frontNote.isSustain)
+				frontNote.holdLen += frontNote.data.time - Conductor.time;
 			members[key]?.playStrum(HIT, true);
 			frontNote.tilTick = Conductor.stepCrochet;
 			break;
