@@ -54,6 +54,8 @@ class StrumLine extends FlxTypedSpriteGroup<Receptor> {
 	public var cpuControl:Bool;
 	public var onNoteHit:FlxTypedSignal<Note->Void>;
 	public var onNoteMiss:FlxTypedSignal<(Int, Note) -> Void>;
+	public var onSustainTick:FlxTypedSignal<Note->Void>;
+	public var onSustainMiss:FlxTypedSignal<Note->Void>;
 
 	public var controls:Array<String> = ["left", "down", "up", "right"];
 
@@ -74,6 +76,8 @@ class StrumLine extends FlxTypedSpriteGroup<Receptor> {
 
 		onNoteHit = new FlxTypedSignal<Note->Void>();
 		onNoteMiss = new FlxTypedSignal<(Int, Note) -> Void>();
+		onSustainTick = new FlxTypedSignal<Note->Void>();
+		onSustainMiss = new FlxTypedSignal<Note->Void>();
 
 		if (!cpuControl && playField != null) {
 			FlxG.stage.addEventListener(openfl.events.KeyboardEvent.KEY_DOWN, inputKeyPress);
@@ -192,7 +196,7 @@ class StrumLine extends FlxTypedSpriteGroup<Receptor> {
 				var behindNote:Note = notesHittable[1];
 				// if the note behind is 2 seconds apart from the front one, invalidate it
 				if (Math.abs(behindNote.data.time - frontNote.data.time) < 0.002)
-					invalidateNote(behindNote);
+					invalidateNote(behindNote, true);
 				// just in case, if the note behind is actually in FRONT of the supposedly front note, swap them.
 				else if (behindNote.data.time < frontNote.data.time)
 					frontNote = behindNote;
@@ -201,13 +205,36 @@ class StrumLine extends FlxTypedSpriteGroup<Receptor> {
 
 			onNoteHit.dispatch(frontNote);
 			members[key]?.playStrum(HIT, true);
+			frontNote.tilTick = Conductor.stepCrochet;
 			break;
 		}
+
+		var bouttaMiss = playField.noteGroup.members.filter(function(n:Note):Bool {
+			var ableToHit:Bool = n.parent == this && n.bouttaMiss;
+			return blockedInputs[key] != true && n.alive && n.data.dir == key && ableToHit;
+		});
+		
+		for (note in bouttaMiss) {
+			note.bouttaMiss = false;
+			members[key]?.playStrum(HIT, true);
+		}
+
 	}
 
-	public function inputKeyRelease(event:KeyboardEvent):Void {
+	public function inputKeyRelease(event:KeyboardEvent):Void {		
 		var key:Int = getKeyFromEvent(event.keyCode);
 		if (key == -1 || playField.paused) return;
+
+		var sustainsMissable:Array<Note> = playField.noteGroup.members.filter(function(n:Note):Bool {
+			var ableToHit:Bool = n.parent == this && n.canBeHit;
+			return blockedInputs[key] != true && n.alive && n.data.dir == key  && (n.isSustain && n.wasHit) && ableToHit;
+		});
+
+		for (note in sustainsMissable) {
+			note.bouttaMiss = true;
+			note.tilTick = Conductor.stepCrochet;
+		}
+
 		members[key]?.playStrum(STATIC, true);
 	}
 
@@ -231,8 +258,9 @@ class StrumLine extends FlxTypedSpriteGroup<Receptor> {
 		return Std.int(a.data.time - b.data.time);
 	}
 
-	public function invalidateNote(badNote:Note):Void {
-		if (!badNote.isSustain) {
+	public function invalidateNote(badNote:Note, ?force:Bool = false):Void {
+		badNote.tilTick = Conductor.stepCrochet;
+		if (!badNote.isSustain || force) {
 			badNote.visible = badNote.active = false;
 			badNote.kill();
 			playField.noteGroup.remove(badNote, true);

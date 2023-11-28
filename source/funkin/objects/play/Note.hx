@@ -86,6 +86,14 @@ class Note extends ForeverSprite {
 	public var canBeHit:Bool = false;
 	public var hitbox:Float = 0.0;
 
+	// SUSTAIN INPUT BEHAVIOR //
+	public var bouttaMiss:Bool = false;
+	public var tilTick(default, set):Float = 0.0;
+	public var missLen:Float = 0.0;
+	var missOffset:Float = 0.0;
+	var wasMissed:Bool = false;
+	var curLen:Float = 0.0;
+
 	// NOTE TYPE BEHAVIOR //
 	public var splash:Bool = false;
 	public var isMine:Bool = false;
@@ -99,10 +107,8 @@ class Note extends ForeverSprite {
 	public function new() {
 		super();
 		sustain = new Sustain(0.7);
-		sustain.alpha = 0.6;
 		tail = new FlxSprite(-999, -999);
 		tail.clipRect = new FlxRect();
-		tail.alpha = 0.6;
 	}
 
 	public function appendData(data:NoteData):Note {
@@ -112,7 +118,8 @@ class Note extends ForeverSprite {
 		this.type = data.type;
 		this.speedMult = 1.0;
 
-		wasHit = isLate = canBeHit = false;
+		missOffset = 0.0;
+		wasMissed = wasHit = isLate = canBeHit = false;
 		hitbox = NoteType.getHitbox(data.type);
 		playAnim(animations[0], true);
 		updateHitbox();
@@ -130,21 +137,33 @@ class Note extends ForeverSprite {
 				sustain.update(elapsed * timeScale);
 				tail.updateAnimation(elapsed * timeScale);
 
+				if (wasHit || isLate || bouttaMiss) {
+					if (tilTick - elapsed <= 0.0 && bouttaMiss) {
+						wasHit = bouttaMiss = false;
+						missOffset = data.holdLen - holdLen;
+						miss();
+						return;
+					}
+					tilTick -= elapsed;
+				}
+
 				if (wasHit) {
 					holdLen -= elapsed;
-					if (holdLen <= 0) {
-						visible = active = false;
-						kill();
-						parent.playField.noteGroup.remove(this, true);
-					}
+					tail.clipRect.y = -Math.min(sustain.sustainMult, 0) * tail.frameHeight;
+					tail.clipRect = tail.clipRect;
+					if (holdLen <= 0)
+						parent.invalidateNote(this, true);
+				} else if (isLate) {
+					curLen -= elapsed;
+					parent.onSustainMiss.dispatch(this);
+					if (curLen <= 0)
+						parent.invalidateNote(this, true);
 				}
 
 				sustain.x = this.x + this.width * 0.5;
 				sustain.y = this.y + this.height * 0.5 - 5 * scrollDifference;
 				tail.x = sustain.x - tail.width * 0.5;
 				tail.y = (Settings.downScroll) ? sustain.y - sustain.height - tail.height : sustain.y + sustain.height;
-				tail.clipRect.y = -Math.min(sustain.sustainMult, 0) * tail.frameHeight;
-				tail.clipRect = tail.clipRect;
 				sustain.flipY = tail.flipY = Settings.downScroll;
 			}
 
@@ -162,7 +181,7 @@ class Note extends ForeverSprite {
 			sustain.draw();
 			tail.draw();
 		}
-		if (!isSustain || !wasHit)
+		if (!isSustain || !(wasHit || wasMissed))
 			super.draw(); // draw behind the note for now
 	}
 
@@ -174,7 +193,7 @@ class Note extends ForeverSprite {
 		speed = strum.speed;
 		visible = parent.visible;
 
-		final time:Float = Conductor.time - data.time;
+		final time:Float = Conductor.time - data.time - missOffset;
 		final distance:Float = (isSustain && wasHit) ? 0.0 : time * (400.0 * (speed * speedMult)) / 0.7; // this needs to be 400.0 since time is second-based
 
 		x = strum.x;
@@ -188,24 +207,42 @@ class Note extends ForeverSprite {
 		if (-distance <= (positionDifference * scrollDifference)) {
 			if (!wasHit) {
 				if (!parent.cpuControl) {
-					if (!isMine) {
-						parent.onNoteMiss.dispatch(direction, this);
-						isLate = true;
-					}
-				}
-				else {
+					if (!isMine && !isLate)
+						miss();
+				} else {
 					parent.members[data.dir].playStrum(HIT, true);
 					parent.onNoteHit.dispatch(this);
+					tilTick = Conductor.stepCrochet;
 				}
 			}
 		}
 	}
 
+	function miss() {
+		parent.onNoteMiss.dispatch(direction, this);
+		wasMissed = isLate = true;
+
+		curLen = holdLen;
+		missLen = holdLen;
+		sustain.alpha = tail.alpha = 0.3;
+		tilTick = Conductor.stepCrochet;
+	}
+
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 	function set_holdLen(newLen:Float) {
-		if (isSustain)
+		if (newLen > 0.0)
 			sustain.sustainMult = (45 * (newLen * speed * speedMult * 15) - tail.frameHeight) / sustain.frameHeight;
 		return holdLen = newLen;
+	}
+
+	function set_tilTick(value:Float) {
+		if (value <= 0) {
+			value = Conductor.stepCrochet;
+			parent.onSustainTick.dispatch(this);
+			if (wasHit)
+				parent.members[data.dir].playStrum(HIT, true);
+		}
+		return tilTick = value;
 	}
 
 	@:noCompletion inline function set_speed(v:Float):Float {
@@ -216,7 +253,7 @@ class Note extends ForeverSprite {
 	}
 
 	@:noCompletion inline function get_isSustain():Bool
-		return data?.holdLen != 0.0;
+		return holdLen > 0.0;
 
 	@:noCompletion inline function get_direction():Int
 		return data?.dir ?? 0;
@@ -242,7 +279,7 @@ class Note extends ForeverSprite {
 				scale.set(parent.noteSkin.notes.size, parent.noteSkin.notes.size);
 				updateHitbox();
 
-				if (isSustain) {
+				if ((data?.holdLen ?? 0.0) > 0.0) {
 					final img:String = parent.noteSkin.notes.sustain ?? image;
 					final holdAnim = parent.noteSkin.notes.animations[1];
 					final tailAnim = parent.noteSkin.notes.animations[2];
@@ -251,6 +288,7 @@ class Note extends ForeverSprite {
 					sustain.animation.addByPrefix("hold", holdAnim.prefix.replace("{dir}", dir).replace("{color}", color), holdAnim.fps, holdAnim.looped);
 					sustain.animation.play("hold");
 					sustain.scale.set(parent.noteSkin.notes.size, parent.noteSkin.notes.size);
+					sustain.antialiasing = this.antialiasing;
 
 					speed = parent.members[direction]?.speed ?? 1.0;
 					holdLen = data?.holdLen ?? 0.0;
@@ -260,8 +298,11 @@ class Note extends ForeverSprite {
 					tail.animation.play("tail");
 					tail.scale.set(parent.noteSkin.notes.size, parent.noteSkin.notes.size);
 					tail.updateHitbox();
-					tail.clipRect.width = tail.frameWidth;
-					tail.clipRect.height = tail.frameHeight;
+					tail.clipRect.set(0, 0, tail.frameWidth, tail.frameHeight);
+					tail.clipRect = tail.clipRect;
+					tail.antialiasing = this.antialiasing;
+
+					sustain.alpha = tail.alpha = 0.6;
 				}
 		}
 
