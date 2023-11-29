@@ -18,7 +18,7 @@ jobs:
         run: |
           haxelib setup C:/haxelib
           haxelib install hxcpp > /dev/null --quiet
-          .\setup.bat
+          docs\setup\setup.bat
         shell: cmd
       - name: Create Version Tag
         run: echo "${{github.run_id}}" > VERSION
