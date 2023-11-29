@@ -250,7 +250,7 @@ class FreeplayMenu extends BaseMenuState {
 
 	#if sys
 	function changeSongPlaying():Void {
-		inline function getSongPath(i:Int):String {
+		function getSongPath(i:Int):String {
 			var real:String = "";
 			final path:String = 'songs/${songs[i].folder}/audio';
 			for (i in Tools.listFiles(AssetHelper.getPath(path))) {
