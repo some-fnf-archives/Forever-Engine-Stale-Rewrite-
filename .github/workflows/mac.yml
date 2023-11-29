@@ -17,8 +17,8 @@ jobs:
         run: |
           haxelib setup ~/haxelib
           haxelib install hxcpp > /dev/null --quiet
-          chmod +x setup.sh
-          sh setup.sh
+          chmod +x docs/setup/setup.sh
+          sh docs/setup/setup.sh
       - name: Create Version Tag
         run: echo "${{github.run_id}}" > VERSION
       - name: Compiling Process
