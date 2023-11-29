@@ -1,10 +1,10 @@
 package funkin.states;
 
-import flixel.math.FlxPoint;
 import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.FlxSubState;
 import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import flixel.sound.FlxSound;
 import flixel.util.FlxTimer;
 import forever.core.scripting.*;
@@ -19,8 +19,8 @@ import funkin.objects.play.Note;
 import funkin.states.base.FNFState;
 import funkin.states.editors.*;
 import funkin.states.menus.*;
-import funkin.ui.ComboSprite;
 import funkin.substates.*;
+import funkin.ui.ComboSprite;
 
 enum abstract GameplayMode(Int) to Int {
 	var STORY = 0;
@@ -109,7 +109,7 @@ class PlayState extends FNFState {
 
 		// -- FIXES FOR LINUX -- //
 
-		var audioFolder:String = 'songs/${songMeta.folder}/audio';
+		final audioFolder:String = 'songs/${songMeta.folder}/audio';
 		for (i in Tools.listFiles(AssetHelper.getPath(audioFolder))) {
 			var fileName:String = i.toLowerCase().replace("." + haxe.io.Path.extension(i), "");
 			if (fileName == "inst")
@@ -508,23 +508,25 @@ class PlayState extends FNFState {
 	}
 
 	override function onBeat(beat:Int):Void {
-		callFunPack("onBeat", [beat]);
 		playField.onBeat(beat);
 		// let 'em do their thing!
 		doDancersDance(beat);
+		callFunPack("onBeat", [beat]);
 	}
 
 	override function onStep(step:Int):Void {
-		final soundTime:Float = vocals.time / 1000.0;
-		if (Math.abs(Conductor.time - soundTime) > 20.0)
-			vocals.time = FlxG.sound.music.time;
+		if (vocals != null && vocals.playing) {
+			final soundTime:Float = vocals.time / 1000.0;
+			if (Math.abs(Conductor.time - soundTime) > 20.0)
+				vocals.time = FlxG.sound.music.time;
+		}
 		callFunPack("onStep", [step]);
 	}
 
 	override function onBar(bar:Int):Void {
-		final names:Array<String> = ["onBar", "onSection", "onMeasure"];
-		for (contextNames in names)
-			callFunPack(contextNames, [bar]);
+		callFunPack("onBar", [bar]);
+		callFunPack("onSection", [bar]);
+		callFunPack("onMeasure", [bar]);
 	}
 
 	function doDancersDance(beat:Int, ?forced:Bool = false):Void {

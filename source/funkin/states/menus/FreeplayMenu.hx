@@ -2,6 +2,7 @@ package funkin.states.menus;
 
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.sound.FlxSound;
 import flixel.util.FlxColor;
 import forever.display.ForeverSprite;
 import forever.display.ForeverText;
@@ -12,12 +13,24 @@ import funkin.states.base.BaseMenuState;
 import funkin.ui.Alphabet;
 import funkin.ui.HealthIcon;
 
+#if sys
+import sys.thread.Thread;
+import sys.thread.Mutex;
+#end
+
+using flixel.effects.FlxFlicker;
+
 class FreeplayMenu extends BaseMenuState {
 	static var prevSel:Int = 0;
 	static var lastDiff:String = null;
 
 	public var bg:ForeverSprite;
 	public var songs:Array<FreeplaySong> = [];
+
+	#if sys
+	public var songThread:Thread;
+	public var mutex:Mutex;
+	#end
 
 	public var songGroup:FlxTypedGroup<Alphabet>;
 	public var iconGroup:FlxTypedGroup<HealthIcon>;
@@ -38,11 +51,16 @@ class FreeplayMenu extends BaseMenuState {
 		#if DISCORD
 		DiscordRPC.updatePresenceDetails("In the Menus", "FREEPLAY");
 		#end
-		Tools.checkMenuMusic(null, false, 102.0);
+
+		#if !sys
+		Tools.checkMenuMusic(null, false);
+		#else
+		mutex = new Mutex();
+		#end
 
 		canChangeAlternative = true;
 
-		var localSongData:Array<String> = Tools.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
+		final localSongData:Array<String> = Tools.listFromFile(AssetHelper.getAsset("data/freeplaySonglist", TEXT));
 
 		for (i in localSongData) {
 			final song:Array<String> = i.trim().split("|");
@@ -102,14 +120,27 @@ class FreeplayMenu extends BaseMenuState {
 				canBackOut = false;
 				canAccept = false;
 
+				FlxG.sound.play(Paths.sound("confirmMenu"));
+
 				var song:funkin.states.PlayState.PlaySong = {
 					name: songs[curSel].name,
 					folder: songs[curSel].folder,
-					difficulty: Difficulty.list[curSelAlt]
+					difficulty: Difficulty.list[curAltSel]
 				};
 
-				Chart.current = ChartLoader.load(song.folder, song.difficulty);
-				FlxG.switchState(new funkin.states.PlayState(song));
+				for (i in 0...songGroup.members.length) {
+					if (i == curSel) {
+						songGroup.members[i].flicker(0.5, 0.08, false, true, (flick:FlxFlicker) -> {
+							Chart.current = ChartLoader.load(song.folder, song.difficulty);
+							FlxG.switchState(new funkin.states.PlayState(song));
+						});
+						iconGroup.members[i].flicker(0.5, 0.08, false, true);
+					}
+					else {
+						FlxTween.tween(songGroup.members[i], {alpha: 0.0}, 0.5);
+						FlxTween.tween(iconGroup.members[i], {alpha: 0.0}, 0.5);
+					}
+				}
 			};
 
 			maxSelections = songs.length - 1;
@@ -133,6 +164,8 @@ class FreeplayMenu extends BaseMenuState {
 			canChangeAlternative = false;
 			canBackOut = false;
 			canAccept = false;
+
+			FlxG.sound.play(Paths.sound("cancelMenu"));
 			FlxG.switchState(new MainMenu());
 		}
 
@@ -141,11 +174,6 @@ class FreeplayMenu extends BaseMenuState {
 	}
 
 	override function update(elapsed:Float):Void {
-		super.update(elapsed);
-
-		if (!_loaded)
-			return;
-
 		lerpScore = Math.floor(Tools.fpsLerp(lerpScore, intendedScore, 0.1));
 		scoreTxt.text = 'PERSONAL BEST:${lerpScore}';
 
@@ -156,9 +184,13 @@ class FreeplayMenu extends BaseMenuState {
 
 		difficultyTxt.x = Math.floor(backPB.x + backPB.width * 0.5);
 		difficultyTxt.x -= (difficultyTxt.width * 0.5);
+
+		super.update(elapsed);
 	}
 
 	override function updateSelection(newSel:Int = 0):Void {
+		if (!_loaded) return;
+
 		super.updateSelection(newSel);
 
 		if (newSel != 0)
@@ -180,21 +212,29 @@ class FreeplayMenu extends BaseMenuState {
 		}
 
 		prevSel = curSel;
+
+		// -- SETUP DIFFICULTIES -- //
+
 		Difficulty.list = null; // ensure its using the default ones.
 		if (songs[curSel].difficulties != null && songs[curSel].difficulties.length > 0)
 			Difficulty.list = songs[curSel].difficulties;
 
 		if (lastDiff != null && Difficulty.list.contains(lastDiff))
-			curSelAlt = Difficulty.list.indexOf(lastDiff);
-
+			curAltSel = Difficulty.list.indexOf(lastDiff);
 		maxSelectionsAlt = Difficulty.list.length - 1;
+
 		updateSelectionAlt();
+
+		#if sys
+		// -- CHANGE THE CURRENT MUSIC BEING PLAYED -- //
+		changeSongPlaying();
+		#end
 	}
 
 	override function updateSelectionAlt(newSelAlt:Int = 0):Void {
 		if (Difficulty.list.length == 1) {
 			difficultyTxt.text = Difficulty.list[0].toUpperCase();
-			curSelAlt = 0;
+			curAltSel = 0;
 			return;
 		}
 
@@ -203,10 +243,54 @@ class FreeplayMenu extends BaseMenuState {
 		if (newSelAlt != 0)
 			FlxG.sound.play(AssetHelper.getAsset('audio/sfx/scrollMenu', SOUND));
 
-		difficultyTxt.text = '« ${Difficulty.list[curSelAlt].toUpperCase()} »';
+		difficultyTxt.text = '« ${Difficulty.list[curAltSel].toUpperCase()} »';
 		intendedScore = Highscore.getSongScore(songs[curSel].folder).score;
-		lastDiff = Difficulty.list[curSelAlt];
+		lastDiff = Difficulty.list[curAltSel];
 	}
+
+	#if sys
+	function changeSongPlaying():Void {
+		inline function getSongPath(i:Int):String {
+			var real:String = "";
+			final path:String = 'songs/${songs[i].folder}/audio';
+			for (i in Tools.listFiles(AssetHelper.getPath(path))) {
+				if (i.toLowerCase().replace("." + haxe.io.Path.extension(i), "") == "inst") {
+					real = '${path}/${i}';
+					break;
+				}
+			}
+			return real;
+		}
+
+		function job():Void {
+			// *
+			while (true) { // NOTE to self: *don't* break this loop -Crow
+				var index:Null<Int> = Thread.readMessage(false);
+				if (index != null) {
+					if (index == curSel) {
+						try {
+							mutex.acquire();
+
+							if (FlxG.sound.music != null && FlxG.sound.music.fadeTween != null)
+								FlxG.sound.music.fadeTween.cancel();
+
+							FlxG.sound.playMusic(AssetHelper.getAsset(getSongPath(index), SOUND), 0.0, true);
+							FlxG.sound.music.time = FlxG.random.int(0, Std.int(FlxG.sound.music.length * 0.5));
+							FlxG.sound.music.fadeIn(0.5, 0.0, 0.8);
+
+							mutex.release();
+						} catch(e:haxe.Exception)
+							trace('[FreeplayMenu:changeSongPlaying()]: Failed to play song of name ${songs[index].name}\nError: ${e.message}');
+					}
+				}
+			}
+			// *
+		}
+
+		if (songThread == null) songThread = Thread.create(job);
+		songThread.sendMessage(curSel);
+	}
+	#end
 }
 
 @:structInit class FreeplaySong {

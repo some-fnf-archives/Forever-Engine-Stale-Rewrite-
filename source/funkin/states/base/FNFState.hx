@@ -5,9 +5,12 @@ class FNFState extends forever.core.scripting.ScriptableState {
 
 	override function new(stateName:String = null):Void {
 		super(stateName);
+	}
+
+	override function create():Void {
+		super.create();
 
 		Conductor.init(true);
-
 		Conductor.onStep.add(onStep);
 		Conductor.onBeat.add(onBeat);
 		Conductor.onBar.add(onBar);
@@ -26,6 +29,5 @@ class FNFState extends forever.core.scripting.ScriptableState {
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 
-	function get_controls():forever.ControlsManager
-		return Controls.current;
+	function get_controls():forever.ControlsManager return Controls.current;
 }

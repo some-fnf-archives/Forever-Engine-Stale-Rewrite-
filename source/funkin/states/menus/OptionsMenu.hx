@@ -76,7 +76,7 @@ class OptionsMenu extends BaseMenuState {
 		#if DISCORD
 		DiscordRPC.updatePresenceDetails("In the Menus", "OPTIONS");
 		#end
-		Tools.checkMenuMusic(null, false, 102.0);
+		Tools.checkMenuMusic(null, false);
 
 		add(bg = new ForeverSprite(0, 0, "menus/menuDesat", {color: 0xFFEA71FD}));
 		bg.scale.set(1.15, 1.15);

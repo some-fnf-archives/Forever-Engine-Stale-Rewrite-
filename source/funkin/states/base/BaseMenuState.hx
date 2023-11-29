@@ -10,7 +10,7 @@ class BaseMenuState extends FNFState {
 	public var curSel:Int = 0;
 
 	/** Your alternative selected item **/
-	public var curSelAlt:Int = 0;
+	public var curAltSel:Int = 0;
 
 	/** If you can scroll through items (up and down selection) **/
 	public var canChangeSelection:Bool = true;
@@ -79,6 +79,6 @@ class BaseMenuState extends FNFState {
 	 * @param newSelAlt     By how much should the alternative selection be increment/decremented?
 	**/
 	public function updateSelectionAlt(newSelAlt:Int = 0):Void {
-		curSelAlt = FlxMath.wrap(curSelAlt + newSelAlt, 0, maxSelectionsAlt);
+		curAltSel = FlxMath.wrap(curAltSel + newSelAlt, 0, maxSelectionsAlt);
 	}
 }

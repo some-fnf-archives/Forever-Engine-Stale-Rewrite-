@@ -95,7 +95,7 @@ class TitleScreen extends FNFState {
 
 		new flixel.util.FlxTimer().start(0.05, function(tmr) {
 			Conductor.active = true;
-			Tools.checkMenuMusic(null, true, 102.0);
+			Tools.checkMenuMusic(null, true);
 		});
 
 		if (seenIntro || introSections.length < 1)
