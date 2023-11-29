@@ -3,10 +3,6 @@ package funkin.states.base;
 class FNFState extends forever.core.scripting.ScriptableState {
 	public var controls(get, never):forever.ControlsManager;
 
-	override function new(stateName:String = null):Void {
-		super(stateName);
-	}
-
 	override function create():Void {
 		super.create();
 
