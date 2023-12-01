@@ -13,11 +13,6 @@ import funkin.states.base.BaseMenuState;
 import funkin.ui.Alphabet;
 import funkin.ui.HealthIcon;
 
-#if sys
-import sys.thread.Thread;
-import sys.thread.Mutex;
-#end
-
 using flixel.effects.FlxFlicker;
 
 class FreeplayMenu extends BaseMenuState {
@@ -26,11 +21,6 @@ class FreeplayMenu extends BaseMenuState {
 
 	public var bg:ForeverSprite;
 	public var songs:Array<FreeplaySong> = [];
-
-	#if sys
-	public var songThread:Thread;
-	public var mutex:Mutex;
-	#end
 
 	public var songGroup:FlxTypedGroup<Alphabet>;
 	public var iconGroup:FlxTypedGroup<HealthIcon>;
@@ -54,8 +44,6 @@ class FreeplayMenu extends BaseMenuState {
 
 		#if !sys
 		Tools.checkMenuMusic(null, false);
-		#else
-		mutex = new Mutex();
 		#end
 
 		canChangeAlternative = true;
@@ -224,11 +212,6 @@ class FreeplayMenu extends BaseMenuState {
 		maxSelectionsAlt = Difficulty.list.length - 1;
 
 		updateSelectionAlt();
-
-		#if sys
-		// -- CHANGE THE CURRENT MUSIC BEING PLAYED -- //
-		changeSongPlaying();
-		#end
 	}
 
 	override function updateSelectionAlt(newSelAlt:Int = 0):Void {
@@ -247,50 +230,6 @@ class FreeplayMenu extends BaseMenuState {
 		intendedScore = Highscore.getSongScore(songs[curSel].folder).score;
 		lastDiff = Difficulty.list[curAltSel];
 	}
-
-	#if sys
-	function changeSongPlaying():Void {
-		function getSongPath(i:Int):String {
-			var real:String = "";
-			final path:String = 'songs/${songs[i].folder}/audio';
-			for (i in Tools.listFiles(AssetHelper.getPath(path))) {
-				if (i.toLowerCase().replace("." + haxe.io.Path.extension(i), "") == "inst") {
-					real = '${path}/${i}';
-					break;
-				}
-			}
-			return real;
-		}
-
-		function job():Void {
-			// *
-			while (true) { // NOTE to self: *don't* break this loop -Crow
-				var index:Null<Int> = Thread.readMessage(false);
-				if (index != null) {
-					if (index == curSel) {
-						try {
-							mutex.acquire();
-
-							if (FlxG.sound.music != null && FlxG.sound.music.fadeTween != null)
-								FlxG.sound.music.fadeTween.cancel();
-
-							FlxG.sound.playMusic(AssetHelper.getAsset(getSongPath(index), SOUND), 0.0, true);
-							FlxG.sound.music.time = FlxG.random.int(0, Std.int(FlxG.sound.music.length * 0.5));
-							FlxG.sound.music.fadeIn(0.5, 0.0, 0.8);
-
-							mutex.release();
-						} catch(e:haxe.Exception)
-							trace('[FreeplayMenu:changeSongPlaying()]: Failed to play song of name ${songs[index].name}\nError: ${e.message}');
-					}
-				}
-			}
-			// *
-		}
-
-		if (songThread == null) songThread = Thread.create(job);
-		songThread.sendMessage(curSel);
-	}
-	#end
 }
 
 @:structInit class FreeplaySong {
