@@ -42,9 +42,7 @@ class FreeplayMenu extends BaseMenuState {
 		DiscordRPC.updatePresenceDetails("In the Menus", "FREEPLAY");
 		#end
 
-		#if !sys
 		Tools.checkMenuMusic(null, false);
-		#end
 
 		canChangeAlternative = true;
 
