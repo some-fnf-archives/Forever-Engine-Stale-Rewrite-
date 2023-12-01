@@ -72,6 +72,7 @@ class Conductor {
 	public static function init(resetSignals:Bool = true):Void {
 		time = 0.0;
 		_lastTime = -1.0;
+		stepf = beatf = barf = 0.0;
 		if (resetSignals) {
 			onStep.removeAll();
 			onBeat.removeAll();
@@ -94,15 +95,13 @@ class Conductor {
 			final timeDelta:Float = time - _lastTime;
 			final beatDelta:Float = (bpm * SIXTY_IN_MULT) * timeDelta;
 			// *
-			if (step != Math.floor(stepf += (beatDelta * stepsPerBeat)))
-				onStep.dispatch(step);
-			if (beat != Math.floor(beatf += beatDelta))
-				onBeat.dispatch(beat);
-			if (bar != Math.floor(barf += (beatDelta / beatsPerBar)))
-				onBar.dispatch(bar);
+			if (beat != Math.floor(beatf += beatDelta)) onBeat.dispatch(beat);
+			if (step != Math.floor(stepf += beatDelta * stepsPerBeat)) onStep.dispatch(step);
+			if (bar != Math.floor(barf += beatDelta / beatsPerBar)) onBar.dispatch(bar);
 			// *
-			_lastTime = time;
 		}
+
+		_lastTime = time;
 	}
 
 	// -- HELPER CONVERSION FUNCTIONS -- //
@@ -124,6 +123,7 @@ class Conductor {
 
 	/** Converts the time of a bar, using the `_bpm`, to Time (in seconds). **/
 	public static inline function barToTime(_bart:Float, _bpm:Float):Float return beatToTime(_bart, _bpm) / beatsPerBar;
+	// BART SIMPSON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -swordcube
 
 	// -- GETTERS & SETTERS, DO NOT MESS WITH THESE -- //
 

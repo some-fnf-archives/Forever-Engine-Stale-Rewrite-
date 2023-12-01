@@ -515,12 +515,16 @@ class PlayState extends FNFState {
 	}
 
 	override function onStep(step:Int):Void {
-		if (vocals != null && vocals.playing) {
-			final soundTime:Float = vocals.time / 1000.0;
-			if (Math.abs(Conductor.time - soundTime) > 20.0)
-				vocals.time = FlxG.sound.music.time;
-		}
 		callFunPack("onStep", [step]);
+		resyncVocals();
+	}
+
+	public function resyncVocals():Void {
+		if (vocals == null) return;
+		
+		if (vocals.playing)
+			if (Math.abs(Conductor.time - (vocals.time / 1000.0)) > 15.0)
+				vocals.time = FlxG.sound.music.time;
 	}
 
 	override function onBar(bar:Int):Void {
@@ -551,8 +555,10 @@ class PlayState extends FNFState {
 		playField.paused = false;
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.resume();
-		if (vocals != null && vocals.playing)
+		if (vocals != null && vocals.playing) {
 			vocals.resume();
+			resyncVocals();
+		}
 		songState = PLAYING;
 		#if DISCORD
 		DiscordRPC.updatePresenceDetails('${songMeta.name}', '${playField.scoreBar.text}');
