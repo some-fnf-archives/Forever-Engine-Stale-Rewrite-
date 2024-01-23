@@ -1,6 +1,8 @@
 package objects.game;
 
-class Receptor extends FlxSprite {
+import backend.ForeverSprite;
+
+class Receptor extends ForeverSprite {
 	public var direction:Int;
 	public var skin(default, set):String;
 

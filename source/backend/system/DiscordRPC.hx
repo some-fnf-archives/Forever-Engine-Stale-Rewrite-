@@ -1,4 +1,4 @@
-package meta.dependency;
+package backend.system;
 
 #if SHOW_DISCORD_RPC
 import sys.thread.Thread;

@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin': Forever Engine" file="ForeverEngine" main="meta.dependency.Main" version="1.0.0" company="swordcube" package="com.swordcube.foreverengine" />
+	<app title="Friday Night Funkin': Forever Engine" file="ForeverEngine" main="backend.system.Main" version="1.0.0" company="swordcube" package="com.swordcube.foreverengine" />
 
 	<!-- ____________________________ Window Settings ___________________________ -->
 

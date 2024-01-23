@@ -6,5 +6,5 @@ import flixel.group.*;
 import flixel.util.FlxSave;
 
 import meta.data.AssetServer;
-import meta.dependency.*;
+import backend.system.*;
 #end
