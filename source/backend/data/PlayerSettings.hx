@@ -1,4 +1,4 @@
-package backend.system;
+package backend.data;
 
 enum SettingType {
 	CHECKBOX(defaultValue:Bool);
@@ -9,6 +9,7 @@ enum SettingType {
 
 class PlayerSettings {
 	public static var data:Dynamic<SettingType> = {
-		downscroll: CHECKBOX(false)
+		downscroll: CHECKBOX(false),
+		framerate: INTEGER(120, 30, 240, 5),
 	};
 }

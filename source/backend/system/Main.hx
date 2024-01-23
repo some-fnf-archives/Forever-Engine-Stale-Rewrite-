@@ -1,8 +1,9 @@
 package backend.system;
 
+import backend.data.PlayerSettings;
 import flixel.FlxGame;
-import openfl.display.Sprite;
 import lime.app.Application as LimeApp;
+import openfl.display.Sprite;
 
 class Main extends Sprite {
 	public static var version(get, set): String;
@@ -16,8 +17,12 @@ class Main extends Sprite {
 	public function new() {
 		super();
 
+		final framerate: Int = PlayerSettings.data.framerate.getParameters()[0];
+
 		tinyWindowForTinyMonitor();
-		addChild(new FlxGame(1280, 720, FlxState));
+		addChild(new FlxGame(1280, 720, FlxState, framerate, framerate, true));
+		// TODO: this?
+		// addChild(new Conductor());
 
 		DiscordRPC.init();
 		FlxG.signals.preStateSwitch.add(() -> {
@@ -31,9 +36,6 @@ class Main extends Sprite {
 			newState = Type.getClass(FlxG.state);
 		});
 		FlxG.fixedTimestep = false;
-
-		// TODO: this?
-		// addChild(new Conductor());
 
 		@:privateAccess {
 			FlxG.game._requestedState = new states.PlayState();
