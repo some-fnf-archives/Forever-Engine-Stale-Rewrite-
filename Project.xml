@@ -3,7 +3,7 @@
 	<!-- _________________________ Application Settings _________________________ -->
 
 	<app title="Friday Night Funkin': Forever Engine" file="ForeverEngine" main="backend.system.Main" />
-	<app version="1.0.0" company="MochiProductions" package="com.mochiproductions.foreverengine" />
+	<app version="1.0.0" company="CloverNCube" package="com.cloverncube.foreverengine" />
 
 	<!-- ____________________________ Window Settings ___________________________ -->
 
