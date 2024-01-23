@@ -1,4 +1,4 @@
-package meta.data;
+package backend.system;
 
 enum SettingType {
 	CHECKBOX(defaultValue:Bool);
