@@ -5,6 +5,6 @@ import flixel.FlxSprite;
 import flixel.group.*;
 import flixel.util.FlxSave;
 
-import backend.system.AssetServer;
+import backend.data.AssetServer;
 import backend.system.*;
 #end

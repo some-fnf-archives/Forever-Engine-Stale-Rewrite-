@@ -39,6 +39,7 @@
 	</section>
 
 	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
+	<haxedef name="no-deprecation-warnings" />
 
 	<section unless="debug" >
 		<haxedef name="SHOW_DISCORD_RPC" />

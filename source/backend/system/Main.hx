@@ -27,7 +27,7 @@ class Main extends Sprite {
 		FlxG.fixedTimestep = false;
 
 		@:privateAccess {
-			FlxG.game._requestedState = new meta.states.PlayState();
+			FlxG.game._requestedState = new states.PlayState();
 			FlxG.game.switchState();
 		}
 	}

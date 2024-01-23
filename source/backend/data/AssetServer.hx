@@ -1,4 +1,4 @@
-package backend.system;
+package backend.data;
 
 import openfl.utils.Assets;
 import openfl.utils.AssetCache;
