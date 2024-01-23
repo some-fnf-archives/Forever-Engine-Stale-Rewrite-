@@ -1,0 +1,50 @@
+{
+  "dependencies": [
+    {
+      "name": "discord_rpc",
+      "type": "git",
+      "dir": null,
+      "ref": "master",
+      "url": "https://github.com/Aidan63/linc_discord-rpc"
+    },
+    {
+      "name": "flixel-nova",
+      "type": "git",
+      "dir": null,
+      "ref": "dev",
+      "url": "https://github.com/swordcube/flixel"
+    },
+    {
+      "name": "flixel-addons-nova",
+      "type": "git",
+      "dir": null,
+      "ref": "dev",
+      "url": "https://github.com/swordcube/flixel-addons"
+    },
+    {
+      "name": "hmm",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "hxcpp",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "hxcpp-debug-server",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "lime",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "openfl",
+      "type": "haxelib",
+      "version": null
+    }
+  ]
+}
