@@ -5,14 +5,13 @@
 	<app title="Friday Night Funkin': Forever Engine" file="ForeverEngine" main="backend.system.Main" />
 	<app version="1.0.0" company="CloverNCube" package="com.cloverncube.foreverengine" />
 
-	<!-- ____________________________ Window Settings ___________________________ -->
+	<!-- [ Window Settings ] -->
 
 	<window width="1280" height="720" fps="120" background="#000000" hardware="true" vsync="false" />
-
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />
 	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" />
 
-	<!-- _____________________________ Path Settings ____________________________ -->
+	<!-- [ Path Settings ] -->
 
 	<set name="BUILD_DIR" value="export/debug" if="debug" />
 	<set name="BUILD_DIR" value="export/release" unless="debug" />
@@ -20,15 +19,11 @@
 	<source path="source" />
 	<assets path="assets" />
 
-	<!-- _______________________________ Libraries ______________________________ -->
+	<!-- [ Defines ] -->
 
-	<haxelib name="format" />
-	<haxelib name="flixel-nova" rename="flixel" />
-	<haxelib name="flixel-addons-nova" rename="flixel-addons" />
-	<haxelib name="discord_rpc" if="SHOW_DISCORD_RPC" />
-	<haxelib name="hxcpp-debug-server" if="debug" />
-
-	<!-- ______________________________ Haxedefines _____________________________ -->
+	<define name="SHOW_DISCORD_RPC" />
+	<define name="FOREVER_SCRIPTING" if="sys" />
+	<define name="FOREVER_MODS" if="sys" />
 
 	<section if="mobile">
 		<haxedef name="FLX_NO_MOUSE" if="mobile" />
@@ -47,4 +42,12 @@
 		<haxedef name="FLX_NO_DEBUG" />
 		<haxedef name="NAPE_RELEASE_BUILD" />
 	</section>
+
+	<!-- [ Libraries ] -->
+
+	<haxelib name="format" />
+	<haxelib name="flixel-nova" rename="flixel" />
+	<haxelib name="flixel-addons-nova" rename="flixel-addons" />
+	<haxelib name="discord_rpc" if="SHOW_DISCORD_RPC" />
+	<haxelib name="hxcpp-debug-server" if="debug" />
 </project>
