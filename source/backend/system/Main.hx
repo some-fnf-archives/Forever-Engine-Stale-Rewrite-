@@ -7,8 +7,8 @@ import lime.app.Application as LimeApp;
 class Main extends Sprite {
 	public static var version(get, set): String;
 
-	inline function get_version() { return LimeApp.current.meta["version"]; }
-	function set_version(v: String) { return LimeApp.current.meta["version"] = v; }
+	inline static function get_version() { return LimeApp.current.meta["version"]; }
+	private static function set_version(v: String) { return LimeApp.current.meta["version"] = v; }
 
 	private static var oldState:Class<FlxState>;
 	private static var newState:Class<FlxState>;
