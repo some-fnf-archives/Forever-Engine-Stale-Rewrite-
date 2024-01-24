@@ -21,8 +21,7 @@ class Main extends Sprite {
 
 		tinyWindowForTinyMonitor();
 		addChild(new FlxGame(1280, 720, FlxState, framerate, framerate, true));
-		// TODO: this?
-		// addChild(new Conductor());
+		addChild(new Conductor());
 
 		DiscordRPC.init();
 		FlxG.signals.preStateSwitch.add(() -> {
