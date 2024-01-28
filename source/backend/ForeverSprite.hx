@@ -53,8 +53,7 @@ class ForeverSprite extends FlxSprite {
     }
 
     public function resizeOffsets(?newScale: Float) {
-        if (newScale == null)
-            newScale = scale.x;
+        if (newScale == null) newScale = scale.x;
         for (i in animOffsets.keys())
             animOffsets[i] = [animOffsets[i][0] * newScale, animOffsets[i][1] * newScale];
     }
