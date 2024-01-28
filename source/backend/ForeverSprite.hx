@@ -43,9 +43,9 @@ class ForeverSprite extends FlxSprite {
 
         final newOffset: Array<Float> = animOffsets.get(animName);
         if (newOffset != null && newOffset.length == 2)
-            offset.set(newOffset[0], newOffset[1]);
+            frameOffset.set(newOffset[0], newOffset[1]);
         else
-            offset.set(0, 0);
+            frameOffset.set(0, 0);
     }
 
     public function setOffset(animName: String, x: Float = 0, y: Float = 0) {
