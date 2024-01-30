@@ -43,19 +43,19 @@ class ForeverSprite extends FlxSprite {
 
         final newOffset: Array<Float> = animOffsets.get(animName);
         if (newOffset != null && newOffset.length == 2)
-            offset.set(newOffset[0], newOffset[1]);
+            frameOffset.set(newOffset[0], newOffset[1]);
         else
-            offset.set(0, 0);
+            frameOffset.set(0, 0);
     }
 
     public function setOffset(animName: String, x: Float = 0, y: Float = 0) {
         animOffsets[animName] = [x, y];
     }
 
-    public function resizeOffsets(?newScale: Float) {
-        if (newScale == null)
-            newScale = scale.x;
+    public function resizeOffsets(?newScaleX: Float, ?newScaleY: Float) {
+        if (newScaleX == null) newScaleX = scale.x;
+        if (newScaleY == null) newScaleY = scale.y;
         for (i in animOffsets.keys())
-            animOffsets[i] = [animOffsets[i][0] * newScale, animOffsets[i][1] * newScale];
+            animOffsets[i] = [animOffsets[i][0] * nweScaleX, animOffsets[i][1] * newScaleY];
     }
 }
