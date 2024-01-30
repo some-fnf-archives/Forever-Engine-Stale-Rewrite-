@@ -19,7 +19,9 @@ class Receptor extends ForeverSprite {
 	private inline function set_skin(newSkin:String):String {
 		switch(newSkin) {
 			case "base":
-				
+				frames = AssetServer.getAsset("game/noteskins/notes/base/sheet", SPARROW);
+				animation.addByPrefix("static", 'arrow static instance ${direction}', 0, false);
+				playAnim("static", true);
 		}
 		return skin = newSkin;
 	}

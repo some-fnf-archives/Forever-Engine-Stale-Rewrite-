@@ -1,19 +1,37 @@
 package backend.data;
 
-import openfl.utils.Assets;
-import openfl.utils.AssetCache;
+import backend.data.AssetType;
 import flixel.graphics.FlxGraphic;
-import flixel.graphics.frames.FlxFramesCollection;
 import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.graphics.frames.FlxFramesCollection;
+import openfl.utils.AssetCache;
+import openfl.utils.Assets;
 
 // TODO: modify openfl assets to make gpu rendered sprites work
 
 class AssetServer {
 	public static var cache:Map<String, Dynamic> = [];
 
+	public static inline function getRoot(?asset: String, ?type: AssetType, ?group: String) {
+		var directory: String = "assets/";
+		if (group != null && group.length != 0) directory += '${group}/';
+		if (asset != null && asset.length != 0) directory += asset;
+		return type.getExtensions(directory);
+	}
+
+	public static inline function getAsset(asset: String, ?type: AssetType, ?group: String): Dynamic {
+		final root: String = getRoot(asset, type, group);
+
+		return switch (type) {
+			// case IMAGE: AssetServer.generateImage();
+			case SPARROW: FlxAtlasFrames.fromSparrow(getAsset(asset, IMAGE), getRoot(asset, XML));
+			case PACKER : FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getRoot(asset, TXT));
+			default: root;
+		}
+	}
+
 	public static function clearCache() {
-		for(asset in cache)
-			destroyAsset(asset);
+		for(asset in cache) destroyAsset(asset);
 
 		@:privateAccess {
 			final assCache = cast(Assets.cache, AssetCache); // lol
