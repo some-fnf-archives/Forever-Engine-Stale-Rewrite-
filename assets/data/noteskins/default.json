@@ -1,0 +1,29 @@
+{
+    "directions": ["left", "down", "up", "right"],
+    "textures": {
+        "receptor": "game/noteskins/base/sheet",
+        "arrow": "{receptor}",
+        "hold": "{receptor}",
+        "holdend": "{receptor}"
+    },
+    "animations": {
+        "receptor": {
+            "static": "arrow static {id}",
+            "press": "{direction} press",
+            "hit": "{direction} confirm"
+        },
+        "note": ["left0", "down0", "up0", "right0"],
+        "hold": [
+            "left hold piece",
+            "down hold piece",
+            "up hold piece",
+            "right hold piece"
+        ],
+        "holdend": [
+            "left hold end",
+            "down hold end",
+            "up hold end",
+            "right hold end"
+        ]
+    }
+}

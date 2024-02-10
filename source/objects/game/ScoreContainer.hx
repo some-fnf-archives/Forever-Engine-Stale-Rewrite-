@@ -1,5 +1,6 @@
-package backend.data;
+package objects.game;
 
+import backend.utils.Dictionary;
 import flixel.math.FlxMath;
 
 /**

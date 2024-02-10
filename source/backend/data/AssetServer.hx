@@ -14,8 +14,8 @@ class AssetServer {
 
 	public static inline function getRoot(?asset: String, ?type: AssetType, ?group: String) {
 		var directory: String = "assets/";
-		if (group != null && group.length != 0) directory += '${group}/';
-		if (asset != null && asset.length != 0) directory += asset;
+		if (group != null && group.length != 0) directory += '$group/';
+		if (asset != null && asset.length != 0) directory += '$asset';
 		return type.getExtensions(directory);
 	}
 
@@ -28,6 +28,16 @@ class AssetServer {
 			case PACKER : FlxAtlasFrames.fromSpriteSheetPacker(getAsset(asset, IMAGE), getRoot(asset, TXT));
 			default: root;
 		}
+	}
+
+	public static function exists(asset: String) {
+		final existanceCheck:String->Bool = #if sys sys.FileSystem.exists #else openfl.utils.Assets.exists #end;
+		return existanceCheck(asset);
+	}
+
+	public static function getCont(asset: String) {
+		final contentGetter:String->String = #if sys sys.io.File.getContent #else openfl.utils.Assets.getText #end;
+		return contentGetter(asset);
 	}
 
 	public static function clearCache() {

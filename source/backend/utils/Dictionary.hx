@@ -1,4 +1,4 @@
-package backend;
+package backend.utils;
 
 typedef AnyDictionary = Dictionary<Dynamic, Dynamic>;
 typedef StringDictionary<T> = Dictionary<String, T>;
