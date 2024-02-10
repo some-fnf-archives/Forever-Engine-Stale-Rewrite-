@@ -1,3 +1,3 @@
-package states.toolbox;
+package states.editors;
 
 class CharacterEditor extends FlxState {}

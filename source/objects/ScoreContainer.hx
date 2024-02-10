@@ -1,4 +1,4 @@
-package objects.game;
+package objects;
 
 import backend.utils.Dictionary;
 import flixel.math.FlxMath;

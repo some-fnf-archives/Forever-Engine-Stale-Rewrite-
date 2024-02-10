@@ -1,6 +1,6 @@
-package objects.game;
+package objects;
 
-import backend.ForeverSprite;
+import backend.utils.ForeverSprite;
 
 @:structInit class NoteData {
     public var time: Float;

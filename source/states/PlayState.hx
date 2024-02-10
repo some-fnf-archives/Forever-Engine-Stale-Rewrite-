@@ -1,6 +1,5 @@
 package states;
 
-import backend.Conductor;
 import flixel.FlxState;
 
 class PlayState extends FlxState implements BeatSynced {

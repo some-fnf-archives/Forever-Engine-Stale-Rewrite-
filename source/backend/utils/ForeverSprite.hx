@@ -1,4 +1,4 @@
-package backend;
+package backend.utils;
 
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
@@ -56,6 +56,6 @@ class ForeverSprite extends FlxSprite {
         if (newScaleX == null) newScaleX = scale.x;
         if (newScaleY == null) newScaleY = scale.y;
         for (i in animOffsets.keys())
-            animOffsets[i] = [animOffsets[i][0] * nweScaleX, animOffsets[i][1] * newScaleY];
+            animOffsets[i] = [animOffsets[i][0] * newScaleX, animOffsets[i][1] * newScaleY];
     }
 }

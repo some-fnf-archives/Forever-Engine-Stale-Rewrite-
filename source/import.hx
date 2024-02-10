@@ -8,4 +8,6 @@ import flixel.util.FlxSave;
 import backend.data.AssetServer;
 import backend.data.Paths;
 import backend.system.*;
+import backend.system.Conductor.BeatSynced;
+import backend.utils.Tools;
 #end

@@ -1,8 +1,6 @@
-package states.toolbox;
+package states.editors;
 
-import backend.Conductor.IBeatEligable;
-
-class ChartEditor extends FlxState implements IBeatEligable {
+class ChartEditor extends FlxState implements BeatSynced {
     public function onBeat(beat: Int) {
         // TODO: something with this.
     }

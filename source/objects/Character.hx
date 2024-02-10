@@ -1,5 +1,5 @@
 package objects;
 
-import backend.ForeverSprite;
+import backend.utils.ForeverSprite;
 
 class Character extends ForeverSprite {}

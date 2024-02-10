@@ -1,6 +1,6 @@
-package objects.game;
+package objects;
 
-import backend.ForeverSprite;
+import backend.utils.ForeverSprite;
 
 class Receptor extends ForeverSprite {
 	public var direction:Int;
