@@ -13,7 +13,7 @@ interface BeatSynced {
 }
 
 class Conductor extends Sprite {
-    public static var timePosition: Float = 0;
+    public static var time: Float = 0;
     public static var bpm(default, set): Float = 100;
     public static var rate: Float = 1;
 
@@ -51,21 +51,18 @@ class Conductor extends Sprite {
 
         super.__enterFrame(deltaTime);
 
-        final dt: Float = lime.system.System.getTimer()*0.001;
-        timePosition += dt;
+        final dt: Float = lime.system.System.getTimer();
+        time += dt;
 
-        if (FlxG.sound.music != null && FlxG.sound.music.playing) {
-            final songTime: Float = FlxG.sound.music.time*0.001;
-            if (Math.abs(timePosition - songTime) > 0.05) {
-                timePosition = songTime;
-            }
-        }
+        if (FlxG.sound.music != null && FlxG.sound.music.playing)
+            if (Math.abs(time - FlxG.sound.music.time) > 5)
+                time = FlxG.sound.music.time;
 
-        final beatdt: Float = (bpm/60) * (timePosition - _lastTime);
+        final beatdt: Float = (bpm/60) * (time - _lastTime);
         if (beat != Math.floor(beatf += beatdt               ) ) stepHit(step);
         if (step != Math.floor(stepf += beatdt * stepsPerBeat) ) beatHit(beat);
         if (bar  != Math.floor(barf  += beatdt / beatsPerBar ) ) barHit (bar );
-        _lastTime = timePosition;
+        _lastTime = time;
     }
 
     // --------------------------------------------------------- //
@@ -110,7 +107,7 @@ class Conductor extends Sprite {
 
     inline static function set_bpm(newBpm: Float) {
         bpm = newBpm;
-        crochet = (60 / bpm);
+        crochet = (60 / bpm) * 1000.0;
         stepCrochet = (crochet * 0.25);
         return bpm;
     }
