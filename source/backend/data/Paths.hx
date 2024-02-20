@@ -13,7 +13,7 @@ class Paths {
     return AssetServer.getRoot(asset, null, group);
   }
 
-  /public static inline function getSharedPath(asset: String, ?group: String) {
+  public static inline function getSharedPath(asset: String, ?group: String) {
     return AssetServer.getRoot(asset, null, group);
   }
   // --- --- --- --- --- --- //
