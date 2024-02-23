@@ -7,6 +7,7 @@ import backend.utils.ForeverSprite;
   public var dire: Int;
   public var sLen: Float;
   public var type: String;
+  public var lane: Int;
 }
 
 class Note extends ForeverSprite {}

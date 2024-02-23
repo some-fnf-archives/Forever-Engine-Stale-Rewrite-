@@ -52,4 +52,16 @@ class Paths {
   public static inline function soundRandom(asset: String, min: Int = 0, ?max: Int = 1, ?group: String) {
     return AssetServer.getAsset(asset + FlxG.random.int(min, max), SOUND, group);
   }
+
+  public static inline function chart(name: String, difficulty: String = "normal", ?group: String) {
+    var path: String = AssetServer.getPath('game/charts/$name/$difficulty', JSON, group);
+    if (!AssetServer.exists(path)) {
+      var legacyPath: String = path.replace('/$difficulty', '$name-$difficulty');
+      if (AssetServer.exists(legacyPath))
+        path = legacyPath;
+      else
+        path = legacyPath.replace('-$difficulty', '');
+    }
+    return path;
+  }
 }
