@@ -103,9 +103,8 @@ class Conductor extends flixel.FlxBasic {
   inline static function get_bar () { return Math.floor(barf ); }
 
   inline static function set_bpm(newBpm: Float) {
-    bpm = newBpm;
-    crochet = (60 / bpm) * 1000.0;
+    crochet = (60 / newBpm) * 1000.0;
     stepCrochet = (crochet * 0.25);
-    return bpm;
+    return bpm = newBpm;
   }
 }
