@@ -3,13 +3,16 @@ package objects;
 import backend.utils.ForeverSprite;
 
 class Receptor extends ForeverSprite {
+  public var downScroll: Bool = false;
+  public var cpu: Bool = false;
+
   public var direction:Int;
-  public var skin(default, set):String;
+  public var skin(default, set): String;
 
-  public var directionStr(get, never):String;
-  public var colorStr    (get, never):String;
+  public var directionStr(get, never): String;
+  public var colorStr    (get, never): String;
 
-  public function new(x:Float = 0, y:Float = 0, direction:Int, ?skin:String = "base") {
+  public function new(x: Float = 0, y: Float = 0, direction: Int, ?skin: String = "base") {
     super(x, y);
     this.direction = direction;
     this.skin = skin;
@@ -20,7 +23,7 @@ class Receptor extends ForeverSprite {
   // ----------------- //
 
   @:noCompletion
-    private inline function set_skin(newSkin:String):String {
+    private inline function set_skin(newSkin: String): String {
       switch(newSkin) {
         case "base":
           frames = AssetServer.getAsset("game/noteskins/notes/base/sheet", SPARROW);

@@ -54,7 +54,7 @@ class Paths {
   }
 
   public static inline function chart(name: String, difficulty: String = "normal", ?group: String) {
-    var path: String = AssetServer.getPath('game/charts/$name/$difficulty', JSON, group);
+    var path: String = AssetServer.getRoot('game/charts/$name/$difficulty', JSON, group);
     if (!AssetServer.exists(path)) {
       var legacyPath: String = path.replace('/$difficulty', '$name-$difficulty');
       if (AssetServer.exists(legacyPath))

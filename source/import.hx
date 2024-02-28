@@ -10,4 +10,6 @@ import backend.data.Paths;
 import backend.system.*;
 import backend.system.Conductor.BeatSynced;
 import backend.utils.Tools;
+
+using StringTools;
 #end

@@ -57,8 +57,8 @@ class Conductor extends flixel.FlxBasic {
         time = FlxG.sound.music.time;
 
     final beatdt: Float = (bpm/60) * (time - _lastTime);
-    if (beat != Math.floor(beatf += beatdt               ) ) stepHit(step);
-    if (step != Math.floor(stepf += beatdt * stepsPerBeat) ) beatHit(beat);
+    if (beat != Math.floor(beatf += beatdt               ) ) beatHit(step);
+    if (step != Math.floor(stepf += beatdt * stepsPerBeat) ) stepHit(beat);
     if (bar  != Math.floor(barf  += beatdt / beatsPerBar ) ) barHit (bar );
     _lastTime = time;
   }
@@ -76,21 +76,21 @@ class Conductor extends flixel.FlxBasic {
   private function stepHit(receivedStep: Int) {
     if (_oldStep == receivedStep) return;
     if (Std.isOfType(FlxG.state, BeatSynced))
-      cast(FlxG.state).onStep(receivedStep);
+      cast(FlxG.state, BeatSynced).onStep(receivedStep);
     _oldStep = receivedStep;
   }
 
   private function beatHit(receivedBeat: Int) {
     if (_oldBeat == receivedBeat) return;
     if (Std.isOfType(FlxG.state, BeatSynced))
-      cast(FlxG.state).onBeat(receivedBeat);
+      cast(FlxG.state, BeatSynced).onBeat(receivedBeat);
     _oldBeat = receivedBeat;
   }
 
   private function barHit (receivedBar: Int) {
     if (_oldBar == receivedBar) return;
     if (Std.isOfType(FlxG.state, BeatSynced))
-      cast(FlxG.state).onBar (receivedBar);
+      cast(FlxG.state, BeatSynced).onBar (receivedBar);
     _oldBar = receivedBar;
   }
 
