@@ -56,7 +56,7 @@ class Conductor extends flixel.FlxBasic {
       if (Math.abs(time - FlxG.sound.music.time) > 5)
         time = FlxG.sound.music.time;
 
-    final beatdt: Float = (bpm/60) * (time - _lastTime);
+    final beatdt: Float = ((bpm/60) * 1000.0) * (time - _lastTime);
     if (beat != Math.floor(beatf += beatdt               ) ) beatHit(step);
     if (step != Math.floor(stepf += beatdt * stepsPerBeat) ) stepHit(beat);
     if (bar  != Math.floor(barf  += beatdt / beatsPerBar ) ) barHit (bar );
