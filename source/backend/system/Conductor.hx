@@ -75,22 +75,31 @@ class Conductor extends flixel.FlxBasic {
 
   private function stepHit(receivedStep: Int) {
     if (_oldStep == receivedStep) return;
-    if (Std.isOfType(FlxG.state, BeatSynced))
+    if (FlxG.state is BeatSynced) {
       cast(FlxG.state, BeatSynced).onStep(receivedStep);
+      if (FlxG.state.subState != null && FlxG.state.subState is BeatSynced)
+	cast(FlxG.state.subState, BeatSynced).onStep(receivedStep);
+    }
     _oldStep = receivedStep;
   }
 
   private function beatHit(receivedBeat: Int) {
     if (_oldBeat == receivedBeat) return;
-    if (Std.isOfType(FlxG.state, BeatSynced))
+    if (FlxG.state is BeatSynced) {
       cast(FlxG.state, BeatSynced).onBeat(receivedBeat);
-    _oldBeat = receivedBeat;
+      if (FlxG.state.subState != null && FlxG.state.subState is BeatSynced)
+	cast(FlxG.state.subState, BeatSynced).onBeat(receivedBeat);
+    }
+   _oldBeat = receivedBeat;
   }
 
   private function barHit (receivedBar: Int) {
     if (_oldBar == receivedBar) return;
-    if (Std.isOfType(FlxG.state, BeatSynced))
+    if (FlxG.state is BeatSynced) {
       cast(FlxG.state, BeatSynced).onBar (receivedBar);
+      if (FlxG.state.subState != null && FlxG.state.subState is BeatSynced)
+	cast(FlxG.state.subState, BeatSynced).onBar (receivedBar);
+   }
     _oldBar = receivedBar;
   }
 
