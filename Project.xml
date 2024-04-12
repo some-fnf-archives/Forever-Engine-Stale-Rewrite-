@@ -24,7 +24,7 @@
 
 	<!-- So lime doesn't really set icons for the linux app, here we export the icon image in order -->
 	<!-- to set the icon ourselves when the game starts -->
-	<assets path="art/iconOG.png" rename="icon.png" if="linux" />
+	<assets path="art/iconOG.png" rename="icon.png" if="linux || mac" />
 
 	<!-- [ Application Settings ] -->
 
