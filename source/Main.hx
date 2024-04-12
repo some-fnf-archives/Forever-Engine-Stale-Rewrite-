@@ -29,7 +29,7 @@ class Main extends Sprite {
 		FlxG.signals.gameResized.add(onResizeGame);
 		FlxG.signals.preStateCreate.add(onStateCreate);
 
-		#if linux
+		#if (linux || mac)
 		var icon = lime.graphics.Image.fromFile("icon.png");
 		openfl.Lib.current.stage.window.setIcon(icon);
 		#end
