@@ -6,7 +6,7 @@
 		<prebuild command='echo It is hightly recommended to use Forever Engine with Haxe 4.3 or later' />
 		<prebuild command='echo Forever does not *properly* function in older versions, and most times it will not compile' />
 		<prebuild command='echo Please consider upgrading to the latest version, Thank you for your patience.' />
-		<prebuild command='echo -CrowPlexus' />
+		<prebuild command='echo -crowplexus' />
 	</section>
 
 	<define name="DISCORD" if="cpp" />
@@ -28,7 +28,7 @@
 
 	<!-- [ Application Settings ] -->
 
-	<app title="Friday Night Funkin' (Forever)" file="Funkin-Forever" company="CrowPlexus" />
+	<app title="Friday Night Funkin' (Forever)" file="Funkin-Forever" company="crowplexus" />
 	<app main="Main" package="com.crowplexus.funkinforever" packageName="com.crowplexus.funkinforever" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
@@ -68,11 +68,9 @@
 	<section if="MODS">
 		<assets path="assets" />
 		<!-- <assets path="mods" rename="mods" if="MODS" /> -->
-		<assets path="locale" rename="assets/funkin/data/locale" if="TRANSLATIONS" />
 	</section>
 	<section unless="MODS">
 		<assets path="assets/funkin" rename="assets" unless="MODS" />
-		<assets path="locale" rename="assets/data/locale" if="TRANSLATIONS" />
 	</section>
 
 	<!-- [ Libraries ] -->
