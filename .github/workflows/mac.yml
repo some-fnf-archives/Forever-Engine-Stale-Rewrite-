@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  buildProcess:
-    runs-on: macos-latest
+  buildMac:
+    runs-on: macos-12
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4.1.7
       - uses: krdlab/setup-haxe@master
         with:
           haxe-version: latest
@@ -21,7 +21,7 @@ jobs:
           sh docs/setup/setup.sh
       - name: Create Version Tag
         run: echo "${{github.run_id}}" > VERSION
-      - name: Compiling Process
+      - name: Compiling for Mac
         run: haxelib run lime build mac --app-version="4.0.0-${{ github.run_id}}"
       - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
